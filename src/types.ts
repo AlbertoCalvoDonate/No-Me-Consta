@@ -1,0 +1,62 @@
+// Los 4 indicadores del juego. Ajusta nombres/temática cuando definas
+// las stats definitivas — esto es la prueba de concepto.
+export interface Stats {
+  medios: number   // Prensa / opinión pública
+  partido: number  // Aparato del partido / lealtad interna
+  votantes: number // Calle / electorado
+  caja: number      // Caja b / finanzas opacas
+}
+
+export type StatKey = keyof Stats
+
+// Efecto de una decisión: cuánto sube o baja cada stat (-3 a +3 aprox)
+export type StatEffects = Partial<Record<StatKey, number>>
+
+export interface CardChoice {
+  text: string          // Texto que se ve al deslizar hacia ese lado
+  effects: StatEffects
+  nextCardId?: string   // Fuerza la siguiente carta (para mini-arcos narrativos)
+  epilogueText?: string // Si esta elección termina la partida, texto de cierre
+}
+
+// Fases narrativas de la legislatura, de menos a más gravedad.
+// No representan fechas reales — son escalones de intensidad dramática.
+export type Phase = 1 | 2 | 3 | 4
+// 1 = Luna de miel      (anecdótico, favores pequeños)
+// 2 = Desgaste           (empiezan las grietas, prensa tira del hilo)
+// 3 = Crisis              (UCO, jueces, fiscal general, filtraciones gordas)
+// 4 = Vísperas electorales (todo puede estallar: indultos, moción de censura)
+
+export const PHASE_MIN_TURN: Record<Phase, number> = {
+  1: 1,
+  2: 9,
+  3: 21,
+  4: 36,
+}
+
+export interface Card {
+  id: string
+  character: string   // Quién "habla" (ej: "El Portavoz", "El Juez")
+  // Retrato opcional del personaje. Nombre de archivo dentro de
+  // public/characters/ (ej. 'presi.png'), sin barra inicial. Si se omite,
+  // la carta se ve como hasta ahora (solo el nombre en texto).
+  characterImage?: string
+  text: string         // Texto de la carta
+  left: CardChoice
+  right: CardChoice
+  // Condición opcional para que la carta solo aparezca en cierto rango de stats
+  condition?: (stats: Stats) => boolean
+  weight?: number       // Prioridad de aparición (default 1)
+  isEnding?: boolean    // Carta especial de final de dinastía
+  phase: Phase          // Fase de gravedad narrativa a la que pertenece
+  minTurn?: number      // Turno mínimo explícito (si no, se usa PHASE_MIN_TURN[phase])
+  maxTurn?: number      // Turno máximo explícito, opcional (para cartas "de una época")
+}
+
+export interface GameState {
+  stats: Stats
+  turn: number
+  history: string[]   // ids de cartas ya vistas, para evitar repeticiones
+  gameOver: boolean
+  deathReason?: string
+}

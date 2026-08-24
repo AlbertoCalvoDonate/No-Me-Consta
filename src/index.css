@@ -1,0 +1,83 @@
+/* Resolución de referencia del juego: móvil en vertical (iPhone 15 Pro-ish).
+   El "marco" mantiene siempre este aspect ratio, tanto en un móvil real
+   (donde ocupa toda la pantalla) como en un navegador de escritorio (donde
+   queda centrado con barras a los lados, como un emulador). */
+:root {
+  --app-width: 393px;
+  --app-height: 852px;
+  /* Fuente "pixel art" estilo Reigns original, vía Google Fonts.
+     OJO: Pixelify Sans se descartó porque su glifo de "5" es casi
+     indistinguible de una "S" (bug de la propia fuente) — Jersey 10 tiene
+     el mismo aspecto alto/estilizado pero con números legibles de verdad.
+     El fallback monospace mantiene el aspecto bloque si la fuente no carga. */
+  --font-pixel: 'Jersey 10', 'Courier New', monospace;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #000;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.phone-frame-outer {
+  width: 100vw;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.phone-frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 393 / 852;
+  width: min(100vw, calc(100dvh * 393 / 852));
+  height: min(100dvh, calc(100vw * 852 / 393));
+  max-width: var(--app-width);
+  max-height: var(--app-height);
+}
+
+/* En pantallas claramente más grandes que un móvil, se ve como un marco de
+   teléfono flotando en el centro en vez de pegado a los bordes. */
+@media (min-width: 500px) and (min-height: 700px) {
+  .phone-frame {
+    border-radius: 40px;
+    border: 10px solid #111;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.rotate-overlay {
+  display: none;
+}
+
+/* Solo móvil, solo vertical: si el viewport está en horizontal, se tapa el
+   juego con un aviso para girar el dispositivo. */
+@media (orientation: landscape) {
+  .phone-frame-outer {
+    display: none;
+  }
+
+  .rotate-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: #0a0a0b;
+    color: #e0b84d;
+    font-family: system-ui, sans-serif;
+    padding: 24px;
+  }
+}

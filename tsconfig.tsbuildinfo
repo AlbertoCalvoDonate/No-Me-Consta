@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/staticons.ts","./src/types.ts","./src/components/bottombar.tsx","./src/components/effectarrow.tsx","./src/components/situationbanner.tsx","./src/components/statbars.tsx","./src/components/swipecard.tsx","./src/data/cards.content.ts","./src/data/cards.ts","./src/hooks/usegamestore.ts","./src/utils/color.ts"],"version":"5.9.3"}
