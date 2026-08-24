@@ -42,15 +42,25 @@ principio del archivo. Cada carta es un objeto `Card`:
   phase: 1,
   character: 'El Personaje',
   text: 'Texto de la situación...',
-  left:  { text: 'Opción izquierda', effects: { medios: -1, caja: 1 } },
-  right: { text: 'Opción derecha',   effects: { partido: 2 } },
+  left:  { text: 'Opción izquierda', effects: { medios: -1, caja: 1 }, moralidad: 1 },
+  right: { text: 'Opción derecha',   effects: { partido: 2 }, moralidad: -1 },
 }
 ```
 
 Las 4 stats (`medios`, `partido`, `votantes`, `caja`) van de 0 a 10. Si una
-llega a 0, se dispara la carta de "final" correspondiente. Esas 13 cartas de
-final (`final_*`) están aparte, en `src/data/cards.ts`, porque llevan una
-condición en código — no hace falta tocarlas para añadir cartas normales.
+llega a 0 (o a 10, por arriba), se dispara la carta de "final"
+correspondiente. Esas cartas de final (`final_*`) están aparte, en
+`src/data/cards.ts`, porque llevan una condición en código — no hace falta
+tocarlas para añadir cartas normales.
+
+`moralidad` es un campo opcional en cada elección (`left`/`right`): un
+número pequeño (normalmente -2 a 2) que indica si esa opción es honesta
+(positivo) o corrupta (negativo). Es una quinta variable oculta (0-10,
+empieza en 5) que **no** se ve en ninguna barra durante la partida — solo
+influye en qué variante de final sale al tocar fondo o techo con alguna
+stat: cada final tiene 3 versiones (alta/media/baja moralidad) que cuentan
+"cómo se llegó hasta ahí", no solo "qué se rompió". Omite el campo si la
+elección es moralmente neutra (la mayoría de cartas de humor/memes lo son).
 
 Después de editar, corre esto para comprobar que todo está bien antes de
 abrir el juego (te dice exactamente qué carta y qué campo está mal, en

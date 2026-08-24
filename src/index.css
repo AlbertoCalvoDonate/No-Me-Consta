@@ -61,7 +61,13 @@ body {
 }
 
 /* Solo móvil, solo vertical: si el viewport está en horizontal, se tapa el
-   juego con un aviso para girar el dispositivo. */
+   juego con un aviso para girar el dispositivo.
+   DESACTIVADO TEMPORALMENTE para poder testear cómodamente en PC (ventana en
+   horizontal) sin tener que estrechar la ventana del navegador. El marco de
+   teléfono (.phone-frame, tamaño y aspect-ratio) sigue intacto arriba, así
+   que el juego se sigue viendo con las mismas proporciones de móvil, solo
+   que ya no se bloquea con el aviso de "gira el dispositivo". Para
+   reactivarlo antes de publicar, descomenta este bloque.
 @media (orientation: landscape) {
   .phone-frame-outer {
     display: none;
@@ -79,5 +85,48 @@ body {
     color: #e0b84d;
     font-family: system-ui, sans-serif;
     padding: 24px;
+  }
+}
+*/
+
+/* Bloqueo de orientación en móvil real: si el teléfono se gira físicamente
+   a horizontal, todo el documento se rota -90° por CSS para que el juego
+   se siga viendo en vertical, como si la pantalla no hubiera girado.
+   Es el truco estándar para "portrait lock" en una web normal: la API real
+   (screen.orientation.lock) solo funciona en pantalla completa y ni
+   siquiera existe en Safari/iOS, así que esto es lo único que funciona en
+   todos los navegadores sin instalar la web como PWA.
+   El "max-height: 600px" es a propósito para que esto SOLO salte en
+   pantallas de móvil en horizontal (altura de viewport corta) y no en una
+   ventana de escritorio ancha, que se queda intacta para poder testear en
+   PC (ver el bloque comentado justo arriba).
+   Limitación conocida: al ser un truco puramente CSS (sin JS que detecte
+   hacia qué lado se ha girado el móvil), asume que se gira en el sentido
+   más habitual; si alguien lo gira al revés, el contenido se ve boca abajo. */
+@media (orientation: landscape) and (max-height: 600px) {
+  html {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100vh;
+    height: 100vw;
+    transform-origin: left top;
+    transform: rotate(-90deg);
+  }
+
+  /* .phone-frame-outer y .phone-frame usan vw/vh más abajo para su propio
+     tamaño — y esas unidades siempre se calculan contra el viewport FÍSICO
+     real (el ancho/alto de verdad del móvil en horizontal), no contra la
+     caja ya rotada de <html> de arriba. Así que aquí dentro hay que
+     invertir esas unidades a mano (vw↔vh) para que, una vez rotado todo el
+     documento, el tamaño final que se ve en pantalla vuelva a coincidir. */
+  .phone-frame-outer {
+    width: 100vh;
+    height: 100vw;
+  }
+
+  .phone-frame {
+    width: min(100vh, calc(100vw * 393 / 852));
+    height: min(100vw, calc(100vh * 852 / 393));
   }
 }

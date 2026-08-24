@@ -17,6 +17,14 @@ function clamp(n: number) {
   return Math.max(0, Math.min(STAT_MAX, n))
 }
 
+// Moralidad: se acumula tal cual, sin el jitter de las stats visibles (ver
+// más abajo) — es un contador narrativo de fondo, no algo que el jugador
+// esté intentando optimizar turno a turno, así que no necesita el
+// componente de suerte.
+function applyMoralidad(current: number, delta: number | undefined): number {
+  return clamp(current + (delta ?? 0))
+}
+
 // Un poco de suerte en cada efecto no nulo (±1, con un 20% de probabilidad
 // cada lado — un 60% de las veces sale tal cual). Centrado en 0, así que no
 // cambia el balance medio del mazo, pero evita que la partida se pueda
@@ -57,7 +65,10 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   // solo por tener las 4 stats altas de rebote. Los finales de stat a 0 no
   // llevan minTurn, así que siguen disparándose en cuanto ocurre el crash.
   const validEndings = cards.filter(
-    (c) => c.isEnding && (c.minTurn === undefined || state.turn >= c.minTurn) && c.condition?.(state.stats)
+    (c) =>
+      c.isEnding &&
+      (c.minTurn === undefined || state.turn >= c.minTurn) &&
+      c.condition?.(state.stats, state.moralidad)
   )
   if (validEndings.length > 0) {
     return validEndings[Math.floor(Math.random() * validEndings.length)]
@@ -67,7 +78,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   // dentro de su ventana de turno/fase, y cumplen su condición si la tienen.
   const recent = new Set(state.history.slice(-5))
   const base = (c: Card) =>
-    !c.isEnding && !recent.has(c.id) && (!c.condition || c.condition(state.stats))
+    !c.isEnding && !recent.has(c.id) && (!c.condition || c.condition(state.stats, state.moralidad))
 
   // 1) Intento estricto: respetando también la ventana de turno/fase
   let candidates = cards.filter((c) => base(c) && isInTurnWindow(c, state.turn))
@@ -98,8 +109,11 @@ function initialStats(): Stats {
   return { medios: STAT_START, partido: STAT_START, votantes: STAT_START, caja: STAT_START }
 }
 
+const MORALIDAD_START = 5
+
 export const useGameStore = create<GameStore>((set, get) => ({
   stats: initialStats(),
+  moralidad: MORALIDAD_START,
   turn: 1,
   history: ['presi_intro'],
   gameOver: false,
@@ -110,10 +124,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const state = get()
     const choice = state.currentCard[side]
     const newStats = applyEffects(state.stats, choice.effects)
+    const newMoralidad = applyMoralidad(state.moralidad, choice.moralidad)
 
     if (choice.epilogueText) {
       set({
         stats: newStats,
+        moralidad: newMoralidad,
         gameOver: true,
         deathReason: choice.epilogueText,
         lastEpilogue: choice.epilogueText,
@@ -123,6 +139,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const nextState: GameState = {
       stats: newStats,
+      moralidad: newMoralidad,
       turn: state.turn + 1,
       history: [...state.history, state.currentCard.id],
       gameOver: false,
@@ -138,6 +155,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   restart: () => {
     set({
       stats: initialStats(),
+      moralidad: MORALIDAD_START,
       turn: 1,
       history: ['presi_intro'],
       gameOver: false,

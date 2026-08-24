@@ -106,6 +106,14 @@ function validate(cards) {
           }
         }
       }
+      if (choice.moralidad !== undefined) {
+        if (typeof choice.moralidad !== 'number' || !Number.isInteger(choice.moralidad)) {
+          errors.push(`${label}: "${side}.moralidad" debería ser un número entero (o no ponerlo, si es neutro).`)
+        } else if (choice.moralidad < EFFECT_MIN || choice.moralidad > EFFECT_MAX) {
+          warnings.push(`${label}: "${side}.moralidad" = ${choice.moralidad}, fuera del rango habitual ${EFFECT_MIN}..${EFFECT_MAX} (aviso, no bloqueante).`)
+        }
+      }
+
       if (choice.nextCardId !== undefined && typeof choice.nextCardId !== 'string') {
         errors.push(`${label}: "${side}.nextCardId" debería ser texto (el id de la siguiente carta).`)
       }

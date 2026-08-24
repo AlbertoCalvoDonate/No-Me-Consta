@@ -15,6 +15,11 @@ export type StatEffects = Partial<Record<StatKey, number>>
 export interface CardChoice {
   text: string          // Texto que se ve al deslizar hacia ese lado
   effects: StatEffects
+  // Efecto oculto sobre la moralidad (0-10, no se ve en pantalla). Positivo
+  // = elección honesta/transparente, negativo = elección corrupta/turbia.
+  // No aparece en ninguna barra — solo se nota en el final. Omite el campo
+  // si la elección es moralmente neutra (la mayoría de cartas "meme_").
+  moralidad?: number
   nextCardId?: string   // Fuerza la siguiente carta (para mini-arcos narrativos)
   epilogueText?: string // Si esta elección termina la partida, texto de cierre
 }
@@ -44,8 +49,10 @@ export interface Card {
   text: string         // Texto de la carta
   left: CardChoice
   right: CardChoice
-  // Condición opcional para que la carta solo aparezca en cierto rango de stats
-  condition?: (stats: Stats) => boolean
+  // Condición opcional para que la carta solo aparezca en cierto rango de
+  // stats (y, opcionalmente, de moralidad — sobre todo para finales que
+  // combinan "qué stat tocó fondo/techo" con "cómo se llegó hasta ahí").
+  condition?: (stats: Stats, moralidad: number) => boolean
   weight?: number       // Prioridad de aparición (default 1)
   isEnding?: boolean    // Carta especial de final de dinastía
   phase: Phase          // Fase de gravedad narrativa a la que pertenece
@@ -55,6 +62,11 @@ export interface Card {
 
 export interface GameState {
   stats: Stats
+  // Moralidad oculta (0-10, empieza en 5). No es una stat visible: no tiene
+  // barra ni se muestra en pantalla, solo influye en qué variante de final
+  // sale al tocar fondo o techo con alguna stat (ver cards.ts). Se acumula
+  // con el campo `moralidad` de cada CardChoice elegida.
+  moralidad: number
   turn: number
   history: string[]   // ids de cartas ya vistas, para evitar repeticiones
   gameOver: boolean
