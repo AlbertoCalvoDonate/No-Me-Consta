@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion, useMotionValue } from 'framer-motion'
+import { motion, useMotionValue } from 'framer-motion'
 import { useGameStore } from './hooks/useGameStore'
 import { SwipeCard } from './components/SwipeCard'
 import { StatBars } from './components/StatBars'
@@ -62,83 +62,88 @@ export default function App() {
               >
                 {!gameOver && <SituationBanner text={currentCard.text} />}
 
-                <AnimatePresence>
-                  {!gameOver ? (
-                    <SwipeCard key={currentCard.id} card={currentCard} onChoose={choose} x={x} />
-                  ) : (
-                    <motion.div
-                      key="gameover"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
+                {/* Sin AnimatePresence a propósito: con ella, al cambiar de
+                    key React mantenía montada la carta saliente un frame de
+                    más (a la espera de una animación de salida que no
+                    existe), y se veían solapadas las dos cartas — nombre de
+                    personaje y panel de texto de ambas a la vez. Con un
+                    condicional normal, React sustituye la carta en el mismo
+                    commit, tal cual pide el comentario de más abajo. */}
+                {!gameOver ? (
+                  <SwipeCard key={currentCard.id} card={currentCard} onChoose={choose} x={x} />
+                ) : (
+                  <motion.div
+                    key="gameover"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{
+                      flex: 1,
+                      minHeight: 0,
+                      margin: '16px 24px',
+                      background: '#1c1c1e',
+                      borderRadius: 16,
+                      padding: 24,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                      color: '#f2f2f2',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <h2
                       style={{
-                        flex: 1,
-                        minHeight: 0,
-                        margin: '16px 24px',
-                        background: '#1c1c1e',
-                        borderRadius: 16,
-                        padding: 24,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        textAlign: 'center',
-                        color: '#f2f2f2',
-                        overflow: 'hidden',
+                        color: '#ff4d4d',
+                        marginBottom: 16,
+                        fontFamily: 'var(--font-pixel)',
+                        fontWeight: 400,
+                        fontSize: 30,
+                        lineHeight: 1.35,
                       }}
                     >
-                      <h2
-                        style={{
-                          color: '#ff4d4d',
-                          marginBottom: 16,
-                          fontFamily: 'var(--font-pixel)',
-                          fontWeight: 700,
-                          fontSize: 30,
-                          lineHeight: 1.35,
-                        }}
-                      >
-                        Fin del reinado
-                      </h2>
-                      <p
-                        style={{
-                          lineHeight: 1.5,
-                          marginBottom: 24,
-                          fontFamily: 'var(--font-pixel)',
-                          fontWeight: 500,
-                          fontSize: 21,
-                        }}
-                      >
-                        {deathReason}
-                      </p>
-                      <p
-                        style={{
-                          color: '#888',
-                          fontSize: 18,
-                          lineHeight: 1.5,
-                          marginBottom: 24,
-                          fontFamily: 'var(--font-pixel)',
-                          fontWeight: 500,
-                        }}
-                      >
-                        Duró {turn - 1} {turn - 1 === 1 ? 'decisión' : 'decisiones'} en el cargo.
-                      </p>
-                      <button
-                        onClick={restart}
-                        style={{
-                          background: '#e0b84d',
-                          border: 'none',
-                          borderRadius: 8,
-                          padding: '12px 18px',
-                          fontFamily: 'var(--font-pixel)',
-                          fontWeight: 700,
-                          fontSize: 21,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        Nueva legislatura
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      Fin del reinado
+                    </h2>
+                    <p
+                      style={{
+                        lineHeight: 1.5,
+                        marginBottom: 24,
+                        fontFamily: 'var(--font-pixel)',
+                        fontWeight: 500,
+                        fontSize: 21,
+                      }}
+                    >
+                      {deathReason}
+                    </p>
+                    <p
+                      style={{
+                        color: '#888',
+                        fontSize: 18,
+                        lineHeight: 1.5,
+                        marginBottom: 24,
+                        fontFamily: 'var(--font-pixel)',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Duró {turn - 1} {turn - 1 === 1 ? 'decisión' : 'decisiones'} en el cargo.
+                    </p>
+                    <button
+                      onClick={restart}
+                      style={{
+                        background: '#e0b84d',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '12px 18px',
+                        fontFamily: 'var(--font-pixel)',
+                        fontWeight: 400,
+                        fontSize: 21,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Nueva legislatura
+                    </button>
+                  </motion.div>
+                )}
               </div>
 
               <BottomBar turn={turn} />

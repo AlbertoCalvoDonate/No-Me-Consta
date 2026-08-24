@@ -9,6 +9,15 @@ const PANEL_WIDTH = 190
 const PANEL_HEIGHT = 96
 const PANEL_HIDDEN = PANEL_WIDTH + 20
 
+// Distancia de arrastre (px, ya con dragElastic aplicado) a la que un lado
+// se considera "totalmente revelado". Se exporta porque StatBars usa el
+// mismo valor para las flechas de efecto — deben moverse en sincronía.
+// Antes eran 150px: bastante más que SWIPE_THRESHOLD (la distancia real
+// para que la elección cuente), así que el panel nunca llegaba a verse
+// entero antes de que el gesto ya se hubiera decidido. Con 60px se revela
+// del todo con menos recorrido del pulgar, y antes de llegar al umbral.
+export const SWIPE_REVEAL_DISTANCE = 60
+
 // Cuánto de "corrupta" es una decisión, a partir de sus propios efectos:
 // caja/partido son ganancias de trastienda, medios/votantes son legitimidad
 // pública. Si una opción gana más de lo primero que de lo segundo, es la
@@ -44,7 +53,7 @@ function ChoicePanel({
 }) {
   const panelXRaw = useTransform(
     x,
-    side === 'left' ? [-150, 0] : [0, 150],
+    side === 'left' ? [-SWIPE_REVEAL_DISTANCE, 0] : [0, SWIPE_REVEAL_DISTANCE],
     side === 'left' ? [0, -PANEL_HIDDEN] : [PANEL_HIDDEN, 0]
   )
   // Redondeado a píxel entero: sin esto, justo al llegar al valor máximo
@@ -78,7 +87,10 @@ function ChoicePanel({
       <div
         style={{
           fontFamily: 'var(--font-pixel)',
-          fontWeight: 700,
+          // 400: es el único peso que existe de verdad para esta fuente (ver
+          // nota en index.css) — un 700 aquí forzaría un "bold" sintético
+          // que se ve borroso, sobre todo a este tamaño.
+          fontWeight: 400,
           fontSize: 20,
           lineHeight: 1.25,
           color: '#fff',
@@ -91,10 +103,14 @@ function ChoicePanel({
   )
 }
 
-const SWIPE_THRESHOLD = 100
-// Un "flick" rápido cuenta como elección aunque no llegue a los 100px de
-// distancia — así se parece más a un gesto real y hay menos posibilidades
-// de que el ratón se salga de la ventana antes de completar el arrastre.
+// Un poco por encima de SWIPE_REVEAL_DISTANCE a propósito: así el panel ya
+// se ha revelado del todo (a los 60px) antes de que el gesto llegue a
+// contar como elección — se ve claro qué se está eligiendo antes de que la
+// carta se vaya.
+const SWIPE_THRESHOLD = 70
+// Un "flick" rápido cuenta como elección aunque no llegue a esa distancia —
+// así se parece más a un gesto real y hay menos posibilidades de que el
+// ratón se salga de la ventana antes de completar el arrastre.
 const FLICK_VELOCITY = 500
 
 interface Props {
@@ -104,7 +120,10 @@ interface Props {
 }
 
 export function SwipeCard({ card, onChoose, x }: Props) {
-  const rotate = useTransform(x, [-200, 200], [-15, 15])
+  // Antes eran ±200px para la inclinación máxima — igual de lejos que el
+  // panel entero, con lo que apenas se notaba girar la carta antes de
+  // soltarla. A juego con SWIPE_REVEAL_DISTANCE, ahora gira más rápido.
+  const rotate = useTransform(x, [-100, 100], [-15, 15])
 
   const leftIsCorrupt = corruptionScore(card.left.effects) > corruptionScore(card.right.effects)
   const leftColors = leftIsCorrupt ? CORRUPT : CLEAN
@@ -117,8 +136,16 @@ export function SwipeCard({ card, onChoose, x }: Props) {
     const decidedLeft = info.offset.x < -SWIPE_THRESHOLD || (info.offset.x < 0 && info.velocity.x < -FLICK_VELOCITY)
     const decidedRight = info.offset.x > SWIPE_THRESHOLD || (info.offset.x > 0 && info.velocity.x > FLICK_VELOCITY)
     if (decidedLeft) {
+      // `x` es la MISMA MotionValue compartida que heredará la carta
+      // siguiente (cambia de key, pero no de `x`). Si no se resetea aquí
+      // mismo, la carta nueva nace ya "arrastrada" al valor con el que se
+      // soltó esta, y durante un frame se ve su panel de texto totalmente
+      // revelado (y la rotación de la carta torcida) antes de saltar a su
+      // sitio — resetear en un useEffect posterior llega un frame tarde.
+      x.set(0)
       onChoose('left')
     } else if (decidedRight) {
+      x.set(0)
       onChoose('right')
     }
   }

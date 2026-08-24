@@ -1,4 +1,7 @@
-import { STAT_ICONS } from '../statIcons'
+import type { Stats } from '../types'
+import { StatIcon } from './StatIcon'
+
+const TUTORIAL_STATS: (keyof Stats)[] = ['medios', 'partido', 'votantes', 'caja']
 
 // Fecha de build formateada una sola vez (no cambia durante la sesión).
 const buildDate = new Date(__BUILD_DATE__).toLocaleString('es-ES', {
@@ -30,7 +33,7 @@ export function StartScreen({ onStart }: { onStart: () => void }) {
           style={{
             margin: 0,
             fontFamily: 'var(--font-pixel)',
-            fontWeight: 700,
+            fontWeight: 400,
             fontSize: 46,
             color: '#e0b84d',
             lineHeight: 1.1,
@@ -64,10 +67,12 @@ export function StartScreen({ onStart }: { onStart: () => void }) {
         }}
       >
         <p style={{ margin: '0 0 10px' }}>👉 👈 Deslice cada carta a un lado u otro para decidir.</p>
-        <p style={{ margin: 0 }}>
-          {STAT_ICONS.medios} {STAT_ICONS.partido} {STAT_ICONS.votantes} {STAT_ICONS.caja} Vigile las 4 barras: si
-          alguna llega a 0 o al máximo, se acaba el reinado.
-        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, margin: '0 0 8px' }}>
+          {TUTORIAL_STATS.map((key) => (
+            <StatIcon key={key} statKey={key} value={5} critical={false} />
+          ))}
+        </div>
+        <p style={{ margin: 0 }}>Vigile estas 4 barras: si alguna llega a 0 o al máximo, se acaba el reinado.</p>
       </div>
 
       <button
@@ -78,7 +83,7 @@ export function StartScreen({ onStart }: { onStart: () => void }) {
           borderRadius: 8,
           padding: '14px 28px',
           fontFamily: 'var(--font-pixel)',
-          fontWeight: 700,
+          fontWeight: 400,
           fontSize: 24,
           cursor: 'pointer',
         }}

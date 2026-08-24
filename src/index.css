@@ -9,7 +9,11 @@
      OJO: Pixelify Sans se descartó porque su glifo de "5" es casi
      indistinguible de una "S" (bug de la propia fuente) — Jersey 10 tiene
      el mismo aspecto alto/estilizado pero con números legibles de verdad.
-     El fallback monospace mantiene el aspecto bloque si la fuente no carga. */
+     El fallback monospace mantiene el aspecto bloque si la fuente no carga.
+     IMPORTANTE: Jersey 10 solo existe en peso 400 (normal) — Google Fonts no
+     sirve ninguna variante bold para ella. Usar font-weight: 700 con esta
+     fuente fuerza al navegador a un "bold" sintético que se ve borroso; usa
+     siempre font-weight: 400 en cualquier texto con var(--font-pixel). */
   --font-pixel: 'Jersey 10', 'Courier New', monospace;
 }
 

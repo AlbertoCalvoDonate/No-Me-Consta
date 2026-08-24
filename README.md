@@ -75,8 +75,14 @@ npm run validate-cards
 Para ponerle cara a un personaje (ej. `presi_intro` en `cards.content.ts`,
 que usa `public/characters/presi.png` como ejemplo):
 
-1. Guarda la imagen (PNG, fondo transparente si puedes) en `public/characters/`.
+1. Guarda la imagen **cuadrada** (mismo ancho que alto — `presi.png` es
+   1000x1000, referencia a seguir) en `public/characters/`.
 2. En la carta, añade `characterImage: 'nombre-del-archivo.png'`.
+
+La carta la muestra con `object-fit: cover`, recortando por los lados para
+llenar el hueco alto y estrecho de la carta — con una imagen cuadrada y el
+personaje centrado (como `presi.png`) el recorte queda bien; una imagen no
+cuadrada o descentrada puede acabar con la cabeza cortada.
 
 No hace falta importar nada ni tocar código — Vite sirve todo lo que hay en
 `public/` directamente. Si una carta no tiene `characterImage`, se ve como
