@@ -18,21 +18,32 @@ function IconShapes({ statKey }: { statKey: keyof Stats }) {
       return (
         <path d="M4,3 h16 a2,2 0 0 1 2,2 v9 a2,2 0 0 1 -2,2 h-8 l-5,4 v-4 h-3 a2,2 0 0 1 -2,-2 v-9 a2,2 0 0 1 2,-2 z" />
       )
-    case 'partido':
-      // Escarapela con lazos: el aparato del partido / lealtad interna.
+    case 'gobierno':
+      // Edificio institucional con columnas: la coalición que te sostiene.
+      // Si se caen las columnas, se cae el Gobierno — la metáfora es directa.
       return (
         <>
-          <circle cx="12" cy="8.5" r="6" />
-          <path d="M8.5,13 L6,22 L9.5,19 L12,21.5 L14.5,19 L18,22 L15.5,13 Z" />
+          <path d="M12,1.5 L22.5,7 L1.5,7 Z" />
+          <rect x="1.5" y="8" width="21" height="2" />
+          <rect x="4" y="11" width="2.6" height="8" />
+          <rect x="8.7" y="11" width="2.6" height="8" />
+          <rect x="13.4" y="11" width="2.6" height="8" />
+          <rect x="18.1" y="11" width="2.6" height="8" />
+          <rect x="1.5" y="20" width="21" height="2.5" />
         </>
       )
-    case 'votantes':
-      // Urna con papeleta: la calle / el electorado.
+    case 'calle':
+      // Tres siluetas de gente: la calle, la gente de a pie. Antes era una
+      // urna, pero la urna se confundía con "elecciones"/"gobierno"; un grupo
+      // de personas se lee como "la gente" sin ambigüedad.
       return (
         <>
-          <path d="M2.5,9 h19 v2.5 h-19 z" />
-          <path d="M4,11.5 h16 v8.5 a1.5,1.5 0 0 1 -1.5,1.5 h-13 a1.5,1.5 0 0 1 -1.5,-1.5 z" />
-          <rect x="10" y="3" width="4" height="7" rx="0.6" />
+          <circle cx="5" cy="6.5" r="3.1" />
+          <path d="M0.6,21 a4.4,5 0 0 1 8.8,0 Z" />
+          <circle cx="19" cy="6.5" r="3.1" />
+          <path d="M14.6,21 a4.4,5 0 0 1 8.8,0 Z" />
+          <circle cx="12" cy="5" r="3.6" />
+          <path d="M6.8,22.5 a5.2,6.2 0 0 1 10.4,0 Z" />
         </>
       )
     case 'caja':

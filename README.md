@@ -56,7 +56,7 @@ principio del archivo. Cada carta es un objeto `Card`:
 }
 ```
 
-Las 4 stats (`medios`, `partido`, `votantes`, `caja`) van de 0 a 10. Si una
+Las 4 stats (`medios`, `gobierno`, `calle`, `caja`) van de 0 a 10. Si una
 llega a 0 (o a 10, por arriba), se dispara la carta de "final"
 correspondiente. Esas cartas de final (`final_*`) están aparte, en
 `src/data/cards.ts`, porque llevan una condición en código — no hace falta
@@ -234,3 +234,37 @@ Al pasar unas elecciones (turno 48, 96) la partida **continúa**: se conservan
 las 4 stats, la moralidad, los flags de trama y el enfado de cada personaje.
 No hay reinicio ni pantalla intermedia — la legislatura siguiente arranca con
 las consecuencias de la anterior encima de la mesa.
+
+## Los cuatro indicadores (y por qué son esos)
+
+En Reigns cada pilar **tiene dueño**: el cardenal es la iglesia, el general
+es el ejército. Ves quién habla y ya sabes qué te juegas. Aquí igual:
+
+| Indicador | Qué mide | Quién lo encarna |
+|---|---|---|
+| **Medios** | el relato, lo que se publica | Periodista, Jefe de Comunicación, Escudero, Juez |
+| **Gobierno** | que la coalición no se rompa | Vicepresidenta, Comunista Woke, Exiliado, Independentista, Expresidente, Ministra |
+| **Calle** | lo que piensa la gente | Encuestador, Ultraderecha, Presidenta Regional, Oposición |
+| **Caja B** | el dinero opaco | Ministro Caído, Hermano, Gurú, Primera Dama |
+
+**Regla al escribir cartas:** la carta de un personaje debería tocar *siempre*
+su indicador, en al menos una de las dos opciones. Ahora mismo lo cumplen 291
+de 305.
+
+### Por qué se renombraron
+
+Antes eran `medios / partido / votantes / caja` y no se entendía por qué una
+respuesta subía o bajaba. Midiendo el mazo salieron tres cosas:
+
+- **`partido` hacía de dos cosas opuestas**: tu aparato interno *y* tus socios
+  de coalición. Ceder al Exiliado subía "partido", cuando el Exiliado no es de
+  tu partido — de hecho cabrea a los tuyos. Ese era el fallo de fondo.
+  `gobierno` es una sola pregunta: ¿te sigue sosteniendo la coalición?
+- **`partido` y `votantes` eran un balancín**: 93 de 106 opciones que tocaban
+  ambos los movían en sentido opuesto. Un solo eje disfrazado de dos.
+- **`medios` era el comodín**: dominante en 13 de los 20 personajes. Cuando no
+  se sabía qué tocar, se tocaba medios.
+
+Los iconos también cambiaron: Gobierno es un edificio con columnas (si se
+caen, se cae) y Calle son tres siluetas de gente (la urna se confundía con el
+evento de elecciones).

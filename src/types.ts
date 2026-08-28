@@ -1,10 +1,29 @@
-// Los 4 indicadores del juego. Ajusta nombres/temática cuando definas
-// las stats definitivas — esto es la prueba de concepto.
+// Los 4 indicadores del juego. Cada uno tiene DUEÑOS: personajes que lo
+// encarnan y cuyas cartas siempre lo tocan. Es lo que hace Reigns (el
+// cardenal es la iglesia, el general el ejército) y es lo que permite que,
+// viendo quién habla, ya sepas qué te estás jugando.
+//
+//   MEDIOS    el relato, lo que se publica
+//             → El Periodista, El Jefe de Comunicación, El Escudero
+//   GOBIERNO  que la coalición no se rompa y te sigan sosteniendo
+//             → La Vicepresidenta, La Comunista Woke, El Exiliado,
+//               El Independentista, El Expresidente, La Ministra
+//   CALLE     lo que piensa la gente de a pie
+//             → El Encuestador, La Ultraderecha, La Presidenta Regional,
+//               La Oposición
+//   CAJA B    el dinero opaco
+//             → El Ministro Caído, El Hermano, El Gurú, La Primera Dama
+//
+// Antes "gobierno" se llamaba "partido" y hacía de dos cosas a la vez (tu
+// aparato interno Y tus socios de coalición), que son opuestas: ceder al
+// Exiliado subía "partido" cuando en realidad cabrea a los tuyos. Por eso no
+// se entendía. Ahora GOBIERNO es "¿aguanta la coalición?", que es una sola
+// pregunta y se lee sola.
 export interface Stats {
-  medios: number   // Prensa / opinión pública
-  partido: number  // Aparato del partido / lealtad interna
-  votantes: number // Calle / electorado
-  caja: number      // Caja b / finanzas opacas
+  medios: number    // Prensa y relato
+  gobierno: number  // Coalición: socios y aparato que te sostienen
+  calle: number     // Opinión pública / la gente
+  caja: number      // Caja B / finanzas opacas
 }
 
 export type StatKey = keyof Stats

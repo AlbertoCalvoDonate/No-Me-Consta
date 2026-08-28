@@ -1,7 +1,7 @@
 import type { Stats } from '../types'
 import { StatIcon } from './StatIcon'
 
-const TUTORIAL_STATS: (keyof Stats)[] = ['medios', 'partido', 'votantes', 'caja']
+const TUTORIAL_STATS: (keyof Stats)[] = ['medios', 'gobierno', 'calle', 'caja']
 
 // Fecha de build formateada una sola vez (no cambia durante la sesión).
 const buildDate = new Date(__BUILD_DATE__).toLocaleString('es-ES', {

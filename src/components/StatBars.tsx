@@ -6,8 +6,8 @@ import { SWIPE_REVEAL_DISTANCE } from './SwipeCard'
 
 const ITEMS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
-  { key: 'partido', label: 'Partido' },
-  { key: 'votantes', label: 'Votantes' },
+  { key: 'gobierno', label: 'Gobierno' },
+  { key: 'calle', label: 'Calle' },
   { key: 'caja', label: 'Caja B' },
 ]
 

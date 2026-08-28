@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const CONTENT_FILE = fileURLToPath(new URL('../src/data/cards.content.ts', import.meta.url))
-const VALID_STATS = ['medios', 'partido', 'votantes', 'caja']
+const VALID_STATS = ['medios', 'gobierno', 'calle', 'caja']
 const VALID_PHASES = [1, 2, 3, 4]
 const EFFECT_MIN = -3
 const EFFECT_MAX = 3

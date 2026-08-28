@@ -37,9 +37,9 @@ export const SWIPE_REVEAL_DISTANCE = 38
 // la moralidad real de cada carta, no si está a la izquierda o la derecha.
 function corruptionScore(effects: StatEffects) {
   const caja = effects.caja ?? 0
-  const partido = effects.partido ?? 0
+  const partido = effects.gobierno ?? 0
   const medios = effects.medios ?? 0
-  const votantes = effects.votantes ?? 0
+  const votantes = effects.calle ?? 0
   return caja + partido - medios - votantes
 }
 

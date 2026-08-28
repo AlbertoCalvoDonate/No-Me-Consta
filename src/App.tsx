@@ -11,8 +11,8 @@ import type { StatKey } from './types'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
-  partido: 'Partido',
-  votantes: 'Votantes',
+  gobierno: 'Gobierno',
+  calle: 'Calle',
   caja: 'Caja B',
 }
 

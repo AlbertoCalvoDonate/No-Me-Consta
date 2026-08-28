@@ -15,7 +15,7 @@ export function BottomBar({ turn }: { turn: number }) {
         color: '#a89f8c',
       }}
     >
-      <span style={{ color: '#e0b84d' }}>Presi</span>
+      <span style={{ color: '#e0b84d' }}>Presidente</span>
       <span>
         {turn} mes{turn === 1 ? '' : 'es'} en el cargo
       </span>

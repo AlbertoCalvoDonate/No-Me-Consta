@@ -65,7 +65,7 @@ const DRIFT_MIN_DISTANCE = 3
 function applyDrift(stats: Stats, turn: number): Stats {
   if (turn % DRIFT_EVERY !== 0) return stats
   const next = { ...stats }
-  for (const key of ['medios', 'partido', 'votantes', 'caja'] as const) {
+  for (const key of ['medios', 'gobierno', 'calle', 'caja'] as const) {
     const d = next[key] - STAT_START
     if (Math.abs(d) >= DRIFT_MIN_DISTANCE) next[key] -= Math.sign(d)
   }
@@ -86,7 +86,7 @@ function damp(current: number, delta: number): number {
 
 function applyEffects(stats: Stats, effects: StatEffects): Stats {
   const next = {} as Stats
-  for (const key of ['medios', 'partido', 'votantes', 'caja'] as const) {
+  for (const key of ['medios', 'gobierno', 'calle', 'caja'] as const) {
     next[key] = clamp(stats[key] + damp(stats[key], jitter(effects[key] ?? 0)))
   }
   return next
@@ -219,10 +219,10 @@ interface GameStore extends GameState {
 }
 
 function initialStats(): Stats {
-  return { medios: STAT_START, partido: STAT_START, votantes: STAT_START, caja: STAT_START }
+  return { medios: STAT_START, gobierno: STAT_START, calle: STAT_START, caja: STAT_START }
 }
 
-const STAT_KEYS = ['medios', 'partido', 'votantes', 'caja'] as const
+const STAT_KEYS = ['medios', 'gobierno', 'calle', 'caja'] as const
 
 // Qué indicador está roto (a 0 o al máximo). Se guarda al terminar para poder
 // decirlo en la pantalla de fin: en Reigns la muerte siempre te dice qué pilar
@@ -295,7 +295,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const nextTurn = state.turn + 1
     const driftedStats = applyDrift(newStats, nextTurn)
-    const atExtreme = (['medios', 'partido', 'votantes', 'caja'] as const).some(
+    const atExtreme = (['medios', 'gobierno', 'calle', 'caja'] as const).some(
       (k) => driftedStats[k] <= 0 || driftedStats[k] >= STAT_MAX
     )
     const nextState: GameState = {

@@ -58,7 +58,7 @@ const endingCards: Card[] = [
     left: { text: 'Presentar batalla en el Parlamento', effects: {}, epilogueText: 'Pierde 400 votos a 3. Los 3 eran los suyos, y los únicos que no le debían nada a nadie. Fin del gobierno.' },
     right: { text: 'Dimitir con dignidad (o lo que quede)', effects: {}, epilogueText: 'Se retira a dar conferencias sobre ética institucional por 30.000€ la charla. La ironía tampoco se le escapa a usted. Fin del gobierno, con PowerPoint incluido.' },
     isEnding: true,
-    condition: (s, m) => s.partido <= 0 && m >= 7,
+    condition: (s, m) => s.gobierno <= 0 && m >= 7,
   },
   {
     id: 'final_partido_media',
@@ -68,7 +68,7 @@ const endingCards: Card[] = [
     left: { text: 'Aceptar la salida pactada', effects: {}, epilogueText: 'Le sustituyen por alguien "de consenso" que nadie recuerda haber votado. Fin del gobierno.' },
     right: { text: 'Negarse a irse del cargo', effects: {}, epilogueText: 'El partido se parte en dos, cada mitad con un logo casi idéntico. Fin del gobierno, con abogados de por medio.' },
     isEnding: true,
-    condition: (s, m) => s.partido <= 0 && m >= 4 && m <= 6,
+    condition: (s, m) => s.gobierno <= 0 && m >= 4 && m <= 6,
   },
   {
     id: 'final_partido_baja',
@@ -78,7 +78,7 @@ const endingCards: Card[] = [
     left: { text: 'Convocar primarias internas', effects: {}, epilogueText: 'Pierde por goleada frente a alguien que hace un mes nadie conocía. Fin del gobierno.' },
     right: { text: 'Cancelar las primarias por "unidad"', effects: {}, epilogueText: 'La militancia se lo toma como el último insulto, después de tantos otros. Fin del gobierno, con carteles quemados de fondo.' },
     isEnding: true,
-    condition: (s, m) => s.partido <= 0 && m <= 3,
+    condition: (s, m) => s.gobierno <= 0 && m <= 3,
   },
 
   // VOTANTES a 0 — la calle le da la espalda
@@ -90,7 +90,7 @@ const endingCards: Card[] = [
     left: { text: 'Aceptar el resultado', effects: {}, epilogueText: 'Se acabó. La oposición jura que ellos serán distintos (no lo serán). Al menos usted se va sabiendo que lo intentó de verdad.' },
     right: { text: 'Impugnar el proceso', effects: {}, epilogueText: 'Nadie le cree, ni siquiera su propio abogado, y menos después de una legislatura tan limpia. Fin del gobierno, con extra de ridículo.' },
     isEnding: true,
-    condition: (s, m) => s.votantes <= 0 && m >= 7,
+    condition: (s, m) => s.calle <= 0 && m >= 7,
   },
   {
     id: 'final_votantes_media',
@@ -100,7 +100,7 @@ const endingCards: Card[] = [
     left: { text: 'Salir usted mismo a dar la cara', effects: {}, epilogueText: 'Asume la derrota en directo, con la voz temblando solo un poco. Fin del gobierno, con cierto respeto.' },
     right: { text: 'Mandar a un portavoz secundario', effects: {}, epilogueText: 'Se le acusa de esconderse hasta en su propio funeral político. Fin del gobierno.' },
     isEnding: true,
-    condition: (s, m) => s.votantes <= 0 && m >= 4 && m <= 6,
+    condition: (s, m) => s.calle <= 0 && m >= 4 && m <= 6,
   },
   {
     id: 'final_votantes_baja',
@@ -110,7 +110,7 @@ const endingCards: Card[] = [
     left: { text: 'Convocar elecciones anticipadas', effects: {}, epilogueText: 'Pierde igualmente, pero al menos elige la fecha del funeral. Fin del gobierno.' },
     right: { text: 'Agotar la legislatura hasta el final', effects: {}, epilogueText: 'Le echan en las urnas de todos modos, solo que más tarde y más enfadados. Fin del gobierno.' },
     isEnding: true,
-    condition: (s, m) => s.votantes <= 0 && m <= 3,
+    condition: (s, m) => s.calle <= 0 && m <= 3,
   },
 
   // CAJA a 0 — el partido se queda sin un euro
@@ -186,7 +186,7 @@ const endingCards: Card[] = [
     left: { text: 'Pedir que le lleven la contraria', effects: {}, epilogueText: 'Cuesta encontrar voces discrepantes de verdad, pero al final aparece alguna. Fin del gobierno, con algo de contrapeso salvado a tiempo.' },
     right: { text: 'Dejar que siga el consenso', effects: {}, epilogueText: 'Un partido que solo dice que sí, aunque sea de corazón, deja de ser un partido. Fin del gobierno, querido hasta el final por gente que ya no le cuestiona nada.' },
     isEnding: true,
-    condition: (s, m) => s.partido >= 10 && m >= 7,
+    condition: (s, m) => s.gobierno >= 10 && m >= 7,
   },
   {
     id: 'final_partido_max_media',
@@ -196,7 +196,7 @@ const endingCards: Card[] = [
     left: { text: 'Abrir el debate interno', effects: {}, epilogueText: 'Las primeras voces discrepantes le acaban comiendo el puesto en menos de un mes. Fin del gobierno.' },
     right: { text: 'Que siga el aplauso', effects: {}, epilogueText: 'El día que se acaba la fiesta, cae usted y cae el partido entero con usted, aplaudiendo hasta el final. Fin del gobierno.' },
     isEnding: true,
-    condition: (s, m) => s.partido >= 10 && m >= 4 && m <= 6,
+    condition: (s, m) => s.gobierno >= 10 && m >= 4 && m <= 6,
   },
   {
     id: 'final_partido_max_baja',
@@ -206,7 +206,7 @@ const endingCards: Card[] = [
     left: { text: 'Aflojar la mano, por si acaso', effects: {}, epilogueText: 'Las primeras voces discrepantes, ahora que se atreven a hablar, no se andan con contemplaciones. Fin del gobierno, rápido y sin margen para el relato.' },
     right: { text: 'Apretar todavía más', effects: {}, epilogueText: 'El miedo sostiene el aparato hasta que deja de hacerlo, de golpe, como pasa siempre. Fin del gobierno, con final poco digno.' },
     isEnding: true,
-    condition: (s, m) => s.partido >= 10 && m <= 3,
+    condition: (s, m) => s.gobierno >= 10 && m <= 3,
   },
   {
     id: 'final_votantes_max_alta',
@@ -216,7 +216,7 @@ const endingCards: Card[] = [
     left: { text: 'Bajar el perfil, por si acaso', effects: {}, epilogueText: 'Recupera algo de normalidad democrática, con gran alivio de los politólogos, aunque en el fondo todos saben que se lo merecía. Fin de un gobierno que rozó el culto a la personalidad, por las razones correctas.' },
     right: { text: 'Disfrutar del pedestal', effects: {}, epilogueText: 'Cuando por fin cae, cae de muy arriba, con eco en los libros de historia y sin un solo escándalo que lo manche. Fin del gobierno, de los que hacen doctorado por las razones buenas.' },
     isEnding: true,
-    condition: (s, m) => s.votantes >= 10 && m >= 7,
+    condition: (s, m) => s.calle >= 10 && m >= 7,
   },
   {
     id: 'final_votantes_max_media',
@@ -226,7 +226,7 @@ const endingCards: Card[] = [
     left: { text: 'Bajar el perfil, por si acaso', effects: {}, epilogueText: 'Recupera algo de normalidad democrática, con gran alivio de los politólogos. Fin de un gobierno que rozó el culto a la personalidad.' },
     right: { text: 'Disfrutar del pedestal', effects: {}, epilogueText: 'Cuando por fin cae, cae de muy arriba y con eco en los libros de historia. Fin del gobierno, de los que hacen doctorado.' },
     isEnding: true,
-    condition: (s, m) => s.votantes >= 10 && m >= 4 && m <= 6,
+    condition: (s, m) => s.calle >= 10 && m >= 4 && m <= 6,
   },
   {
     id: 'final_votantes_max_baja',
@@ -236,7 +236,7 @@ const endingCards: Card[] = [
     left: { text: 'Confesar el tinglado', effects: {}, epilogueText: 'El culto se desinfla en cuanto se sabe la verdad, pero al menos queda algo parecido a la honestidad. Fin del gobierno, con la fantasía rota a tiempo.' },
     right: { text: 'Dejar que la fe siga creciendo', effects: {}, epilogueText: 'Cuando alguien finalmente destapa el montaje, la caída es proporcional a la mentira. Fin del gobierno, de los que también hacen doctorado, pero en la facultad de Periodismo, apartado "manipulación".' },
     isEnding: true,
-    condition: (s, m) => s.votantes >= 10 && m <= 3,
+    condition: (s, m) => s.calle >= 10 && m <= 3,
   },
   {
     id: 'final_caja_max_alta',
@@ -304,7 +304,7 @@ const electionCards: Card[] = [
       effects: {},
       epilogueText: 'No sale a comparecer. La silla vacía en la sala de prensa es la última imagen de su gobierno, y da la vuelta al mundo. Fin del gobierno.',
     },
-    condition: (s) => s.medios <= 2 || s.partido <= 2 || s.votantes <= 2 || s.caja <= 2,
+    condition: (s) => s.medios <= 2 || s.gobierno <= 2 || s.calle <= 2 || s.caja <= 2,
   },
   // --- TRIUNFO: llegas fuerte en todo ---
   {
@@ -316,7 +316,7 @@ const electionCards: Card[] = [
     text: 'Cuatro años completos y llega usted con los cuatro indicadores en verde. Es tan raro que hasta los suyos desconfían. Los resultados: mayoría, y de las cómodas.',
     left: {
       text: 'Repetir mandato y apretar el acelerador',
-      effects: { medios: -1, partido: 1 },
+      effects: { medios: -1, gobierno: 1 },
       epilogueText: 'Gana con mayoría y encara otra legislatura entera. Muy pocos llegan hasta aquí de una pieza. Fin del gobierno, en lo más alto y por la puerta grande.',
     },
     right: {
@@ -327,7 +327,7 @@ const electionCards: Card[] = [
     // 3 de las 4 en verde y ninguna floja: exigente, pero alcanzable si se
     // juega bien. Con las 4 a 7 la victoria salía en el 0,5% de partidas.
     condition: (s) => {
-      const v = [s.medios, s.partido, s.votantes, s.caja]
+      const v = [s.medios, s.gobierno, s.calle, s.caja]
       return v.filter((n) => n >= 7).length >= 3 && v.every((n) => n >= 6)
     },
   },
@@ -341,11 +341,11 @@ const electionCards: Card[] = [
     text: 'Cuatro años. Toca renovar. El recuento va tan justo que a las tres de la mañana nadie se atreve a salir al balcón. Al final: se queda, pero por los pelos y debiendo favores.',
     left: {
       text: 'Pactar con quien haga falta para seguir',
-      effects: { partido: 1, medios: -1, votantes: -1 },
+      effects: { gobierno: 1, medios: -1, calle: -1 },
     },
     right: {
       text: 'Gobernar en minoría y sufrir cada votación',
-      effects: { medios: 1, partido: -1 },
+      effects: { medios: 1, gobierno: -1 },
     },
   },
   {
@@ -357,13 +357,13 @@ const electionCards: Card[] = [
     text: 'Cuatro años y ni usted ni nadie suma para gobernar. Toca repetir elecciones, con el país entero poniendo los ojos en blanco y una campaña más que pagar.',
     left: {
       text: 'Repetir campaña a lo grande',
-      effects: { caja: -2, votantes: 1 },
+      effects: { caja: -2, calle: 1 },
     },
     right: {
       text: 'Campaña austera, casi de tapadillo',
-      effects: { caja: 1, votantes: -1, medios: -1 },
+      effects: { caja: 1, calle: -1, medios: -1 },
     },
-    condition: (s) => s.partido <= 5,
+    condition: (s) => s.gobierno <= 5,
   },
 
   {
@@ -375,13 +375,13 @@ const electionCards: Card[] = [
     text: 'Cuatro años. Todas las encuestas le daban fuera y a las once de la noche resulta que sigue dentro. El encuestador ha apagado el móvil. Usted tampoco se lo cree.',
     left: {
       text: 'Salir al balcón a celebrarlo',
-      effects: { votantes: 1, medios: -1 },
+      effects: { calle: 1, medios: -1 },
     },
     right: {
       text: 'Salir muy serio, como si lo esperara',
       effects: { medios: 1 },
     },
-    condition: (s) => s.votantes <= 4,
+    condition: (s) => s.calle <= 4,
   },
   {
     id: 'elecciones_abstencion',
@@ -392,11 +392,11 @@ const electionCards: Card[] = [
     text: 'Cuatro años. Gana usted, sí, pero con la abstención más alta que se recuerda: han votado menos de la mitad. Nadie sabe muy bien qué celebrar esta noche.',
     left: {
       text: 'Prometer "escuchar a los que no votaron"',
-      effects: { medios: 1, votantes: 1, partido: -1 },
+      effects: { medios: 1, calle: 1, gobierno: -1 },
     },
     right: {
       text: 'Una victoria es una victoria',
-      effects: { partido: 1, votantes: -1 },
+      effects: { gobierno: 1, calle: -1 },
     },
     condition: (s) => s.medios <= 5,
   },
@@ -420,7 +420,7 @@ const electionCards: Card[] = [
       effects: {},
       epilogueText: 'Dimite la víspera de la campaña y deja al partido vendido. Dicen que fue lo más honesto que hizo en doce años, y probablemente sea verdad. Fin del gobierno.',
     },
-    condition: (s) => s.partido <= 4 || s.medios <= 4,
+    condition: (s) => s.gobierno <= 4 || s.medios <= 4,
   },
   {
     id: 'elecciones_retirada_final',
@@ -459,7 +459,7 @@ const electionCards: Card[] = [
       effects: {},
       epilogueText: 'Coloca a un sucesor de su cuerda y se va a un consejo de administración a seguir mandando sin salir en la foto. Fin del gobierno, solo sobre el papel.',
     },
-    condition: (s) => s.medios >= 6 && s.partido >= 6 && s.votantes >= 6 && s.caja >= 6,
+    condition: (s) => s.medios >= 6 && s.gobierno >= 6 && s.calle >= 6 && s.caja >= 6,
   },
 ]
 
