@@ -218,3 +218,19 @@ es que te lo eche en cara.
 
 Medido en simulación: jugando al azar, el 8% de las partidas ve una carta de
 enfado; jugando a decir que no a todo, el 48%.
+
+### Flechas de efecto (temporal)
+
+Las flechas ▲▼ sobre los iconos adelantan qué stat sube o baja con cada
+opción. Están para poder probar el mazo cómodamente, pero la intención es
+quitarlas: Reigns muestra la magnitud del cambio pero **no** la dirección, a
+propósito, para que el jugador aprenda qué hace cada personaje. Se apagan con
+`SHOW_EFFECT_ARROWS = false` en `src/components/StatBars.tsx`, sin tocar nada
+más.
+
+### Qué persiste entre legislaturas
+
+Al pasar unas elecciones (turno 48, 96) la partida **continúa**: se conservan
+las 4 stats, la moralidad, los flags de trama y el enfado de cada personaje.
+No hay reinicio ni pantalla intermedia — la legislatura siguiente arranca con
+las consecuencias de la anterior encima de la mesa.

@@ -11,6 +11,13 @@ const ITEMS: { key: keyof Stats; label: string }[] = [
   { key: 'caja', label: 'Caja B' },
 ]
 
+// Flechas ▲▼ que adelantan qué stat sube o baja con cada opción. De momento
+// se quedan porque vienen muy bien para probar el mazo, pero la idea es
+// quitarlas: Reigns enseña la MAGNITUD del cambio pero no la dirección, a
+// propósito, para que el jugador tenga que aprender qué hace cada personaje.
+// Ponlo en false y desaparecen; no hay que tocar nada más.
+const SHOW_EFFECT_ARROWS = true
+
 interface Props {
   stats: Stats
   card?: Card
@@ -58,8 +65,12 @@ export function StatBars({ stats, card, x }: Props) {
                   pointerEvents: 'none',
                 }}
               >
-                {leftVal !== 0 && <EffectArrow value={leftVal} opacity={leftOpacity} />}
-                {rightVal !== 0 && <EffectArrow value={rightVal} opacity={rightOpacity} />}
+                {SHOW_EFFECT_ARROWS && leftVal !== 0 && (
+                  <EffectArrow value={leftVal} opacity={leftOpacity} />
+                )}
+                {SHOW_EFFECT_ARROWS && rightVal !== 0 && (
+                  <EffectArrow value={rightVal} opacity={rightOpacity} />
+                )}
               </div>
             </div>
             {/* Etiqueta de texto: los iconos solos no siempre se entienden. */}
