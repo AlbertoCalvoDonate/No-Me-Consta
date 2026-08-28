@@ -128,7 +128,7 @@ const endingCards: Card[] = [
   {
     id: 'final_caja_media',
     phase: 4,
-    character: 'El Tesorero',
+    character: 'El Ministro Caído',
     text: 'No queda ni para las nóminas. Los proveedores llevan meses sin cobrar y ya le han bloqueado en el móvil.',
     left: { text: 'Recorte drástico de gastos', effects: {}, epilogueText: 'El partido sobrevive, reducido a un local y una cafetera. Fin del reinado, con austeridad de verdad por una vez.' },
     right: { text: 'Buscar financiación venga de donde venga', effects: {}, epilogueText: 'La procedencia del dinero se convierte en la pregunta favorita de todos los jueces de España. Fin del reinado.' },

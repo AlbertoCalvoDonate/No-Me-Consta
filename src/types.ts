@@ -41,7 +41,7 @@ export const PHASE_MIN_TURN: Record<Phase, number> = {
 
 export interface Card {
   id: string
-  character: string   // Quién "habla" (ej: "El Portavoz", "El Juez")
+  character: string   // Quién "habla" (ej: "El Jefe de Comunicación", "El Juez")
   // Retrato opcional del personaje. Nombre de archivo dentro de
   // public/characters/ (ej. 'presi.png'), sin barra inicial. Si se omite,
   // la carta se ve como hasta ahora (solo el nombre en texto).
