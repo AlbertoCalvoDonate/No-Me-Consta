@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { Card, GameState, Stats, StatEffects } from '../types'
 import { PHASE_MIN_TURN } from '../types'
-import { cards, STAT_START, STAT_MAX } from '../data/cards'
+import { cards, STAT_START, STAT_MAX, ELECTION_INTERVAL, ELECTION_MAX_TERMS } from '../data/cards'
 
 function cardMinTurn(c: Card): number {
   return c.minTurn ?? PHASE_MIN_TURN[c.phase]
@@ -42,19 +42,91 @@ function jitter(base: number): number {
   return base
 }
 
-function applyEffects(stats: Stats, effects: StatEffects): Stats {
-  return {
-    medios: clamp(stats.medios + jitter(effects.medios ?? 0)),
-    partido: clamp(stats.partido + jitter(effects.partido ?? 0)),
-    votantes: clamp(stats.votantes + jitter(effects.votantes ?? 0)),
-    caja: clamp(stats.caja + jitter(effects.caja ?? 0)),
+// Amortiguación en los extremos: un empujón hacia un extremo pierde fuerza
+// cuando ya estás cerca de él (llevar los medios de 8 a 9 cuesta más que de
+// 4 a 5). Sin esto, la partida media duraba 12 turnos —un año de gobierno— y
+// el 90% de las partidas no llegaba nunca a la fase 4 del mazo; además morir
+// por TECHO (una stat a 10) era lo más común jugando honesto, que se leía
+// como un castigo absurdo. Con la amortiguación hay que insistir de verdad
+// para reventar por arriba o por abajo, y la partida respira.
+// El margen se mide contra el extremo al que empuja el efecto.
+const DAMP_ZONE = 4
+
+// Desgaste del poder: cada DRIFT_EVERY turnos, toda stat que se haya alejado
+// del centro vuelve 1 punto hacia él. La luna de miel se pasa y los enfados
+// también. Sin esto, el mazo (que empuja mucho hacia arriba en votantes y
+// medios) hacía que jugar honesto reventara por TECHO en 9 turnos — morir por
+// "gustar demasiado" era el final más común y se leía como un castigo
+// absurdo. Con el desgaste, honesto y corrupto duran casi lo mismo y hay que
+// sostener una tendencia para romper por cualquiera de los dos lados.
+const DRIFT_EVERY = 3
+const DRIFT_MIN_DISTANCE = 3
+
+function applyDrift(stats: Stats, turn: number): Stats {
+  if (turn % DRIFT_EVERY !== 0) return stats
+  const next = { ...stats }
+  for (const key of ['medios', 'partido', 'votantes', 'caja'] as const) {
+    const d = next[key] - STAT_START
+    if (Math.abs(d) >= DRIFT_MIN_DISTANCE) next[key] -= Math.sign(d)
   }
+  return next
+}
+
+function damp(current: number, delta: number): number {
+  if (delta === 0) return 0
+  const headroom = delta > 0 ? STAT_MAX - current : current
+  const factor = Math.min(1, headroom / DAMP_ZONE)
+  const scaled = delta * factor
+  // Redondeo hacia el entero, conservando al menos 1 de empuje mientras
+  // quede margen: así nunca se queda "atascada" sin poder llegar al extremo.
+  const out = delta > 0 ? Math.floor(scaled) : Math.ceil(scaled)
+  if (out === 0 && headroom > 0) return delta > 0 ? 1 : -1
+  return out
+}
+
+function applyEffects(stats: Stats, effects: StatEffects): Stats {
+  const next = {} as Stats
+  for (const key of ['medios', 'partido', 'votantes', 'caja'] as const) {
+    next[key] = clamp(stats[key] + damp(stats[key], jitter(effects[key] ?? 0)))
+  }
+  return next
 }
 
 function pickNextCard(state: GameState, forcedId?: string): Card {
   if (forcedId) {
     const forced = cards.find((c) => c.id === forcedId)
     if (forced) return forced
+  }
+
+  // ELECCIONES: cada ELECTION_INTERVAL turnos (4 años de gobierno) toca
+  // renovar legislatura, pase lo que pase. Es el hito de la partida: según
+  // cómo lleguen las stats sale una carta u otra (derrota, apretada,
+  // triunfo), y en la tercera convocatoria el juego termina sí o sí.
+  // Va ANTES de los finales por stat: si justo ese turno además tocabas
+  // fondo, manda la noche electoral, que es mejor final.
+  if (state.turn > 0 && state.turn % ELECTION_INTERVAL === 0) {
+    const electionCards = cards.filter(
+      (c) => c.isElection && (!c.condition || c.condition(state.stats, state.moralidad))
+    )
+    if (electionCards.length > 0) {
+      // La última convocatoria tiene sus propias cartas (`_final`): si hay
+      // alguna válida, tiene prioridad sobre las normales.
+      const isLast = state.turn >= ELECTION_INTERVAL * ELECTION_MAX_TERMS
+      const pool = isLast
+        ? electionCards.filter((c) => c.id.endsWith('_final'))
+        : electionCards.filter((c) => !c.id.endsWith('_final'))
+      const chosen = pool.length > 0 ? pool : electionCards
+      return chosen[Math.floor(Math.random() * chosen.length)]
+    }
+  }
+
+  // Turno de gracia: tocar 0 o el máximo NO mata al instante. El icono se
+  // pone rojo, sale una carta normal y tienes ese turno para rectificar; solo
+  // si sigues en el extremo al turno siguiente cae el final. Sin esto, un
+  // pico de mala suerte te mataba sin margen (y morir por TECHO, jugando
+  // limpio, era el final más común).
+  if (state.extremeStreak < 2) {
+    return pickRegularCard(state)
   }
 
   // ¿Algún stat ha tocado fondo (o se ha alcanzado un final especial)?
@@ -64,9 +136,14 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   // partir de ese turno — así no se gana "por accidente" a los 5 minutos
   // solo por tener las 4 stats altas de rebote. Los finales de stat a 0 no
   // llevan minTurn, así que siguen disparándose en cuanto ocurre el crash.
+  // `!c.isElection`: las cartas de la última convocatoria son isEnding Y
+  // isElection a la vez. Sin excluirlas aquí, se colaban como final normal en
+  // cualquier turno (se vio una noche electoral de "Doce años" en el mes 50).
+  // Solo deben salir por la rama de elecciones de arriba.
   const validEndings = cards.filter(
     (c) =>
       c.isEnding &&
+      !c.isElection &&
       (c.minTurn === undefined || state.turn >= c.minTurn) &&
       c.condition?.(state.stats, state.moralidad)
   )
@@ -74,11 +151,19 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
     return validEndings[Math.floor(Math.random() * validEndings.length)]
   }
 
+  return pickRegularCard(state)
+}
+
+// Sorteo de carta normal (ni final ni elecciones).
+function pickRegularCard(state: GameState): Card {
   // Cartas normales candidatas: no vistas recientemente, no son finales,
   // dentro de su ventana de turno/fase, y cumplen su condición si la tienen.
   const recent = new Set(state.history.slice(-5))
   const base = (c: Card) =>
-    !c.isEnding && !recent.has(c.id) && (!c.condition || c.condition(state.stats, state.moralidad))
+    !c.isEnding &&
+    !c.isElection &&
+    !recent.has(c.id) &&
+    (!c.condition || c.condition(state.stats, state.moralidad))
 
   // No repetir el personaje de la carta anterior: dos cartas seguidas del
   // mismo personaje se leen como un bug. Las cadenas narrativas (nextCardId)
@@ -97,10 +182,13 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
     inWindow.length ? inWindow :
     anyBase.filter(otherChar).length ? anyBase.filter(otherChar) :
     anyBase.length ? anyBase :
-    cards.filter((c) => !c.isEnding && otherChar(c))
+    cards.filter((c) => !c.isEnding && !c.isElection && otherChar(c))
 
   const weighted = candidates.flatMap((c) => Array(c.weight ?? 1).fill(c))
-  return weighted[Math.floor(Math.random() * weighted.length)] ?? cards.find((c) => !c.isEnding)!
+  return (
+    weighted[Math.floor(Math.random() * weighted.length)] ??
+    cards.find((c) => !c.isEnding && !c.isElection)!
+  )
 }
 
 interface GameStore extends GameState {
@@ -131,6 +219,7 @@ const firstCard = pickIntro()
 
 export const useGameStore = create<GameStore>((set, get) => ({
   stats: initialStats(),
+  extremeStreak: 0,
   moralidad: MORALIDAD_START,
   turn: 1,
   history: [firstCard.id],
@@ -155,10 +244,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return
     }
 
+    const nextTurn = state.turn + 1
+    const driftedStats = applyDrift(newStats, nextTurn)
+    const atExtreme = (['medios', 'partido', 'votantes', 'caja'] as const).some(
+      (k) => driftedStats[k] <= 0 || driftedStats[k] >= STAT_MAX
+    )
     const nextState: GameState = {
-      stats: newStats,
+      stats: driftedStats,
+      extremeStreak: atExtreme ? state.extremeStreak + 1 : 0,
       moralidad: newMoralidad,
-      turn: state.turn + 1,
+      turn: nextTurn,
       history: [...state.history, state.currentCard.id],
       gameOver: false,
     }
@@ -174,6 +269,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const intro = pickIntro()
     set({
       stats: initialStats(),
+      extremeStreak: 0,
       moralidad: MORALIDAD_START,
       turn: 1,
       history: [intro.id],

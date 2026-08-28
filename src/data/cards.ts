@@ -1,5 +1,4 @@
 import type { Card } from '../types'
-import { PHASE_MIN_TURN } from '../types'
 import { contentCards } from './cards.content'
 
 // Cartas de "final de partida" (mecánica de final de partida tipo Reigns).
@@ -82,7 +81,7 @@ const endingCards: Card[] = [
     condition: (s, m) => s.partido <= 0 && m <= 3,
   },
 
-  // Vla AlianzaTES a 0 — la calle le da la espalda
+  // VOTANTES a 0 — la calle le da la espalda
   {
     id: 'final_votantes_alta',
     phase: 4,
@@ -270,32 +269,201 @@ const endingCards: Card[] = [
     condition: (s, m) => s.caja >= 10 && m <= 3,
   },
 
-  // FINAL ESPECIAL — sobrevivir toda la legislatura con los stats saneados.
-  // minTurn evita que este final "bueno" salga de rebote a los 5 minutos
-  // solo por haber tocado las 4 stats a 6+ a la vez muy pronto en la
-  // partida — ver el comentario sobre minTurn en useGameStore.ts.
+]
+
+// ============================================================================
+// ELECCIONES — el hito de la partida, cada 4 años de gobierno.
+// ============================================================================
+// Antes se podía "ganar" por accidente: bastaba con sobrevivir mucho tiempo y
+// que en algún momento las 4 stats pasaran de 6 a la vez. En simulación, un
+// bot que solo buscaba el centro ganaba el 90% de las partidas jugando 200
+// turnos. Ahora la victoria es un hito de verdad: al llegar el turno tocan
+// elecciones sí o sí, y el resultado depende de cómo llegues.
+//
+// useGameStore fuerza una de estas cartas cuando `turn % ELECTION_INTERVAL`
+// es 0 (ver pickNextCard). Nunca salen por sorteo normal.
+export const ELECTION_INTERVAL = 48 // 1 turno = 1 mes, así que 48 = 4 años
+export const ELECTION_MAX_TERMS = 3 // a la tercera convocatoria, se acaba
+
+const electionCards: Card[] = [
+  // --- DERROTA: llegas con algo hundido ---
   {
-    id: 'final_reeleccion',
+    id: 'elecciones_derrota',
     phase: 4,
-    character: 'Noche electoral (buena)',
-    text: 'Contra todo pronóstico, ha llegado entero al final de la legislatura. Los cuatro indicadores aguantan. Toca votar.',
+    isElection: true,
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Cuatro años. Llega la noche electoral con el peor dato posible en la mano y el escrutinio no deja lugar a dudas: se acabó. En la sede ya han quitado la foto grande del vestíbulo.',
     left: {
-      text: 'Presentarse a la reelección',
+      text: 'Salir a felicitar al ganador',
       effects: {},
-      epilogueText: 'Gana con mayoría. Empieza otra legislatura... y con ella, otra ronda entera de tentaciones.',
+      epilogueText: 'Sale con una sonrisa que no engaña a nadie y felicita al ganador en directo. Se le recordará más por esa cara que por la legislatura entera. Fin del gobierno.',
     },
     right: {
-      text: 'Retirarse mientras gana, por una vez',
+      text: 'Encerrarse y no salir',
       effects: {},
-      epilogueText: 'Se va por la puerta grande, algo insólito en este juego. Fin de un gobierno limpio (o casi).',
+      epilogueText: 'No sale a comparecer. La silla vacía en la sala de prensa es la última imagen de su gobierno, y da la vuelta al mundo. Fin del gobierno.',
     },
+    condition: (s) => s.medios <= 2 || s.partido <= 2 || s.votantes <= 2 || s.caja <= 2,
+  },
+  // --- TRIUNFO: llegas fuerte en todo ---
+  {
+    id: 'elecciones_triunfo',
+    phase: 4,
+    isElection: true,
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Cuatro años completos y llega usted con los cuatro indicadores en verde. Es tan raro que hasta los suyos desconfían. Los resultados: mayoría, y de las cómodas.',
+    left: {
+      text: 'Repetir mandato y apretar el acelerador',
+      effects: { medios: -1, partido: 1 },
+      epilogueText: 'Gana con mayoría y encara otra legislatura entera. Muy pocos llegan hasta aquí de una pieza. Fin del gobierno, en lo más alto y por la puerta grande.',
+    },
+    right: {
+      text: 'Retirarse invicto, por una vez',
+      effects: {},
+      epilogueText: 'Se va ganando, que en este oficio no lo hace nadie. Los libros de historia le tratarán mejor que sus propios compañeros de partido. Fin del gobierno.',
+    },
+    // 3 de las 4 en verde y ninguna floja: exigente, pero alcanzable si se
+    // juega bien. Con las 4 a 7 la victoria salía en el 0,5% de partidas.
+    condition: (s) => {
+      const v = [s.medios, s.partido, s.votantes, s.caja]
+      return v.filter((n) => n >= 7).length >= 3 && v.every((n) => n >= 6)
+    },
+  },
+  // --- APRETADA: el caso normal, sigues gobernando ---
+  {
+    id: 'elecciones_apretada',
+    phase: 4,
+    isElection: true,
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Cuatro años. Toca renovar. El recuento va tan justo que a las tres de la mañana nadie se atreve a salir al balcón. Al final: se queda, pero por los pelos y debiendo favores.',
+    left: {
+      text: 'Pactar con quien haga falta para seguir',
+      effects: { partido: 1, medios: -1, votantes: -1 },
+    },
+    right: {
+      text: 'Gobernar en minoría y sufrir cada votación',
+      effects: { medios: 1, partido: -1 },
+    },
+  },
+  {
+    id: 'elecciones_repeticion',
+    phase: 4,
+    isElection: true,
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Cuatro años y ni usted ni nadie suma para gobernar. Toca repetir elecciones, con el país entero poniendo los ojos en blanco y una campaña más que pagar.',
+    left: {
+      text: 'Repetir campaña a lo grande',
+      effects: { caja: -2, votantes: 1 },
+    },
+    right: {
+      text: 'Campaña austera, casi de tapadillo',
+      effects: { caja: 1, votantes: -1, medios: -1 },
+    },
+    condition: (s) => s.partido <= 5,
+  },
+
+  {
+    id: 'elecciones_sorpresa',
+    phase: 4,
+    isElection: true,
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Cuatro años. Todas las encuestas le daban fuera y a las once de la noche resulta que sigue dentro. El encuestador ha apagado el móvil. Usted tampoco se lo cree.',
+    left: {
+      text: 'Salir al balcón a celebrarlo',
+      effects: { votantes: 1, medios: -1 },
+    },
+    right: {
+      text: 'Salir muy serio, como si lo esperara',
+      effects: { medios: 1 },
+    },
+    condition: (s) => s.votantes <= 4,
+  },
+  {
+    id: 'elecciones_abstencion',
+    phase: 4,
+    isElection: true,
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Cuatro años. Gana usted, sí, pero con la abstención más alta que se recuerda: han votado menos de la mitad. Nadie sabe muy bien qué celebrar esta noche.',
+    left: {
+      text: 'Prometer "escuchar a los que no votaron"',
+      effects: { medios: 1, votantes: 1, partido: -1 },
+    },
+    right: {
+      text: 'Una victoria es una victoria',
+      effects: { partido: 1, votantes: -1 },
+    },
+    condition: (s) => s.medios <= 5,
+  },
+
+  // --- ÚLTIMA CONVOCATORIA (ELECTION_MAX_TERMS): aquí se acaba siempre ---
+  {
+    id: 'elecciones_quemado_final',
+    phase: 4,
+    isElection: true,
     isEnding: true,
-    minTurn: PHASE_MIN_TURN[4],
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Doce años. Le quedan un partido agotado, una oposición que ya ni le ataca porque no hace falta, y una legislatura más que nadie, ni usted, tiene ganas de empezar.',
+    left: {
+      text: 'Presentarse igualmente y perder',
+      effects: {},
+      epilogueText: 'Se presenta por costumbre y pierde por goleada. Doce años se acaban en una sala de prensa medio vacía, con dos cámaras y un becario. Fin del gobierno.',
+    },
+    right: {
+      text: 'Dimitir la noche antes de la campaña',
+      effects: {},
+      epilogueText: 'Dimite la víspera de la campaña y deja al partido vendido. Dicen que fue lo más honesto que hizo en doce años, y probablemente sea verdad. Fin del gobierno.',
+    },
+    condition: (s) => s.partido <= 4 || s.medios <= 4,
+  },
+  {
+    id: 'elecciones_retirada_final',
+    phase: 4,
+    isElection: true,
+    isEnding: true,
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Doce años en el cargo. Ya no hay legislatura que renovar: ni el partido, ni la ley, ni su propia espalda dan para otra. Esta noche se decide solo cómo quiere que se cuente.',
+    left: {
+      text: 'Anunciar la retirada en directo',
+      effects: {},
+      epilogueText: 'Anuncia la retirada él mismo, con la sala en pie. Doce años dan para muchos titulares, y usted se va eligiendo el último. Fin del gobierno, con final elegido.',
+    },
+    right: {
+      text: 'Dejar que le echen las urnas',
+      effects: {},
+      epilogueText: 'Se presenta una vez más y las urnas hacen el trabajo. Doce años se acaban en una noche y en un balcón sin gente. Fin del gobierno.',
+    },
+  },
+  {
+    id: 'elecciones_leyenda_final',
+    phase: 4,
+    isElection: true,
+    isEnding: true,
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Doce años y sigue con los cuatro indicadores altos. A estas alturas ya no le discute nadie: es usted el sistema. Y eso, en política, es la señal para irse.',
+    left: {
+      text: 'Irse convertido en estatua',
+      effects: {},
+      epilogueText: 'Se retira invicto tras doce años. Le ponen su nombre a una plaza y a un instituto. Nadie recuerda ya cómo empezó todo, y a usted le viene muy bien. Fin del gobierno, en leyenda.',
+    },
+    right: {
+      text: 'Dejar sucesor y mover los hilos desde fuera',
+      effects: {},
+      epilogueText: 'Coloca a un sucesor de su cuerda y se va a un consejo de administración a seguir mandando sin salir en la foto. Fin del gobierno, solo sobre el papel.',
+    },
     condition: (s) => s.medios >= 6 && s.partido >= 6 && s.votantes >= 6 && s.caja >= 6,
   },
 ]
 
-export const cards: Card[] = [...contentCards, ...endingCards]
+export const cards: Card[] = [...contentCards, ...endingCards, ...electionCards]
 
 export const STAT_MAX = 10
 export const STAT_START = 5

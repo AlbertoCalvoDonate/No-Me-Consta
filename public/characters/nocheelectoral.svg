@@ -1,0 +1,28 @@
+<svg viewBox="0 0 1020 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Noche electoral: no es una persona, es la urna. Mismo lienzo 1020x1200
+       que los retratos .png para que encaje en la carta sin recortes. -->
+  <!-- Sin rect de fondo a propósito: como los retratos .png, el fondo es
+       transparente y deja ver el color de la carta. Con fondo opaco se veían
+       dos bandas de otro color arriba y abajo. -->
+  <!-- reloj de pared, casi la medianoche -->
+  <circle cx="840" cy="200" r="74" fill="none" stroke="#2f3a4d" stroke-width="10"/>
+  <path d="M840,200 L840,150" stroke="#4a5a75" stroke-width="10" stroke-linecap="round"/>
+  <path d="M840,200 L874,218" stroke="#4a5a75" stroke-width="9" stroke-linecap="round"/>
+  <!-- barras de resultados al fondo -->
+  <rect x="120" y="330" width="86" height="150" fill="#243044"/>
+  <rect x="228" y="266" width="86" height="214" fill="#2b3950"/>
+  <rect x="336" y="376" width="86" height="104" fill="#212c3e"/>
+  <!-- papeleta cayendo -->
+  <path d="M470,300 L648,272 L664,382 L486,410 Z" fill="#f2efe2"/>
+  <path d="M508,330 L622,313" stroke="#9aa3b3" stroke-width="12"/>
+  <path d="M514,360 L600,347" stroke="#c2c8d2" stroke-width="10"/>
+  <!-- urna -->
+  <path d="M250,520 L770,520 L770,586 L250,586 Z" fill="#3d4c66"/>
+  <path d="M510,520 L770,520 L770,586 L510,586 Z" fill="#334057"/>
+  <rect x="430" y="536" width="160" height="24" rx="8" fill="#0e131b"/>
+  <path d="M296,586 L724,586 L690,1060 A34,34 0 0 1 656,1092 L364,1092 A34,34 0 0 1 330,1060 Z" fill="#46587a"/>
+  <path d="M510,586 L724,586 L690,1060 A34,34 0 0 1 656,1092 L510,1092 Z" fill="#3a4a67"/>
+  <!-- sello / escudo neutro en la urna -->
+  <circle cx="510" cy="800" r="118" fill="none" stroke="#e0b84d" stroke-width="14" opacity="0.85"/>
+  <path d="M452,764 h116 v26 h-116 z M452,812 h116 v26 h-116 z" fill="#e0b84d" opacity="0.85"/>
+</svg>

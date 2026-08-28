@@ -10,7 +10,7 @@ const PANEL_HEIGHT = 130
 const PANEL_HIDDEN = PANEL_WIDTH + 24
 
 // Inclinación máxima de la carta al arrastrar (grados). El panel de respuesta
-// (hijo de la carta) la contrarresta con -CARD_TILT para que el texto no gire.
+// es hijo de la carta y gira con ella, como una pegatina pegada encima.
 const CARD_TILT = 12
 
 // Proporción común de todos los retratos (scripts/normalize-portraits.mjs los
@@ -45,10 +45,17 @@ const CORRUPT = { bg: '#3a1414', accent: '#ff4d4d' }
 
 // Etiqueta de tamaño fijo (ni crece ni encoge con el texto) que entra
 // deslizándose desde el lateral en sincronía directa con el arrastre — no
-// con umbrales de opacidad. "Hermana" de la carta, no hija, así que vive
-// ENCIMA de ella sin rotar ni moverse con su transform. Pegada arriba y
-// deliberadamente pequeña: el resto de la carta (el retrato) queda visible
-// durante todo el gesto, en vez de taparla entera.
+// con umbrales de opacidad. Deliberadamente pequeña y arriba: el resto de la
+// carta (el retrato) queda visible durante todo el gesto.
+//
+// GEOMETRÍA (varios intentos fallidos antes de dar con esto):
+//  - Es HERMANA de la carta, no hija: así el overflow:hidden de la carta no la
+//    recorta, y no hereda su rotación (el texto se lee siempre recto).
+//  - Viaja con la carta en X (`cardX + deslizamiento`), no se queda quieta: si
+//    no, al arrastrar la carta se iba y el panel se quedaba flotando fuera.
+//  - Queda CENTRADA en horizontal, no pegada a un lateral. Pegada al borde se
+//    salía de la carta al inclinarse esta, y encima ese borde es justo el que
+//    se va de pantalla al arrastrar, así que el panel se cortaba con él.
 function ChoicePanel({
   text,
   side,
@@ -64,15 +71,17 @@ function ChoicePanel({
   // panel sigue del todo fuera de pantalla. Colchón para el rebote elástico
   // al soltar, que se pasa unos píxeles al lado contrario.
   const DEAD_ZONE = 14
-  const panelXRaw = useTransform(
+  const slideRaw = useTransform(
     x,
     side === 'left' ? [-SWIPE_REVEAL_DISTANCE, -DEAD_ZONE] : [DEAD_ZONE, SWIPE_REVEAL_DISTANCE],
     side === 'left' ? [0, -PANEL_HIDDEN] : [PANEL_HIDDEN, 0]
   )
-  // Redondeado a píxel entero: sin esto, justo al llegar al valor máximo
-  // (totalmente revelado) el navegador podía renderizar un subpíxel de más
-  // o de menos y se veía como un salto de 1px al terminar la animación.
-  const panelX = useTransform(panelXRaw, (v) => Math.round(v))
+  // Posición final = desplazamiento de la carta + deslizamiento de entrada.
+  // Redondeado a píxel entero: sin esto, al llegar al valor máximo el
+  // navegador podía renderizar un subpíxel de más y se veía un salto de 1px.
+  const panelX = useTransform<number, number>([x, slideRaw], ([cardX, slide]) =>
+    Math.round(cardX + slide)
+  )
   // El panel de un lado NO existe (opacity 0) en cuanto el arrastre está en
   // el lado contrario — incluso 1px. Así, pase lo que pase con el rebote al
   // soltar (que puede cruzar el 0 hacia el otro signo), el panel que no se ha
@@ -80,17 +89,13 @@ function ChoicePanel({
   // lado el panel ya está a 0.93 pero todavía fuera de pantalla (zona muerta),
   // así que tampoco se ve "aparecer".
   const opacity = useTransform(x, (v) => ((side === 'left' ? v < 0 : v > 0) ? 0.93 : 0))
-  // El panel es hijo de la carta (para que el borde redondeado lo recorte),
-  // así que hereda su rotación. Esto la contrarresta para que el TEXTO se lea
-  // recto aunque la carta esté inclinada.
-  const counterRotate = useTransform(x, [-100, 100], [CARD_TILT, -CARD_TILT])
   return (
     <motion.div
       style={{
         position: 'absolute',
-        rotate: counterRotate,
-        top: 12,
-        [side]: 14,
+        top: 26,
+        left: '50%',
+        marginLeft: -PANEL_WIDTH / 2,
         width: PANEL_WIDTH,
         height: PANEL_HEIGHT,
         x: panelX,
@@ -188,7 +193,12 @@ export function SwipeCard({ card, onChoose, x }: Props) {
         boxSizing: 'border-box',
       }}
     >
-      <div style={{ position: 'relative', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+      {/* SIN overflow:hidden a propósito: este contenedor NO rota, así que al
+          inclinarse la carta sus esquinas se salían de él y las recortaba en
+          vertical — y con ellas el panel de respuesta, que se veía cortado por
+          la mitad. La carta ya se recorta a sí misma con su propio
+          overflow+borderRadius, que es el borde visible. */}
+      <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
         <motion.div
           key={card.id}
           style={{
@@ -247,13 +257,13 @@ export function SwipeCard({ card, onChoose, x }: Props) {
             />
           )}
 
-          {/* Paneles de respuesta: HIJOS de la carta, así el overflow:hidden y
-              el borde redondeado de la carta los recortan — nunca asoman por
-              fuera del borde visible aunque la carta esté inclinada. Entran
-              deslizándose desde el lateral en sincronía con el arrastre. */}
-          <ChoicePanel text={card.left.text} side="left" colors={leftColors} x={x} />
-          <ChoicePanel text={card.right.text} side="right" colors={rightColors} x={x} />
         </motion.div>
+
+        {/* Paneles de respuesta: hermanos de la carta (ver comentario en
+            ChoicePanel). Viajan con ella en X y quedan centrados, así que
+            siempre caen dentro de la carta sin que nada los recorte. */}
+        <ChoicePanel text={card.left.text} side="left" colors={leftColors} x={x} />
+        <ChoicePanel text={card.right.text} side="right" colors={rightColors} x={x} />
       </div>
 
       <div

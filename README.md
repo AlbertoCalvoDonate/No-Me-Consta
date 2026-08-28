@@ -134,8 +134,8 @@ así:
 `nextCardId` sí pueden repetirlo, para eso están.
 
 ### Ideas para las siguientes cartas
-- El mazo tiene ~255 cartas de contenido (reacción, enemistades y arranque
-  incluidas) + los finales, así que toca más pulir contenido que sumar
+- El mazo tiene ~292 cartas de contenido + finales + elecciones, así que
+  toca más pulir contenido que sumar
 - Añade `condition` a algunas cartas para que solo aparezcan en rangos
   concretos de stats (ej. una carta de "escándalo mediático" solo si
   `medios < 3`)
@@ -153,3 +153,33 @@ npm run build
 
 Sube la carpeta `dist/` a Cloudflare Pages (o conecta el repo de GitHub para
 despliegue automático).
+
+## Balance del juego
+
+Las tres mecánicas que sostienen la dificultad están en `src/hooks/useGameStore.ts`
+y salieron de simular miles de partidas (`scripts/` no las incluye; ver historial):
+
+- **Amortiguación** (`damp`): un efecto que empuja hacia un extremo pierde
+  fuerza cuando ya estás cerca de él. Sin esto la partida media duraba 12
+  turnos.
+- **Desgaste** (`applyDrift`): cada 3 turnos, las stats alejadas del centro
+  vuelven 1 punto hacia él. Evita que acumular en una dirección sea gratis;
+  sin esto, jugar siempre honesto reventaba por *techo* en 9 turnos.
+- **Turno de gracia** (`extremeStreak`): tocar 0 o el máximo no mata al
+  instante, da un turno para rectificar.
+
+Con eso, jugando al azar la mediana es ~96 turnos (8 años de gobierno) y un
+jugador bueno gana ~10% de las partidas.
+
+### Elecciones (el hito de la partida)
+
+Cada `ELECTION_INTERVAL` turnos (48 = 4 años) toca renovar legislatura. La
+carta que sale depende de cómo llegues (derrota, apretada, sorpresa,
+abstención, triunfo). A la tercera convocatoria (12 años) el juego termina
+siempre, con la carta `_final` que corresponda.
+
+Las cartas de elecciones llevan `isElection: true`, viven en `cards.ts` (usan
+`condition`) y **nunca** salen por sorteo normal: las fuerza `pickNextCard`.
+Ojo: las de la última convocatoria son `isEnding` **y** `isElection`, así que
+el filtro de finales normales tiene que excluir `isElection` — si no, se
+cuelan en cualquier turno.

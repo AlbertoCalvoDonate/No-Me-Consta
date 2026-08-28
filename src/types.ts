@@ -55,6 +55,10 @@ export interface Card {
   condition?: (stats: Stats, moralidad: number) => boolean
   weight?: number       // Prioridad de aparición (default 1)
   isEnding?: boolean    // Carta especial de final de partida
+  // Carta del evento de elecciones (cada 4 años de gobierno). No sale nunca
+  // por sorteo: useGameStore la fuerza al llegar el turno, eligiendo entre
+  // las que cumplen su `condition`. Ver ELECTION_INTERVAL en cards.ts.
+  isElection?: boolean
   phase: Phase          // Fase de gravedad narrativa a la que pertenece
   minTurn?: number      // Turno mínimo explícito (si no, se usa PHASE_MIN_TURN[phase])
   maxTurn?: number      // Turno máximo explícito, opcional (para cartas "de una época")
@@ -62,6 +66,10 @@ export interface Card {
 
 export interface GameState {
   stats: Stats
+  // Turnos seguidos con alguna stat en un extremo (0 o el máximo). Tocar el
+  // extremo NO mata al instante: da un turno de margen para rectificar, y
+  // solo si sigues ahí al turno siguiente cae el final. Ver useGameStore.
+  extremeStreak: number
   // Moralidad oculta (0-10, empieza en 5). No es una stat visible: no tiene
   // barra ni se muestra en pantalla, solo influye en qué variante de final
   // sale al tocar fondo o techo con alguna stat (ver cards.ts). Se acumula
