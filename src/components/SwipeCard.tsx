@@ -214,11 +214,13 @@ export function SwipeCard({ card, onChoose, x }: Props) {
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                // 'center': si el encuadre de la carta queda más ancho que
-                // alto (pantallas cortas), recorta un poco por arriba y por
-                // abajo a partes iguales en vez de comerse toda la parte de
-                // abajo del retrato.
                 objectPosition: 'center',
+                // Zoom fijo por encima de `cover`: los retratos no vienen
+                // todos con el mismo encuadre (algunos traen más aire sobre
+                // la cabeza). Un scale ligero se come ese margen y hace que
+                // la cara llene la carta de forma parecida en todos. El
+                // recorte extra se lo lleva el overflow:hidden de la carta.
+                transform: 'scale(1.13)',
               }}
             />
           )}

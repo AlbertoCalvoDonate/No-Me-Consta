@@ -118,7 +118,10 @@ const MORALIDAD_START = 5
 
 // Cartas de arranque (ver cards.content.ts). Se elige una al azar al empezar
 // y al reiniciar, así la primera decisión de la partida no es siempre la misma.
-const INTRO_IDS = ['presi_intro', 'presi_intro_b', 'presi_intro_c', 'presi_intro_d']
+const INTRO_IDS = [
+  'presi_intro', 'presi_intro_b', 'presi_intro_c', 'presi_intro_d',
+  'presi_intro_e', 'presi_intro_f', 'presi_intro_g', 'presi_intro_h',
+]
 function pickIntro(): Card {
   const id = INTRO_IDS[Math.floor(Math.random() * INTRO_IDS.length)]
   return cards.find((c) => c.id === id) ?? cards.find((c) => c.id === 'presi_intro')!

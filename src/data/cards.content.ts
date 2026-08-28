@@ -112,6 +112,78 @@ export const contentCards: Card[] = [
       nextCardId: 'inicio',
     },
   },
+  {
+    id: 'presi_intro_e',
+    phase: 1,
+    maxTurn: 1,
+    character: 'Presi',
+    characterImage: 'presi.png',
+    text: 'El jefe de seguridad le entrega una carpeta con el sello de "ALTO SECRETO" y le mira fijamente. "Léala hoy. Solo hoy. Y luego olvide que existió, por su bien."',
+    left: {
+      text: 'Leerla entera esta noche, palabra por palabra',
+      effects: { medios: 1 }, moralidad: 1,
+      nextCardId: 'inicio',
+    },
+    right: {
+      text: 'Firmar el acuse de recibo sin abrirla siquiera',
+      effects: { partido: 1 },
+      nextCardId: 'inicio',
+    },
+  },
+  {
+    id: 'presi_intro_f',
+    phase: 1,
+    maxTurn: 1,
+    character: 'Presi',
+    characterImage: 'presi.png',
+    text: 'El primer día ya trae 40 reuniones en la agenda. La número 1 es con un empresario que "apoyó mucho" la campaña. La número 40, la última, con gente de la calle.',
+    left: {
+      text: 'Reordenar la agenda y empezar por la número 40',
+      effects: { votantes: 1 }, moralidad: 1,
+      nextCardId: 'inicio',
+    },
+    right: {
+      text: 'Respetar el orden: hay que ser agradecido con quien ayuda',
+      effects: { caja: 1 }, moralidad: -1,
+      nextCardId: 'inicio',
+    },
+  },
+  {
+    id: 'presi_intro_g',
+    phase: 1,
+    maxTurn: 1,
+    character: 'Presi',
+    characterImage: 'presi.png',
+    text: 'La mitad de la plantilla es del presidente anterior. Le sonríen con demasiados dientes. Uno de ellos tiene el móvil en la mano, en horizontal, apuntando discretamente hacia usted.',
+    left: {
+      text: 'Mantenerlos a todos por prudencia y no hacer ruido',
+      effects: { partido: 1 },
+      nextCardId: 'inicio',
+    },
+    right: {
+      text: 'Traer a los suyos de confianza y que corra el aire',
+      effects: { partido: -1, votantes: 1 },
+      nextCardId: 'inicio',
+    },
+  },
+  {
+    id: 'presi_intro_h',
+    phase: 1,
+    maxTurn: 1,
+    character: 'Presi',
+    characterImage: 'presi.png',
+    text: 'Antes de nada, El Escudero le empuja hacia un balcón: "Salude, salude, que la foto del primer día es la que sale en los libros." Abajo hay cuatro personas, dos banderas y un periodista aburrido.',
+    left: {
+      text: 'Salir a saludar con un entusiasmo sospechosamente genuino',
+      effects: { votantes: 1 },
+      nextCardId: 'inicio',
+    },
+    right: {
+      text: '"¿No deberíamos hacer algo antes de celebrarlo?"',
+      effects: { medios: 1, partido: -1 }, moralidad: 1,
+      nextCardId: 'inicio',
+    },
+  },
   // --- EJEMPLOS DE TONO "MEME"/CASTIZO — prueba de concepto, a ver qué tal
   // sienta mezclado con el resto del mazo. Bórralas, edítalas o multiplícalas
   // libremente; llevan el prefijo "meme_" solo para que sea fácil encontrarlas
