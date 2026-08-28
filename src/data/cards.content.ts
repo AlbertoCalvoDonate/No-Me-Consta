@@ -402,7 +402,7 @@ export const contentCards: Card[] = [
     characterImage: 'cunado.svg',
     text: 'Su hermano quiere un puesto de asesor en un organismo público. Sin oposición, sin méritos: dice que "algo se merece" por ser de la familia.',
     left: { text: 'Proceso abierto', effects: { partido: -1, votantes: 1 }, moralidad: 1 },
-    right: { text: 'Nombramiento a dedo', effects: { partido: 1, votantes: -2 }, moralidad: -1, nextCardId: 'react_asesor_woke' },
+    right: { text: 'Nombramiento a dedo', effects: { partido: 1, votantes: -2 }, moralidad: -1, nextCardId: 'react_asesor_woke', addFlags: ['hermano_colocado'] },
   },
   {
     id: 'gob_fiscal_general',
@@ -1158,7 +1158,7 @@ export const contentCards: Card[] = [
     characterImage: 'cunado.svg',
     text: 'El curso de "liderazgo institucional" para altos cargos lo doy yo. Bueno, una empresa mía. Bueno, de un primo. Ya nos entendemos.',
     left: { text: 'Sacarlo a concurso', effects: { votantes: 1 }, moralidad: 1 },
-    right: { text: 'Al cuñado, directo', effects: { caja: 1, votantes: -1 }, moralidad: -1 },
+    right: { text: 'A mi primo, directo', effects: { caja: 1, votantes: -1 }, moralidad: -1 },
   },
   {
     id: 'gob_reserva_restaurante',
@@ -2045,6 +2045,7 @@ export const contentCards: Card[] = [
   // --- LA VICEPRESIDENTA (idealista, ambiciosa, a un paso de montar lo suyo) ---
   {
     id: 'vice_sentido_comun',
+    pleases: 'left',
     phase: 1,
     character: 'La Vicepresidenta',
     characterImage: 'vicepresi.png',
@@ -2054,6 +2055,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'vice_nuevo_ciclo',
+    pleases: 'left',
     phase: 2,
     character: 'La Vicepresidenta',
     characterImage: 'vicepresi.png',
@@ -2063,6 +2065,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'vice_nuevo_ministerio',
+    pleases: 'left',
     phase: 2,
     character: 'La Vicepresidenta',
     characterImage: 'vicepresi.png',
@@ -2072,6 +2075,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'vice_presupuestos',
+    pleases: 'left',
     phase: 3,
     character: 'La Vicepresidenta',
     characterImage: 'vicepresi.png',
@@ -2081,6 +2085,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'vice_otras_opciones',
+    pleases: 'left',
     phase: 3,
     character: 'La Vicepresidenta',
     characterImage: 'vicepresi.png',
@@ -2092,6 +2097,7 @@ export const contentCards: Card[] = [
   // --- LA COMUNISTA WOKE (combativa, moralista, asamblea permanente) ---
   {
     id: 'woke_verguenza',
+    pleases: 'left',
     phase: 2,
     character: 'La Comunista Woke',
     characterImage: 'comunistawoke.png',
@@ -2101,6 +2107,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'woke_gente_centro',
+    pleases: 'left',
     phase: 1,
     character: 'La Comunista Woke',
     characterImage: 'comunistawoke.png',
@@ -2110,6 +2117,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'woke_asamblea',
+    pleases: 'left',
     phase: 2,
     character: 'La Comunista Woke',
     characterImage: 'comunistawoke.png',
@@ -2119,6 +2127,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'woke_purismo',
+    pleases: 'left',
     phase: 3,
     character: 'La Comunista Woke',
     characterImage: 'comunistawoke.png',
@@ -2128,6 +2137,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'woke_lineas_rojas',
+    pleases: 'left',
     phase: 4,
     character: 'La Comunista Woke',
     characterImage: 'comunistawoke.png',
@@ -2139,6 +2149,7 @@ export const contentCards: Card[] = [
   // --- EL EXILIADO (dramático, eterno, "desde el exilio", el conflicto sigue vivo) ---
   {
     id: 'exiliado_precondicion',
+    pleases: 'right',
     phase: 1,
     character: 'El Exiliado',
     characterImage: 'exiliadopesado.png',
@@ -2148,6 +2159,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'exiliado_mesa_dialogo',
+    pleases: 'right',
     phase: 3,
     character: 'El Exiliado',
     characterImage: 'exiliadopesado.png',
@@ -2157,6 +2169,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'exiliado_bunker',
+    pleases: 'right',
     phase: 4,
     character: 'El Exiliado',
     characterImage: 'exiliadopesado.png',
@@ -2166,6 +2179,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'exiliado_manifiesto',
+    pleases: 'right',
     phase: 2,
     character: 'El Exiliado',
     characterImage: 'exiliadopesado.png',
@@ -2224,6 +2238,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'indepe_traspaso',
+    pleases: 'right',
     phase: 2,
     character: 'El Independentista',
     characterImage: 'independentista.png',
@@ -2233,6 +2248,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'indepe_enfado',
+    pleases: 'left',
     phase: 3,
     character: 'El Independentista',
     characterImage: 'independentista.png',
@@ -2242,6 +2258,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'indepe_madrid_no_entiende',
+    pleases: 'right',
     phase: 3,
     character: 'El Independentista',
     characterImage: 'independentista.png',
@@ -2251,6 +2268,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'indepe_inversion',
+    pleases: 'left',
     phase: 2,
     character: 'El Independentista',
     characterImage: 'independentista.png',
@@ -2260,6 +2278,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'indepe_investidura',
+    pleases: 'right',
     phase: 4,
     character: 'El Independentista',
     characterImage: 'independentista.png',
@@ -2271,6 +2290,7 @@ export const contentCards: Card[] = [
   // --- LA MINISTRA (segura de sí misma, "yo sé de lo que hablo", experta de todo) ---
   {
     id: 'ministra_expertos',
+    pleases: 'right',
     phase: 2,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.png',
@@ -2280,6 +2300,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ministra_choque',
+    pleases: 'right',
     phase: 2,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.png',
@@ -2289,6 +2310,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ministra_profesionales',
+    pleases: 'right',
     phase: 2,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.png',
@@ -2298,6 +2320,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ministra_anuncio',
+    pleases: 'right',
     phase: 3,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.png',
@@ -2307,6 +2330,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ministra_dato',
+    pleases: 'right',
     phase: 3,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.png',
@@ -2316,6 +2340,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ministra_dimision',
+    pleases: 'left',
     phase: 4,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.png',
@@ -2459,6 +2484,7 @@ export const contentCards: Card[] = [
   // --- LA ULTRADERECHA (combativo, cruzada perpetua, "¡la patria!") ---
   {
     id: 'ultra_patria',
+    pleases: 'left',
     phase: 1,
     character: 'La Ultraderecha',
     characterImage: 'ultraderecha.png',
@@ -2468,6 +2494,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ultra_fronteras',
+    pleases: 'left',
     phase: 2,
     character: 'La Ultraderecha',
     characterImage: 'ultraderecha.png',
@@ -2477,6 +2504,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ultra_guerra_cultural',
+    pleases: 'left',
     phase: 2,
     character: 'La Ultraderecha',
     characterImage: 'ultraderecha.png',
@@ -2486,6 +2514,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ultra_soberania',
+    pleases: 'right',
     phase: 3,
     character: 'La Ultraderecha',
     characterImage: 'ultraderecha.png',
@@ -2513,6 +2542,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ultra_pinza',
+    pleases: 'right',
     phase: 4,
     character: 'La Ultraderecha',
     characterImage: 'ultraderecha.png',
@@ -2524,6 +2554,7 @@ export const contentCards: Card[] = [
   // --- EL ESCUDERO (leal hasta el ridículo, sale a defender lo indefendible) ---
   {
     id: 'escudero_de_cajon',
+    pleases: 'left',
     phase: 2,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.png',
@@ -2533,6 +2564,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'escudero_ataque',
+    pleases: 'left',
     phase: 3,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.png',
@@ -2554,6 +2586,7 @@ export const contentCards: Card[] = [
   // --- LA PRIMERA DAMA (empresaria, catedrática, autora... y el presi: "sí, cariño") ---
   {
     id: 'dama_curso',
+    pleases: 'left',
     phase: 1,
     character: 'La Primera Dama',
     characterImage: 'primeradama.svg',
@@ -2563,6 +2596,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'dama_empresaria',
+    pleases: 'left',
     phase: 2,
     character: 'La Primera Dama',
     characterImage: 'primeradama.svg',
@@ -2572,6 +2606,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'dama_libro',
+    pleases: 'left',
     phase: 2,
     character: 'La Primera Dama',
     characterImage: 'primeradama.svg',
@@ -2581,6 +2616,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'dama_avion',
+    pleases: 'left',
     phase: 3,
     character: 'La Primera Dama',
     characterImage: 'primeradama.svg',
@@ -2590,6 +2626,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'dama_cena',
+    pleases: 'left',
     phase: 4,
     character: 'La Primera Dama',
     characterImage: 'primeradama.svg',
@@ -2602,6 +2639,7 @@ export const contentCards: Card[] = [
   //     en relojes y conferencias, corrupto con cara de santo) ---
   {
     id: 'guru_faro',
+    pleases: 'right',
     phase: 1,
     character: 'El Gurú',
     characterImage: 'guru.svg',
@@ -2611,6 +2649,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'guru_conferencia',
+    pleases: 'right',
     phase: 2,
     character: 'El Gurú',
     characterImage: 'guru.svg',
@@ -2620,6 +2659,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'guru_reloj',
+    pleases: 'right',
     phase: 2,
     character: 'El Gurú',
     characterImage: 'guru.svg',
@@ -2629,6 +2669,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'guru_regimen',
+    pleases: 'right',
     phase: 3,
     character: 'El Gurú',
     characterImage: 'guru.svg',
@@ -2638,6 +2679,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'guru_fundacion',
+    pleases: 'right',
     phase: 3,
     character: 'El Gurú',
     characterImage: 'guru.svg',
@@ -2647,6 +2689,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'guru_salvar_mundo',
+    pleases: 'right',
     phase: 4,
     character: 'El Gurú',
     characterImage: 'guru.svg',
@@ -2909,5 +2952,205 @@ export const contentCards: Card[] = [
     text: 'Le ha dado alas y ahora no hay quien le pare: tres platós, dos podcasts y una entrevista en una radio local a las siete de la mañana. Dice cosas nuevas cada vez.',
     left: { text: 'Ponerle un argumentario y un horario', effects: { medios: 1, partido: -1 } },
     right: { text: 'Que siga a su aire', effects: { medios: -2, votantes: 1 } },
+  },
+
+  // ============================================================================
+  // ENFADOS — consecuencias de decirle que no a alguien una y otra vez.
+  // Cada carta de personaje marca con `pleases` qué lado le da la razón; el
+  // lado contrario le suma enfado. Estas cartas saltan al pasar el umbral y
+  // su peso crece con el enfado, así que cuanto más le ignoras, más probable
+  // es que te lo eche en cara (es la "narrativa adaptativa" de Reigns: la
+  // trama que está viva se vuelve más frecuente).
+  // Ojo al escribirlas: la condición es sobre ctx.anger[<nombre exacto del
+  // personaje>], tal cual aparece en `character`.
+  // ============================================================================
+  {
+    id: 'anger_vice',
+    phase: 2,
+    character: 'La Vicepresidenta',
+    characterImage: 'vicepresi.png',
+    text: 'Ha dejado de pedirle cosas. Eso, en ella, es la peor señal. Hoy ha reunido a los suyos en un hotel, sin avisar, y ha salido sonriendo mucho para las cámaras.',
+    left: { text: 'Ofrecerle algo gordo, ya', effects: { partido: 1, caja: -1, votantes: 1 }, moralidad: -1 },
+    right: { text: 'Dejarla ir de una vez', effects: { partido: -2, votantes: -1 } },
+    condition: (_s, _m, ctx) => (ctx.anger['La Vicepresidenta'] ?? 0) >= 3,
+    weight: (_s, _m, ctx) => (ctx.anger['La Vicepresidenta'] ?? 0) - 1,
+  },
+  {
+    id: 'anger_woke',
+    phase: 2,
+    character: 'La Comunista Woke',
+    characterImage: 'comunistawoke.png',
+    text: '"Llevo meses tragando y se acabó." Ha convocado una rueda de prensa a la misma hora que la suya, en la acera de enfrente, con sus ministros detrás.',
+    left: { text: 'Ceder en algo para calmarla', effects: { votantes: 1, partido: -1, medios: -1 } },
+    right: { text: 'Que se vaya del Gobierno', effects: { partido: -2, votantes: -1, medios: 1 } },
+    condition: (_s, _m, ctx) => (ctx.anger['La Comunista Woke'] ?? 0) >= 3,
+    weight: (_s, _m, ctx) => (ctx.anger['La Comunista Woke'] ?? 0) - 1,
+  },
+  {
+    id: 'anger_exiliado',
+    phase: 3,
+    character: 'El Exiliado',
+    characterImage: 'exiliadopesado.png',
+    text: '"Le hemos dado de todo y usted no ha dado nada." Rompe la relación por carta, en tres idiomas, y publica el histórico entero de lo que le prometió.',
+    left: { text: 'Volar a verle y prometerle algo', effects: { partido: 1, votantes: -2, medios: -1 }, moralidad: -1 },
+    right: { text: 'Gobernar sin sus votos', effects: { partido: -2, medios: 1 }, moralidad: 1 },
+    condition: (_s, _m, ctx) => (ctx.anger['El Exiliado'] ?? 0) >= 3,
+    weight: (_s, _m, ctx) => (ctx.anger['El Exiliado'] ?? 0) - 1,
+  },
+  {
+    id: 'anger_indepe',
+    phase: 3,
+    character: 'El Independentista',
+    characterImage: 'independentista.png',
+    text: '"Se acabaron los zascas. Ahora vienen los votos." Anuncia que su grupo pasa al "no" en todo, sin excepción, hasta nuevo aviso. Y lo va a cumplir.',
+    left: { text: 'Negociar una salida cara', effects: { partido: 1, caja: -2 }, moralidad: -1 },
+    right: { text: 'Aguantar el bloqueo', effects: { partido: -2, medios: 1 } },
+    condition: (_s, _m, ctx) => (ctx.anger['El Independentista'] ?? 0) >= 3,
+    weight: (_s, _m, ctx) => (ctx.anger['El Independentista'] ?? 0) - 1,
+  },
+  {
+    id: 'anger_ultra',
+    phase: 3,
+    character: 'La Ultraderecha',
+    characterImage: 'ultraderecha.png',
+    text: 'Después de decirle que no a todo, ha decidido que usted es su tema. Cinco actos, una caravana de coches y una pancarta con su cara en cada plaza del país.',
+    left: { text: 'Tirarle un hueso pequeño', effects: { partido: 1, votantes: -2 }, moralidad: -1 },
+    right: { text: 'Ignorarle y que grite solo', effects: { medios: -1, votantes: 1 } },
+    condition: (_s, _m, ctx) => (ctx.anger['La Ultraderecha'] ?? 0) >= 4,
+    weight: (_s, _m, ctx) => (ctx.anger['La Ultraderecha'] ?? 0) - 2,
+  },
+  {
+    id: 'anger_dama',
+    phase: 2,
+    character: 'La Primera Dama',
+    characterImage: 'primeradama.svg',
+    text: 'Ha concedido una entrevista de dos páginas sin avisarle. Titular: "Yo también he renunciado a cosas". El "también" lleva mucho trabajo detrás.',
+    left: { text: 'Salir a apoyarla en todo', effects: { medios: -2, partido: 1 }, moralidad: -1 },
+    right: { text: 'No comentar la entrevista', effects: { medios: -1, votantes: -1 } },
+    condition: (_s, _m, ctx) => (ctx.anger['La Primera Dama'] ?? 0) >= 3,
+    weight: (_s, _m, ctx) => (ctx.anger['La Primera Dama'] ?? 0) - 1,
+  },
+  {
+    id: 'anger_guru',
+    phase: 3,
+    character: 'El Gurú',
+    characterImage: 'guru.svg',
+    text: '"Este Gobierno ha perdido el alma." Lo dice desde un festival de ideas, en una isla, con entrada a 600 euros. Sus seguidores le creen. Son muchos.',
+    left: { text: 'Reconciliarse y darle un cargo', effects: { votantes: 1, medios: -2 }, moralidad: -2 },
+    right: { text: 'Dejarle predicar en su isla', effects: { votantes: -1, medios: 1 }, moralidad: 1 },
+    condition: (_s, _m, ctx) => (ctx.anger['El Gurú'] ?? 0) >= 3,
+    weight: (_s, _m, ctx) => (ctx.anger['El Gurú'] ?? 0) - 1,
+  },
+  {
+    id: 'anger_escudero',
+    phase: 2,
+    character: 'El Escudero',
+    characterImage: 'ministrolameculos.png',
+    text: 'Le ha pedido tantas veces que se calle que hoy, en el plató, cuando le han preguntado por usted, se ha encogido de hombros. En directo. Eso no lo había hecho nunca.',
+    left: { text: 'Devolverle el micrófono', effects: { partido: 1, medios: -1 } },
+    right: { text: 'Mejor así, callado', effects: { partido: -2, medios: 1 } },
+    condition: (_s, _m, ctx) => (ctx.anger['El Escudero'] ?? 0) >= 4,
+    weight: (_s, _m, ctx) => (ctx.anger['El Escudero'] ?? 0) - 2,
+  },
+  {
+    id: 'anger_ministra',
+    phase: 3,
+    character: 'La Ministra',
+    characterImage: 'ministraincompetente.png',
+    text: 'Ha dejado la carta de dimisión encima de su mesa, sin sobre, para que la lea todo el que pase. Aún no la ha firmado. Es un aviso, y de los caros.',
+    left: { text: 'Darle lo que pide y que se quede', effects: { votantes: 1, partido: -1 } },
+    right: { text: 'Firmarle el cese usted mismo', effects: { partido: 1, votantes: -1, medios: -1 } },
+    condition: (_s, _m, ctx) => (ctx.anger['La Ministra'] ?? 0) >= 3,
+    weight: (_s, _m, ctx) => (ctx.anger['La Ministra'] ?? 0) - 1,
+  },
+
+  // ============================================================================
+  // TRAMA DEL HERMANO — arco con estado. La coloca a dedo, el juez abre
+  // diligencias, la prensa tira del hilo y acaba en juicio. Cada paso enciende
+  // un flag que abre el siguiente y sube el peso de la trama mientras está
+  // viva (y la apaga cuando se cierra), como las cartas de guerra de Reigns.
+  // ============================================================================
+  {
+    id: 'trama_hermano_diligencias',
+    phase: 2,
+    character: 'El Juez',
+    characterImage: 'juez.svg',
+    text: 'He abierto diligencias por el nombramiento de su hermano. De momento es un trámite. De momento.',
+    left: {
+      text: 'Que su hermano dimita hoy mismo',
+      effects: { medios: 1, partido: -1 },
+      moralidad: 2,
+      removeFlags: ['hermano_colocado'],
+    },
+    right: {
+      text: 'Aguantar y que siga en el puesto',
+      effects: { partido: 1, medios: -1 },
+      moralidad: -1,
+      addFlags: ['hermano_investigado'],
+    },
+    condition: (_s, _m, ctx) => ctx.flags.has('hermano_colocado') && !ctx.flags.has('hermano_investigado'),
+    weight: 3,
+  },
+  {
+    id: 'trama_hermano_prensa',
+    phase: 3,
+    character: 'El Periodista',
+    characterImage: 'periodista.svg',
+    text: 'Tenemos su nómina, su contrato y una hoja de firmas donde no ha firmado ni un día. ¿Quiere comentar algo antes de que salga el domingo?',
+    left: {
+      text: 'Adelantarse y contarlo entero',
+      effects: { medios: 1, partido: -1 },
+      moralidad: 2,
+      removeFlags: ['hermano_investigado'],
+    },
+    right: {
+      text: 'Negar que hubiera trato de favor',
+      effects: { medios: -2, partido: 1 },
+      moralidad: -2,
+      addFlags: ['hermano_imputado'],
+    },
+    condition: (_s, _m, ctx) => ctx.flags.has('hermano_investigado') && !ctx.flags.has('hermano_imputado'),
+    weight: 4,
+  },
+  {
+    id: 'trama_hermano_juicio',
+    phase: 3,
+    character: 'El Juez',
+    characterImage: 'juez.svg',
+    text: 'Su hermano queda imputado y con fecha de juicio. Le pregunto, por última vez y para el acta: ¿usted firmó ese nombramiento?',
+    left: {
+      text: 'Decir la verdad y asumirlo',
+      effects: { medios: 2, partido: -2, votantes: 1 },
+      moralidad: 3,
+      removeFlags: ['hermano_imputado'],
+    },
+    right: {
+      text: '"No me consta"',
+      effects: { partido: 1, medios: -2, votantes: -1 },
+      moralidad: -3,
+      addFlags: ['hermano_juicio'],
+    },
+    condition: (_s, _m, ctx) => ctx.flags.has('hermano_imputado'),
+    weight: 5,
+  },
+  {
+    id: 'trama_hermano_condena',
+    phase: 4,
+    character: 'El Hermano',
+    characterImage: 'cunado.svg',
+    text: '"Me van a condenar y tú lo sabes." Ha traído una carpeta con todos los correos que os cruzasteis. Y una pregunta: "¿Me vas a dejar caer solo?"',
+    left: {
+      text: 'Dejarle caer y salvar el Gobierno',
+      effects: { medios: 1, partido: -1, votantes: -1 },
+      moralidad: -1,
+      removeFlags: ['hermano_juicio'],
+    },
+    right: {
+      text: 'Mover cielo y tierra por él',
+      effects: { partido: -1, medios: -2, caja: -1 },
+      moralidad: -2,
+    },
+    condition: (_s, _m, ctx) => ctx.flags.has('hermano_juicio'),
+    weight: 6,
   },
 ]

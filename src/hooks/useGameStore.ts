@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Card, GameState, Stats, StatEffects } from '../types'
+import type { Card, CardContext, GameState, Stats, StatEffects, StatKey } from '../types'
 import { PHASE_MIN_TURN } from '../types'
 import { cards, STAT_START, STAT_MAX, ELECTION_INTERVAL, ELECTION_MAX_TERMS } from '../data/cards'
 
@@ -92,11 +92,29 @@ function applyEffects(stats: Stats, effects: StatEffects): Stats {
   return next
 }
 
+// Contexto que ven `condition` y `weight` de cada carta.
+function contextOf(state: GameState): CardContext {
+  return { flags: new Set(state.flags), anger: state.anger, turn: state.turn }
+}
+
+function cardAllowed(c: Card, state: GameState, ctx: CardContext): boolean {
+  return !c.condition || c.condition(state.stats, state.moralidad, ctx)
+}
+
+// Peso de una carta en la "bolsa" del sorteo. Puede ser un número fijo o una
+// función del estado: así una trama puede volverse más frecuente mientras
+// está viva y apagarse sola (peso 0) cuando deja de tener sentido.
+function cardWeight(c: Card, state: GameState, ctx: CardContext): number {
+  const w = typeof c.weight === 'function' ? c.weight(state.stats, state.moralidad, ctx) : c.weight
+  return Math.max(0, Math.round(w ?? 1))
+}
+
 function pickNextCard(state: GameState, forcedId?: string): Card {
   if (forcedId) {
     const forced = cards.find((c) => c.id === forcedId)
     if (forced) return forced
   }
+  const ctx = contextOf(state)
 
   // ELECCIONES: cada ELECTION_INTERVAL turnos (4 años de gobierno) toca
   // renovar legislatura, pase lo que pase. Es el hito de la partida: según
@@ -105,9 +123,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   // Va ANTES de los finales por stat: si justo ese turno además tocabas
   // fondo, manda la noche electoral, que es mejor final.
   if (state.turn > 0 && state.turn % ELECTION_INTERVAL === 0) {
-    const electionCards = cards.filter(
-      (c) => c.isElection && (!c.condition || c.condition(state.stats, state.moralidad))
-    )
+    const electionCards = cards.filter((c) => c.isElection && cardAllowed(c, state, ctx))
     if (electionCards.length > 0) {
       // La última convocatoria tiene sus propias cartas (`_final`): si hay
       // alguna válida, tiene prioridad sobre las normales.
@@ -145,7 +161,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
       c.isEnding &&
       !c.isElection &&
       (c.minTurn === undefined || state.turn >= c.minTurn) &&
-      c.condition?.(state.stats, state.moralidad)
+      c.condition?.(state.stats, state.moralidad, ctx)
   )
   if (validEndings.length > 0) {
     return validEndings[Math.floor(Math.random() * validEndings.length)]
@@ -154,8 +170,11 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   return pickRegularCard(state)
 }
 
-// Sorteo de carta normal (ni final ni elecciones).
+// Sorteo de carta normal (ni final ni elecciones). Es la "bolsa" de Reigns:
+// se quitan las que no encajan con el estado y las recién vistas, al resto se
+// le da un tamaño (peso, que puede depender del estado) y se saca una.
 function pickRegularCard(state: GameState): Card {
+  const ctx = contextOf(state)
   // Cartas normales candidatas: no vistas recientemente, no son finales,
   // dentro de su ventana de turno/fase, y cumplen su condición si la tienen.
   const recent = new Set(state.history.slice(-5))
@@ -163,7 +182,8 @@ function pickRegularCard(state: GameState): Card {
     !c.isEnding &&
     !c.isElection &&
     !recent.has(c.id) &&
-    (!c.condition || c.condition(state.stats, state.moralidad))
+    cardAllowed(c, state, ctx) &&
+    cardWeight(c, state, ctx) > 0
 
   // No repetir el personaje de la carta anterior: dos cartas seguidas del
   // mismo personaje se leen como un bug. Las cadenas narrativas (nextCardId)
@@ -184,7 +204,7 @@ function pickRegularCard(state: GameState): Card {
     anyBase.length ? anyBase :
     cards.filter((c) => !c.isEnding && !c.isElection && otherChar(c))
 
-  const weighted = candidates.flatMap((c) => Array(c.weight ?? 1).fill(c))
+  const weighted = candidates.flatMap((c) => Array(cardWeight(c, state, ctx)).fill(c))
   return (
     weighted[Math.floor(Math.random() * weighted.length)] ??
     cards.find((c) => !c.isEnding && !c.isElection)!
@@ -200,6 +220,15 @@ interface GameStore extends GameState {
 
 function initialStats(): Stats {
   return { medios: STAT_START, partido: STAT_START, votantes: STAT_START, caja: STAT_START }
+}
+
+const STAT_KEYS = ['medios', 'partido', 'votantes', 'caja'] as const
+
+// Qué indicador está roto (a 0 o al máximo). Se guarda al terminar para poder
+// decirlo en la pantalla de fin: en Reigns la muerte siempre te dice qué pilar
+// falló, y eso es lo que te enseña a jugar mejor la siguiente.
+function brokenStat(stats: Stats): StatKey | undefined {
+  return STAT_KEYS.find((k) => stats[k] <= 0 || stats[k] >= STAT_MAX)
 }
 
 const MORALIDAD_START = 5
@@ -224,21 +253,41 @@ export const useGameStore = create<GameStore>((set, get) => ({
   turn: 1,
   history: [firstCard.id],
   gameOver: false,
+  flags: [],
+  anger: {},
   currentCard: firstCard,
   lastEpilogue: undefined,
 
   choose: (side) => {
     const state = get()
-    const choice = state.currentCard[side]
+    const card = state.currentCard
+    const choice = card[side]
     const newStats = applyEffects(state.stats, choice.effects)
     const newMoralidad = applyMoralidad(state.moralidad, choice.moralidad)
+
+    // Estado narrativo: la elección puede encender o apagar flags.
+    const flagSet = new Set(state.flags)
+    choice.addFlags?.forEach((f) => flagSet.add(f))
+    choice.removeFlags?.forEach((f) => flagSet.delete(f))
+    const newFlags = [...flagSet]
+
+    // Enfado: si la carta marca qué lado le da la razón al personaje y has
+    // elegido el contrario, se lo apunta. Contentarle rebaja el enfado.
+    const newAnger = { ...state.anger }
+    if (card.pleases) {
+      const current = newAnger[card.character] ?? 0
+      newAnger[card.character] = side === card.pleases ? Math.max(0, current - 1) : current + 1
+    }
 
     if (choice.epilogueText) {
       set({
         stats: newStats,
         moralidad: newMoralidad,
+        flags: newFlags,
+        anger: newAnger,
         gameOver: true,
         deathReason: choice.epilogueText,
+        deathStat: brokenStat(state.stats),
         lastEpilogue: choice.epilogueText,
       })
       return
@@ -256,6 +305,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       turn: nextTurn,
       history: [...state.history, state.currentCard.id],
       gameOver: false,
+      flags: newFlags,
+      anger: newAnger,
     }
     const nextCard = pickNextCard(nextState, choice.nextCardId)
 
@@ -274,7 +325,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       turn: 1,
       history: [intro.id],
       gameOver: false,
+      flags: [],
+      anger: {},
       deathReason: undefined,
+      deathStat: undefined,
       lastEpilogue: undefined,
       currentCard: intro,
     })

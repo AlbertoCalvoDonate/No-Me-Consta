@@ -183,3 +183,38 @@ Las cartas de elecciones llevan `isElection: true`, viven en `cards.ts` (usan
 Ojo: las de la última convocatoria son `isEnding` **y** `isElection`, así que
 el filtro de finales normales tiene que excluir `isElection` — si no, se
 cuelan en cualquier turno.
+
+## Narrativa adaptativa (el modelo de Reigns)
+
+Reigns describe su selección de cartas como una **bolsa**: coges todas, quitas
+las que no encajan con el estado, quitas las recién vistas, das a cada una un
+"tamaño" (peso) y sorteas. Eso ya es lo que hace `pickRegularCard`. Encima de
+eso hay tres piezas que permiten que la partida se cuente sola:
+
+### Pesos dinámicos
+
+`weight` puede ser un número **o una función** `(stats, moralidad, ctx)`. Así
+una trama se vuelve más frecuente mientras está viva y se apaga sola (peso 0)
+cuando deja de tener sentido — igual que las cartas de guerra de Reigns, que
+entran en la baraja al empezar la guerra y salen al acabarla.
+
+### Flags (estado narrativo)
+
+Cualquier elección puede encender o apagar flags con `addFlags` /
+`removeFlags`, y cualquier carta puede consultarlos en `condition` vía
+`ctx.flags`. Con eso se montan arcos de varias cartas que se van abriendo unos
+a otros. Ejemplo completo en el mazo: la **trama del hermano**
+(`trama_hermano_*`), que va de colocarle a dedo → diligencias → prensa →
+imputación → juicio, y en la que cada paso sube el peso de la trama.
+
+### Enfado por personaje
+
+Reigns lleva un nivel de "stress" por personaje según cuántas veces le
+rechazas. Aquí: cada carta puede marcar con `pleases: 'left' | 'right'` qué
+lado le da la razón a quien habla. Elegir el contrario le suma enfado;
+contentarle se lo baja. Las cartas `anger_*` saltan al pasar el umbral y su
+peso crece con el enfado, así que cuanto más ignoras a alguien, más probable
+es que te lo eche en cara.
+
+Medido en simulación: jugando al azar, el 8% de las partidas ve una carta de
+enfado; jugando a decir que no a todo, el 48%.

@@ -44,7 +44,7 @@ const endingCards: Card[] = [
     character: 'La Redacción',
     text: 'Se ha filtrado el documento definitivo: años de trapicheos, uno detrás de otro, todos con su firma al pie. Ni el mejor community manager del país le salva ya de esta.',
     left: { text: 'Publicar la verdad completa', effects: {}, epilogueText: 'Se queda sin apoyos, pero al menos sin más secretos que esconder — los pocos que le quedaban. Fin del gobierno, tarde mejor que nunca.' },
-    right: { text: 'Culpar a "una campaña orquestada"', effects: {}, epilogueText: 'Hasta su cuñado, que llevaba años cobrando de más, deja de compartirlo en el grupo de WhatsApp. Fin del gobierno.' },
+    right: { text: 'Culpar a "una campaña orquestada"', effects: {}, epilogueText: 'Hasta su hermano, que llevaba años cobrando de más, deja de compartirlo en el grupo de WhatsApp. Fin del gobierno.' },
     isEnding: true,
     condition: (s, m) => s.medios <= 0 && m <= 3,
   },

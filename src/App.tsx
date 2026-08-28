@@ -6,12 +6,22 @@ import { StatBars } from './components/StatBars'
 import { SituationBanner } from './components/SituationBanner'
 import { BottomBar } from './components/BottomBar'
 import { StartScreen } from './components/StartScreen'
+import { StatIcon } from './components/StatIcon'
+import type { StatKey } from './types'
+
+const STAT_LABEL: Record<StatKey, string> = {
+  medios: 'Medios',
+  partido: 'Partido',
+  votantes: 'Votantes',
+  caja: 'Caja B',
+}
 
 export default function App() {
   // Pantalla de inicio: solo se ve una vez al cargar la web, no vuelve a
   // salir al reiniciar partida (restart lleva directo a jugar de nuevo).
   const [started, setStarted] = useState(false)
-  const { stats, turn, gameOver, deathReason, currentCard, choose, restart } = useGameStore()
+  const { stats, turn, gameOver, deathReason, deathStat, currentCard, choose, restart } =
+    useGameStore()
 
   // Posición de arrastre de la carta actual, compartida con StatBars para
   // que las flechas de efecto se vean arriba, sobre el icono de cada stat,
@@ -124,6 +134,36 @@ export default function App() {
                     >
                       {deathReason}
                     </p>
+                    {/* Qué indicador se rompió. En Reigns la pantalla de
+                        muerte siempre te dice qué pilar falló: es lo que te
+                        enseña a jugar mejor la próxima. */}
+                    {deathStat && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 10,
+                          marginBottom: 18,
+                          padding: '8px 14px',
+                          borderRadius: 10,
+                          background: 'rgba(255,77,77,0.12)',
+                          border: '1px solid rgba(255,77,77,0.35)',
+                        }}
+                      >
+                        <StatIcon statKey={deathStat} value={stats[deathStat]} critical size={30} />
+                        <span
+                          style={{
+                            fontFamily: 'var(--font-pixel)',
+                            fontWeight: 500,
+                            fontSize: 19,
+                            color: '#ff9b9b',
+                          }}
+                        >
+                          {STAT_LABEL[deathStat]}
+                          {stats[deathStat] <= 0 ? ' por los suelos' : ' por las nubes'}
+                        </span>
+                      </div>
+                    )}
                     <p
                       style={{
                         color: '#888',
@@ -134,7 +174,8 @@ export default function App() {
                         fontWeight: 500,
                       }}
                     >
-                      Duró {turn - 1} {turn - 1 === 1 ? 'decisión' : 'decisiones'} en el cargo.
+                      Duró {turn - 1} {turn - 1 === 1 ? 'mes' : 'meses'} en el cargo
+                      {turn - 1 >= 12 ? ` (${(( turn - 1) / 12).toFixed(1)} años)` : ''}.
                     </p>
                     <button
                       onClick={restart}

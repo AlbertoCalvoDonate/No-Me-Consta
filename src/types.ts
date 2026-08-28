@@ -22,6 +22,22 @@ export interface CardChoice {
   moralidad?: number
   nextCardId?: string   // Fuerza la siguiente carta (para mini-arcos narrativos)
   epilogueText?: string // Si esta elección termina la partida, texto de cierre
+  // Estado narrativo que enciende o apaga esta elección. Los flags son texto
+  // libre ('guerra_abierta', 'hermano_imputado'...) y las cartas los consultan
+  // desde `condition` para aparecer o no. Es como lo hace Reigns: las cartas
+  // de guerra entran en la baraja cuando empieza la guerra y salen al acabar.
+  addFlags?: string[]
+  removeFlags?: string[]
+}
+
+// Contexto de la partida que ven `condition` y `weight`, más allá de las
+// stats: el estado narrativo (flags) y el enfado acumulado por personaje.
+export interface CardContext {
+  flags: ReadonlySet<string>
+  // Cuántas veces se ha desairado a cada personaje (por nombre). Sube cuando
+  // eliges la opción contraria a lo que pide, si la carta marca `pleases`.
+  anger: Readonly<Record<string, number>>
+  turn: number
 }
 
 // Fases narrativas de la legislatura, de menos a más gravedad.
@@ -52,8 +68,17 @@ export interface Card {
   // Condición opcional para que la carta solo aparezca en cierto rango de
   // stats (y, opcionalmente, de moralidad — sobre todo para finales que
   // combinan "qué stat tocó fondo/techo" con "cómo se llegó hasta ahí").
-  condition?: (stats: Stats, moralidad: number) => boolean
-  weight?: number       // Prioridad de aparición (default 1)
+  // El tercer parámetro trae el estado narrativo (flags, enfados, turno).
+  condition?: (stats: Stats, moralidad: number, ctx: CardContext) => boolean
+  // Prioridad de aparición (default 1). Puede ser una función para que el
+  // peso cambie con la partida, que es la clave de la narrativa adaptativa de
+  // Reigns: una carta se vuelve más frecuente mientras su trama está viva y
+  // se apaga (peso 0) cuando deja de tener sentido.
+  weight?: number | ((stats: Stats, moralidad: number, ctx: CardContext) => number)
+  // Qué lado le da la razón al personaje. Si se indica, elegir el contrario
+  // le suma enfado (ver CardContext.anger), que otras cartas pueden usar
+  // como condición para saltar ("te has cansado de decirle que no").
+  pleases?: 'left' | 'right'
   isEnding?: boolean    // Carta especial de final de partida
   // Carta del evento de elecciones (cada 4 años de gobierno). No sale nunca
   // por sorteo: useGameStore la fuerza al llegar el turno, eligiendo entre
@@ -79,4 +104,11 @@ export interface GameState {
   history: string[]   // ids de cartas ya vistas, para evitar repeticiones
   gameOver: boolean
   deathReason?: string
+  // Qué indicador provocó el final, para poder decirlo en la pantalla de fin
+  // (en Reigns la pantalla de muerte te dice siempre qué pilar te mató).
+  deathStat?: StatKey
+  // Estado narrativo de la partida (ver CardChoice.addFlags).
+  flags: string[]
+  // Enfado acumulado por personaje (ver CardContext.anger).
+  anger: Record<string, number>
 }
