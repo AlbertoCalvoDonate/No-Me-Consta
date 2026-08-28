@@ -31,7 +31,7 @@ export function StatBars({ stats, card, x }: Props) {
         display: 'flex',
         background: '#111113',
         borderBottom: '1px solid rgba(255,255,255,0.06)',
-        padding: '14px 6px',
+        padding: '12px 4px 10px',
       }}
     >
       {ITEMS.map(({ key, label }) => {
@@ -43,26 +43,37 @@ export function StatBars({ stats, card, x }: Props) {
         const rightVal = card?.right.effects[key] ?? 0
         return (
           <div key={key} style={{ flex: 1, textAlign: 'center' }} aria-label={`${label}: ${stats[key]}`}>
-            <StatIcon statKey={key} value={stats[key]} critical={critical} />
+            {/* La flecha de efecto se superpone sobre el icono al hacer swipe
+                (position:absolute), así que el icono no salta al aparecer. */}
+            <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
+              <StatIcon statKey={key} value={stats[key]} critical={critical} />
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  top: -8,
+                  height: 40,
+                  pointerEvents: 'none',
+                }}
+              >
+                {leftVal !== 0 && <EffectArrow value={leftVal} opacity={leftOpacity} />}
+                {rightVal !== 0 && <EffectArrow value={rightVal} opacity={rightOpacity} />}
+              </div>
+            </div>
             {/* Etiqueta de texto: los iconos solos no siempre se entienden. */}
             <div
               style={{
                 fontFamily: 'var(--font-pixel)',
                 fontWeight: 500,
-                fontSize: 12,
+                fontSize: 14,
                 letterSpacing: 0.4,
                 lineHeight: 1,
-                marginTop: 3,
-                color: critical ? '#ff6b6b' : '#9a9384',
+                marginTop: 4,
+                color: critical ? '#ff6b6b' : '#a8a08c',
               }}
             >
               {label}
-            </div>
-            {/* Hueco fijo para la flecha, para que los iconos no salten
-                cuando aparece/desaparece */}
-            <div style={{ position: 'relative', height: 20, marginTop: 3 }}>
-              {leftVal !== 0 && <EffectArrow value={leftVal} opacity={leftOpacity} />}
-              {rightVal !== 0 && <EffectArrow value={rightVal} opacity={rightOpacity} />}
             </div>
           </div>
         )

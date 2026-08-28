@@ -46,7 +46,17 @@ function IconShapes({ statKey }: { statKey: keyof Stats }) {
   }
 }
 
-export function StatIcon({ statKey, value, critical }: { statKey: keyof Stats; value: number; critical: boolean }) {
+export function StatIcon({
+  statKey,
+  value,
+  critical,
+  size = 44,
+}: {
+  statKey: keyof Stats
+  value: number
+  critical: boolean
+  size?: number
+}) {
   const pct = Math.max(0, Math.min(1, value / STAT_MAX))
   const fillHeight = VB * pct
   const fillY = VB - fillHeight
@@ -54,14 +64,15 @@ export function StatIcon({ statKey, value, critical }: { statKey: keyof Stats; v
   const fillColor = critical ? '#ff4d4d' : '#e0b84d'
 
   return (
-    <svg width={30} height={30} viewBox={`0 0 ${VB} ${VB}`} aria-hidden="true">
+    <svg width={size} height={size} viewBox={`0 0 ${VB} ${VB}`} aria-hidden="true">
       <defs>
         <clipPath id={clipId}>
           <IconShapes statKey={statKey} />
         </clipPath>
       </defs>
-      {/* Silueta vacía, siempre visible de fondo. */}
-      <g fill="#4d493e">
+      {/* Silueta vacía, siempre visible de fondo. Más clara que antes para
+          que el icono se lea aunque la stat esté casi a cero (poco relleno). */}
+      <g fill="#6b6656">
         <IconShapes statKey={statKey} />
       </g>
       {/* Relleno tipo medidor: sube desde abajo, recortado a la silueta.

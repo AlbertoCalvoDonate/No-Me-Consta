@@ -5,9 +5,9 @@ import { characterColor } from '../utils/color'
 // Tamaño FIJO a propósito — no crece ni encoge con el largo del texto, para
 // que la carta de debajo se vea siempre, no solo un hueco pequeño. El texto
 // que no quepa se recorta (overflow hidden) en vez de agrandar la etiqueta.
-const PANEL_WIDTH = 190
-const PANEL_HEIGHT = 96
-const PANEL_HIDDEN = PANEL_WIDTH + 20
+const PANEL_WIDTH = 210
+const PANEL_HEIGHT = 118
+const PANEL_HIDDEN = PANEL_WIDTH + 24
 
 // Distancia de arrastre (px, ya con dragElastic aplicado) a la que un lado
 // se considera "totalmente revelado". Se exporta porque StatBars usa el
@@ -86,10 +86,10 @@ function ChoicePanel({
         borderRadius: 12,
         boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
-        padding: '10px 12px',
+        padding: '8px 10px',
         boxSizing: 'border-box',
         zIndex: 4,
         pointerEvents: 'none',
@@ -97,15 +97,17 @@ function ChoicePanel({
     >
       <div
         style={{
+          width: '100%',
           fontFamily: 'var(--font-pixel)',
           // 400: es el único peso que existe de verdad para esta fuente (ver
           // nota en index.css) — un 700 aquí forzaría un "bold" sintético
           // que se ve borroso, sobre todo a este tamaño.
           fontWeight: 400,
-          fontSize: 20,
-          lineHeight: 1.25,
+          fontSize: 15,
+          lineHeight: 1.2,
           color: '#fff',
           textAlign: 'center',
+          overflowWrap: 'anywhere',
         }}
       >
         {text}

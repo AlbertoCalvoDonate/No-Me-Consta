@@ -48,12 +48,12 @@ export const contentCards: Card[] = [
     characterImage: 'presi.png',
     text: 'Primer día. La puerta del despacho se cierra a su espalda. Nadie más en la sala: solo usted, una mesa enorme y la sensación de que esto puede acabar muy bien o rematadamente mal.',
     left: {
-      text: 'Lo voy a hacer por la gente. De verdad. Esta vez sí',
+      text: 'Por la gente. De verdad. Esta vez sí',
       effects: { votantes: 1 }, moralidad: 1,
       nextCardId: 'inicio',
     },
     right: {
-      text: 'Cuatro añitos, unos contactos, y a vivir tranquilo',
+      text: 'Cuatro añitos, unos contactos, y a vivir',
       effects: { caja: 1 }, moralidad: -1,
       nextCardId: 'inicio',
     },
@@ -66,12 +66,12 @@ export const contentCards: Card[] = [
     characterImage: 'presi.png',
     text: 'Aún no ha soltado el abrigo y ya hay tres teléfonos sonando, dos ministros discutiendo en el pasillo y un sobre sin remitente encima de la mesa. "Esto es una oportunidad", se dice.',
     left: {
-      text: 'Salir al pasillo a poner paz entre los ministros',
+      text: 'Poner paz entre los ministros del pasillo',
       effects: { partido: 1 },
       nextCardId: 'inicio',
     },
     right: {
-      text: 'Cerrar la puerta y abrir primero el sobre sin remitente',
+      text: 'Cerrar la puerta y abrir el sobre primero',
       effects: { caja: 1, medios: -1 }, moralidad: -1,
       nextCardId: 'inicio',
     },
@@ -84,12 +84,12 @@ export const contentCards: Card[] = [
     characterImage: 'presi.png',
     text: 'Se mira en el espejo del baño oficial y ensaya la cara de estadista. Le sale más bien la de alguien que todavía no se cree del todo dónde está. Habrá que apañarse con esa.',
     left: {
-      text: 'Salir a saludar a todo el personal, uno por uno, por su nombre',
+      text: 'Saludar a todo el personal, uno por uno',
       effects: { votantes: 1 }, moralidad: 1,
       nextCardId: 'inicio',
     },
     right: {
-      text: 'Preguntar discretamente cuál es el despacho bueno',
+      text: 'Preguntar cuál es el despacho bueno',
       effects: { partido: 1, votantes: -1 },
       nextCardId: 'inicio',
     },
@@ -102,12 +102,12 @@ export const contentCards: Card[] = [
     characterImage: 'presi.png',
     text: 'Su antecesor le ha dejado una nota en el cajón: "Suerte. La vas a necesitar." Debajo, un número de teléfono tachado y la palabra "NO" subrayada tres veces con bolígrafo.',
     left: {
-      text: 'Guardar la nota en un cajón y empezar de cero',
+      text: 'Guardar la nota y empezar de cero',
       effects: { votantes: 1 }, moralidad: 1,
       nextCardId: 'inicio',
     },
     right: {
-      text: 'Descifrar el número tachado y marcarlo, total, por curiosidad',
+      text: 'Descifrar el número tachado y marcarlo',
       effects: { caja: 1, medios: -1 }, moralidad: -1,
       nextCardId: 'inicio',
     },
@@ -120,12 +120,12 @@ export const contentCards: Card[] = [
     characterImage: 'presi.png',
     text: 'El jefe de seguridad le entrega una carpeta con el sello de "ALTO SECRETO" y le mira fijamente. "Léala hoy. Solo hoy. Y luego olvide que existió, por su bien."',
     left: {
-      text: 'Leerla entera esta noche, palabra por palabra',
+      text: 'Leerla entera esta noche, sin saltarse nada',
       effects: { medios: 1 }, moralidad: 1,
       nextCardId: 'inicio',
     },
     right: {
-      text: 'Firmar el acuse de recibo sin abrirla siquiera',
+      text: 'Firmar el acuse sin abrirla siquiera',
       effects: { partido: 1 },
       nextCardId: 'inicio',
     },
@@ -138,12 +138,12 @@ export const contentCards: Card[] = [
     characterImage: 'presi.png',
     text: 'El primer día ya trae 40 reuniones en la agenda. La número 1 es con un empresario que "apoyó mucho" la campaña. La número 40, la última, con gente de la calle.',
     left: {
-      text: 'Reordenar la agenda y empezar por la número 40',
+      text: 'Dar la vuelta a la agenda y empezar por la 40',
       effects: { votantes: 1 }, moralidad: 1,
       nextCardId: 'inicio',
     },
     right: {
-      text: 'Respetar el orden: hay que ser agradecido con quien ayuda',
+      text: 'Respetar el orden: hay que ser agradecido',
       effects: { caja: 1 }, moralidad: -1,
       nextCardId: 'inicio',
     },
@@ -156,12 +156,12 @@ export const contentCards: Card[] = [
     characterImage: 'presi.png',
     text: 'La mitad de la plantilla es del presidente anterior. Le sonríen con demasiados dientes. Uno de ellos tiene el móvil en la mano, en horizontal, apuntando discretamente hacia usted.',
     left: {
-      text: 'Mantenerlos a todos por prudencia y no hacer ruido',
+      text: 'Mantenerlos a todos, por prudencia',
       effects: { partido: 1 },
       nextCardId: 'inicio',
     },
     right: {
-      text: 'Traer a los suyos de confianza y que corra el aire',
+      text: 'Traer a los suyos y que corra el aire',
       effects: { partido: -1, votantes: 1 },
       nextCardId: 'inicio',
     },
@@ -174,12 +174,12 @@ export const contentCards: Card[] = [
     characterImage: 'presi.png',
     text: 'Antes de nada, El Escudero le empuja hacia un balcón: "Salude, salude, que la foto del primer día es la que sale en los libros." Abajo hay cuatro personas, dos banderas y un periodista aburrido.',
     left: {
-      text: 'Salir a saludar con un entusiasmo sospechosamente genuino',
+      text: 'Salir a saludar con entusiasmo sincero',
       effects: { votantes: 1 },
       nextCardId: 'inicio',
     },
     right: {
-      text: '"¿No deberíamos hacer algo antes de celebrarlo?"',
+      text: '"¿No deberíamos hacer algo primero?"',
       effects: { medios: 1, partido: -1 }, moralidad: 1,
       nextCardId: 'inicio',
     },
