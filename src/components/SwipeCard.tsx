@@ -18,14 +18,17 @@ const CARD_TILT = 12
 // para caber entero en la carta, así todos se ven igual en cualquier pantalla.
 const PORTRAIT_RATIO = '1020 / 1200'
 
-// Distancia de arrastre (px, ya con dragElastic aplicado) a la que un lado
-// se considera "totalmente revelado". Se exporta porque StatBars usa el
-// mismo valor para las flechas de efecto — deben moverse en sincronía.
-// Antes eran 150px: bastante más que SWIPE_THRESHOLD (la distancia real
-// para que la elección cuente), así que el panel nunca llegaba a verse
-// entero antes de que el gesto ya se hubiera decidido. Con 60px se revela
-// del todo con menos recorrido del pulgar, y antes de llegar al umbral.
-export const SWIPE_REVEAL_DISTANCE = 60
+// Distancia de arrastre a la que un lado se considera "totalmente revelado".
+// Se exporta porque StatBars usa el mismo valor para las flechas de efecto —
+// deben moverse en sincronía.
+//
+// OJO con las unidades: esto se mide sobre `x`, que es el desplazamiento YA
+// amortiguado por dragElastic (0.7), mientras que SWIPE_THRESHOLD se compara
+// contra el recorrido real del DEDO. Es decir: dedo ≈ x / 0.7. Con 60 aquí,
+// el panel no se completaba hasta 86px de dedo, pero la elección ya estaba
+// decidida a los 70px — el panel no llegaba a leerse entero nunca. Medido:
+// con 38 se completa a ~54px de dedo, bastante antes del umbral.
+export const SWIPE_REVEAL_DISTANCE = 38
 
 // Cuánto de "corrupta" es una decisión, a partir de sus propios efectos:
 // caja/partido son ganancias de trastienda, medios/votantes son legitimidad
@@ -67,13 +70,14 @@ function ChoicePanel({
   colors: { bg: string; accent: string }
   x: MotionValue<number>
 }) {
-  // Zona muerta: mientras el arrastre no pase de estos px hacia este lado, el
-  // panel sigue del todo fuera de pantalla. Colchón para el rebote elástico
-  // al soltar, que se pasa unos píxeles al lado contrario.
-  const DEAD_ZONE = 14
+  // El deslizamiento arranca en 0, no en una zona muerta: el panel empieza a
+  // asomar desde el primer píxel de arrastre y entra de forma gradual. Con
+  // zona muerta entraba tarde y de golpe, y no daba tiempo a leerlo. Para el
+  // rebote al soltar no hace falta colchón aquí: de eso se encarga `opacity`,
+  // que apaga el panel en cuanto el arrastre cruza al lado contrario.
   const slideRaw = useTransform(
     x,
-    side === 'left' ? [-SWIPE_REVEAL_DISTANCE, -DEAD_ZONE] : [DEAD_ZONE, SWIPE_REVEAL_DISTANCE],
+    side === 'left' ? [-SWIPE_REVEAL_DISTANCE, 0] : [0, SWIPE_REVEAL_DISTANCE],
     side === 'left' ? [0, -PANEL_HIDDEN] : [PANEL_HIDDEN, 0]
   )
   // Posición final = desplazamiento de la carta + deslizamiento de entrada.
@@ -135,11 +139,11 @@ function ChoicePanel({
   )
 }
 
-// Un poco por encima de SWIPE_REVEAL_DISTANCE a propósito: así el panel ya
-// se ha revelado del todo (a los 60px) antes de que el gesto llegue a
-// contar como elección — se ve claro qué se está eligiendo antes de que la
-// carta se vaya.
-const SWIPE_THRESHOLD = 70
+// Recorrido del DEDO para que el gesto cuente como elección. Tiene que dejar
+// margen de sobra por encima del punto en el que el panel ya está entero
+// (~54px de dedo, ver SWIPE_REVEAL_DISTANCE): ese hueco es el tiempo que
+// tienes para leer la opción antes de que la carta se vaya.
+const SWIPE_THRESHOLD = 82
 // Un "flick" rápido cuenta como elección aunque no llegue a esa distancia —
 // así se parece más a un gesto real y hay menos posibilidades de que el
 // ratón se salga de la ventana antes de completar el arrastre.
