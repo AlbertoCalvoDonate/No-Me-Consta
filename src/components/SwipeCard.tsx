@@ -80,12 +80,14 @@ function ChoicePanel({
     side === 'left' ? [-SWIPE_REVEAL_DISTANCE, 0] : [0, SWIPE_REVEAL_DISTANCE],
     side === 'left' ? [0, -PANEL_HIDDEN] : [PANEL_HIDDEN, 0]
   )
-  // Posición final = desplazamiento de la carta + deslizamiento de entrada.
+  // Solo el deslizamiento de entrada: el panel NO acompaña a la carta. Una vez
+  // dentro se queda QUIETO en pantalla aunque se siga arrastrando, y es la
+  // carta la que se va por debajo (como en el Reigns original). Antes le
+  // sumaba el desplazamiento de la carta y, pasada la distancia de revelado,
+  // el panel se iba con ella en vez de quedarse a la vista.
   // Redondeado a píxel entero: sin esto, al llegar al valor máximo el
   // navegador podía renderizar un subpíxel de más y se veía un salto de 1px.
-  const panelX = useTransform<number, number>([x, slideRaw], ([cardX, slide]) =>
-    Math.round(cardX + slide)
-  )
+  const panelX = useTransform(slideRaw, (v) => Math.round(v))
   // El panel de un lado NO existe (opacity 0) en cuanto el arrastre está en
   // el lado contrario — incluso 1px. Así, pase lo que pase con el rebote al
   // soltar (que puede cruzar el 0 hacia el otro signo), el panel que no se ha
