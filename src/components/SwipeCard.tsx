@@ -214,13 +214,13 @@ export function SwipeCard({ card, onChoose, x }: Props) {
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                objectPosition: 'center',
-                // Zoom fijo por encima de `cover`: los retratos no vienen
-                // todos con el mismo encuadre (algunos traen más aire sobre
-                // la cabeza). Un scale ligero se come ese margen y hace que
-                // la cara llene la carta de forma parecida en todos. El
-                // recorte extra se lo lleva el overflow:hidden de la carta.
-                transform: 'scale(1.13)',
+                // Los PNG de retrato están todos re-encuadrados al mismo
+                // lienzo (1020x1200, ~5% de aire sobre la cabeza, torso
+                // sangrando por abajo — ver scripts/normalize). Con ese
+                // encuadre común, 'center top' ancla la cara arriba: si el
+                // hueco de la carta queda ancho, el recorte se lo lleva el
+                // torso (que ya sangra) y no el pelo.
+                objectPosition: 'center top',
               }}
             />
           )}

@@ -102,6 +102,13 @@ El reparto usa retratos `.png` propios salvo cinco personajes con SVG
 provisional a la espera de arte nuevo (`cunado.svg` — ahora "El Hermano" —,
 `encuestador.svg`, `juez.svg`, `periodista.svg`, `primeradama.svg`).
 
+Los `.png` están **re-encuadrados a un lienzo común** (1020×1200, poco aire
+sobre la cabeza, torso sangrando por abajo) con `scripts/normalize-portraits.mjs`,
+para que en la carta se vean todos con el mismo plano sin importar la altura
+de la ventana. Al añadir un retrato nuevo, pásale ese script (necesita `npm
+run dev` levantado). En la carta se muestran con `object-fit: cover` +
+`object-position: center top`.
+
 ### Cartas de arranque
 
 `useGameStore` elige al azar una de las cartas `presi_intro*` como primera
