@@ -9,6 +9,10 @@ const PANEL_WIDTH = 216
 const PANEL_HEIGHT = 130
 const PANEL_HIDDEN = PANEL_WIDTH + 24
 
+// Inclinación máxima de la carta al arrastrar (grados). El panel de respuesta
+// (hijo de la carta) la contrarresta con -CARD_TILT para que el texto no gire.
+const CARD_TILT = 12
+
 // Proporción común de todos los retratos (scripts/normalize-portraits.mjs los
 // re-encuadra a 1020x1200). El <img> se dimensiona a este ratio y se escala
 // para caber entero en la carta, así todos se ven igual en cualquier pantalla.
@@ -76,11 +80,16 @@ function ChoicePanel({
   // lado el panel ya está a 0.93 pero todavía fuera de pantalla (zona muerta),
   // así que tampoco se ve "aparecer".
   const opacity = useTransform(x, (v) => ((side === 'left' ? v < 0 : v > 0) ? 0.93 : 0))
+  // El panel es hijo de la carta (para que el borde redondeado lo recorte),
+  // así que hereda su rotación. Esto la contrarresta para que el TEXTO se lea
+  // recto aunque la carta esté inclinada.
+  const counterRotate = useTransform(x, [-100, 100], [CARD_TILT, -CARD_TILT])
   return (
     <motion.div
       style={{
         position: 'absolute',
-        top: 14,
+        rotate: counterRotate,
+        top: 12,
         [side]: 14,
         width: PANEL_WIDTH,
         height: PANEL_HEIGHT,
@@ -138,10 +147,7 @@ interface Props {
 }
 
 export function SwipeCard({ card, onChoose, x }: Props) {
-  // Antes eran ±200px para la inclinación máxima — igual de lejos que el
-  // panel entero, con lo que apenas se notaba girar la carta antes de
-  // soltarla. A juego con SWIPE_REVEAL_DISTANCE, ahora gira más rápido.
-  const rotate = useTransform(x, [-100, 100], [-15, 15])
+  const rotate = useTransform(x, [-100, 100], [-CARD_TILT, CARD_TILT])
 
   const leftIsCorrupt = corruptionScore(card.left.effects) > corruptionScore(card.right.effects)
   const leftColors = leftIsCorrupt ? CORRUPT : CLEAN
@@ -240,13 +246,14 @@ export function SwipeCard({ card, onChoose, x }: Props) {
               }}
             />
           )}
-        </motion.div>
 
-        {/* Paneles de respuesta: hermanos de la carta (no hijos), por eso no
-            rotan ni viajan con ella — entran deslizándose desde el lateral
-            en sincronía directa con el arrastre. */}
-        <ChoicePanel text={card.left.text} side="left" colors={leftColors} x={x} />
-        <ChoicePanel text={card.right.text} side="right" colors={rightColors} x={x} />
+          {/* Paneles de respuesta: HIJOS de la carta, así el overflow:hidden y
+              el borde redondeado de la carta los recortan — nunca asoman por
+              fuera del borde visible aunque la carta esté inclinada. Entran
+              deslizándose desde el lateral en sincronía con el arrastre. */}
+          <ChoicePanel text={card.left.text} side="left" colors={leftColors} x={x} />
+          <ChoicePanel text={card.right.text} side="right" colors={rightColors} x={x} />
+        </motion.div>
       </div>
 
       <div

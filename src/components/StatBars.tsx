@@ -35,10 +35,11 @@ export function StatBars({ stats, card, x }: Props) {
       }}
     >
       {ITEMS.map(({ key, label }) => {
-        // Crítico por ambos lados: tocar fondo Y tocar techo acaban mal
-        // (ver los finales "_max" en cards.ts), así que el aviso rojo vale
-        // para los dos extremos, no solo para cuando la stat está baja.
-        const critical = stats[key] <= 2 || stats[key] >= 8
+        // Crítico por ambos lados: tocar fondo (0) Y tocar techo (10) acaban
+        // mal (ver los finales "_max" en cards.ts). El rojo salta solo a un
+        // paso del final (<=1 o >=9), para que "rojo" signifique de verdad
+        // "otra más y pierdes" y no "vas calentito".
+        const critical = stats[key] <= 1 || stats[key] >= 9
         const leftVal = card?.left.effects[key] ?? 0
         const rightVal = card?.right.effects[key] ?? 0
         return (

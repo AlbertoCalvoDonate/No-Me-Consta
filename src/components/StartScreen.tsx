@@ -72,7 +72,7 @@ export function StartScreen({ onStart }: { onStart: () => void }) {
             <StatIcon key={key} statKey={key} value={5} critical={false} />
           ))}
         </div>
-        <p style={{ margin: 0 }}>Vigile estas 4 barras: si alguna llega a 0 o al máximo, se acaba el reinado.</p>
+        <p style={{ margin: 0 }}>Vigile estas 4 barras: si alguna llega a 0 o al máximo, se acaba el gobierno.</p>
       </div>
 
       <button

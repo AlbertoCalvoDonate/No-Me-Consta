@@ -3,8 +3,11 @@
    (donde ocupa toda la pantalla) como en un navegador de escritorio (donde
    queda centrado con barras a los lados, como un emulador). */
 :root {
-  --app-width: 393px;
-  --app-height: 852px;
+  /* Proporción y tamaño de referencia: Samsung Galaxy S23 (1080x2340 -> 6/13).
+     En un móvil real el marco ocupa toda la pantalla; en escritorio queda
+     centrado con este tamaño máximo, como un S23 flotando. */
+  --app-width: 400px;
+  --app-height: 866px;
   /* Fuente "pixel art" estilo Reigns original, vía Google Fonts.
      OJO: Pixelify Sans se descartó porque su glifo de "5" es casi
      indistinguible de una "S" (bug de la propia fuente) — Jersey 10 tiene
@@ -37,15 +40,22 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #000;
+  /* Fondo tipo monograma (estilo Dolce & Gabbana) pero con banderitas.
+     El patrón está en public/bg-flags.svg, ya a baja opacidad. */
+  background-color: #060607;
+  background-image: url('/bg-flags.svg');
+  background-repeat: repeat;
+  background-size: 150px 130px;
 }
 
 .phone-frame {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 393 / 852;
-  width: min(100vw, calc(100dvh * 393 / 852));
-  height: min(100dvh, calc(100vw * 852 / 393));
+  box-sizing: border-box;
+  /* 6 / 13 = proporción del Samsung Galaxy S23 (1080 x 2340). */
+  aspect-ratio: 6 / 13;
+  width: min(100vw, calc(100dvh * 6 / 13));
+  height: min(100dvh, calc(100vw * 13 / 6));
   max-width: var(--app-width);
   max-height: var(--app-height);
 }

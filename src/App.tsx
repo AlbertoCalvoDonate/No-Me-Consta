@@ -44,7 +44,13 @@ export default function App() {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            background: 'radial-gradient(circle at top, #2c2c2e, #0a0a0b)',
+            // Patrón de banderitas (estilo monograma) por encima del degradado,
+            // así se ve también en móvil, donde el marco llena la pantalla.
+            backgroundColor: '#0a0a0b',
+            backgroundImage:
+              "url('/bg-flags.svg'), radial-gradient(circle at top, #2c2c2e, #0a0a0b)",
+            backgroundRepeat: 'repeat, no-repeat',
+            backgroundSize: '150px 130px, cover',
             fontFamily: 'system-ui, sans-serif',
           }}
         >
@@ -105,7 +111,7 @@ export default function App() {
                         lineHeight: 1.35,
                       }}
                     >
-                      Fin del mandato
+                      Fin del gobierno
                     </h2>
                     <p
                       style={{

@@ -54,7 +54,7 @@ export interface Card {
   // combinan "qué stat tocó fondo/techo" con "cómo se llegó hasta ahí").
   condition?: (stats: Stats, moralidad: number) => boolean
   weight?: number       // Prioridad de aparición (default 1)
-  isEnding?: boolean    // Carta especial de final de dinastía
+  isEnding?: boolean    // Carta especial de final de partida
   phase: Phase          // Fase de gravedad narrativa a la que pertenece
   minTurn?: number      // Turno mínimo explícito (si no, se usa PHASE_MIN_TURN[phase])
   maxTurn?: number      // Turno máximo explícito, opcional (para cartas "de una época")
