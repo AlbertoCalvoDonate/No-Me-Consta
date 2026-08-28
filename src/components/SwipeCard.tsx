@@ -5,8 +5,8 @@ import { characterColor } from '../utils/color'
 // Tamaño FIJO a propósito — no crece ni encoge con el largo del texto, para
 // que la carta de debajo se vea siempre, no solo un hueco pequeño. El texto
 // que no quepa se recorta (overflow hidden) en vez de agrandar la etiqueta.
-const PANEL_WIDTH = 210
-const PANEL_HEIGHT = 118
+const PANEL_WIDTH = 216
+const PANEL_HEIGHT = 130
 const PANEL_HIDDEN = PANEL_WIDTH + 24
 
 // Proporción común de todos los retratos (scripts/normalize-portraits.mjs los
@@ -108,7 +108,7 @@ function ChoicePanel({
           // nota en index.css) — un 700 aquí forzaría un "bold" sintético
           // que se ve borroso, sobre todo a este tamaño.
           fontWeight: 400,
-          fontSize: 15,
+          fontSize: 18,
           lineHeight: 1.2,
           color: '#fff',
           textAlign: 'center',
