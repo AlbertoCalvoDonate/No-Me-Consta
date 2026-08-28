@@ -224,6 +224,15 @@ export const contentCards: Card[] = [
     left: { text: 'Coger la llamada', effects: { medios: 1, partido: -1 }, moralidad: 1 },
     right: { text: 'Que la coja el abogado', effects: { partido: 1, medios: -1 }, moralidad: -1 },
   },
+  {
+    id: 'meme_txekila',
+    phase: 3,
+    character: 'El Periodista',
+    characterImage: 'periodista.svg',
+    text: 'Un periodista lo resume sin piedad, en directo: "Ha incumplido una promesa electoral de las gordas y ha pactado con un partido nacionalista de los peligrosos. ¿Algo que decir?"',
+    left: { text: '"No voy a pactar con ellos. Se lo repito una vez más"', effects: { partido: 1, medios: -2 }, moralidad: -1 },
+    right: { text: '"Que te vote Txekila"', effects: { votantes: 1, medios: -1, partido: -1 }, moralidad: 1 },
+  },
 
   {
     id: 'inicio',
@@ -237,11 +246,11 @@ export const contentCards: Card[] = [
     characterImage: 'jefecomunicacion.png',
     text: 'Presidente, ha llegado. Su primer día en el cargo. ¿Cómo quiere empezar?',
     left: {
-      text: 'Mano dura',
+      text: 'Con mano dura, y que tiemble quien deba temblar',
       effects: { votantes: 2, partido: -1 },
     },
     right: {
-      text: 'Caviar con amigos',
+      text: 'Con una cena de bienvenida, con los de siempre',
       effects: { caja: 2, medios: -1 }, moralidad: -1,
     },
   },
