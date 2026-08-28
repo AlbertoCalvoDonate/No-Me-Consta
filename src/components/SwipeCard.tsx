@@ -9,6 +9,11 @@ const PANEL_WIDTH = 210
 const PANEL_HEIGHT = 118
 const PANEL_HIDDEN = PANEL_WIDTH + 24
 
+// Proporción común de todos los retratos (scripts/normalize-portraits.mjs los
+// re-encuadra a 1020x1200). El <img> se dimensiona a este ratio y se escala
+// para caber entero en la carta, así todos se ven igual en cualquier pantalla.
+const PORTRAIT_RATIO = '1020 / 1200'
+
 // Distancia de arrastre (px, ya con dragElastic aplicado) a la que un lado
 // se considera "totalmente revelado". Se exporta porque StatBars usa el
 // mismo valor para las flechas de efecto — deben moverse en sincronía.
@@ -194,6 +199,9 @@ export function SwipeCard({ card, onChoose, x }: Props) {
             touchAction: 'none',
             userSelect: 'none',
             WebkitUserSelect: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
@@ -211,17 +219,21 @@ export function SwipeCard({ card, onChoose, x }: Props) {
               alt={card.character}
               draggable={false}
               style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
+                // Todos los retratos están re-encuadrados al mismo lienzo
+                // (PORTRAIT_RATIO, ver scripts/normalize-portraits.mjs). En vez
+                // de forzar la imagen a llenar un hueco de forma variable (que
+                // recortaba distinto en cada pantalla), el <img> se dimensiona
+                // a ESE ratio y se escala para caber entero dentro de la carta:
+                // el retrato se ve completo y con el mismo plano SIEMPRE. Lo
+                // que sobra de carta queda del color de fondo (que es el mismo
+                // que asoma por el fondo transparente del png).
+                display: 'block',
+                width: 'auto',
+                height: 'auto',
+                maxWidth: '100%',
+                maxHeight: '100%',
+                aspectRatio: PORTRAIT_RATIO,
                 objectFit: 'cover',
-                // Los PNG de retrato están todos re-encuadrados al mismo
-                // lienzo (1020x1200, ~5% de aire sobre la cabeza, torso
-                // sangrando por abajo — ver scripts/normalize). Con ese
-                // encuadre común, 'center top' ancla la cara arriba: si el
-                // hueco de la carta queda ancho, el recorte se lo lleva el
-                // torso (que ya sangra) y no el pelo.
                 objectPosition: 'center top',
               }}
             />

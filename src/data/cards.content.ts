@@ -1522,7 +1522,7 @@ export const contentCards: Card[] = [
     phase: 1,
     character: 'El Expresidente',
     characterImage: 'expresidentecompetente.png',
-    text: '"En mis tiempos esto no pasaba", arranca, y de ahí media hora de batallitas de cuando fundaron el partido, todas rematadas con "y usted no habría durado ni un asamblea".',
+    text: '"En mis tiempos esto no pasaba", arranca, y de ahí media hora de batallitas de cuando fundaron el partido, todas rematadas con un "y usted no habría durado ni una semana".',
     left: { text: 'Escuchar por respeto', effects: { partido: 1 } },
     right: { text: 'Cortarle con cariño', effects: { partido: -1, votantes: 1 } },
   },
