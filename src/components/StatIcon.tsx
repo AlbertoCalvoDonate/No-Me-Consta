@@ -10,40 +10,37 @@ const VB = 24
 
 // Cada icono es un fragmento de <path>/<rect>/<circle> en un viewBox de
 // 24x24, pensado para leerse bien de pequeño y en una sola silueta.
+// Metáforas lo más literales posible (van con etiqueta de texto debajo).
 function IconShapes({ statKey }: { statKey: keyof Stats }) {
   switch (statKey) {
     case 'medios':
-      // Megáfono: prensa / opinión pública.
+      // Bocadillo de diálogo: prensa / opinión pública.
       return (
-        <>
-          <path d="M7,9 L19,3 L19,21 L7,15 Z" />
-          <rect x="3" y="10" width="4" height="5" rx="1.2" />
-        </>
+        <path d="M4,3 h16 a2,2 0 0 1 2,2 v9 a2,2 0 0 1 -2,2 h-8 l-5,4 v-4 h-3 a2,2 0 0 1 -2,-2 v-9 a2,2 0 0 1 2,-2 z" />
       )
     case 'partido':
-      // Bandera: aparato del partido / lealtad interna.
+      // Escarapela con lazos: el aparato del partido / lealtad interna.
       return (
         <>
-          <rect x="5" y="2" width="2.4" height="20" rx="1" />
-          <path d="M7.4,3 L20,7.5 L7.4,12 Z" />
+          <circle cx="12" cy="8.5" r="6" />
+          <path d="M8.5,13 L6,22 L9.5,19 L12,21.5 L14.5,19 L18,22 L15.5,13 Z" />
         </>
       )
     case 'votantes':
-      // Puño en alto: la calle / el electorado.
+      // Urna con papeleta: la calle / el electorado.
       return (
         <>
-          <rect x="6" y="5" width="12" height="10" rx="4" />
-          <rect x="9" y="14" width="6" height="8" rx="1.5" />
+          <path d="M2.5,9 h19 v2.5 h-19 z" />
+          <path d="M4,11.5 h16 v8.5 a1.5,1.5 0 0 1 -1.5,1.5 h-13 a1.5,1.5 0 0 1 -1.5,-1.5 z" />
+          <rect x="10" y="3" width="4" height="7" rx="0.6" />
         </>
       )
     case 'caja':
-      // Saco de dinero, con cuello estrecho para que no parezca una llama:
-      // caja B / finanzas opacas.
+      // Maletín: dinero de trastienda / caja B.
       return (
         <>
-          <path d="M9,7 L15,7 L12,3 Z" />
-          <rect x="10" y="7" width="4" height="4" />
-          <circle cx="12" cy="15.5" r="7" />
+          <path d="M8,8 V6 a4,4 0 0 1 8,0 V8 h-2.2 V6.2 a1.8,1.8 0 0 0 -3.6,0 V8 Z" />
+          <rect x="2.5" y="8" width="19" height="12.5" rx="2" />
         </>
       )
   }

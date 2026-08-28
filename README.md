@@ -1,13 +1,17 @@
 # No Me Consta
 
-Prototipo estilo *Reigns*: sátira sobre política española (comisiones,
-enchufismo, ERE fantasma, pactos de investidura, etc.). Eres el presidente y
-tienes que sobrevivir una legislatura entera aguantando a tu propio gabinete
+Prototipo estilo *Reigns*: sátira política genérica (comisiones, enchufismo,
+ERE fantasma, pactos de investidura, guerras de titulares…). Eres el
+presidente y tienes que aguantar una legislatura entera a tu propio gabinete
 y a la oposición, carta a carta.
 
-El reparto son caricaturas veladas de figuras reales — se citan por epíteto
-(«El Jefe de Comunicación», «La Vacilona», «El Exiliado»…), no por su nombre.
-Están descritos en `src/data/cards.content.ts`.
+El reparto son arquetipos reconocibles —«El Jefe de Comunicación», «La
+Presidenta Regional», «El Exiliado», «La Comunista Woke», «El Hermano», «La
+Primera Dama»…— sin nombres reales ni lugares concretos (nada de países,
+capitales ni instituciones con nombre). El tono busca reírse de todos por
+igual: los efectos de cada carta van del coste político, no de si la medida
+es "buena" o "mala". Algunos personajes se llevan mal entre sí y a veces
+toca elegir bando.
 
 ## Poner en marcha
 
@@ -94,15 +98,22 @@ No hace falta importar nada ni tocar código — Vite sirve todo lo que hay en
 hasta ahora (solo el nombre en texto), así que puedes ir añadiendo retratos
 poco a poco.
 
-El reparto actual usa retratos `.png` propios salvo cuatro personajes
-(`cunado.svg`, `encuestador.svg`, `juez.svg`, `periodista.svg`), que siguen
-con el SVG provisional a la espera de arte nuevo.
+El reparto usa retratos `.png` propios salvo cinco personajes con SVG
+provisional a la espera de arte nuevo (`cunado.svg` — ahora "El Hermano" —,
+`encuestador.svg`, `juez.svg`, `periodista.svg`, `primeradama.svg`).
 
-### Cartas de reacción
+### Cartas de arranque
 
-Algunas elecciones "jugosas" encadenan a una **carta de reacción**: eliges,
-por ejemplo, colocar al cuñado a dedo y en el turno siguiente salta El Juez
-("ese nombramiento ya tiene una denuncia encima de mi mesa..."). Se montan
+`useGameStore` elige al azar una de las cartas `presi_intro*` como primera
+carta de la partida (y otra al reiniciar), así la primera decisión no es
+siempre la misma. Todas llevan a `inicio` después vía `nextCardId`.
+
+### Cartas de reacción y enemistades
+
+Algunas elecciones "jugosas" encadenan a una **carta de reacción**: colocas
+al hermano a dedo y al turno siguiente salta El Juez ("ese nombramiento ya
+tiene una denuncia encima de mi mesa..."). Y hay cartas de **enemistad**
+(`feud_*`) donde dos personajes se pelean y te toca elegir bando. Se montan
 así:
 
 1. En la carta que dispara, añade `nextCardId: 'react_xxx'` a la opción
@@ -111,9 +122,13 @@ así:
    `cards.content.ts`, con `maxTurn: 0` y `weight: 0` para que **solo**
    aparezca forzada y nunca salga en el sorteo normal.
 
+`pickNextCard` además evita repetir el **personaje** de la carta anterior
+(dos cartas seguidas del mismo se leen como un bug); las cadenas por
+`nextCardId` sí pueden repetirlo, para eso están.
+
 ### Ideas para las siguientes cartas
-- El mazo tiene ~250 cartas de contenido (incl. ~13 de reacción) + los
-  finales, así que toca más pulir contenido que sumar cantidad
+- El mazo tiene ~255 cartas de contenido (reacción, enemistades y arranque
+  incluidas) + los finales, así que toca más pulir contenido que sumar
 - Añade `condition` a algunas cartas para que solo aparezcan en rangos
   concretos de stats (ej. una carta de "escándalo mediático" solo si
   `medios < 3`)

@@ -19,6 +19,9 @@ export default function App() {
   // framer-motion actualiza esto fuera del ciclo de render).
   const x = useMotionValue(0)
   useEffect(() => {
+    // stop(): por si quedaba viva la animación de rebote del arrastre
+    // anterior sobre esta MotionValue compartida (ver SwipeCard.handleDragEnd).
+    x.stop()
     x.set(0)
   }, [currentCard.id, x])
 
@@ -102,7 +105,7 @@ export default function App() {
                         lineHeight: 1.35,
                       }}
                     >
-                      Fin del reinado
+                      Fin del mandato
                     </h2>
                     <p
                       style={{

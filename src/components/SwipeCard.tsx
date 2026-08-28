@@ -51,15 +51,26 @@ function ChoicePanel({
   colors: { bg: string; accent: string }
   x: MotionValue<number>
 }) {
+  // Zona muerta: mientras el arrastre no pase de estos px hacia este lado, el
+  // panel sigue del todo fuera de pantalla. Colchón para el rebote elástico
+  // al soltar, que se pasa unos píxeles al lado contrario.
+  const DEAD_ZONE = 14
   const panelXRaw = useTransform(
     x,
-    side === 'left' ? [-SWIPE_REVEAL_DISTANCE, 0] : [0, SWIPE_REVEAL_DISTANCE],
+    side === 'left' ? [-SWIPE_REVEAL_DISTANCE, -DEAD_ZONE] : [DEAD_ZONE, SWIPE_REVEAL_DISTANCE],
     side === 'left' ? [0, -PANEL_HIDDEN] : [PANEL_HIDDEN, 0]
   )
   // Redondeado a píxel entero: sin esto, justo al llegar al valor máximo
   // (totalmente revelado) el navegador podía renderizar un subpíxel de más
   // o de menos y se veía como un salto de 1px al terminar la animación.
   const panelX = useTransform(panelXRaw, (v) => Math.round(v))
+  // El panel de un lado NO existe (opacity 0) en cuanto el arrastre está en
+  // el lado contrario — incluso 1px. Así, pase lo que pase con el rebote al
+  // soltar (que puede cruzar el 0 hacia el otro signo), el panel que no se ha
+  // elegido nunca llega a verse. Cuando se empieza a arrastrar hacia este
+  // lado el panel ya está a 0.93 pero todavía fuera de pantalla (zona muerta),
+  // así que tampoco se ve "aparecer".
+  const opacity = useTransform(x, (v) => ((side === 'left' ? v < 0 : v > 0) ? 0.93 : 0))
   return (
     <motion.div
       style={{
@@ -70,7 +81,7 @@ function ChoicePanel({
         height: PANEL_HEIGHT,
         x: panelX,
         background: colors.bg,
-        opacity: 0.93,
+        opacity,
         border: `2px solid ${colors.accent}`,
         borderRadius: 12,
         boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
@@ -137,14 +148,17 @@ export function SwipeCard({ card, onChoose, x }: Props) {
     const decidedRight = info.offset.x > SWIPE_THRESHOLD || (info.offset.x > 0 && info.velocity.x > FLICK_VELOCITY)
     if (decidedLeft) {
       // `x` es la MISMA MotionValue compartida que heredará la carta
-      // siguiente (cambia de key, pero no de `x`). Si no se resetea aquí
-      // mismo, la carta nueva nace ya "arrastrada" al valor con el que se
-      // soltó esta, y durante un frame se ve su panel de texto totalmente
-      // revelado (y la rotación de la carta torcida) antes de saltar a su
-      // sitio — resetear en un useEffect posterior llega un frame tarde.
+      // siguiente (cambia de key, pero no de `x`). `x.stop()` mata la
+      // animación de rebote que framer-motion lanza al soltar: si no, esa
+      // animación sigue corriendo sobre `x` tras desmontarse esta carta,
+      // se pasa del 0 hacia el signo contrario y asoma un trozo del panel
+      // de la otra opción en la carta nueva. `x.set(0)` deja la carta
+      // siguiente en su sitio desde el primer frame.
+      x.stop()
       x.set(0)
       onChoose('left')
     } else if (decidedRight) {
+      x.stop()
       x.set(0)
       onChoose('right')
     }
@@ -183,7 +197,7 @@ export function SwipeCard({ card, onChoose, x }: Props) {
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.7}
           dragSnapToOrigin
-          dragTransition={{ bounceStiffness: 400, bounceDamping: 30 }}
+          dragTransition={{ bounceStiffness: 450, bounceDamping: 45 }}
           onDragEnd={handleDragEnd}
           initial={{ scale: 0.88, opacity: 0, y: 60 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -200,7 +214,11 @@ export function SwipeCard({ card, onChoose, x }: Props) {
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                objectPosition: 'top center',
+                // 'center': si el encuadre de la carta queda más ancho que
+                // alto (pantallas cortas), recorta un poco por arriba y por
+                // abajo a partes iguales en vez de comerse toda la parte de
+                // abajo del retrato.
+                objectPosition: 'center',
               }}
             />
           )}

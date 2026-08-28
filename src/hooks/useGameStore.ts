@@ -80,22 +80,27 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   const base = (c: Card) =>
     !c.isEnding && !recent.has(c.id) && (!c.condition || c.condition(state.stats, state.moralidad))
 
-  // 1) Intento estricto: respetando también la ventana de turno/fase
-  let candidates = cards.filter((c) => base(c) && isInTurnWindow(c, state.turn))
+  // No repetir el personaje de la carta anterior: dos cartas seguidas del
+  // mismo personaje se leen como un bug. Las cadenas narrativas (nextCardId)
+  // sí pueden repetirlo — salen antes, por la rama `forcedId` de arriba.
+  const lastId = state.history[state.history.length - 1]
+  const lastChar = lastId ? cards.find((c) => c.id === lastId)?.character : undefined
+  const otherChar = (c: Card) => c.character !== lastChar
 
-  // 2) Si no hay nada en esta fase todavía (partida muy temprana o mazo corto),
-  //    relaja la ventana de turno pero mantiene el resto de filtros.
-  if (candidates.length === 0) {
-    candidates = cards.filter(base)
-  }
+  const inWindow = cards.filter((c) => base(c) && isInTurnWindow(c, state.turn))
+  const anyBase = cards.filter(base)
 
-  // 3) Último recurso: cualquier carta no-final, ignorando repetición reciente.
-  if (candidates.length === 0) {
-    candidates = cards.filter((c) => !c.isEnding)
-  }
+  // Preferencia: en ventana y otro personaje > en ventana > base y otro
+  // personaje > base > (último recurso) cualquier carta no-final.
+  const candidates =
+    inWindow.filter(otherChar).length ? inWindow.filter(otherChar) :
+    inWindow.length ? inWindow :
+    anyBase.filter(otherChar).length ? anyBase.filter(otherChar) :
+    anyBase.length ? anyBase :
+    cards.filter((c) => !c.isEnding && otherChar(c))
 
   const weighted = candidates.flatMap((c) => Array(c.weight ?? 1).fill(c))
-  return weighted[Math.floor(Math.random() * weighted.length)]
+  return weighted[Math.floor(Math.random() * weighted.length)] ?? cards.find((c) => !c.isEnding)!
 }
 
 interface GameStore extends GameState {
@@ -111,13 +116,23 @@ function initialStats(): Stats {
 
 const MORALIDAD_START = 5
 
+// Cartas de arranque (ver cards.content.ts). Se elige una al azar al empezar
+// y al reiniciar, así la primera decisión de la partida no es siempre la misma.
+const INTRO_IDS = ['presi_intro', 'presi_intro_b', 'presi_intro_c', 'presi_intro_d']
+function pickIntro(): Card {
+  const id = INTRO_IDS[Math.floor(Math.random() * INTRO_IDS.length)]
+  return cards.find((c) => c.id === id) ?? cards.find((c) => c.id === 'presi_intro')!
+}
+
+const firstCard = pickIntro()
+
 export const useGameStore = create<GameStore>((set, get) => ({
   stats: initialStats(),
   moralidad: MORALIDAD_START,
   turn: 1,
-  history: ['presi_intro'],
+  history: [firstCard.id],
   gameOver: false,
-  currentCard: cards.find((c) => c.id === 'presi_intro')!,
+  currentCard: firstCard,
   lastEpilogue: undefined,
 
   choose: (side) => {
@@ -153,15 +168,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   restart: () => {
+    const intro = pickIntro()
     set({
       stats: initialStats(),
       moralidad: MORALIDAD_START,
       turn: 1,
-      history: ['presi_intro'],
+      history: [intro.id],
       gameOver: false,
       deathReason: undefined,
       lastEpilogue: undefined,
-      currentCard: cards.find((c) => c.id === 'presi_intro')!,
+      currentCard: intro,
     })
   },
 }))

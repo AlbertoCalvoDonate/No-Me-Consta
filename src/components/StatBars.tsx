@@ -44,9 +44,23 @@ export function StatBars({ stats, card, x }: Props) {
         return (
           <div key={key} style={{ flex: 1, textAlign: 'center' }} aria-label={`${label}: ${stats[key]}`}>
             <StatIcon statKey={key} value={stats[key]} critical={critical} />
+            {/* Etiqueta de texto: los iconos solos no siempre se entienden. */}
+            <div
+              style={{
+                fontFamily: 'var(--font-pixel)',
+                fontWeight: 500,
+                fontSize: 12,
+                letterSpacing: 0.4,
+                lineHeight: 1,
+                marginTop: 3,
+                color: critical ? '#ff6b6b' : '#9a9384',
+              }}
+            >
+              {label}
+            </div>
             {/* Hueco fijo para la flecha, para que los iconos no salten
                 cuando aparece/desaparece */}
-            <div style={{ position: 'relative', height: 20, marginTop: 4 }}>
+            <div style={{ position: 'relative', height: 20, marginTop: 3 }}>
               {leftVal !== 0 && <EffectArrow value={leftVal} opacity={leftOpacity} />}
               {rightVal !== 0 && <EffectArrow value={rightVal} opacity={rightOpacity} />}
             </div>
