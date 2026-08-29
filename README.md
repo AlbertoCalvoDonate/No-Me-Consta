@@ -52,7 +52,7 @@ principio del archivo. Cada carta es un objeto `Card`:
   character: 'El Personaje',
   text: 'Texto de la situación...',
   left:  { text: 'Opción izquierda', effects: { medios: -1, caja: 1 }, moralidad: 1 },
-  right: { text: 'Opción derecha',   effects: { partido: 2 }, moralidad: -1 },
+  right: { text: 'Opción derecha',   effects: { gobierno: 2 }, moralidad: -1 },
 }
 ```
 
@@ -134,7 +134,7 @@ así:
 `nextCardId` sí pueden repetirlo, para eso están.
 
 ### Ideas para las siguientes cartas
-- El mazo tiene ~292 cartas de contenido + finales + elecciones, así que
+- El mazo tiene ~313 cartas de contenido + finales + elecciones, así que
   toca más pulir contenido que sumar
 - Añade `condition` a algunas cartas para que solo aparezcan en rangos
   concretos de stats (ej. una carta de "escándalo mediático" solo si
@@ -156,20 +156,19 @@ despliegue automático).
 
 ## Balance del juego
 
-Las tres mecánicas que sostienen la dificultad están en `src/hooks/useGameStore.ts`
-y salieron de simular miles de partidas (`scripts/` no las incluye; ver historial):
+Las mecánicas que sostienen la dificultad están en `src/hooks/useGameStore.ts`
+y salieron de simular miles de partidas:
 
 - **Amortiguación** (`damp`): un efecto que empuja hacia un extremo pierde
-  fuerza cuando ya estás cerca de él. Sin esto la partida media duraba 12
-  turnos.
-- **Desgaste** (`applyDrift`): cada 3 turnos, las stats alejadas del centro
-  vuelven 1 punto hacia él. Evita que acumular en una dirección sea gratis;
-  sin esto, jugar siempre honesto reventaba por *techo* en 9 turnos.
+  fuerza cuando ya estás cerca de él. El margen lo fija el modo (`dampZone`).
+- **Desgaste** (`applyDrift`): las stats alejadas del centro vuelven hacia él
+  cada X turnos. Es lo que hacía imposible morir, así que ahora depende del
+  modo: no existe en «Gobierno en minoría» y se desvanece en «Con mayoría
+  absoluta». Ver *Dificultad* más abajo.
 - **Turno de gracia** (`extremeStreak`): tocar 0 o el máximo no mata al
   instante, da un turno para rectificar.
-
-Con eso, jugando al azar la mediana es ~96 turnos (8 años de gobierno) y un
-jugador bueno gana ~10% de las partidas.
+- **Suerte** (`jitter`): ±1 sobre cada efecto no nulo, para que no se pueda
+  "resolver" la partida con una estrategia perfecta.
 
 ### Elecciones (el hito de la partida)
 
