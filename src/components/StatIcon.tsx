@@ -21,14 +21,16 @@ function IconShapes({ statKey }: { statKey: keyof Stats }) {
     case 'gobierno':
       // Edificio institucional con columnas: la coalición que te sostiene.
       // Si se caen las columnas, se cae el Gobierno — la metáfora es directa.
+      // Columnas centradas a mano: el hueco libre (21 de ancho menos 4
+      // columnas de 3) son 9, repartidos en 5 huecos de 1.8. De ahí las x.
       return (
         <>
           <path d="M12,1.5 L22.5,7 L1.5,7 Z" />
           <rect x="1.5" y="8" width="21" height="2" />
-          <rect x="4" y="11" width="2.6" height="8" />
-          <rect x="8.7" y="11" width="2.6" height="8" />
-          <rect x="13.4" y="11" width="2.6" height="8" />
-          <rect x="18.1" y="11" width="2.6" height="8" />
+          <rect x="3.3" y="11" width="3" height="8" />
+          <rect x="8.1" y="11" width="3" height="8" />
+          <rect x="12.9" y="11" width="3" height="8" />
+          <rect x="17.7" y="11" width="3" height="8" />
           <rect x="1.5" y="20" width="21" height="2.5" />
         </>
       )
@@ -36,14 +38,20 @@ function IconShapes({ statKey }: { statKey: keyof Stats }) {
       // Tres siluetas de gente: la calle, la gente de a pie. Antes era una
       // urna, pero la urna se confundía con "elecciones"/"gobierno"; un grupo
       // de personas se lee como "la gente" sin ambigüedad.
+      // Tres bustos. Cada cuerpo arranca justo donde acaba su cabeza (con un
+      // pelín de solape): antes los hombros empezaban 6 unidades más abajo y
+      // las cabezas parecían flotar. Los de los lados van bastante más bajos
+      // y pequeños para que la silueta haga escalón: si van a la misma altura
+      // los tres cuerpos se funden en un bloque plano y deja de leerse como
+      // gente.
       return (
         <>
-          <circle cx="5" cy="6.5" r="3.1" />
-          <path d="M0.6,21 a4.4,5 0 0 1 8.8,0 Z" />
-          <circle cx="19" cy="6.5" r="3.1" />
-          <path d="M14.6,21 a4.4,5 0 0 1 8.8,0 Z" />
-          <circle cx="12" cy="5" r="3.6" />
-          <path d="M6.8,22.5 a5.2,6.2 0 0 1 10.4,0 Z" />
+          <circle cx="4.2" cy="9.5" r="2.7" />
+          <path d="M0.3,22.5 v-6.7 a3.9,3.9 0 0 1 7.8,0 v6.7 Z" />
+          <circle cx="19.8" cy="9.5" r="2.7" />
+          <path d="M15.9,22.5 v-6.7 a3.9,3.9 0 0 1 7.8,0 v6.7 Z" />
+          <circle cx="12" cy="5.8" r="3.7" />
+          <path d="M6.6,22.5 v-8 a5.4,5.4 0 0 1 10.8,0 v8 Z" />
         </>
       )
     case 'caja':
