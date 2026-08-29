@@ -219,6 +219,18 @@ es que te lo eche en cara.
 Medido en simulación: jugando al azar, el 8% de las partidas ve una carta de
 enfado; jugando a decir que no a todo, el 48%.
 
+### Leer los indicadores
+
+Cada indicador tiene **icono con relleno** (bonito, pero no comparable entre
+ellos: cada silueta tiene una forma distinta y el mismo nivel ocupa áreas muy
+distintas) y debajo una **barra de 10 segmentos**, uno por punto, que sí se
+lee igual en los cuatro y dice exactamente cuánto queda.
+
+Importante al mirarlos: el **rojo salta a 1 punto** (o a 9, por arriba), pero
+**se muere a 0** (o a 10) y con un turno de gracia por medio. Es decir, "todo
+rojo" no significa muerto, significa a un paso. La barra de segmentos existe
+justamente para poder distinguir esos dos estados de un vistazo.
+
 ### Flechas de efecto (temporal)
 
 Las flechas ▲▼ sobre los iconos adelantan qué stat sube o baja con cada

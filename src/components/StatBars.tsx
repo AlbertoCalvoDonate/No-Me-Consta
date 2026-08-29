@@ -3,6 +3,34 @@ import type { Card, Stats } from '../types'
 import { EffectArrow } from './EffectArrow'
 import { StatIcon } from './StatIcon'
 import { SWIPE_REVEAL_DISTANCE } from './SwipeCard'
+import { STAT_MAX } from '../data/cards'
+
+// Barra de nivel: un segmento por punto (0 a STAT_MAX). El relleno del icono
+// es bonito pero NO se puede comparar entre indicadores: como cada silueta
+// tiene una forma distinta, el mismo nivel ocupa áreas muy distintas y "medio
+// bocadillo" no parece lo mismo que "medio templo". Esto se lee igual en los
+// cuatro y dice exactamente cuántos puntos quedan, que es lo que importa
+// cuando estás en rojo: el aviso salta a 1 punto, pero se muere a 0.
+function LevelBar({ value, critical }: { value: number; critical: boolean }) {
+  return (
+    // El margen lateral es lo que separa visualmente las cuatro barras: sin
+    // él se leen como una única tira de 40 segmentos y no se ve dónde acaba
+    // un indicador y empieza el siguiente.
+    <div style={{ display: 'flex', gap: 1.5, margin: '5px 11px 0', height: 6 }}>
+      {Array.from({ length: STAT_MAX }, (_, i) => (
+        <div
+          key={i}
+          style={{
+            flex: 1,
+            borderRadius: 1,
+            background:
+              i < value ? (critical ? '#ff4d4d' : '#e0b84d') : 'rgba(255,255,255,0.14)',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
 
 const ITEMS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
@@ -73,6 +101,7 @@ export function StatBars({ stats, card, x }: Props) {
                 )}
               </div>
             </div>
+            <LevelBar value={stats[key]} critical={critical} />
             {/* Etiqueta de texto: los iconos solos no siempre se entienden. */}
             <div
               style={{
