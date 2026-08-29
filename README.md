@@ -98,9 +98,10 @@ No hace falta importar nada ni tocar código — Vite sirve todo lo que hay en
 hasta ahora (solo el nombre en texto), así que puedes ir añadiendo retratos
 poco a poco.
 
-El reparto usa retratos `.png` propios salvo cinco personajes con SVG
-provisional a la espera de arte nuevo (`cunado.svg` — ahora "El Hermano" —,
-`encuestador.svg`, `juez.svg`, `periodista.svg`, `primeradama.svg`).
+El reparto usa retratos `.png` propios salvo cuatro personajes que siguen con
+SVG provisional a la espera de arte nuevo: `cunado.svg` (ahora "El Hermano"),
+`encuestador.svg`, `juez.svg` y `periodista.svg`. `nocheelectoral.svg` es de
+las cartas de elecciones, no de un personaje.
 
 Los `.png` están **re-encuadrados a un lienzo común** (1020×1200, poco aire
 sobre la cabeza, torso sangrando por abajo) con `scripts/normalize-portraits.mjs`,

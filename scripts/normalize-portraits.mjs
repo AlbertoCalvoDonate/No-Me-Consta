@@ -6,20 +6,39 @@
 //
 // Uso (hace falta un servidor de dev levantado y npx playwright):
 //   1. npm run dev            (en otra terminal)
-//   2. node scripts/normalize-portraits.mjs
+//   2. node scripts/normalize-portraits.mjs              -> todos
+//      node scripts/normalize-portraits.mjs guru.png ... -> solo esos
 //
 // Es idempotente en la práctica: re-encuadra sobre el bounding box de píxeles
 // no transparentes, así que volver a pasarlo apenas cambia nada. Guarda copia
 // de los originales antes de tocar nada si quieres poder volver atrás.
 //
-// Nota técnica: usa un navegador (canvas) porque Node no trae manipulación
-// de imágenes. Playwright se coge de su caché de npx; ajusta la ruta si hace
-// falta. La página se carga desde localhost para que el canvas no quede
+// Nota técnica: usa un navegador (canvas) porque Node no trae manipulación de
+// imágenes. La página se carga desde localhost para que el canvas no quede
 // "tainted" por CORS al leer los píxeles.
 
-import { chromium } from 'playwright'
 import { writeFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+
+// Playwright no es dependencia del proyecto (solo hace falta para este script
+// puntual). Se intenta resolver del proyecto y, si no está, de la caché de
+// npx. Si falla, el mensaje dice qué ejecutar.
+async function loadChromium() {
+  const tries = ['playwright', 'playwright-core']
+  for (const mod of tries) {
+    try {
+      return (await import(mod)).chromium
+    } catch {
+      /* siguiente */
+    }
+  }
+  const npxCache = process.env.PLAYWRIGHT_PATH
+  if (npxCache) return (await import(npxCache)).chromium
+  throw new Error(
+    'No encuentro playwright. Instálalo con: npm i -D playwright  (o define PLAYWRIGHT_PATH)'
+  )
+}
+const chromium = await loadChromium()
 
 const CHARDIR = fileURLToPath(new URL('../public/characters/', import.meta.url))
 const DEV_URL = process.env.DEV_URL || 'http://localhost:5173/'
@@ -30,7 +49,10 @@ const TH = 1200
 const HEADROOM = 0.05 // aire sobre la cabeza, en tanto por uno de la altura
 const CONTENT_H = 0.96 // el contenido ocupa este % de la altura del lienzo
 
-const files = readdirSync(CHARDIR).filter((f) => f.endsWith('.png'))
+// Sin argumentos, todos los .png; con argumentos, solo los indicados (útil
+// al añadir un retrato nuevo, para no reescribir los que ya están bien).
+const args = process.argv.slice(2)
+const files = args.length > 0 ? args : readdirSync(CHARDIR).filter((f) => f.endsWith('.png'))
 
 const browser = await chromium.launch()
 const page = await browser.newPage()
