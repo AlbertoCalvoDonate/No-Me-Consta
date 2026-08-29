@@ -268,3 +268,60 @@ respuesta subía o bajaba. Midiendo el mazo salieron tres cosas:
 Los iconos también cambiaron: Gobierno es un edificio con columnas (si se
 caen, se cae) y Calle son tres siluetas de gente (la urna se confundía con el
 evento de elecciones).
+
+## Dificultad: por qué morir era imposible
+
+Jugando de forma competente se moría en el **1%** de las partidas: el 99%
+agotaba las tres legislaturas. El culpable no era el mazo sino el **desgaste**
+(*drift*): cada 3 turnos, toda barra alejada del centro volvía sola un punto
+hacia él, así que **no compensar salía gratis**. Medido quitando cada
+mecanismo por separado (jugando al azar, mediana de meses):
+
+| | mediana | muere |
+|---|---|---|
+| como estaba | 96 | 58% |
+| sin turno de gracia | 48 | 89% |
+| sin amortiguación | 38 | 94% |
+| **sin desgaste** | **18** | **99%** |
+
+El mazo, en cambio, está bien equilibrado: la suma de todos sus efectos ronda
+cero. Lo que sí está sesgado es cada estrategia pura, y eso es deliberado —
+te obliga a alternar:
+
+| Si juegas siempre… | medios | gobierno |
+|---|---|---|
+| honesto | **+166** | −104 |
+| corrupto | **−247** | +121 |
+
+En Reigns no existe nada parecido al desgaste: los medidores solo se mueven
+por las cartas, y las que hacen *drift* con el tiempo son un **peligro** del
+que avisan las guías, no una ayuda.
+
+### Los dos modos
+
+Se elige al empezar (`src/data/modes.ts`). Mismo mazo, distinta red de
+seguridad. Medido jugando de forma competente:
+
+| Modo | Desgaste | Muere | Mediana | Llega a 4 años | A 8 años |
+|---|---|---|---|---|---|
+| **Gobierno en minoría** | ninguno | 89% | 48 meses | 51% | 18% |
+| **Con mayoría absoluta** | se desvanece | 70% | 108 meses | 94% | 66% |
+
+En «Con mayoría absoluta» el desgaste actúa cada 3 turnos en la primera
+legislatura, cada 6 en la segunda y desaparece en la tercera: la primera hace
+de tutorial y a partir de ahí aprieta.
+
+### Muertes por evento
+
+Además de por barra, se puede caer por una situación que has ido construyendo
+tú. Se comprueban en todos los turnos y llevan `byEvent: true`:
+
+- **Moción de censura** — el hermano imputado y sin un medio que te defienda.
+- **Ruptura de la coalición** — dos socios hartos de verdad, o cuatro bastante.
+- **Registro y detención** — caja llena, prensa encima y la moralidad por los
+  suelos.
+
+Saltan en torno al 4% de las partidas: son caídas que se ven venir y se pueden
+esquivar, no trampas. Al escribir una nueva, la condición tiene que ser
+exigente por eso mismo. En estas muertes la pantalla de fin no señala ningún
+indicador, porque la causa fue la situación y no una barra.

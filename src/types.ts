@@ -1,3 +1,5 @@
+import type { ModeId } from './data/modes'
+
 // Los 4 indicadores del juego. Cada uno tiene DUEÑOS: personajes que lo
 // encarnan y cuyas cartas siempre lo tocan. Es lo que hace Reigns (el
 // cardenal es la iglesia, el general el ejército) y es lo que permite que,
@@ -99,6 +101,11 @@ export interface Card {
   // como condición para saltar ("te has cansado de decirle que no").
   pleases?: 'left' | 'right'
   isEnding?: boolean    // Carta especial de final de partida
+  // Final que NO se dispara por una barra en el extremo, sino por una
+  // situación concreta (una trama que ha llegado demasiado lejos, media
+  // bancada harta de ti...). Se comprueba en todos los turnos. Su `condition`
+  // debe ser exigente: si es fácil de cumplir, corta partidas sin avisar.
+  byEvent?: boolean
   // Carta del evento de elecciones (cada 4 años de gobierno). No sale nunca
   // por sorteo: useGameStore la fuerza al llegar el turno, eligiendo entre
   // las que cumplen su `condition`. Ver ELECTION_INTERVAL en cards.ts.
@@ -130,4 +137,6 @@ export interface GameState {
   flags: string[]
   // Enfado acumulado por personaje (ver CardContext.anger).
   anger: Record<string, number>
+  // Modo de dificultad elegido al empezar (ver src/data/modes.ts).
+  mode: ModeId
 }

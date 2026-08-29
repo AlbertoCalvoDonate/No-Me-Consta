@@ -64,7 +64,14 @@ export default function App() {
             fontFamily: 'system-ui, sans-serif',
           }}
         >
-          {!started && <StartScreen onStart={() => setStarted(true)} />}
+          {!started && (
+            <StartScreen
+              onStart={(mode) => {
+                restart(mode)
+                setStarted(true)
+              }}
+            />
+          )}
 
           {started && (
             <>
@@ -178,7 +185,7 @@ export default function App() {
                       {turn - 1 >= 12 ? ` (${(( turn - 1) / 12).toFixed(1)} años)` : ''}.
                     </p>
                     <button
-                      onClick={restart}
+                      onClick={() => restart()}
                       style={{
                         background: '#e0b84d',
                         border: 'none',

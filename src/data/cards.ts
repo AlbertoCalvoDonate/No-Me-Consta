@@ -269,6 +269,56 @@ const endingCards: Card[] = [
     condition: (s, m) => s.caja >= 10 && m <= 3,
   },
 
+  // ==========================================================================
+  // MUERTES POR EVENTO (byEvent) — no las dispara una barra en el extremo,
+  // sino una situación que has ido construyendo tú: una trama que llega
+  // demasiado lejos, media bancada harta de aguantarte. Se comprueban en
+  // TODOS los turnos, así que sus condiciones tienen que ser exigentes: son
+  // caídas que se ven venir y se pueden esquivar, no trampas.
+  // ==========================================================================
+  {
+    id: 'final_evento_mocion',
+    phase: 3,
+    minTurn: 12,
+    character: 'La Oposición',
+    text: 'Su hermano sentado en el banquillo y usted sin un solo medio que le defienda. La oposición ha contado los votos tres veces y le salen. Esta moción no es para hacer ruido: es para ganarla.',
+    left: { text: 'Ir al pleno a dar la cara', effects: {}, epilogueText: 'Aguanta dos horas de intervenciones sin pestañear. Pierde por siete votos. Al menos se fue de pie. Fin del gobierno.' },
+    right: { text: 'Dimitir antes de la votación', effects: {}, epilogueText: 'Dimite la víspera para no salir en la foto de la derrota. Sale igualmente en todas. Fin del gobierno.' },
+    isEnding: true,
+    byEvent: true,
+    condition: (s, _m, ctx) =>
+      (ctx.flags.has('hermano_juicio') || ctx.flags.has('hermano_imputado')) && s.medios <= 4,
+  },
+  {
+    id: 'final_evento_ruptura',
+    phase: 2,
+    minTurn: 10,
+    character: 'La Coalición',
+    text: 'Han ido saliendo del despacho uno a uno, cada uno con su motivo, y hoy se han encontrado todos en el mismo restaurante. No hace falta contar los escaños: ya no están.',
+    left: { text: 'Convocar elecciones usted mismo', effects: {}, epilogueText: 'Se adelanta al golpe y convoca. Pierde, pero elige el día. Fin del gobierno, con la dignidad de haber puesto la fecha.' },
+    right: { text: 'Resistir hasta que le echen', effects: {}, epilogueText: 'Aguanta tres semanas gobernando sin mayoría, sin socios y sin presupuesto. Luego ya no. Fin del gobierno.' },
+    isEnding: true,
+    byEvent: true,
+    // Tres personajes distintos con el enfado muy alto: no es un enfado
+    // puntual, es que te has quedado solo.
+    condition: (_s, _m, ctx) => {
+      const angers = Object.values(ctx.anger)
+      return angers.filter((a) => a >= 5).length >= 2 || angers.filter((a) => a >= 3).length >= 4
+    },
+  },
+  {
+    id: 'final_evento_registro',
+    phase: 3,
+    minTurn: 14,
+    character: 'El Juez',
+    text: 'Caja llena, prensa encima y una causa abierta con su nombre. A las seis de la mañana hay coches en la puerta y un secretario judicial con una orden de registro.',
+    left: { text: 'Abrir la puerta y colaborar', effects: {}, epilogueText: 'Entrega los ordenadores él mismo. El vídeo de la caja saliendo del portal abre todos los informativos. Fin del gobierno.' },
+    right: { text: 'Llamar al abogado y ganar horas', effects: {}, epilogueText: 'Los abogados retrasan el registro cuatro horas. Cuatro horas que salen en el auto, subrayadas. Fin del gobierno, y con agravante.' },
+    isEnding: true,
+    byEvent: true,
+    condition: (s, m) => s.caja >= 8 && s.medios <= 3 && m <= 3,
+  },
+
 ]
 
 // ============================================================================

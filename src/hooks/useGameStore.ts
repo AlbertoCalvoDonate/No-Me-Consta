@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { Card, CardContext, GameState, Stats, StatEffects, StatKey } from '../types'
 import { PHASE_MIN_TURN } from '../types'
 import { cards, STAT_START, STAT_MAX, ELECTION_INTERVAL, ELECTION_MAX_TERMS } from '../data/cards'
+import { MODES, DEFAULT_MODE, type ModeConfig, type ModeId } from '../data/modes'
 
 function cardMinTurn(c: Card): number {
   return c.minTurn ?? PHASE_MIN_TURN[c.phase]
@@ -44,26 +45,31 @@ function jitter(base: number): number {
 
 // Amortiguación en los extremos: un empujón hacia un extremo pierde fuerza
 // cuando ya estás cerca de él (llevar los medios de 8 a 9 cuesta más que de
-// 4 a 5). Sin esto, la partida media duraba 12 turnos —un año de gobierno— y
-// el 90% de las partidas no llegaba nunca a la fase 4 del mazo; además morir
-// por TECHO (una stat a 10) era lo más común jugando honesto, que se leía
-// como un castigo absurdo. Con la amortiguación hay que insistir de verdad
-// para reventar por arriba o por abajo, y la partida respira.
-// El margen se mide contra el extremo al que empuja el efecto.
-const DAMP_ZONE = 4
-
-// Desgaste del poder: cada DRIFT_EVERY turnos, toda stat que se haya alejado
-// del centro vuelve 1 punto hacia él. La luna de miel se pasa y los enfados
-// también. Sin esto, el mazo (que empuja mucho hacia arriba en votantes y
-// medios) hacía que jugar honesto reventara por TECHO en 9 turnos — morir por
-// "gustar demasiado" era el final más común y se leía como un castigo
-// absurdo. Con el desgaste, honesto y corrupto duran casi lo mismo y hay que
-// sostener una tendencia para romper por cualquiera de los dos lados.
-const DRIFT_EVERY = 3
+// 4 a 5). El margen (`dampZone`) lo pone el modo de dificultad: cuanto más
+// bajo, más pegan los golpes cerca del borde.
+//
+// Desgaste del poder: cada `driftEvery` turnos, toda stat alejada del centro
+// vuelve 1 punto hacia él. Era la razón por la que morir resultaba casi
+// imposible — no compensar salía gratis, y jugando bien solo se moría en el
+// 1% de las partidas. Ahora depende del modo: en "Gobierno en minoría" no
+// existe, y en "Con mayoría absoluta" se desvanece según avanzan las
+// legislaturas.
 const DRIFT_MIN_DISTANCE = 3
 
-function applyDrift(stats: Stats, turn: number): Stats {
-  if (turn % DRIFT_EVERY !== 0) return stats
+// Cada cuántos turnos toca desgaste, ya con el desvanecido del modo aplicado.
+function driftIntervalFor(mode: ModeConfig, turn: number): number {
+  if (mode.driftEvery === 0) return 0
+  if (!mode.driftFades) return mode.driftEvery
+  // Se duplica en la segunda legislatura y desaparece en la tercera.
+  const term = Math.floor(turn / ELECTION_INTERVAL)
+  if (term === 0) return mode.driftEvery
+  if (term === 1) return mode.driftEvery * 2
+  return 0
+}
+
+function applyDrift(stats: Stats, turn: number, mode: ModeConfig): Stats {
+  const every = driftIntervalFor(mode, turn)
+  if (every === 0 || turn % every !== 0) return stats
   const next = { ...stats }
   for (const key of ['medios', 'gobierno', 'calle', 'caja'] as const) {
     const d = next[key] - STAT_START
@@ -72,10 +78,10 @@ function applyDrift(stats: Stats, turn: number): Stats {
   return next
 }
 
-function damp(current: number, delta: number): number {
+function damp(current: number, delta: number, dampZone: number): number {
   if (delta === 0) return 0
   const headroom = delta > 0 ? STAT_MAX - current : current
-  const factor = Math.min(1, headroom / DAMP_ZONE)
+  const factor = Math.min(1, headroom / dampZone)
   const scaled = delta * factor
   // Redondeo hacia el entero, conservando al menos 1 de empuje mientras
   // quede margen: así nunca se queda "atascada" sin poder llegar al extremo.
@@ -84,10 +90,10 @@ function damp(current: number, delta: number): number {
   return out
 }
 
-function applyEffects(stats: Stats, effects: StatEffects): Stats {
+function applyEffects(stats: Stats, effects: StatEffects, dampZone: number): Stats {
   const next = {} as Stats
   for (const key of ['medios', 'gobierno', 'calle', 'caja'] as const) {
-    next[key] = clamp(stats[key] + damp(stats[key], jitter(effects[key] ?? 0)))
+    next[key] = clamp(stats[key] + damp(stats[key], jitter(effects[key] ?? 0), dampZone))
   }
   return next
 }
@@ -136,6 +142,21 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
     }
   }
 
+  // MUERTES POR EVENTO: no dependen de las barras, sino de lo que has ido
+  // haciendo (tramas abiertas, gente harta de ti). Se comprueban en todos los
+  // turnos, no solo al tocar un extremo. Reigns tiene 29 muertes distintas y
+  // muchas son así: situaciones concretas que ves venir y puedes esquivar.
+  const eventEndings = cards.filter(
+    (c) =>
+      c.isEnding &&
+      c.byEvent &&
+      (c.minTurn === undefined || state.turn >= c.minTurn) &&
+      c.condition?.(state.stats, state.moralidad, ctx)
+  )
+  if (eventEndings.length > 0) {
+    return eventEndings[Math.floor(Math.random() * eventEndings.length)]
+  }
+
   // Turno de gracia: tocar 0 o el máximo NO mata al instante. El icono se
   // pone rojo, sale una carta normal y tienes ese turno para rectificar; solo
   // si sigues en el extremo al turno siguiente cae el final. Sin esto, un
@@ -160,6 +181,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
     (c) =>
       c.isEnding &&
       !c.isElection &&
+      !c.byEvent &&
       (c.minTurn === undefined || state.turn >= c.minTurn) &&
       c.condition?.(state.stats, state.moralidad, ctx)
   )
@@ -215,7 +237,7 @@ interface GameStore extends GameState {
   currentCard: Card
   lastEpilogue?: string
   choose: (side: 'left' | 'right') => void
-  restart: () => void
+  restart: (mode?: ModeId) => void
 }
 
 function initialStats(): Stats {
@@ -255,6 +277,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   gameOver: false,
   flags: [],
   anger: {},
+  mode: DEFAULT_MODE,
   currentCard: firstCard,
   lastEpilogue: undefined,
 
@@ -262,7 +285,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const state = get()
     const card = state.currentCard
     const choice = card[side]
-    const newStats = applyEffects(state.stats, choice.effects)
+    const mode = MODES[state.mode]
+    const newStats = applyEffects(state.stats, choice.effects, mode.dampZone)
     const newMoralidad = applyMoralidad(state.moralidad, choice.moralidad)
 
     // Estado narrativo: la elección puede encender o apagar flags.
@@ -287,14 +311,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
         anger: newAnger,
         gameOver: true,
         deathReason: choice.epilogueText,
-        deathStat: brokenStat(state.stats),
+        // En una muerte por evento la causa es la situación, no una barra:
+        // señalar un indicador ahí despista (te caes por la moción y te dice
+        // "Medios por los suelos"). Solo se marca en las muertes por barra.
+        deathStat: card.byEvent ? undefined : brokenStat(state.stats),
         lastEpilogue: choice.epilogueText,
       })
       return
     }
 
     const nextTurn = state.turn + 1
-    const driftedStats = applyDrift(newStats, nextTurn)
+    const driftedStats = applyDrift(newStats, nextTurn, mode)
     const atExtreme = (['medios', 'gobierno', 'calle', 'caja'] as const).some(
       (k) => driftedStats[k] <= 0 || driftedStats[k] >= STAT_MAX
     )
@@ -307,6 +334,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       gameOver: false,
       flags: newFlags,
       anger: newAnger,
+      mode: state.mode,
     }
     const nextCard = pickNextCard(nextState, choice.nextCardId)
 
@@ -316,7 +344,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     })
   },
 
-  restart: () => {
+  restart: (mode) => {
     const intro = pickIntro()
     set({
       stats: initialStats(),
@@ -327,6 +355,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       gameOver: false,
       flags: [],
       anger: {},
+      mode: mode ?? get().mode,
       deathReason: undefined,
       deathStat: undefined,
       lastEpilogue: undefined,
