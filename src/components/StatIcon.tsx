@@ -11,47 +11,47 @@ const VB = 24
 // Cada icono es un fragmento de <path>/<rect>/<circle> en un viewBox de
 // 24x24, pensado para leerse bien de pequeño y en una sola silueta.
 // Metáforas lo más literales posible (van con etiqueta de texto debajo).
+//
+// TODOS ocupan exactamente y = 2 … 22 (20 de alto) y x = 2 … 22 salvo el de
+// gente, que se va a los bordes por los hombros. Si no coinciden en altura se
+// nota mucho puestos en fila: antes iban de 17 (bocadillo) a 21 (templo) y
+// parecían de tamaños distintos. Al tocar un icono, respeta ese encuadre.
 function IconShapes({ statKey }: { statKey: keyof Stats }) {
   switch (statKey) {
     case 'medios':
-      // Bocadillo de diálogo: prensa / opinión pública.
+      // Bocadillo de diálogo: prensa / relato.
       return (
-        <path d="M4,3 h16 a2,2 0 0 1 2,2 v9 a2,2 0 0 1 -2,2 h-8 l-5,4 v-4 h-3 a2,2 0 0 1 -2,-2 v-9 a2,2 0 0 1 2,-2 z" />
+        <path d="M4,2 h16 a2,2 0 0 1 2,2 v11 a2,2 0 0 1 -2,2 h-8 l-5,5 v-5 h-3 a2,2 0 0 1 -2,-2 v-11 a2,2 0 0 1 2,-2 z" />
       )
     case 'gobierno':
       // Edificio institucional con columnas: la coalición que te sostiene.
       // Si se caen las columnas, se cae el Gobierno — la metáfora es directa.
-      // Columnas centradas a mano: el hueco libre (21 de ancho menos 4
-      // columnas de 3) son 9, repartidos en 5 huecos de 1.8. De ahí las x.
+      // Columnas centradas: 20 de ancho menos 4 de 3 dejan 8, en 5 huecos de 1.6.
       return (
         <>
-          <path d="M12,1.5 L22.5,7 L1.5,7 Z" />
-          <rect x="1.5" y="8" width="21" height="2" />
-          <rect x="3.3" y="11" width="3" height="8" />
-          <rect x="8.1" y="11" width="3" height="8" />
-          <rect x="12.9" y="11" width="3" height="8" />
-          <rect x="17.7" y="11" width="3" height="8" />
-          <rect x="1.5" y="20" width="21" height="2.5" />
+          <path d="M12,2 L22,7 L2,7 Z" />
+          <rect x="2" y="8" width="20" height="2" />
+          <rect x="3.6" y="11" width="3" height="8" />
+          <rect x="8.2" y="11" width="3" height="8" />
+          <rect x="12.8" y="11" width="3" height="8" />
+          <rect x="17.4" y="11" width="3" height="8" />
+          <rect x="2" y="19.5" width="20" height="2.5" />
         </>
       )
     case 'calle':
-      // Tres siluetas de gente: la calle, la gente de a pie. Antes era una
-      // urna, pero la urna se confundía con "elecciones"/"gobierno"; un grupo
-      // de personas se lee como "la gente" sin ambigüedad.
-      // Tres bustos. Cada cuerpo arranca justo donde acaba su cabeza (con un
-      // pelín de solape): antes los hombros empezaban 6 unidades más abajo y
-      // las cabezas parecían flotar. Los de los lados van bastante más bajos
-      // y pequeños para que la silueta haga escalón: si van a la misma altura
-      // los tres cuerpos se funden en un bloque plano y deja de leerse como
-      // gente.
+      // Tres bustos: la gente de a pie. Cada cuerpo arranca donde acaba su
+      // cabeza (antes los hombros iban 6 unidades más abajo y las cabezas
+      // flotaban). Los de los lados van más bajos y pequeños para que la
+      // silueta haga escalón: a la misma altura los tres se funden en un
+      // bloque plano y deja de leerse como gente.
       return (
         <>
-          <circle cx="4.2" cy="9.5" r="2.7" />
-          <path d="M0.3,22.5 v-6.7 a3.9,3.9 0 0 1 7.8,0 v6.7 Z" />
-          <circle cx="19.8" cy="9.5" r="2.7" />
-          <path d="M15.9,22.5 v-6.7 a3.9,3.9 0 0 1 7.8,0 v6.7 Z" />
-          <circle cx="12" cy="5.8" r="3.7" />
-          <path d="M6.6,22.5 v-8 a5.4,5.4 0 0 1 10.8,0 v8 Z" />
+          <circle cx="4.2" cy="9.4" r="2.7" />
+          <path d="M0.3,22 v-6.3 a3.9,3.9 0 0 1 7.8,0 v6.3 Z" />
+          <circle cx="19.8" cy="9.4" r="2.7" />
+          <path d="M15.9,22 v-6.3 a3.9,3.9 0 0 1 7.8,0 v6.3 Z" />
+          <circle cx="12" cy="5.7" r="3.7" />
+          <path d="M6.6,22 v-7.6 a5.4,5.4 0 0 1 10.8,0 v7.6 Z" />
         </>
       )
     case 'caja':
@@ -59,7 +59,7 @@ function IconShapes({ statKey }: { statKey: keyof Stats }) {
       return (
         <>
           <path d="M8,8 V6 a4,4 0 0 1 8,0 V8 h-2.2 V6.2 a1.8,1.8 0 0 0 -3.6,0 V8 Z" />
-          <rect x="2.5" y="8" width="19" height="12.5" rx="2" />
+          <rect x="2" y="8" width="20" height="14" rx="2" />
         </>
       )
   }

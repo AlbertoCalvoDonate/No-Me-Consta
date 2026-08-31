@@ -195,7 +195,10 @@ export function SwipeCard({ card, onChoose, x }: Props) {
         minHeight: 0,
         display: 'flex',
         flexDirection: 'column',
-        padding: '16px 24px 12px',
+        // Márgenes mínimos: la carta es lo que manda en pantalla y el
+        // retrato está limitado por el ANCHO (su ratio es 1020/1200), así que
+        // cada píxel lateral que se recorta aquí lo gana la imagen.
+        padding: '10px 8px 8px',
         boxSizing: 'border-box',
       }}
     >
@@ -276,7 +279,7 @@ export function SwipeCard({ card, onChoose, x }: Props) {
         style={{
           flexShrink: 0,
           textAlign: 'center',
-          marginTop: 10,
+          marginTop: 7,
           fontFamily: 'var(--font-pixel)',
           fontWeight: 500,
           fontSize: 22,

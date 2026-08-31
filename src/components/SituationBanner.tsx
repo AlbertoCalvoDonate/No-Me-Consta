@@ -14,7 +14,7 @@ export function SituationBanner({ text }: { text: string }) {
         boxSizing: 'border-box',
         background: '#1c1c1e',
         borderBottom: '1px solid rgba(224,184,77,0.25)',
-        padding: '8px 20px',
+        padding: '8px 14px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
