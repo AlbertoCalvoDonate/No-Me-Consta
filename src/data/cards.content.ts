@@ -2389,6 +2389,15 @@ export const contentCards: Card[] = [
     left: { text: 'Tomárselo como un buen augurio', effects: { calle: 1 } },
     right: { text: 'Ignorarlo, como siempre', effects: {} },
   },
+  {
+    id: 'mopongo_millones',
+    phase: 2,
+    character: 'Mopongo',
+    characterImage: 'mopongo.png',
+    text: '"La gente se queja de que han invertido 27 millones en una rotonda." Ella escucha, asiente muy despacio, con toda la calma del mundo, y responde: "Eso no es na, chiqui."',
+    left: { text: '"Efectivamente. No es na"', effects: { gobierno: 1, medios: -1, calle: -1 } },
+    right: { text: 'Explicar en qué se han ido los 27 millones', effects: { medios: 1, calle: 1, gobierno: -1 }, moralidad: 1 },
+  },
 
   // --- LA OPOSICIÓN (moderado, paciente, siempre a punto de ganar y nunca) ---
   {
