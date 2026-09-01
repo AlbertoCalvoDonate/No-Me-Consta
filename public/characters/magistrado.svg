@@ -1,0 +1,35 @@
+<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Variante del retrato de El Juez para El Magistrado Afín: misma toga y
+       mismo poligonaje, pero pelo oscuro con entradas, gafas y una sonrisa
+       leve. Los dos jueces salen en el mismo mazo y tienen que distinguirse de
+       un vistazo: el que te investiga no sonríe nunca. Provisional, como el
+       otro, a la espera de arte de verdad. -->
+  <path d="M60,500 L95,350 L170,315 L230,315 L305,350 L340,500 Z" fill="#151515"/>
+  <path d="M200,500 L200,315 L230,315 L305,350 L320,500 Z" fill="#0a0a0a"/>
+  <path d="M150,330 L200,360 L165,420 L140,345 Z" fill="#f2f0ea"/>
+  <path d="M250,330 L200,360 L235,420 L260,345 Z" fill="#f2f0ea"/>
+  <path d="M186,352 L200,368 L214,352 L208,430 L192,430 Z" fill="#8c2230"/>
+  <rect x="178" y="270" width="44" height="70" fill="#c9905c"/>
+  <path d="M118,222 L108,242 L118,267 L132,257 Z" fill="#c9905c"/>
+  <path d="M282,222 L292,242 L282,267 L268,257 Z" fill="#c9905c"/>
+  <path d="M200,120 L130,150 L120,240 L140,300 L172,335 L200,345 Z" fill="#dba876"/>
+  <path d="M200,120 L270,150 L280,240 L260,300 L228,335 L200,345 Z" fill="#c28c56"/>
+  <path d="M146,204 L182,200 L182,209 L148,214 Z" fill="#241812"/>
+  <path d="M218,200 L254,204 L252,214 L218,209 Z" fill="#241812"/>
+  <rect x="155" y="222" width="14" height="26" fill="#141010"/>
+  <rect x="231" y="222" width="14" height="26" fill="#141010"/>
+  <!-- Gafas: lo primero que distingue a los dos jueces de lejos. -->
+  <g fill="none" stroke="#2b2b2e" stroke-width="7">
+    <rect x="140" y="212" width="48" height="44" rx="7"/>
+    <rect x="212" y="212" width="48" height="44" rx="7"/>
+    <path d="M188,232 L212,232"/>
+    <path d="M140,228 L118,236"/>
+    <path d="M260,228 L282,236"/>
+  </g>
+  <!-- Sonrisa leve: el favor siempre viene con una sonrisa. -->
+  <path d="M172,292 Q200,312 228,292 Q200,302 172,292 Z" fill="#7d4436"/>
+  <!-- Pelo oscuro con entradas, frente a las canas del otro juez. -->
+  <path d="M124,168 Q142,104 200,100 Q258,104 276,168 Q266,138 236,126 Q218,140 200,132 Q182,140 164,126 Q134,138 124,168 Z" fill="#2f2620"/>
+  <path d="M164,126 Q182,118 200,132 Q186,112 164,126 Z" fill="#dba876"/>
+  <path d="M236,126 Q218,118 200,132 Q214,112 236,126 Z" fill="#c28c56"/>
+</svg>

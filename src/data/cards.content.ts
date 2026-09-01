@@ -4187,4 +4187,224 @@ export const contentCards: Card[] = [
     },
   },
 
+
+  // ============================================================================
+  // EL MAGISTRADO AFIN — el otro juez. Mientras El Juez instruye contra usted,
+  // este mueve papeles a su favor... y apunta cada favor en una libreta. Todo
+  // lo que le acepta enciende una bomba (scheduleCardId) que vuelve meses
+  // despues convertida en factura. Y si le deja tirado demasiadas veces, el
+  // enfado le cambia de bando: ver 'afin_traicion'.
+  // Su indicador de cabecera es MEDIOS, como el del Juez: los dos operan en el
+  // terreno del escandalo, uno para encenderlo y otro para apagarlo.
+  // ============================================================================
+  {
+    id: 'afin_aviso',
+    phase: 2,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: 'Le llama a las once de la noche desde un teléfono que no es el suyo. "Mañana entra una denuncia contra usted. Se la van a repartir a mi compañero, que no es de los nuestros. Yo puedo intentar algo, pero tendría que ser esta noche."',
+    left: { text: 'Que siga su curso normal', effects: { medios: 1, gobierno: -1 }, moralidad: 3 },
+    right: {
+      text: '"Haz lo que tengas que hacer"',
+      effects: { medios: 1, gobierno: 1 },
+      moralidad: -3,
+      addFlags: ['magistrado_debe'],
+      scheduleCardId: 'afin_cobro_ascenso',
+      scheduleIn: 9,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'afin_archiva',
+    phase: 2,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: '"Lo de su consejero lo tengo encima de la mesa." Da golpecitos en una carpeta muy fina. "Puedo archivarlo por falta de indicios, que además es medio verdad. La otra mitad ya es cosa suya."',
+    left: { text: 'Que lo investigue hasta el final', effects: { medios: 2, gobierno: -2 }, moralidad: 3 },
+    right: {
+      text: 'Dejar que lo archive',
+      effects: { medios: 1, gobierno: 1, caja: 1 },
+      moralidad: -3,
+      addFlags: ['causa_archivada'],
+      scheduleCardId: 'afin_cobro_hijo',
+      scheduleIn: 11,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'afin_reparto',
+    phase: 3,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: '"El reparto de causas es aleatorio, presidente." Sonríe. "Aleatorio del todo, del todo, tampoco. Digamos que hay días en los que estoy de guardia y días en los que me pongo de guardia."',
+    left: { text: 'Preferir no saber cómo funciona', effects: { medios: 1 }, moralidad: 1 },
+    right: {
+      text: 'Preguntarle qué días está de guardia',
+      effects: { gobierno: 1, medios: -1 },
+      moralidad: -3,
+      addFlags: ['magistrado_debe'],
+      scheduleCardId: 'afin_cobro_sala',
+      scheduleIn: 8,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'afin_sumario',
+    phase: 3,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: 'Le enseña un sumario que no debería enseñarle. Es de una causa contra la oposición y hay dentro cosas muy feas. "Esto sale público en dos meses. O en dos días, según a quién le interese."',
+    left: { text: 'No tocar ese sumario', effects: { medios: 1 }, moralidad: 3 },
+    right: {
+      text: 'Que salga el lunes por la mañana',
+      effects: { calle: 1, gobierno: 1, medios: -2 },
+      moralidad: -3,
+      addFlags: ['sumario_filtrado'],
+      scheduleCardId: 'afin_filtracion_vuelve',
+      scheduleIn: 10,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'afin_cena',
+    phase: 2,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: '"Una cena entre amigos, sin agenda ni nada." El problema es que él instruye tres causas que le tocan a usted de cerca, y las cenas entre amigos también se fotografían.',
+    left: { text: 'Cancelar y verse cuando no instruya nada', effects: { medios: 1, gobierno: -1 }, moralidad: 2 },
+    right: { text: 'Cenar en un reservado, sin móviles', effects: { gobierno: 1, medios: -2 }, moralidad: -2 },
+    pleases: 'right',
+  },
+  {
+    id: 'afin_prensa',
+    phase: 3,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: '"Mi compañero el instructor filtra a la prensa todo lo que hace." Se recuesta. "Yo también sé filtrar, presidente. Solo que yo filtro cosas que le ayudan. Dígame cuándo."',
+    left: { text: 'Pedirle que no filtre nada', effects: { medios: 2, gobierno: -1 }, moralidad: 2 },
+    right: { text: '"Cuando yo te avise"', effects: { medios: -1, gobierno: 1 }, moralidad: -2 },
+    pleases: 'right',
+  },
+
+  // --- LAS FACTURAS (solo llegan programadas, nunca por sorteo) ---
+  {
+    id: 'afin_cobro_ascenso',
+    phase: 1,
+    weight: 0,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: '"¿Se acuerda de aquella noche que le llamé?" Claro que se acuerda. "Sale plaza en el tribunal de arriba. Yo no le pido nada, presidente. Solo digo que estaría bien que el nombramiento lo firme alguien que me conozca."',
+    left: {
+      text: 'Que el tribunal decida sin usted',
+      effects: { medios: 2, gobierno: -1 },
+      moralidad: 3,
+      removeFlags: ['magistrado_debe'],
+    },
+    right: {
+      text: 'Mover los hilos para el ascenso',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -3,
+      addFlags: ['magistrado_colocado'],
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'afin_cobro_hijo',
+    phase: 1,
+    weight: 0,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: 'Trae el currículum de su hijo dentro de la misma carpeta fina de hace unos meses. "Es un chico brillante. Y ya sabe que en esta vida una mano lava la otra, y las dos lavan la cara."',
+    left: {
+      text: 'Que se presente como todos',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: 3,
+      removeFlags: ['causa_archivada'],
+    },
+    right: {
+      text: 'Buscarle un puesto discreto',
+      effects: { caja: -1, gobierno: 1, medios: -1 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'afin_cobro_sala',
+    phase: 1,
+    weight: 0,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: '"Tengo un problemilla con Hacienda de hace años." Lo dice como quien comenta la lluvia. "Nada grave. Pero si a alguien se le ocurriera mirarlo con lupa ahora, sería un momento muy malo para los dos."',
+    left: {
+      text: 'Que Hacienda mire lo que tenga que mirar',
+      effects: { medios: 2, gobierno: -2 },
+      moralidad: 3,
+      removeFlags: ['magistrado_debe'],
+    },
+    right: {
+      text: 'Que ese expediente no se toque',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'afin_filtracion_vuelve',
+    phase: 1,
+    weight: 0,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'Aquel sumario que salió tan oportunamente el lunes tenía una copia con marca de agua. La marca lleva a un juzgado, el juzgado a un despacho y el despacho a una llamada suya de la noche anterior.',
+    left: {
+      text: 'Reconocer la llamada y asumirlo',
+      effects: { medios: 1, gobierno: -2 },
+      moralidad: 3,
+      removeFlags: ['sumario_filtrado'],
+    },
+    right: {
+      text: '"Yo no he llamado a ningún juez"',
+      effects: { medios: -3, gobierno: 1 },
+      moralidad: -3,
+    },
+  },
+
+  // --- CUANDO SE LE HARTA UNO ---
+  {
+    id: 'anger_afin',
+    phase: 3,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: 'Ya no llama de noche. Ya no trae carpetas. Cuando se cruzan en un acto le saluda con la cabeza, mirando a otro lado, como se saluda a alguien con quien uno prefiere no salir en la misma foto.',
+    left: { text: 'Buscarle y arreglarlo como sea', effects: { gobierno: 1, medios: -1, caja: -1 }, moralidad: -2 },
+    right: { text: 'Dejar que se enfríe', effects: { medios: 1, gobierno: -1 }, moralidad: 1 },
+    condition: (_s, _m, ctx) => (ctx.anger['El Magistrado Afín'] ?? 0) >= 3,
+    weight: (_s, _m, ctx) => (ctx.anger['El Magistrado Afín'] ?? 0) - 1,
+  },
+  {
+    id: 'afin_traicion',
+    phase: 3,
+    character: 'El Juez',
+    characterImage: 'juez.svg',
+    text: 'Hay un magistrado que ha declarado como testigo esta mañana. Ha contado llamadas nocturnas, carpetas y un reparto de causas que no era tan aleatorio. Sabe muchísimo, y ahora está muy motivado.',
+    left: { text: 'Reconocer las llamadas', effects: { medios: 1, gobierno: -3 }, moralidad: 3 },
+    right: { text: '"Ese señor miente por despecho"', effects: { medios: -3, gobierno: 1 }, moralidad: -2 },
+    // Solo si se le hizo un favor Y luego se le dejó tirado lo suficiente.
+    condition: (_s, _m, ctx) =>
+      (ctx.anger['El Magistrado Afín'] ?? 0) >= 4 &&
+      (ctx.flags.has('magistrado_colocado') || ctx.flags.has('causa_archivada')),
+    weight: 6,
+  },
+  {
+    id: 'juez_sospecha',
+    phase: 3,
+    character: 'El Juez',
+    characterImage: 'juez.svg',
+    text: 'Hay causas suyas que llevan meses cayendo siempre en el mismo juzgado, y no es el mío. El reparto es aleatorio, dice la norma. Voy a pedir el listado de los últimos dos años.',
+    left: { text: 'Entregar el listado entero', effects: { medios: 1, gobierno: -1 }, moralidad: 2 },
+    right: { text: 'Que el listado tarde en aparecer', effects: { medios: -2, gobierno: 1 }, moralidad: -2 },
+    condition: (_s, _m, ctx) =>
+      ctx.flags.has('magistrado_debe') || ctx.flags.has('magistrado_colocado'),
+    weight: 3,
+  },
+
 ]
