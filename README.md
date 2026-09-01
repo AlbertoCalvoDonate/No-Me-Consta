@@ -103,12 +103,26 @@ SVG provisional a la espera de arte nuevo: `cunado.svg` (ahora "El Hermano"),
 `encuestador.svg`, `juez.svg` y `periodista.svg`. `nocheelectoral.svg` es de
 las cartas de elecciones, no de un personaje.
 
-Los `.png` están **re-encuadrados a un lienzo común** (1020×1200, poco aire
+Los retratos están en **.webp** (ver abajo) y **re-encuadrados a un lienzo común** (1020×1200, poco aire
 sobre la cabeza, torso sangrando por abajo) con `scripts/normalize-portraits.mjs`,
 para que en la carta se vean todos con el mismo plano sin importar la altura
 de la ventana. Al añadir un retrato nuevo, pásale ese script (necesita `npm
 run dev` levantado). En la carta se muestran con `object-fit: cover` +
 `object-position: center top`.
+
+### Peso de los retratos
+
+Estan en **.webp**, no en png: mismo lienzo y misma transparencia, pero
+**14,20 MB -> 1,16 MB (92% menos)**. El arte es plano y de pocos colores, que
+es justo lo que mejor comprime; a calidad 0.9 no hay diferencia visible ni en
+el retrato mas detallado.
+
+    npm run dev                       # en otra terminal
+    node scripts/to-webp.mjs          # convierte los .png que haya
+
+Al traer arte nuevo: pasalo primero por `to-webp.mjs` y luego por
+`normalize-portraits.mjs` (que ya entiende los dos formatos y reexporta en el
+mismo con el que entro, para no volver a inflarlo).
 
 ### Cartas de arranque
 

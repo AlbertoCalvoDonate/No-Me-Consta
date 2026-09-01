@@ -52,7 +52,12 @@ const CONTENT_H = 0.96 // el contenido ocupa este % de la altura del lienzo
 // Sin argumentos, todos los .png; con argumentos, solo los indicados (útil
 // al añadir un retrato nuevo, para no reescribir los que ya están bien).
 const args = process.argv.slice(2)
-const files = args.length > 0 ? args : readdirSync(CHARDIR).filter((f) => f.endsWith('.png'))
+// Los retratos viven en .webp (ver scripts/to-webp.mjs); se aceptan .png por
+// si entra arte nuevo sin convertir todavia.
+const files =
+  args.length > 0
+    ? args
+    : readdirSync(CHARDIR).filter((f) => f.endsWith('.webp') || f.endsWith('.png'))
 
 const browser = await chromium.launch()
 const page = await browser.newPage()
@@ -99,7 +104,9 @@ for (const f of files) {
       const dx = TW / 2 - (minX + bw / 2) * scale
       const dy = HEADROOM * TH - minY * scale
       x2.drawImage(img, 0, 0, nw, nh, dx, dy, nw * scale, nh * scale)
-      return c2.toDataURL('image/png')
+      // Se reexporta en el MISMO formato que entro: convertir un webp a png
+      // al re-encuadrarlo lo devolveria a pesar diez veces mas.
+      return c2.toDataURL(f.endsWith('.webp') ? 'image/webp' : 'image/png', 0.9)
     },
     { f, TW, TH, HEADROOM, CONTENT_H }
   )
