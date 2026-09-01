@@ -8,6 +8,7 @@ import { BottomBar } from './components/BottomBar'
 import { StartScreen } from './components/StartScreen'
 import { StatIcon } from './components/StatIcon'
 import type { StatKey } from './types'
+import { epitetoDe } from './data/epitetos'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
@@ -20,7 +21,7 @@ export default function App() {
   // Pantalla de inicio: solo se ve una vez al cargar la web, no vuelve a
   // salir al reiniciar partida (restart lleva directo a jugar de nuevo).
   const [started, setStarted] = useState(false)
-  const { stats, turn, gameOver, deathReason, deathStat, currentCard, choose, restart } =
+  const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, choose, restart } =
     useGameStore()
 
   // Posición de arrastre de la carta actual, compartida con StatBars para
@@ -114,16 +115,28 @@ export default function App() {
                       alignItems: 'center',
                       textAlign: 'center',
                       color: '#f2f2f2',
-                      // Scroll en vez de recorte, y centrado con `margin:auto`
-                      // en el contenido en lugar de `justifyContent:center`:
-                      // con center + overflow, cuando el contenido no cabe se
-                      // corta por ARRIBA Y POR ABAJO y el botón de reiniciar
-                      // desaparecía (medido: en 360x640 pasaba con 54 de los
-                      // 64 epílogos). Con `margin:auto` se centra si sobra
-                      // sitio y se puede desplazar si falta.
-                      overflowY: 'auto',
+                      overflow: 'hidden',
                     }}
                   >
+                    {/* Dos zonas: el relato se desplaza si hace falta, y el
+                        botón vive FUERA de esa zona, así que no se sale nunca.
+                        Antes todo iba junto con overflow:hidden y
+                        justifyContent:center, que cuando el texto no cabía lo
+                        recortaba por arriba Y por abajo y se llevaba el botón
+                        por delante (medido: en 360x640 pasaba con 54 de los 64
+                        epílogos del juego). El `margin:auto` centra el relato
+                        cuando sobra sitio. */}
+                    <div
+                      style={{
+                        flex: 1,
+                        minHeight: 0,
+                        width: '100%',
+                        overflowY: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'safe center',
+                      }}
+                    >
                     <div style={{ margin: 'auto 0', width: '100%' }}>
                     <h2
                       style={{
@@ -193,9 +206,60 @@ export default function App() {
                       Duró {turn - 1} {turn - 1 === 1 ? 'mes' : 'meses'} en el cargo
                       {turn - 1 >= 12 ? ` (${(( turn - 1) / 12).toFixed(1)} años)` : ''}.
                     </p>
+                    {/* Cómo le recordarán: el único momento en que se
+                        enseña la moralidad acumulada, y sin número — solo el
+                        título que se ha ganado, como los apodos que la
+                        historia les colgaba a los reyes. */}
+                    <div
+                      style={{
+                        margin: '0',
+                        paddingTop: 14,
+                        borderTop: '1px solid rgba(224,184,77,0.22)',
+                        width: '100%',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: 'var(--font-pixel)',
+                          fontWeight: 500,
+                          fontSize: 14,
+                          letterSpacing: 0.4,
+                          color: '#8a8272',
+                        }}
+                      >
+                        LOS LIBROS LE LLAMARÁN
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: 'var(--font-pixel)',
+                          fontWeight: 400,
+                          fontSize: 25,
+                          lineHeight: 1.25,
+                          color: '#e0b84d',
+                          margin: '4px 0 5px',
+                        }}
+                      >
+                        {epitetoDe(moralidad).nombre}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: 'var(--font-pixel)',
+                          fontWeight: 500,
+                          fontSize: 15,
+                          lineHeight: 1.35,
+                          color: '#9a927f',
+                        }}
+                      >
+                        {epitetoDe(moralidad).nota}
+                      </div>
+                    </div>
+                    </div>
+                    </div>
                     <button
                       onClick={() => restart()}
                       style={{
+                        flexShrink: 0,
+                        marginTop: 14,
                         background: '#e0b84d',
                         border: 'none',
                         borderRadius: 8,
@@ -208,7 +272,6 @@ export default function App() {
                     >
                       Nueva legislatura
                     </button>
-                    </div>
                   </motion.div>
                 )}
               </div>

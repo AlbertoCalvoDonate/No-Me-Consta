@@ -231,6 +231,18 @@ Importante al mirarlos: el **rojo salta a 1 punto** (o a 9, por arriba), pero
 rojo" no significa muerto, significa a un paso. La barra de segmentos existe
 justamente para poder distinguir esos dos estados de un vistazo.
 
+### El epíteto final
+
+Al acabar la partida se enseña la **moralidad** acumulada, que durante el
+juego es invisible. No como número, sino como el apodo que la historia les
+colgaba a los reyes: El Sabio, El Felón, El Trincón... Hay uno por cada valor
+posible (0 a 10) en `src/data/epitetos.ts`, así que dos partidas parecidas
+pero no iguales acaban con títulos distintos.
+
+El botón de reiniciar vive FUERA de la zona con scroll del panel de fin, para
+que no pueda salirse de pantalla por mucho que crezca el texto. Comprobado con
+los 64 epílogos del juego en cuatro resoluciones, hasta 320x568.
+
 ### Flechas de efecto (temporal)
 
 Las flechas ▲▼ sobre los iconos adelantan qué stat sube o baja con cada
