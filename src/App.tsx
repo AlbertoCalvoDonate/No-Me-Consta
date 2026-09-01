@@ -105,38 +105,46 @@ export default function App() {
                     style={{
                       flex: 1,
                       minHeight: 0,
-                      margin: '16px 24px',
+                      margin: '12px 10px',
                       background: '#1c1c1e',
                       borderRadius: 16,
-                      padding: 24,
+                      padding: '16px 18px',
                       display: 'flex',
                       flexDirection: 'column',
-                      justifyContent: 'center',
                       alignItems: 'center',
                       textAlign: 'center',
                       color: '#f2f2f2',
-                      overflow: 'hidden',
+                      // Scroll en vez de recorte, y centrado con `margin:auto`
+                      // en el contenido en lugar de `justifyContent:center`:
+                      // con center + overflow, cuando el contenido no cabe se
+                      // corta por ARRIBA Y POR ABAJO y el botón de reiniciar
+                      // desaparecía (medido: en 360x640 pasaba con 54 de los
+                      // 64 epílogos). Con `margin:auto` se centra si sobra
+                      // sitio y se puede desplazar si falta.
+                      overflowY: 'auto',
                     }}
                   >
+                    <div style={{ margin: 'auto 0', width: '100%' }}>
                     <h2
                       style={{
                         color: '#ff4d4d',
-                        marginBottom: 16,
+                        marginBottom: 12,
+                        marginTop: 0,
                         fontFamily: 'var(--font-pixel)',
                         fontWeight: 400,
-                        fontSize: 30,
-                        lineHeight: 1.35,
+                        fontSize: 27,
+                        lineHeight: 1.3,
                       }}
                     >
                       Fin del gobierno
                     </h2>
                     <p
                       style={{
-                        lineHeight: 1.5,
-                        marginBottom: 24,
+                        lineHeight: 1.45,
+                        margin: '0 0 16px',
                         fontFamily: 'var(--font-pixel)',
                         fontWeight: 500,
-                        fontSize: 21,
+                        fontSize: 19,
                       }}
                     >
                       {deathReason}
@@ -150,7 +158,8 @@ export default function App() {
                           display: 'flex',
                           alignItems: 'center',
                           gap: 10,
-                          marginBottom: 18,
+                          margin: '0 auto 14px',
+                          width: 'fit-content',
                           padding: '8px 14px',
                           borderRadius: 10,
                           background: 'rgba(255,77,77,0.12)',
@@ -174,9 +183,9 @@ export default function App() {
                     <p
                       style={{
                         color: '#888',
-                        fontSize: 18,
-                        lineHeight: 1.5,
-                        marginBottom: 24,
+                        fontSize: 16,
+                        lineHeight: 1.4,
+                        margin: '0 0 18px',
                         fontFamily: 'var(--font-pixel)',
                         fontWeight: 500,
                       }}
@@ -199,6 +208,7 @@ export default function App() {
                     >
                       Nueva legislatura
                     </button>
+                    </div>
                   </motion.div>
                 )}
               </div>
