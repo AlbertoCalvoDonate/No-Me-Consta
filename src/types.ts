@@ -42,6 +42,14 @@ export interface CardChoice {
   // si la elección es moralmente neutra (la mayoría de cartas "meme_").
   moralidad?: number
   nextCardId?: string   // Fuerza la siguiente carta (para mini-arcos narrativos)
+  // BOMBA DE RELOJERIA: deja una carta pendiente que saldra dentro de
+  // `scheduleIn` turnos, no al turno siguiente. Es la diferencia entre
+  // "aceptas el sobre y te pillan acto seguido" y "aceptas el sobre y
+  // ocho meses despues, cuando ya no te acuerdas, aparece el periodista".
+  // A diferencia de dejarlo al sorteo, esto SI llega: la trama no se
+  // queda a medias por mala suerte.
+  scheduleCardId?: string
+  scheduleIn?: number   // turnos de espera (por defecto SCHEDULE_DEFAULT)
   epilogueText?: string // Si esta elección termina la partida, texto de cierre
   // Estado narrativo que enciende o apaga esta elección. Los flags son texto
   // libre ('guerra_abierta', 'hermano_imputado'...) y las cartas los consultan
@@ -55,6 +63,11 @@ export interface CardChoice {
 // stats: el estado narrativo (flags) y el enfado acumulado por personaje.
 export interface CardContext {
   flags: ReadonlySet<string>
+  // Cuantos turnos lleva encendido un flag (-1 si no lo esta). Es lo que
+  // permite las BOMBAS DE RELOJERIA: aceptas el favor hoy y la carta que te
+  // lo hace pagar espera meses antes de poder salir, en vez de encadenarse
+  // al turno siguiente. Ej: (s, m, ctx) => ctx.flagAge('sobre_hermano') >= 10
+  flagAge: (flag: string) => number
   // Cuántas veces se ha desairado a cada personaje (por nombre). Sube cuando
   // eliges la opción contraria a lo que pide, si la carta marca `pleases`.
   anger: Readonly<Record<string, number>>
@@ -106,6 +119,11 @@ export interface Card {
   // bancada harta de ti...). Se comprueba en todos los turnos. Su `condition`
   // debe ser exigente: si es fácil de cumplir, corta partidas sin avisar.
   byEvent?: boolean
+  // Balance de fin de año: se fuerza una cada RECAP_EVERY turnos (12 = 1 año),
+  // salvo que ese turno toque ya la noche electoral. Nunca sale por sorteo.
+  // Sirve para hacer una parada, mirar atras y decidir el tono del ano que
+  // viene: una legislatura son 48 turnos y sin esto se hace muy plana.
+  isRecap?: boolean
   // Carta del evento de elecciones (cada 4 años de gobierno). No sale nunca
   // por sorteo: useGameStore la fuerza al llegar el turno, eligiendo entre
   // las que cumplen su `condition`. Ver ELECTION_INTERVAL en cards.ts.
@@ -135,6 +153,12 @@ export interface GameState {
   deathStat?: StatKey
   // Estado narrativo de la partida (ver CardChoice.addFlags).
   flags: string[]
+  // Turno en que se encendio cada flag, para poder saber cuanto lleva activo
+  // (ver CardContext.flagAge).
+  flagTurn: Record<string, number>
+  // Cartas pendientes de salir y a partir de que turno (ver
+  // CardChoice.scheduleCardId).
+  scheduled: { id: string; turn: number }[]
   // Enfado acumulado por personaje (ver CardContext.anger).
   anger: Record<string, number>
   // Modo de dificultad elegido al empezar (ver src/data/modes.ts).

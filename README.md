@@ -231,6 +231,27 @@ Importante al mirarlos: el **rojo salta a 1 punto** (o a 9, por arriba), pero
 rojo" no significa muerto, significa a un paso. La barra de segmentos existe
 justamente para poder distinguir esos dos estados de un vistazo.
 
+### Balance de fin de ano y bombas de relojeria
+
+Cada **12 turnos (1 ano)** se fuerza una carta `isRecap`: una parada para mirar
+atras y marcar el tono del ano siguiente. Una legislatura son 48 turnos y sin
+esto se hacia muy plana. Si el turno cae a la vez en balance y en elecciones,
+manda la noche electoral.
+
+Las **bombas de relojeria** son el otro mecanismo nuevo: una eleccion puede
+dejar programada una carta para dentro de N turnos con `scheduleCardId` y
+`scheduleIn`. La diferencia con `nextCardId` es el retardo, y con dejarlo al
+sorteo, que esta SI llega: la trama no se queda a medias por mala suerte.
+
+    right: { text: 'Aceptarlo y no hablar del tema', effects: { caja: 2 },
+             addFlags: ['sobre_hermano'],
+             scheduleCardId: 'bomba_sobre_explota', scheduleIn: 11 }
+
+Once meses despues, cuando ya no te acuerdas, aparece el periodista con el
+nombre del "amigo" que puso el dinero. Tambien existe `ctx.flagAge(flag)`, que
+dice cuantos turnos lleva encendido un flag, para condiciones del tipo "solo
+si esto lleva escondido medio ano".
+
 ### El epíteto final
 
 Al acabar la partida se enseña la **moralidad** acumulada, que durante el

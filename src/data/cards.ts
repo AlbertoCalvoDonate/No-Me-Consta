@@ -333,6 +333,9 @@ const endingCards: Card[] = [
 // useGameStore fuerza una de estas cartas cuando `turn % ELECTION_INTERVAL`
 // es 0 (ver pickNextCard). Nunca salen por sorteo normal.
 export const ELECTION_INTERVAL = 48 // 1 turno = 1 mes, así que 48 = 4 años
+
+// Cada cuantos turnos toca balance de fin de ano (12 turnos = 1 ano).
+export const RECAP_EVERY = 12
 export const ELECTION_MAX_TERMS = 3 // a la tercera convocatoria, se acaba
 
 const electionCards: Card[] = [
@@ -509,7 +512,11 @@ const electionCards: Card[] = [
       effects: {},
       epilogueText: 'Coloca a un sucesor de su cuerda y se va a un consejo de administración a seguir mandando sin salir en la foto. Fin del gobierno, solo sobre el papel.',
     },
-    condition: (s) => s.medios >= 6 && s.gobierno >= 6 && s.calle >= 6 && s.caja >= 6,
+    // Tres de las cuatro en 6 o mas. Exigirlas las cuatro dejaba este final
+    // en el 1.9% de las partidas que llegan hasta aqui (0% en minoria), es
+    // decir, practicamente nadie lo veia nunca.
+    condition: (s) =>
+      [s.medios, s.gobierno, s.calle, s.caja].filter((v) => v >= 6).length >= 3,
   },
 ]
 

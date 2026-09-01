@@ -1,7 +1,14 @@
 import { create } from 'zustand'
 import type { Card, CardContext, GameState, Stats, StatEffects, StatKey } from '../types'
 import { PHASE_MIN_TURN } from '../types'
-import { cards, STAT_START, STAT_MAX, ELECTION_INTERVAL, ELECTION_MAX_TERMS } from '../data/cards'
+import {
+  cards,
+  STAT_START,
+  STAT_MAX,
+  ELECTION_INTERVAL,
+  ELECTION_MAX_TERMS,
+  RECAP_EVERY,
+} from '../data/cards'
 import { MODES, DEFAULT_MODE, type ModeConfig, type ModeId } from '../data/modes'
 
 function cardMinTurn(c: Card): number {
@@ -56,6 +63,10 @@ function jitter(base: number): number {
 // legislaturas.
 const DRIFT_MIN_DISTANCE = 3
 
+// Meses que tarda en estallar una bomba de relojeria si la carta no dice
+// otra cosa (ver CardChoice.scheduleIn).
+const SCHEDULE_DEFAULT = 8
+
 // Cada cuántos turnos toca desgaste, ya con el desvanecido del modo aplicado.
 function driftIntervalFor(mode: ModeConfig, turn: number): number {
   if (mode.driftEvery === 0) return 0
@@ -100,7 +111,12 @@ function applyEffects(stats: Stats, effects: StatEffects, dampZone: number): Sta
 
 // Contexto que ven `condition` y `weight` de cada carta.
 function contextOf(state: GameState): CardContext {
-  return { flags: new Set(state.flags), anger: state.anger, turn: state.turn }
+  return {
+    flags: new Set(state.flags),
+    anger: state.anger,
+    turn: state.turn,
+    flagAge: (f) => (state.flagTurn[f] === undefined ? -1 : state.turn - state.flagTurn[f]),
+  }
 }
 
 function cardAllowed(c: Card, state: GameState, ctx: CardContext): boolean {
@@ -122,6 +138,16 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   }
   const ctx = contextOf(state)
 
+  // BOMBAS DE RELOJERIA: cartas que se dejaron programadas hace meses y a las
+  // que ya les toca. Van antes que nada (salvo una cadena forzada en curso):
+  // si se dejaran al sorteo se perderian, y la gracia de la bomba es que
+  // llega justo cuando ya no te acordabas.
+  const debida = state.scheduled.filter((s) => state.turn >= s.turn)
+  if (debida.length > 0) {
+    const c = cards.find((x) => x.id === debida[0].id)
+    if (c) return c
+  }
+
   // ELECCIONES: cada ELECTION_INTERVAL turnos (4 años de gobierno) toca
   // renovar legislatura, pase lo que pase. Es el hito de la partida: según
   // cómo lleguen las stats sale una carta u otra (derrota, apretada,
@@ -139,6 +165,17 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
         : electionCards.filter((c) => !c.id.endsWith('_final'))
       const chosen = pool.length > 0 ? pool : electionCards
       return chosen[Math.floor(Math.random() * chosen.length)]
+    }
+  }
+
+  // BALANCE DE FIN DE ANO: cada RECAP_EVERY turnos toca parar, mirar atras y
+  // decidir el tono del ano que viene. Va DESPUES de las elecciones (si el
+  // turno cae en las dos cosas, manda la noche electoral, que es mas gorda) y
+  // ANTES de todo lo demas, para que no se lo coma un final por barra.
+  if (state.turn > 0 && state.turn % RECAP_EVERY === 0) {
+    const recaps = cards.filter((c) => c.isRecap && cardAllowed(c, state, ctx))
+    if (recaps.length > 0) {
+      return recaps[Math.floor(Math.random() * recaps.length)]
     }
   }
 
@@ -203,6 +240,7 @@ function pickRegularCard(state: GameState): Card {
   const base = (c: Card) =>
     !c.isEnding &&
     !c.isElection &&
+    !c.isRecap &&
     !recent.has(c.id) &&
     cardAllowed(c, state, ctx) &&
     cardWeight(c, state, ctx) > 0
@@ -276,6 +314,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   history: [firstCard.id],
   gameOver: false,
   flags: [],
+  flagTurn: {},
+  scheduled: [],
   anger: {},
   mode: DEFAULT_MODE,
   currentCard: firstCard,
@@ -291,9 +331,27 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // Estado narrativo: la elección puede encender o apagar flags.
     const flagSet = new Set(state.flags)
-    choice.addFlags?.forEach((f) => flagSet.add(f))
-    choice.removeFlags?.forEach((f) => flagSet.delete(f))
+    const newFlagTurn = { ...state.flagTurn }
+    choice.addFlags?.forEach((f) => {
+      // Solo se apunta la primera vez: si se vuelve a encender un flag que ya
+      // estaba, su antiguedad no se reinicia.
+      if (!flagSet.has(f)) newFlagTurn[f] = state.turn
+      flagSet.add(f)
+    })
+    choice.removeFlags?.forEach((f) => {
+      flagSet.delete(f)
+      delete newFlagTurn[f]
+    })
     const newFlags = [...flagSet]
+
+    // Bomba de relojeria: se apunta para dentro de unos meses.
+    const newScheduled = state.scheduled.filter((s) => s.id !== state.currentCard.id)
+    if (choice.scheduleCardId) {
+      newScheduled.push({
+        id: choice.scheduleCardId,
+        turn: state.turn + (choice.scheduleIn ?? SCHEDULE_DEFAULT),
+      })
+    }
 
     // Enfado: si la carta marca qué lado le da la razón al personaje y has
     // elegido el contrario, se lo apunta. Contentarle rebaja el enfado.
@@ -308,6 +366,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         stats: newStats,
         moralidad: newMoralidad,
         flags: newFlags,
+        flagTurn: newFlagTurn,
+        scheduled: newScheduled,
         anger: newAnger,
         gameOver: true,
         deathReason: choice.epilogueText,
@@ -333,6 +393,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       history: [...state.history, state.currentCard.id],
       gameOver: false,
       flags: newFlags,
+      flagTurn: newFlagTurn,
+      scheduled: newScheduled,
       anger: newAnger,
       mode: state.mode,
     }
@@ -354,6 +416,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       history: [intro.id],
       gameOver: false,
       flags: [],
+      flagTurn: {},
+      scheduled: [],
       anger: {},
       mode: mode ?? get().mode,
       deathReason: undefined,
