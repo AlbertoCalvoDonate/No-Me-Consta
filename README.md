@@ -402,9 +402,9 @@ visto una sola carta.
 La curva ya existe sin modos: un novato dura 29 turnos y un experto 48, un 65%
 más, solo por jugar mejor. Reigns tampoco tiene dificultades.
 
-Queda una configuración: **sin desgaste y con amortiguación 2** (
-en ). Jugando bien se muere en el 91-97% de las partidas, con
-mediana de 29 a 48 turnos según la peric ia.
+Queda una configuración: **sin desgaste y con amortiguación 2**
+(`DAMP_ZONE` en `src/hooks/useGameStore.ts`). Jugando bien se muere en el
+91-97% de las partidas, con mediana de 29 a 48 turnos según la pericia.
 
 ### Muertes por evento
 
