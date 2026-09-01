@@ -21,6 +21,9 @@ function isInTurnWindow(c: Card, turn: number): boolean {
   return turn >= min && turn <= max
 }
 
+// Las cuatro barras, en el orden en que se ven en pantalla.
+const STAT_KEYS = ['medios', 'gobierno', 'calle', 'caja'] as const
+
 function clamp(n: number) {
   return Math.max(0, Math.min(STAT_MAX, n))
 }
@@ -105,6 +108,23 @@ function applyEffects(stats: Stats, effects: StatEffects, dampZone: number): Sta
   const next = {} as Stats
   for (const key of ['medios', 'gobierno', 'calle', 'caja'] as const) {
     next[key] = clamp(stats[key] + damp(stats[key], jitter(effects[key] ?? 0), dampZone))
+  }
+  return next
+}
+
+// Cuanto hay que alejarse del centro para que el comodin de vacaciones te
+// devuelva un punto (con STAT_START = 5, esto son las barras a 7 o mas y a
+// 3 o menos).
+const REBALANCE_DISTANCE = 2
+
+// Comodin de `CardChoice.rebalance`: acerca cada barra un punto al centro,
+// solo si esta lo bastante lejos. Sin jitter ni amortiguacion, a proposito:
+// es un respiro y tiene que ser fiable.
+function applyRebalance(stats: Stats): Stats {
+  const next = { ...stats }
+  for (const key of STAT_KEYS) {
+    const d = next[key] - STAT_START
+    if (Math.abs(d) >= REBALANCE_DISTANCE) next[key] = clamp(next[key] - Math.sign(d))
   }
   return next
 }
@@ -282,8 +302,6 @@ function initialStats(): Stats {
   return { medios: STAT_START, gobierno: STAT_START, calle: STAT_START, caja: STAT_START }
 }
 
-const STAT_KEYS = ['medios', 'gobierno', 'calle', 'caja'] as const
-
 // Qué indicador está roto (a 0 o al máximo). Se guarda al terminar para poder
 // decirlo en la pantalla de fin: en Reigns la muerte siempre te dice qué pilar
 // falló, y eso es lo que te enseña a jugar mejor la siguiente.
@@ -326,7 +344,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const card = state.currentCard
     const choice = card[side]
     const mode = MODES[state.mode]
-    const newStats = applyEffects(state.stats, choice.effects, mode.dampZone)
+    const afterEffects = applyEffects(state.stats, choice.effects, mode.dampZone)
+    const newStats = choice.rebalance ? applyRebalance(afterEffects) : afterEffects
     const newMoralidad = applyMoralidad(state.moralidad, choice.moralidad)
 
     // Estado narrativo: la elección puede encender o apagar flags.

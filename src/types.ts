@@ -41,6 +41,12 @@ export interface CardChoice {
   // No aparece en ninguna barra — solo se nota en el final. Omite el campo
   // si la elección es moralmente neutra (la mayoría de cartas "meme_").
   moralidad?: number
+  // Comodin: en vez de sumar y restar cantidades fijas, acerca TODAS las
+  // barras al centro (lo que este muy alto baja 1, lo que este muy bajo
+  // sube 1, y lo que ande cerca del centro se queda). Se aplica despues de
+  // `effects` y sin suerte ni amortiguacion de por medio: es un respiro
+  // deliberado, no un empujon mas.
+  rebalance?: boolean
   nextCardId?: string   // Fuerza la siguiente carta (para mini-arcos narrativos)
   // BOMBA DE RELOJERIA: deja una carta pendiente que saldra dentro de
   // `scheduleIn` turnos, no al turno siguiente. Es la diferencia entre

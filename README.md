@@ -252,6 +252,19 @@ nombre del "amigo" que puso el dinero. Tambien existe `ctx.flagAge(flag)`, que
 dice cuantos turnos lleva encendido un flag, para condiciones del tipo "solo
 si esto lleva escondido medio ano".
 
+### El comodin de verano
+
+`vacaciones_tecnicas` sale a mitad de ano (turnos 6, 18, 30...) y no siempre:
+compite en el sorteo con peso 90, asi que cae en un tercio de los veranos.
+Aceptarla no suma ni resta cantidades fijas: usa `rebalance: true`, que acerca
+TODAS las barras un punto al centro (las que estan a 7 o mas bajan, las que
+estan a 3 o menos suben, el resto se queda). Sin suerte ni amortiguacion de
+por medio: es un respiro y tiene que ser fiable.
+
+Medido: recorta la desviacion media respecto al centro de 4,6 a 3,4 puntos.
+Es la carta a la que agarrarse cuando algo se ha ido de madre, y la que
+estorba cuando ibas lanzado.
+
 ### El epíteto final
 
 Al acabar la partida se enseña la **moralidad** acumulada, que durante el

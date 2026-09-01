@@ -3484,4 +3484,35 @@ export const contentCards: Card[] = [
     pleases: 'left',
   },
 
+
+  // ============================================================================
+  // COMODIN DE VERANO — sale a mitad de ano (turnos 6, 18, 30...), y no
+  // siempre: compite en el sorteo con un peso alto, asi que unas veces cae y
+  // otras no. Aceptar las vacaciones no suma ni resta cantidades fijas, sino
+  // que ACERCA TODAS LAS BARRAS AL CENTRO (ver CardChoice.rebalance): en
+  // agosto se enfria todo, lo bueno y lo malo. Es la carta a la que agarrarse
+  // cuando algo se ha ido de madre, y la que estorba cuando ibas lanzado.
+  // ============================================================================
+  {
+    id: 'vacaciones_tecnicas',
+    phase: 1,
+    character: 'El Jefe de Comunicación',
+    characterImage: 'jefecomunicacion.png',
+    text: 'Agosto. No hay Parlamento, no hay comisiones y hasta los periodistas están en la playa. Tres semanas sin aparecer y el país se olvida de todo: de lo malo y de lo bueno. Usted dirá.',
+    left: {
+      text: 'Vacaciones técnicas hasta septiembre',
+      effects: {},
+      rebalance: true,
+    },
+    right: {
+      text: 'Quedarse a trabajar todo agosto',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: 1,
+    },
+    // Solo a mitad de año, y con peso alto para que caiga a menudo pero no
+    // siempre: medido, sale en torno a un tercio de los veranos.
+    condition: (_s, _m, ctx) => ctx.turn % 12 === 6,
+    weight: 90,
+  },
+
 ]
