@@ -2933,6 +2933,16 @@ export const contentCards: Card[] = [
     right: { text: 'Defenderle como "un referente"', effects: { medios: -2, gobierno: 1 }, moralidad: -2 },
   },
   {
+    id: 'periodista_galgo',
+    phase: 2,
+    character: 'El Periodista',
+    characterImage: 'periodista.svg',
+    text: '"Tras huir de la ciudad por su terrible gestión de la crisis, ya hay quien le llama El Galgo." El titular está escrito. Solo falta su reacción, que también irá en el titular.',
+    left: { text: 'Pedir perdón, sin peros ni matices', effects: { calle: 1, medios: 1, gobierno: -1 }, moralidad: 2 },
+    right: { text: '"Yo estoy bien, gracias"', effects: { calle: -3, medios: -1 }, moralidad: -2 },
+    pleases: 'left',
+  },
+  {
     id: 'react_dama_juez',
     phase: 3,
     maxTurn: 0,
