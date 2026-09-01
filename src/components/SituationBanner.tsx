@@ -22,6 +22,11 @@ export function SituationBanner({ text }: { text: string }) {
       }}
     >
       <div
+        // Marca para las pruebas automáticas: sin ella hay que localizar este
+        // texto recorriendo todos los divs con getComputedStyle, que fuerza un
+        // reflow por elemento y llega a tumbar la pestaña al repetirlo miles
+        // de veces.
+        data-testid="situacion"
         style={{
           fontFamily: 'var(--font-pixel)',
           fontWeight: 500,

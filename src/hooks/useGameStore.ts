@@ -112,6 +112,7 @@ function contextOf(state: GameState): CardContext {
     flags: new Set(state.flags),
     anger: state.anger,
     turn: state.turn,
+    favor: state.favor,
     flagAge: (f) => (state.flagTurn[f] === undefined ? -1 : state.turn - state.flagTurn[f]),
   }
 }
@@ -145,6 +146,32 @@ function cartaDeEpilogo(texto: string, base: Card): Card {
     left: { text: 'Pues...', effects: {} },
     right: { text: 'Pues...', effects: {} },
   }
+}
+
+// Cuántos favores hay que deberle a alguien para que aparezca a salvarte.
+// Medido: con 3 el rescate sale en el 4% de las partidas, que es lo justo
+// para que sorprenda sin volverse una red de seguridad. Con 2 se disparaba
+// al 12-20% y el juego perdía la tensión.
+const FAVOR_PARA_RESCATE = 3
+
+// Busca a alguien que te deba lo bastante Y que pinte algo en esta caída.
+// Devuelve undefined casi siempre, que es lo suyo: el rescate es la
+// excepción, no la red de seguridad.
+function buscarRescate(
+  state: GameState,
+  cardMuerte: Card,
+  favor: Record<string, number>,
+  flags: Set<string>
+): Card | undefined {
+  if (flags.has('ya_te_salvaron')) return undefined
+  const barra = cardMuerte.byEvent ? undefined : brokenStat(state.stats)
+  const clave: StatKey | 'evento' | undefined = cardMuerte.byEvent ? 'evento' : barra
+  if (!clave) return undefined
+  const posibles = cards.filter(
+    (c) => c.rescatePara === clave && (favor[c.character] ?? 0) >= FAVOR_PARA_RESCATE
+  )
+  if (posibles.length === 0) return undefined
+  return posibles[Math.floor(Math.random() * posibles.length)]
 }
 
 function pickNextCard(state: GameState, forcedId?: string): Card {
@@ -331,6 +358,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   flagTurn: {},
   scheduled: [],
   anger: {},
+  favor: {},
   currentCard: firstCard,
   lastEpilogue: undefined,
 
@@ -369,9 +397,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // Enfado: si la carta marca qué lado le da la razón al personaje y has
     // elegido el contrario, se lo apunta. Contentarle rebaja el enfado.
     const newAnger = { ...state.anger }
+    const newFavor = { ...state.favor }
     if (card.pleases) {
-      const current = newAnger[card.character] ?? 0
-      newAnger[card.character] = side === card.pleases ? Math.max(0, current - 1) : current + 1
+      const enfado = newAnger[card.character] ?? 0
+      const favores = newFavor[card.character] ?? 0
+      if (side === card.pleases) {
+        newAnger[card.character] = Math.max(0, enfado - 1)
+        newFavor[card.character] = favores + 1
+      } else {
+        newAnger[card.character] = enfado + 1
+        newFavor[card.character] = Math.max(0, favores - 1)
+      }
     }
 
     // Al elegir en la carta del "Pues..." ya solo queda cerrar la partida:
@@ -382,6 +418,30 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
 
     if (choice.epilogueText) {
+      // ¿Hay alguien que te deba lo bastante como para sacarte de esta? Solo
+      // si el rescate viene a cuento (te salva de la barra que te ha matado) y
+      // solo una vez por partida.
+      const salvador = buscarRescate(state, card, newFavor, flagSet)
+      if (salvador) {
+        set({
+          stats: newStats,
+          moralidad: newMoralidad,
+          // El flag se pone al ENSEÑAR el rescate, no al aceptarlo. Si se
+          // pusiera solo al aceptar, rechazarlo volvía a disparar la búsqueda,
+          // encontraba al mismo salvador y la partida entraba en bucle
+          // infinito hasta tumbar la pestaña.
+          flags: [...newFlags, 'ya_te_salvaron'],
+          flagTurn: newFlagTurn,
+          scheduled: newScheduled,
+          anger: newAnger,
+          favor: newFavor,
+          extremeStreak: 0,
+          deathReason: choice.epilogueText,
+          lastEpilogue: choice.epilogueText,
+          currentCard: salvador,
+        })
+        return
+      }
       set({
         stats: newStats,
         moralidad: newMoralidad,
@@ -389,6 +449,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         flagTurn: newFlagTurn,
         scheduled: newScheduled,
         anger: newAnger,
+        favor: newFavor,
         // Todavía NO es game over: primero se enseña el epílogo como carta,
         // con "Pues..." a los dos lados. La pantalla de fin llega después.
         deathReason: choice.epilogueText,
@@ -417,6 +478,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       flagTurn: newFlagTurn,
       scheduled: newScheduled,
       anger: newAnger,
+      favor: newFavor,
     }
     const nextCard = pickNextCard(nextState, choice.nextCardId)
 
@@ -439,6 +501,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       flagTurn: {},
       scheduled: [],
       anger: {},
+      favor: {},
       deathReason: undefined,
       deathStat: undefined,
       lastEpilogue: undefined,

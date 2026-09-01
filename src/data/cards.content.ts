@@ -193,6 +193,7 @@ export const contentCards: Card[] = [
   // y borrarlas de una tacada si decidís que no encajan. ---
   {
     id: 'meme_pizza_tortilla',
+    pleases: 'left',
     phase: 1,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
@@ -202,6 +203,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_icono',
+    pleases: 'right',
     phase: 1,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
@@ -211,6 +213,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_liado_parda',
+    pleases: 'left',
     phase: 2,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
@@ -220,6 +223,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_udef',
+    pleases: 'right',
     phase: 3,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -337,6 +341,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'rueda_prensa',
+    pleases: 'left',
     phase: 3,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
@@ -454,6 +459,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_espionaje',
+    pleases: 'right',
     phase: 3,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -499,6 +505,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_filtracion_wasap',
+    pleases: 'right',
     phase: 3,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
@@ -634,6 +641,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_ue_pregunta',
+    pleases: 'right',
     phase: 3,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -661,6 +669,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_debate_tv',
+    pleases: 'right',
     phase: 4,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
@@ -850,6 +859,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_sondeo_manipulado',
+    pleases: 'right',
     phase: 2,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
@@ -976,6 +986,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_hackeo',
+    pleases: 'right',
     phase: 3,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -1075,6 +1086,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_carta_dimision',
+    pleases: 'right',
     phase: 4,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -1120,6 +1132,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_photo_op',
+    pleases: 'right',
     phase: 1,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
@@ -1174,6 +1187,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_ley_mordaza_datos',
+    pleases: 'right',
     phase: 2,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -1264,6 +1278,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_dimite_portavoz',
+    pleases: 'right',
     phase: 2,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
@@ -1300,6 +1315,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_bloqueo_parlamentario',
+    pleases: 'right',
     phase: 3,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -1327,6 +1343,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_prescripcion',
+    pleases: 'right',
     phase: 3,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -1390,6 +1407,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_recurso_electoral',
+    pleases: 'right',
     phase: 4,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -1417,6 +1435,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_ultimo_consejo',
+    pleases: 'right',
     phase: 4,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -1468,6 +1487,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_duda_ofende',
+    pleases: 'right',
     phase: 2,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -2587,6 +2607,7 @@ export const contentCards: Card[] = [
 
   {
     id: 'bolanos_normal_funcionamiento',
+    pleases: 'right',
     phase: 3,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -2735,6 +2756,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'feud_escudero_bolanos',
+    pleases: 'left',
     phase: 3,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -2820,6 +2842,7 @@ export const contentCards: Card[] = [
   // ============================================================================
   {
     id: 'meme_micro_abierto',
+    pleases: 'right',
     phase: 2,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
@@ -3275,6 +3298,7 @@ export const contentCards: Card[] = [
   // ============================================================================
   {
     id: 'recap_bien',
+    pleases: 'left',
     phase: 1,
     isRecap: true,
     character: 'El Jefe de Comunicación',
@@ -4405,6 +4429,235 @@ export const contentCards: Card[] = [
     condition: (_s, _m, ctx) =>
       ctx.flags.has('magistrado_debe') || ctx.flags.has('magistrado_colocado'),
     weight: 3,
+  },
+
+
+  // ============================================================================
+  // RESCATES — la última oportunidad. No salen por sorteo (weight: 0): el store
+  // las busca justo cuando la partida iba a terminar, y solo aparece la de un
+  // personaje que (a) te salva de la barra que te ha matado y (b) te debe al
+  // menos FAVOR_PARA_RESCATE favores, acumulados a base de darle la razón.
+  //
+  // Ninguno sale gratis. Aceptar te devuelve a la partida pero te deja
+  // debiéndoselo todo: enciende una bomba que vuelve meses después. Rechazar
+  // te mata, pero es lo único decente y la moralidad lo recoge.
+  // ============================================================================
+  {
+    id: 'rescate_medios',
+    phase: 1,
+    weight: 0,
+    rescatePara: 'medios',
+    character: 'El Jefe de Comunicación',
+    characterImage: 'jefecomunicacion.webp',
+    text: 'Entra sin llamar, con el discurso ya escrito. "Salgo yo y digo que fui yo. Que lo decidí sin consultarle, que le mentí y que dimito." Se ajusta la corbata. "Llevo cuatro años tapándole. Déjeme hacerlo una última vez, pero en grande."',
+    left: {
+      text: 'Dejar que se inmole por usted',
+      effects: { medios: 4, gobierno: -1 },
+      moralidad: -2,
+      addFlags: ['ya_te_salvaron', 'debe_favor_comunicacion'],
+      scheduleCardId: 'rescate_cobro_comunicacion',
+      scheduleIn: 10,
+    },
+    right: {
+      text: 'No dejar que pague lo que hizo usted',
+      effects: {},
+      moralidad: 3,
+      epilogueText: 'Le dice que no y sale usted a dar la cara. Dura once minutos de rueda de prensa. Él le mira desde el fondo de la sala, y por primera vez en cuatro años no está tomando notas. Fin del gobierno, pero se fue solo.',
+    },
+  },
+  {
+    id: 'rescate_gobierno',
+    phase: 1,
+    weight: 0,
+    rescatePara: 'gobierno',
+    character: 'El Escudero',
+    characterImage: 'ministrolameculos.webp',
+    text: 'El comité ya tiene los votos para echarle. Él lleva dos noches llamando uno por uno, sin dormir, con una libreta. "Me faltan tres. Los tengo si les prometo cosas que usted tendrá que cumplir. ¿Se las prometo?"',
+    left: {
+      text: '"Promételes lo que haga falta"',
+      effects: { gobierno: 4, caja: -2 },
+      moralidad: -2,
+      addFlags: ['ya_te_salvaron', 'deuda_escudero'],
+      scheduleCardId: 'rescate_cobro_escudero',
+      scheduleIn: 9,
+    },
+    right: {
+      text: 'Que no prometa nada en su nombre',
+      effects: {},
+      moralidad: 3,
+      epilogueText: 'Le prohíbe seguir llamando y pierde la votación por tres votos. Él es el único que vota a favor suyo, y lo hace de pie. Fin del gobierno, con un solo leal y ninguna promesa que cumplir.',
+    },
+  },
+  {
+    id: 'rescate_calle',
+    phase: 1,
+    weight: 0,
+    rescatePara: 'calle',
+    character: 'La Socia Incómoda',
+    characterImage: 'sociaincomoda.webp',
+    text: 'La calle le ha dado la espalda y ella tiene la única gente que aún sale a la calle por algo. "Puedo llenarle la plaza el domingo. Mi gente irá porque se lo pida yo, no por usted. Y luego habrá que hablar de precios."',
+    left: {
+      text: 'Que llene la plaza el domingo',
+      effects: { calle: 4, gobierno: -1, medios: -1 },
+      moralidad: -1,
+      addFlags: ['ya_te_salvaron', 'deuda_socia'],
+      scheduleCardId: 'rescate_cobro_socia',
+      scheduleIn: 8,
+    },
+    right: {
+      text: 'No pedir prestada una plaza',
+      effects: {},
+      moralidad: 3,
+      epilogueText: 'Le dice que una plaza prestada no es apoyo, es escenografía. El domingo no va nadie, ni suyo ni de ella. Fin del gobierno, con la plaza vacía y sin deberle nada a nadie.',
+    },
+  },
+  {
+    id: 'rescate_caja',
+    phase: 1,
+    weight: 0,
+    rescatePara: 'caja',
+    character: 'El Ministro Caído',
+    characterImage: 'ministrocorrupto.webp',
+    text: '"Presi, míreme." Deja un maletín encima de la mesa y no lo abre. "Aquí hay para tapar el agujero entero. Y si mañana preguntan de dónde salió, salió de mí. Yo por usted voy a la cárcel, ya se lo dije. Solo tiene que decir que sí."',
+    left: {
+      text: 'Aceptar el maletín',
+      effects: { caja: 4, medios: -2 },
+      moralidad: -3,
+      addFlags: ['ya_te_salvaron', 'deuda_ministro'],
+      scheduleCardId: 'rescate_cobro_ministro',
+      scheduleIn: 7,
+    },
+    right: {
+      text: '"Llévate eso de aquí"',
+      effects: {},
+      moralidad: 3,
+      epilogueText: 'Le dice que se lleve el maletín y él se lo lleva, ofendido de verdad. Tres semanas después las cuentas no cuadran delante de un juez y no hay maletín que lo tape. Fin del gobierno, arruinado y sin deberle un favor a nadie.',
+    },
+  },
+  {
+    id: 'rescate_evento',
+    phase: 1,
+    weight: 0,
+    rescatePara: 'evento',
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: 'Le llama otra vez de noche, otra vez desde un teléfono que no es el suyo. "Lo que le viene encima puedo pararlo veinticuatro horas. No más. En veinticuatro horas usted puede hacer muchas cosas, presidente. Yo, después de esto, ya no podré hacer ninguna."',
+    left: {
+      text: 'Aceptar las veinticuatro horas',
+      effects: { medios: 2, gobierno: 2 },
+      moralidad: -3,
+      addFlags: ['ya_te_salvaron', 'deuda_magistrado'],
+      scheduleCardId: 'rescate_cobro_magistrado',
+      scheduleIn: 6,
+    },
+    right: {
+      text: 'Que no queme su carrera por usted',
+      effects: {},
+      moralidad: 3,
+      epilogueText: 'Le dice que cuelgue y que se olvide de que le llamó. Al día siguiente pasa todo lo que tenía que pasar, puntual. Él sigue siendo juez, y usted ya no es nada. Fin del gobierno, sin arrastrar a nadie.',
+    },
+  },
+
+  // --- LO QUE CUESTA QUE TE SALVEN (solo llegan programadas) ---
+  {
+    id: 'rescate_cobro_comunicacion',
+    phase: 1,
+    weight: 0,
+    character: 'El Jefe de Comunicación',
+    characterImage: 'jefecomunicacion.webp',
+    text: 'Volvió a los tres meses, como si nada, y desde entonces no pide: informa. Hoy informa de que el discurso de mañana lo escribe él, de que no habrá preguntas y de que la remodelación del Gobierno ya la ha pensado.',
+    left: {
+      text: 'Recordarle quién manda aquí',
+      effects: { gobierno: -2, medios: -1 },
+      moralidad: 2,
+      removeFlags: ['debe_favor_comunicacion'],
+    },
+    right: {
+      text: 'Dejarle escribir el discurso',
+      effects: { medios: 1, gobierno: 1, calle: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'rescate_cobro_escudero',
+    phase: 1,
+    weight: 0,
+    character: 'El Escudero',
+    characterImage: 'ministrolameculos.webp',
+    text: 'Trae la libreta de aquellas noches. En ella están los tres nombres y, al lado de cada uno, lo que les prometió usted sin saberlo. Un ministerio, una embajada y algo que ni siquiera está escrito, solo subrayado.',
+    left: {
+      text: 'Cumplir solo lo que sea legal',
+      effects: { gobierno: -2, medios: 1 },
+      moralidad: 2,
+      removeFlags: ['deuda_escudero'],
+    },
+    right: {
+      text: 'Cumplirlo todo, hasta lo subrayado',
+      effects: { gobierno: 1, caja: -2, medios: -1 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'rescate_cobro_socia',
+    phase: 1,
+    weight: 0,
+    character: 'La Socia Incómoda',
+    characterImage: 'sociaincomoda.webp',
+    text: '"Aquella plaza la llené yo." No hace falta que diga más, pero lo dice igual: quiere la ley entera, sin enmiendas, sin informes y con su nombre en el titular. "Es el precio del domingo, y era barato."',
+    left: {
+      text: 'Negociar la ley como cualquier otra',
+      effects: { gobierno: -2, medios: 1 },
+      moralidad: 2,
+      removeFlags: ['deuda_socia'],
+    },
+    right: {
+      text: 'Aprobarla tal cual la trae',
+      effects: { gobierno: 1, calle: 1, medios: -2, caja: -1 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'rescate_cobro_ministro',
+    phase: 1,
+    weight: 0,
+    character: 'El Ministro Caído',
+    characterImage: 'ministrocorrupto.webp',
+    text: '"¿Se acuerda del maletín?" Claro que se acuerda. "Pues resulta que el dinero tenía dueño, el dueño tiene nombre y el nombre quiere una cosa. Nada del otro mundo: una concesión. Y la quiere firmada por usted."',
+    left: {
+      text: 'Devolver el dinero y asumir el agujero',
+      effects: { caja: -3, medios: 2 },
+      moralidad: 3,
+      removeFlags: ['deuda_ministro'],
+    },
+    right: {
+      text: 'Firmar la concesión',
+      effects: { caja: 1, medios: -2, calle: -1 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'rescate_cobro_magistrado',
+    phase: 1,
+    weight: 0,
+    character: 'El Magistrado Afín',
+    characterImage: 'magistrado.svg',
+    text: 'Aquellas veinticuatro horas le costaron el prestigio y una información reservada. Ahora está fuera del escalafón y muy tranquilo. "No vengo a pedirle nada, presidente. Vengo a recordarle que sigo teniendo la copia de todo."',
+    left: {
+      text: 'Contarlo usted antes que él',
+      effects: { medios: 1, gobierno: -3 },
+      moralidad: 3,
+      removeFlags: ['deuda_magistrado'],
+    },
+    right: {
+      text: 'Darle lo que pida y que siga tranquilo',
+      effects: { gobierno: 1, caja: -2, medios: -1 },
+      moralidad: -3,
+    },
+    pleases: 'right',
   },
 
 ]

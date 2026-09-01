@@ -75,6 +75,9 @@ export interface CardContext {
   // Cuántas veces se ha desairado a cada personaje (por nombre). Sube cuando
   // eliges la opción contraria a lo que pide, si la carta marca `pleases`.
   anger: Readonly<Record<string, number>>
+  // Lo contrario: cuántas veces le has dado la razón. Es lo que puede hacer
+  // que ese personaje aparezca a salvarte el día que caigas (ver `rescatePara`).
+  favor: Readonly<Record<string, number>>
   turn: number
 }
 
@@ -117,6 +120,11 @@ export interface Card {
   // le suma enfado (ver CardContext.anger), que otras cartas pueden usar
   // como condición para saltar ("te has cansado de decirle que no").
   pleases?: 'left' | 'right'
+  // Carta de RESCATE: no sale por sorteo. Se busca justo cuando la partida
+  // iba a terminar, y solo aparece si te mató esta barra ('evento' para las
+  // muertes por situación) Y el personaje que la firma te debe bastantes
+  // favores. Es la última oportunidad, y no sale gratis.
+  rescatePara?: StatKey | 'evento'
   isEnding?: boolean    // Carta especial de final de partida
   // Final que NO se dispara por una barra en el extremo, sino por una
   // situación concreta (una trama que ha llegado demasiado lejos, media
@@ -165,4 +173,6 @@ export interface GameState {
   scheduled: { id: string; turn: number }[]
   // Enfado acumulado por personaje (ver CardContext.anger).
   anger: Record<string, number>
+  // Favores acumulados por personaje (ver CardContext.favor).
+  favor: Record<string, number>
 }
