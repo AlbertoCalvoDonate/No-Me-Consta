@@ -245,7 +245,13 @@ export function SwipeCard({ card, onChoose, x }: Props) {
           {card.characterImage && (
             <img
               src={`/characters/${card.characterImage}`}
-              alt={card.character}
+              // Decorativa a proposito: el nombre del personaje ya esta
+              // escrito debajo de la carta, asi que un alt con el nombre lo
+              // repetiria para un lector de pantalla. Y con alt vacio, el
+              // navegador no pinta ese texto en la esquina mientras el png
+              // aun no ha cargado, que es justo lo que se veia la primera
+              // vez que salia cada personaje.
+              alt=""
               draggable={false}
               style={{
                 // Todos los retratos están re-encuadrados al mismo lienzo
