@@ -111,8 +111,8 @@ export default function App() {
         >
           {!started && (
             <StartScreen
-              onStart={(mode) => {
-                restart(mode)
+              onStart={() => {
+                restart()
                 setStarted(true)
               }}
             />

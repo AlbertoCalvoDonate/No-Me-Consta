@@ -1,6 +1,5 @@
 import type { Stats } from '../types'
 import { StatIcon } from './StatIcon'
-import { MODES, type ModeId } from '../data/modes'
 
 const TUTORIAL_STATS: (keyof Stats)[] = ['medios', 'gobierno', 'calle', 'caja']
 
@@ -13,7 +12,7 @@ const buildDate = new Date(__BUILD_DATE__).toLocaleString('es-ES', {
   minute: '2-digit',
 })
 
-export function StartScreen({ onStart }: { onStart: (mode: ModeId) => void }) {
+export function StartScreen({ onStart }: { onStart: () => void }) {
   return (
     <div
       style={{
@@ -76,35 +75,22 @@ export function StartScreen({ onStart }: { onStart: (mode: ModeId) => void }) {
         <p style={{ margin: 0 }}>Vigile estas 4 barras: si alguna llega a 0 o al máximo, se acaba el gobierno.</p>
       </div>
 
-      {/* Dos modos. La diferencia es cuánto te perdona el juego no compensar
-          los excesos, no el contenido: el mazo es el mismo. */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 320 }}>
-        {(['minoria', 'mayoria'] as ModeId[]).map((id, i) => {
-          const mode = MODES[id]
-          const principal = i === 0
-          return (
-            <button
-              key={id}
-              onClick={() => onStart(id)}
-              style={{
-                background: principal ? '#e0b84d' : 'transparent',
-                color: principal ? '#1a1a1a' : '#e0b84d',
-                border: principal ? 'none' : '2px solid rgba(224,184,77,0.55)',
-                borderRadius: 10,
-                padding: '12px 18px',
-                fontFamily: 'var(--font-pixel)',
-                fontWeight: 400,
-                cursor: 'pointer',
-                textAlign: 'center',
-                lineHeight: 1.2,
-              }}
-            >
-              <div style={{ fontSize: 23 }}>{mode.label}</div>
-              <div style={{ fontSize: 15, opacity: 0.75, marginTop: 3 }}>{mode.tagline}</div>
-            </button>
-          )
-        })}
-      </div>
+      <button
+        onClick={onStart}
+        style={{
+          background: '#e0b84d',
+          border: 'none',
+          borderRadius: 10,
+          padding: '14px 30px',
+          fontFamily: 'var(--font-pixel)',
+          fontWeight: 400,
+          fontSize: 24,
+          cursor: 'pointer',
+        }}
+      >
+        Empezar legislatura
+      </button>
+
 
       <div
         style={{

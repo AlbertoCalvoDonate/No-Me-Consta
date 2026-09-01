@@ -390,19 +390,21 @@ En Reigns no existe nada parecido al desgaste: los medidores solo se mueven
 por las cartas, y las que hacen *drift* con el tiempo son un **peligro** del
 que avisan las guías, no una ayuda.
 
-### Los dos modos
+### Una sola dificultad
 
-Se elige al empezar (`src/data/modes.ts`). Mismo mazo, distinta red de
-seguridad. Medido jugando de forma competente:
+Hubo dos modos, y se quitaron. Medidos con jugadores de distinta pericia, los
+dos mataban a más del 79%: lo único que cambiaba de verdad no era el reto sino
+la DURACIÓN de la partida (83 turnos frente a 37 para el jugador medio). Un
+selector que promete «más fácil o más difícil½ y entrega «más larga o más
+corta» no vale lo que cuesta mantener, y además obliga a elegir antes de haber
+visto una sola carta.
 
-| Modo | Desgaste | Muere | Mediana | Llega a 4 años | A 8 años |
-|---|---|---|---|---|---|
-| **Gobierno en minoría** | ninguno | 89% | 48 meses | 51% | 18% |
-| **Con mayoría absoluta** | se desvanece | 70% | 108 meses | 94% | 66% |
+La curva ya existe sin modos: un novato dura 29 turnos y un experto 48, un 65%
+más, solo por jugar mejor. Reigns tampoco tiene dificultades.
 
-En «Con mayoría absoluta» el desgaste actúa cada 3 turnos en la primera
-legislatura, cada 6 en la segunda y desaparece en la tercera: la primera hace
-de tutorial y a partir de ahí aprieta.
+Queda una configuración: **sin desgaste y con amortiguación 2** (
+en ). Jugando bien se muere en el 91-97% de las partidas, con
+mediana de 29 a 48 turnos según la peric ia.
 
 ### Muertes por evento
 

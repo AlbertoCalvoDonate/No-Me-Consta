@@ -9,7 +9,6 @@ import {
   ELECTION_MAX_TERMS,
   RECAP_EVERY,
 } from '../data/cards'
-import { MODES, DEFAULT_MODE, type ModeConfig, type ModeId } from '../data/modes'
 
 function cardMinTurn(c: Card): number {
   return c.minTurn ?? PHASE_MIN_TURN[c.phase]
@@ -55,47 +54,25 @@ function jitter(base: number): number {
 
 // Amortiguación en los extremos: un empujón hacia un extremo pierde fuerza
 // cuando ya estás cerca de él (llevar los medios de 8 a 9 cuesta más que de
-// 4 a 5). El margen (`dampZone`) lo pone el modo de dificultad: cuanto más
-// bajo, más pegan los golpes cerca del borde.
+// 4 a 5). Cuanto más bajo, más pegan los golpes cerca del borde.
 //
-// Desgaste del poder: cada `driftEvery` turnos, toda stat alejada del centro
-// vuelve 1 punto hacia él. Era la razón por la que morir resultaba casi
-// imposible — no compensar salía gratis, y jugando bien solo se moría en el
-// 1% de las partidas. Ahora depende del modo: en "Gobierno en minoría" no
-// existe, y en "Con mayoría absoluta" se desvanece según avanzan las
-// legislaturas.
-const DRIFT_MIN_DISTANCE = 3
+// Hubo un segundo mecanismo, el "desgaste": cada X turnos las barras
+// alejadas del centro volvían solas hacia él. Se quitó porque era justo lo
+// que hacía imposible morir — no compensar salía gratis y, jugando bien, se
+// moría en el 1% de las partidas. Y con él se fueron los dos modos de
+// dificultad: medidos, los dos mataban a más del 79% y lo único que
+// cambiaba de verdad era cuánto duraba la partida, no el reto. Está en el
+// historial de git si alguna vez hace falta recuperarlo.
+const DAMP_ZONE = 2
 
-// Meses que tarda en estallar una bomba de relojeria si la carta no dice
+// Meses que tarda en estallar una bomba de relojería si la carta no dice
 // otra cosa (ver CardChoice.scheduleIn).
 const SCHEDULE_DEFAULT = 8
 
-// Cada cuántos turnos toca desgaste, ya con el desvanecido del modo aplicado.
-function driftIntervalFor(mode: ModeConfig, turn: number): number {
-  if (mode.driftEvery === 0) return 0
-  if (!mode.driftFades) return mode.driftEvery
-  // Se duplica en la segunda legislatura y desaparece en la tercera.
-  const term = Math.floor(turn / ELECTION_INTERVAL)
-  if (term === 0) return mode.driftEvery
-  if (term === 1) return mode.driftEvery * 2
-  return 0
-}
-
-function applyDrift(stats: Stats, turn: number, mode: ModeConfig): Stats {
-  const every = driftIntervalFor(mode, turn)
-  if (every === 0 || turn % every !== 0) return stats
-  const next = { ...stats }
-  for (const key of ['medios', 'gobierno', 'calle', 'caja'] as const) {
-    const d = next[key] - STAT_START
-    if (Math.abs(d) >= DRIFT_MIN_DISTANCE) next[key] -= Math.sign(d)
-  }
-  return next
-}
-
-function damp(current: number, delta: number, dampZone: number): number {
+function damp(current: number, delta: number): number {
   if (delta === 0) return 0
   const headroom = delta > 0 ? STAT_MAX - current : current
-  const factor = Math.min(1, headroom / dampZone)
+  const factor = Math.min(1, headroom / DAMP_ZONE)
   const scaled = delta * factor
   // Redondeo hacia el entero, conservando al menos 1 de empuje mientras
   // quede margen: así nunca se queda "atascada" sin poder llegar al extremo.
@@ -104,10 +81,10 @@ function damp(current: number, delta: number, dampZone: number): number {
   return out
 }
 
-function applyEffects(stats: Stats, effects: StatEffects, dampZone: number): Stats {
+function applyEffects(stats: Stats, effects: StatEffects): Stats {
   const next = {} as Stats
   for (const key of ['medios', 'gobierno', 'calle', 'caja'] as const) {
-    next[key] = clamp(stats[key] + damp(stats[key], jitter(effects[key] ?? 0), dampZone))
+    next[key] = clamp(stats[key] + damp(stats[key], jitter(effects[key] ?? 0)))
   }
   return next
 }
@@ -295,7 +272,7 @@ interface GameStore extends GameState {
   currentCard: Card
   lastEpilogue?: string
   choose: (side: 'left' | 'right') => void
-  restart: (mode?: ModeId) => void
+  restart: () => void
 }
 
 function initialStats(): Stats {
@@ -335,7 +312,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
   flagTurn: {},
   scheduled: [],
   anger: {},
-  mode: DEFAULT_MODE,
   currentCard: firstCard,
   lastEpilogue: undefined,
 
@@ -343,8 +319,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const state = get()
     const card = state.currentCard
     const choice = card[side]
-    const mode = MODES[state.mode]
-    const afterEffects = applyEffects(state.stats, choice.effects, mode.dampZone)
+    const afterEffects = applyEffects(state.stats, choice.effects)
     const newStats = choice.rebalance ? applyRebalance(afterEffects) : afterEffects
     const newMoralidad = applyMoralidad(state.moralidad, choice.moralidad)
 
@@ -400,12 +375,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
 
     const nextTurn = state.turn + 1
-    const driftedStats = applyDrift(newStats, nextTurn, mode)
     const atExtreme = (['medios', 'gobierno', 'calle', 'caja'] as const).some(
-      (k) => driftedStats[k] <= 0 || driftedStats[k] >= STAT_MAX
+      (k) => newStats[k] <= 0 || newStats[k] >= STAT_MAX
     )
     const nextState: GameState = {
-      stats: driftedStats,
+      stats: newStats,
       extremeStreak: atExtreme ? state.extremeStreak + 1 : 0,
       moralidad: newMoralidad,
       turn: nextTurn,
@@ -415,7 +389,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       flagTurn: newFlagTurn,
       scheduled: newScheduled,
       anger: newAnger,
-      mode: state.mode,
     }
     const nextCard = pickNextCard(nextState, choice.nextCardId)
 
@@ -425,7 +398,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     })
   },
 
-  restart: (mode) => {
+  restart: () => {
     const intro = pickIntro()
     set({
       stats: initialStats(),
@@ -438,7 +411,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       flagTurn: {},
       scheduled: [],
       anger: {},
-      mode: mode ?? get().mode,
       deathReason: undefined,
       deathStat: undefined,
       lastEpilogue: undefined,

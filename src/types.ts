@@ -1,5 +1,3 @@
-import type { ModeId } from './data/modes'
-
 // Los 4 indicadores del juego. Cada uno tiene DUEÑOS: personajes que lo
 // encarnan y cuyas cartas siempre lo tocan. Es lo que hace Reigns (el
 // cardenal es la iglesia, el general el ejército) y es lo que permite que,
@@ -167,6 +165,4 @@ export interface GameState {
   scheduled: { id: string; turn: number }[]
   // Enfado acumulado por personaje (ver CardContext.anger).
   anger: Record<string, number>
-  // Modo de dificultad elegido al empezar (ver src/data/modes.ts).
-  mode: ModeId
 }
