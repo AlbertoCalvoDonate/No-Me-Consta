@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
-import { useGameStore } from './hooks/useGameStore'
+import { useGameStore, EPILOGO_ID } from './hooks/useGameStore'
 import { SwipeCard } from './components/SwipeCard'
 import { StatBars } from './components/StatBars'
 import { SituationBanner } from './components/SituationBanner'
@@ -56,10 +56,12 @@ export default function App() {
   // Fin de partida: trombon triste, o fanfarria si aguanto las tres
   // legislaturas (los finales de la ultima convocatoria son isElection).
   useEffect(() => {
-    if (!gameOver) return
-    if (currentCard.isElection && turn > 100) sfx.triunfo()
+    // Suena al aparecer la carta del "Pues...", que es el momento en que te
+    // caes de verdad, no al llegar a la pantalla de fin un gesto más tarde.
+    if (currentCard.id !== EPILOGO_ID) return
+    if (turn > 100) sfx.triunfo()
     else sfx.trombon()
-  }, [gameOver, currentCard, turn])
+  }, [currentCard, turn])
 
   // Cartas de hito: el balance de fin de ano y la noche electoral se anuncian.
   useEffect(() => {

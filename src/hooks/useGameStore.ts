@@ -128,6 +128,25 @@ function cardWeight(c: Card, state: GameState, ctx: CardContext): number {
   return Math.max(0, Math.round(w ?? 1))
 }
 
+// La carta del "Pues...", tal cual la hace Reigns: al morir sale una última
+// carta con el epílogo, y las dos opciones son EXACTAMENTE la misma. Ya no
+// hay nada que decidir, y esa es la broma. Sin efectos y sin moralidad: no
+// queda nada que puntuar.
+export const EPILOGO_ID = '__epilogo__'
+
+function cartaDeEpilogo(texto: string, base: Card): Card {
+  return {
+    id: EPILOGO_ID,
+    phase: 4,
+    // Se queda la cara de quien te ha rematado, que para eso ha venido.
+    character: base.character,
+    characterImage: base.characterImage,
+    text: texto,
+    left: { text: 'Pues...', effects: {} },
+    right: { text: 'Pues...', effects: {} },
+  }
+}
+
 function pickNextCard(state: GameState, forcedId?: string): Card {
   if (forcedId) {
     const forced = cards.find((c) => c.id === forcedId)
@@ -355,6 +374,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
       newAnger[card.character] = side === card.pleases ? Math.max(0, current - 1) : current + 1
     }
 
+    // Al elegir en la carta del "Pues..." ya solo queda cerrar la partida:
+    // sus dos opciones son la misma y no tocan nada.
+    if (card.id === EPILOGO_ID) {
+      set({ gameOver: true })
+      return
+    }
+
     if (choice.epilogueText) {
       set({
         stats: newStats,
@@ -363,13 +389,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
         flagTurn: newFlagTurn,
         scheduled: newScheduled,
         anger: newAnger,
-        gameOver: true,
+        // Todavía NO es game over: primero se enseña el epílogo como carta,
+        // con "Pues..." a los dos lados. La pantalla de fin llega después.
         deathReason: choice.epilogueText,
         // En una muerte por evento la causa es la situación, no una barra:
         // señalar un indicador ahí despista (te caes por la moción y te dice
         // "Medios por los suelos"). Solo se marca en las muertes por barra.
         deathStat: card.byEvent ? undefined : brokenStat(state.stats),
         lastEpilogue: choice.epilogueText,
+        currentCard: cartaDeEpilogo(choice.epilogueText, card),
       })
       return
     }

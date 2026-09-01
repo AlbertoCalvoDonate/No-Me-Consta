@@ -46,6 +46,8 @@ export function corruptionScore(effects: StatEffects) {
 
 const CLEAN = { bg: '#12331f', accent: '#4dff88' }
 const CORRUPT = { bg: '#3a1414', accent: '#ff4d4d' }
+// Para cuando no hay nada que elegir de verdad.
+const NEUTRO = { bg: '#26262a', accent: '#8d8677' }
 
 // Etiqueta de tamaño fijo (ni crece ni encoge con el texto) que entra
 // deslizándose desde el lateral en sincronía directa con el arrastre — no
@@ -162,8 +164,12 @@ export function SwipeCard({ card, onChoose, x }: Props) {
   const rotate = useTransform(x, [-100, 100], [-CARD_TILT, CARD_TILT])
 
   const leftIsCorrupt = corruptionScore(card.left.effects) > corruptionScore(card.right.effects)
-  const leftColors = leftIsCorrupt ? CORRUPT : CLEAN
-  const rightColors = leftIsCorrupt ? CLEAN : CORRUPT
+  // Cuando las dos opciones dicen lo mismo (la carta del "Pues..." al morir)
+  // los dos paneles van del mismo color. Pintar una verde y otra roja daría a
+  // entender que hay algo que elegir, y justo la gracia es que no lo hay.
+  const mismaOpcion = card.left.text === card.right.text
+  const leftColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CORRUPT : CLEAN
+  const rightColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CLEAN : CORRUPT
 
   // Sin animación de salida a propósito: la carta siguiente entra al
   // instante en cuanto se decide (nada que esperar, nada que se pueda
@@ -274,6 +280,29 @@ export function SwipeCard({ card, onChoose, x }: Props) {
             />
           )}
 
+          {/* Sin retrato (las voces que cierran la partida: "La Redacción",
+              "El Comité Ejecutivo", "La Calle"...) la carta salía como un
+              rectángulo de color vacío. Se rotula con el nombre en grande,
+              que además le da un aire de titular. */}
+          {!card.characterImage && (
+            <div
+              style={{
+                padding: '0 26px',
+                textAlign: 'center',
+                fontFamily: 'var(--font-pixel)',
+                fontWeight: 400,
+                fontSize: 34,
+                lineHeight: 1.25,
+                letterSpacing: 0.5,
+                color: 'rgba(255,255,255,0.92)',
+                textShadow: '0 2px 10px rgba(0,0,0,0.45)',
+                overflowWrap: 'anywhere',
+              }}
+            >
+              {card.character}
+            </div>
+          )}
+
         </motion.div>
 
         {/* Paneles de respuesta: hermanos de la carta (ver comentario en
@@ -283,19 +312,24 @@ export function SwipeCard({ card, onChoose, x }: Props) {
         <ChoicePanel text={card.right.text} side="right" colors={rightColors} x={x} />
       </div>
 
-      <div
-        style={{
-          flexShrink: 0,
-          textAlign: 'center',
-          marginTop: 7,
-          fontFamily: 'var(--font-pixel)',
-          fontWeight: 500,
-          fontSize: 22,
-          color: '#e0b84d',
-        }}
-      >
-        {card.character}
-      </div>
+      {/* El nombre va debajo de la carta SALVO cuando la carta no tiene
+          retrato: en ese caso ya está rotulado dentro, en grande, y repetirlo
+          aquí lo dejaba escrito dos veces en la misma pantalla. */}
+      {card.characterImage && (
+        <div
+          style={{
+            flexShrink: 0,
+            textAlign: 'center',
+            marginTop: 7,
+            fontFamily: 'var(--font-pixel)',
+            fontWeight: 500,
+            fontSize: 22,
+            color: '#e0b84d',
+          }}
+        >
+          {card.character}
+        </div>
+      )}
     </div>
   )
 }
