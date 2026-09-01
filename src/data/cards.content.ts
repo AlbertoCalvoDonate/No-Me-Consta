@@ -432,7 +432,7 @@ export const contentCards: Card[] = [
     characterImage: 'ministrocorrupto.webp',
     text: 'Si el decreto de última hora incluye esta excepción concreta, mi empresa se ahorra una fortuna. Y usted, un buen donativo.',
     left: { text: 'Decreto limpio', effects: { medios: 1, caja: -1 }, moralidad: 2 },
-    right: { text: 'Letra pequeña, amigo', effects: { caja: 2, medios: -1 }, moralidad: -2 },
+    right: { text: 'Letra pequeña, amigo', effects: { caja: 2, medios: -1 }, moralidad: -2 , addFlags: ['decreto_express'], scheduleCardId: 'bomba_decreto_tumbado', scheduleIn: 11 },
   },
   {
     id: 'gob_financiacion_campana',
@@ -2697,7 +2697,7 @@ export const contentCards: Card[] = [
     characterImage: 'guru.webp',
     text: '"He montado una fundación para acabar con la pobreza mundial. El 90% del presupuesto es mi sueldo y mis viajes, pero el 10% llega a alguien. Eso ya es más que nada."',
     left: { text: 'Auditar la fundación', effects: { medios: 1, gobierno: -1 }, moralidad: 2 },
-    right: { text: 'Meterle una subvención pública', effects: { caja: -1, medios: -2 }, moralidad: -2, nextCardId: 'react_guru_periodista' },
+    right: { text: 'Meterle una subvención pública', effects: { caja: -1, medios: -2 }, moralidad: -2, nextCardId: 'react_guru_periodista' , addFlags: ['subvencion_guru'], scheduleCardId: 'bomba_fundacion_guru', scheduleIn: 10 },
   },
   {
     id: 'guru_salvar_mundo',
@@ -3675,7 +3675,7 @@ export const contentCards: Card[] = [
     characterImage: 'ministraincompetente.webp',
     text: 'Quiere presentar unos datos buenísimos. Son buenísimos porque su equipo ha cambiado cómo se cuentan. Técnicamente es legal. Periodísticamente es un titular.',
     left: { text: 'Presentarlos con el cambio explicado', effects: { medios: 1, gobierno: -1 }, moralidad: 2 },
-    right: { text: 'Presentarlos sin más detalle', effects: { gobierno: 1, medios: -2 }, moralidad: -2 },
+    right: { text: 'Presentarlos sin más detalle', effects: { gobierno: 1, medios: -2 }, moralidad: -2 , addFlags: ['dato_cocinado'], scheduleCardId: 'bomba_dato_recalculado', scheduleIn: 7 },
     pleases: 'right',
   },
 
@@ -3760,7 +3760,7 @@ export const contentCards: Card[] = [
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
     text: 'Un diputado suyo se ofrece a cambiar de bando por un puesto. Los votos salen. La foto, si se sabe, no sale en ningún sitio bueno.',
-    left: { text: 'Aceptar al tránsfuga', effects: { gobierno: 2, calle: -2, medios: -1 }, moralidad: -3 },
+    left: { text: 'Aceptar al tránsfuga', effects: { gobierno: 2, calle: -2, medios: -1 }, moralidad: -3 , addFlags: ['transfuga'], scheduleCardId: 'bomba_transfuga', scheduleIn: 8 },
     right: { text: 'Rechazarlo y contarlo', effects: { calle: 2, medios: 1, gobierno: -1 }, moralidad: 3 },
   },
   {
@@ -3862,7 +3862,7 @@ export const contentCards: Card[] = [
     character: 'La Primera Dama',
     characterImage: 'primeradama.webp',
     text: '"Me han dado una cátedra." No ha opositado, no tiene el título y la plaza se creó hace tres semanas. "Es que valoran mucho la experiencia vital."',
-    left: { text: '"Sí, cariño"', effects: { caja: -1, medios: -2 }, moralidad: -2 },
+    left: { text: '"Sí, cariño"', effects: { caja: -1, medios: -2 }, moralidad: -2 , addFlags: ['catedra_dama'], scheduleCardId: 'bomba_catedra', scheduleIn: 12 },
     right: { text: 'Preguntar quién creó esa plaza', effects: { medios: 1, caja: 1 }, moralidad: 2 },
     pleases: 'left',
   },
@@ -4019,7 +4019,7 @@ export const contentCards: Card[] = [
     characterImage: 'ministrocorrupto.webp',
     text: '"Presi, lo del otro día se lo arreglé yo." Le pone una mano en el hombro y la deja ahí un segundo de más. "No hacía falta que me lo pidiera. Entre nosotros esas cosas no se piden. Se deben."',
     left: { text: 'Dejarle claro que no le debe nada', effects: { medios: 1, gobierno: -2 }, moralidad: 2 },
-    right: { text: 'Agradecerlo y cambiar de tema', effects: { gobierno: 1, medios: -1 }, moralidad: -2 },
+    right: { text: 'Agradecerlo y cambiar de tema', effects: { gobierno: 1, medios: -1 }, moralidad: -2 , addFlags: ['favor_debido'], scheduleCardId: 'bomba_favor_cobro', scheduleIn: 9 },
     pleases: 'right',
   },
   {
@@ -4061,6 +4061,130 @@ export const contentCards: Card[] = [
     left: { text: 'Que devuelva el favor del viaje', effects: { medios: 1, caja: -1 }, moralidad: 2 },
     right: { text: 'Que nadie identifique el yate', effects: { caja: 1, medios: -2 }, moralidad: -2 },
     pleases: 'right',
+  },
+
+
+  // ============================================================================
+  // BOMBAS DE RELOJERIA — la factura llega meses despues de la firma. Todas
+  // llevan weight: 0 para que solo puedan salir programadas (ver
+  // CardChoice.scheduleCardId), nunca por sorteo. La carta que las enciende es
+  // una que ya existia en el mazo: se acepta un favor cualquiera y la cuenta
+  // aparece cuando ya no te acuerdas de haberlo pedido.
+  // ============================================================================
+  {
+    id: 'bomba_favor_cobro',
+    phase: 1,
+    weight: 0,
+    character: 'El Ministro Caído',
+    characterImage: 'ministrocorrupto.webp',
+    text: '"Presi, ¿se acuerda del favor de hace unos meses?" Claro que no se acuerda. "Pues ahora necesito una cosita yo. Una licencia. Nada, un papel." Y sonríe como quien ya sabe la respuesta.',
+    left: {
+      text: 'Decirle que ese favor no existió',
+      effects: { medios: 1, gobierno: -2 },
+      moralidad: 2,
+      removeFlags: ['favor_debido'],
+    },
+    right: {
+      text: 'Firmarle el papel y quedar en paz',
+      effects: { caja: 1, medios: -2, calle: -1 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'bomba_catedra',
+    phase: 1,
+    weight: 0,
+    character: 'El Juez',
+    characterImage: 'juez.svg',
+    text: 'Investigo la creación de una cátedra a medida. La plaza se creó tres semanas antes de adjudicarse, con un perfil que solo encajaba con una persona. Esa persona vive en su casa.',
+    left: {
+      text: 'Que renuncie a la cátedra hoy',
+      effects: { medios: 2, calle: 1, caja: -1 },
+      moralidad: 3,
+      removeFlags: ['catedra_dama'],
+    },
+    right: {
+      text: '"Mi mujer tiene vida propia"',
+      effects: { medios: -3, gobierno: 1 },
+      moralidad: -2,
+    },
+  },
+  {
+    id: 'bomba_transfuga',
+    phase: 1,
+    weight: 0,
+    character: 'La Oposición',
+    characterImage: 'oposicionsuave.webp',
+    text: 'El diputado que se pasó a su bando vuelve con una petición. Y con otra. Y recuerda, muy amablemente, que su voto sigue siendo decisivo y que la puerta se abre en las dos direcciones.',
+    left: {
+      text: 'Llamar a su farol y perder el voto',
+      effects: { gobierno: -2, medios: 2 },
+      moralidad: 2,
+      removeFlags: ['transfuga'],
+    },
+    right: {
+      text: 'Pagar el peaje otra vez',
+      effects: { gobierno: 1, caja: -2, calle: -1 },
+      moralidad: -2,
+    },
+  },
+  {
+    id: 'bomba_decreto_tumbado',
+    phase: 1,
+    weight: 0,
+    character: 'El Juez',
+    characterImage: 'juez.svg',
+    text: 'El decreto que sacaron ustedes a toda prisa acaba de ser anulado. Sin informes, sin plazos y sin una sola firma técnica. Todo lo que se hizo con él estos meses queda en el aire.',
+    left: {
+      text: 'Rehacerlo bien y desde cero',
+      effects: { medios: 1, gobierno: -2, caja: -1 },
+      moralidad: 2,
+      removeFlags: ['decreto_express'],
+    },
+    right: {
+      text: 'Culpar a los jueces y repetirlo igual',
+      effects: { gobierno: 1, medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+  },
+  {
+    id: 'bomba_fundacion_guru',
+    phase: 1,
+    weight: 0,
+    character: 'El Periodista',
+    characterImage: 'periodista.svg',
+    text: 'La subvención que aprobaron para la fundación del Gurú tiene un problema: el proyecto no se hizo. Hay facturas de un congreso que nadie recuerda haber celebrado. Y una de un hotel de Baleares.',
+    left: {
+      text: 'Reclamar el dinero y denunciarlo',
+      effects: { medios: 2, caja: 1, calle: 1 },
+      moralidad: 3,
+      removeFlags: ['subvencion_guru'],
+    },
+    right: {
+      text: '"Se justificará en su momento"',
+      effects: { medios: -3, gobierno: 1 },
+      moralidad: -3,
+    },
+  },
+  {
+    id: 'bomba_dato_recalculado',
+    phase: 1,
+    weight: 0,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.svg',
+    text: 'Un instituto independiente ha recalculado aquellos datos tan buenos que presentaron. Con el método de siempre no salen buenos: salen justo al revés. Lo publican el lunes.',
+    left: {
+      text: 'Publicar las dos series y explicarlo',
+      effects: { medios: 2, calle: -1, gobierno: -1 },
+      moralidad: 3,
+      removeFlags: ['dato_cocinado'],
+    },
+    right: {
+      text: 'Desacreditar al instituto',
+      effects: { medios: -2, calle: -1, gobierno: 1 },
+      moralidad: -3,
+    },
   },
 
 ]
