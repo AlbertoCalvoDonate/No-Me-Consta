@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
 import { useGameStore } from './hooks/useGameStore'
 import { SwipeCard } from './components/SwipeCard'
@@ -9,6 +9,8 @@ import { StartScreen } from './components/StartScreen'
 import { StatIcon } from './components/StatIcon'
 import type { StatKey } from './types'
 import { epitetoDe } from './data/epitetos'
+import { sfx } from './utils/sfx'
+import { corruptionScore } from './components/SwipeCard'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
@@ -28,6 +30,21 @@ export default function App() {
   // que las flechas de efecto se vean arriba, sobre el icono de cada stat,
   // en tiempo real conforme se mueve la carta (sin re-renders de React:
   // framer-motion actualiza esto fuera del ciclo de render).
+  // Solo para repintar el boton del altavoz; la fuente de verdad vive en sfx.
+  const [sonido, setSonido] = useState(sfx.activo())
+
+  // El sonido va aqui y no en el store a proposito: es presentacion, no reglas
+  // del juego. Suena segun lo turbia que sea la opcion elegida, usando el
+  // mismo criterio con el que la carta pinta el panel de rojo o de verde.
+  const elegir = (side: 'left' | 'right') => {
+    const propia = corruptionScore(currentCard[side].effects)
+    const otra = corruptionScore(currentCard[side === 'left' ? 'right' : 'left'].effects)
+    if (propia > otra) sfx.moneda()
+    else if (propia < otra) sfx.campana()
+    else sfx.papel()
+    choose(side)
+  }
+
   const x = useMotionValue(0)
   useEffect(() => {
     // stop(): por si quedaba viva la animación de rebote del arrastre
@@ -35,6 +52,32 @@ export default function App() {
     x.stop()
     x.set(0)
   }, [currentCard.id, x])
+
+  // Fin de partida: trombon triste, o fanfarria si aguanto las tres
+  // legislaturas (los finales de la ultima convocatoria son isElection).
+  useEffect(() => {
+    if (!gameOver) return
+    if (currentCard.isElection && turn > 100) sfx.triunfo()
+    else sfx.trombon()
+  }, [gameOver, currentCard, turn])
+
+  // Cartas de hito: el balance de fin de ano y la noche electoral se anuncian.
+  useEffect(() => {
+    if (gameOver) return
+    if (currentCard.isElection) sfx.eleccion()
+    else if (currentCard.isRecap) sfx.balance()
+  }, [currentCard, gameOver])
+
+  // Aviso al entrar una barra en zona critica (el mismo umbral que las pinta
+  // de rojo). Solo al ENTRAR: si no, pitaria en cada carta mientras dure.
+  const criticas = (['medios', 'gobierno', 'calle', 'caja'] as StatKey[]).filter(
+    (k) => stats[k] <= 1 || stats[k] >= 9
+  ).length
+  const criticasPrevias = useRef(0)
+  useEffect(() => {
+    if (!gameOver && criticas > criticasPrevias.current) sfx.alarma()
+    criticasPrevias.current = criticas
+  }, [criticas, gameOver])
 
   return (
     <>
@@ -55,6 +98,7 @@ export default function App() {
           style={{
             display: 'flex',
             flexDirection: 'column',
+            position: 'relative',
             // Patrón de banderitas (estilo monograma) por encima del degradado,
             // así se ve también en móvil, donde el marco llena la pantalla.
             backgroundColor: '#0a0a0b',
@@ -73,6 +117,30 @@ export default function App() {
               }}
             />
           )}
+
+          {/* Altavoz para silenciar. Arriba a la derecha y discreto: tiene que
+              estar a mano desde el primer momento, pero sin robar atencion. */}
+          <button
+            onClick={() => setSonido(sfx.alternar())}
+            aria-label={sonido ? 'Silenciar' : 'Activar sonido'}
+            style={{
+              position: 'absolute',
+              top: 8,
+              right: 10,
+              zIndex: 10,
+              width: 34,
+              height: 34,
+              border: 'none',
+              borderRadius: 8,
+              background: 'rgba(0,0,0,0.35)',
+              color: sonido ? '#e0b84d' : '#6b6656',
+              fontSize: 17,
+              lineHeight: 1,
+              cursor: 'pointer',
+            }}
+          >
+            {sonido ? '🔊' : '🔇'}
+          </button>
 
           {started && (
             <>
@@ -97,7 +165,7 @@ export default function App() {
                     condicional normal, React sustituye la carta en el mismo
                     commit, tal cual pide el comentario de más abajo. */}
                 {!gameOver ? (
-                  <SwipeCard key={currentCard.id} card={currentCard} onChoose={choose} x={x} />
+                  <SwipeCard key={currentCard.id} card={currentCard} onChoose={elegir} x={x} />
                 ) : (
                   <motion.div
                     key="gameover"

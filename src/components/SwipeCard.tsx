@@ -1,6 +1,7 @@
 import { motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion'
 import type { Card, StatEffects } from '../types'
 import { characterColor } from '../utils/color'
+import { sfx } from '../utils/sfx'
 
 // Tamaño FIJO a propósito — no crece ni encoge con el largo del texto, para
 // que la carta de debajo se vea siempre, no solo un hueco pequeño. El texto
@@ -35,7 +36,7 @@ export const SWIPE_REVEAL_DISTANCE = 38
 // pública. Si una opción gana más de lo primero que de lo segundo, es la
 // "mala" (roja); si es al revés, es la "buena" (verde) — así el color sigue
 // la moralidad real de cada carta, no si está a la izquierda o la derecha.
-function corruptionScore(effects: StatEffects) {
+export function corruptionScore(effects: StatEffects) {
   const caja = effects.caja ?? 0
   const partido = effects.gobierno ?? 0
   const medios = effects.medios ?? 0
@@ -235,6 +236,7 @@ export function SwipeCard({ card, onChoose, x }: Props) {
           dragElastic={0.7}
           dragSnapToOrigin
           dragTransition={{ bounceStiffness: 450, bounceDamping: 45 }}
+          onDragStart={() => sfx.roce()}
           onDragEnd={handleDragEnd}
           initial={{ scale: 0.88, opacity: 0, y: 60 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}

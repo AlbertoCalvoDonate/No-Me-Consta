@@ -184,6 +184,28 @@ Ojo: las de la última convocatoria son `isEnding` **y** `isElection`, así que
 el filtro de finales normales tiene que excluir `isElection` — si no, se
 cuelan en cualquier turno.
 
+## Sonido
+
+Todo SINTETIZADO con Web Audio (`src/utils/sfx.ts`): no hay un solo archivo de
+audio en el proyecto, son osciladores creados al vuelo. Pesa cero en el bundle
+y encaja con la estetica pixel, que ya es medio chiptune.
+
+| cuando | suena |
+|---|---|
+| empiezas a arrastrar | un toque seco |
+| eliges la opcion turbia | la moneda de toda la vida, dos notas hacia arriba |
+| eliges la opcion honesta | una campanita limpia |
+| eliges una opcion neutra | papeles |
+| una barra entra en rojo | dos pitidos de alarma barata |
+| balance de fin de ano | campanita de calendario |
+| noche electoral | fanfarria de telediario con murmullo |
+| **cae el gobierno** | **el trombon triste** |
+| aguantas las tres legislaturas | fanfarria buena y aplausos |
+
+El altavoz de arriba a la derecha silencia, y la preferencia se recuerda entre
+sesiones. El AudioContext no se crea hasta el primer sonido, porque los
+navegadores bloquean el audio que no viene detras de un gesto del usuario.
+
 ## Narrativa adaptativa (el modelo de Reigns)
 
 Reigns describe su selección de cartas como una **bolsa**: coges todas, quitas
