@@ -164,10 +164,14 @@ export function SwipeCard({ card, onChoose, x }: Props) {
   const rotate = useTransform(x, [-100, 100], [-CARD_TILT, CARD_TILT])
 
   const leftIsCorrupt = corruptionScore(card.left.effects) > corruptionScore(card.right.effects)
-  // Cuando las dos opciones dicen lo mismo (la carta del "Pues..." al morir)
-  // los dos paneles van del mismo color. Pintar una verde y otra roja daría a
-  // entender que hay algo que elegir, y justo la gracia es que no lo hay.
-  const mismaOpcion = card.left.text === card.right.text
+  // En una carta de muerte (las dos salidas acaban la partida) los dos
+  // paneles dicen "Pues..." y van del mismo color, como en Reigns: ya no hay
+  // nada que elegir y esa es la broma. Cada lado conserva su propio epílogo,
+  // así que sigue habiendo dos finales, pero se eligen a ciegas.
+  const esMuerte = Boolean(card.left.epilogueText && card.right.epilogueText)
+  const mismaOpcion = esMuerte || card.left.text === card.right.text
+  const textoIzq = esMuerte ? 'Pues...' : card.left.text
+  const textoDer = esMuerte ? 'Pues...' : card.right.text
   const leftColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CORRUPT : CLEAN
   const rightColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CLEAN : CORRUPT
 
@@ -308,8 +312,8 @@ export function SwipeCard({ card, onChoose, x }: Props) {
         {/* Paneles de respuesta: hermanos de la carta (ver comentario en
             ChoicePanel). Viajan con ella en X y quedan centrados, así que
             siempre caen dentro de la carta sin que nada los recorte. */}
-        <ChoicePanel text={card.left.text} side="left" colors={leftColors} x={x} />
-        <ChoicePanel text={card.right.text} side="right" colors={rightColors} x={x} />
+        <ChoicePanel text={textoIzq} side="left" colors={leftColors} x={x} />
+        <ChoicePanel text={textoDer} side="right" colors={rightColors} x={x} />
       </div>
 
       {/* El nombre va debajo de la carta SALVO cuando la carta no tiene

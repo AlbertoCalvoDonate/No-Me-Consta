@@ -129,29 +129,10 @@ function cardWeight(c: Card, state: GameState, ctx: CardContext): number {
   return Math.max(0, Math.round(w ?? 1))
 }
 
-// La carta del "Pues...", tal cual la hace Reigns: al morir sale una última
-// carta con el epílogo, y las dos opciones son EXACTAMENTE la misma. Ya no
-// hay nada que decidir, y esa es la broma. Sin efectos y sin moralidad: no
-// queda nada que puntuar.
-export const EPILOGO_ID = '__epilogo__'
-
-function cartaDeEpilogo(texto: string, base: Card): Card {
-  return {
-    id: EPILOGO_ID,
-    phase: 4,
-    // Se queda la cara de quien te ha rematado, que para eso ha venido.
-    character: base.character,
-    characterImage: base.characterImage,
-    text: texto,
-    left: { text: 'Pues...', effects: {} },
-    right: { text: 'Pues...', effects: {} },
-  }
-}
-
 // Cuántos favores hay que deberle a alguien para que aparezca a salvarte.
-// Medido: con 3 el rescate sale en el 4% de las partidas, que es lo justo
-// para que sorprenda sin volverse una red de seguridad. Con 2 se disparaba
-// al 12-20% y el juego perdía la tensión.
+// Medido: con 3 el rescate sale en el 7% de las partidas, que es lo justo
+// para que sorprenda sin volverse una red de seguridad. Con 5 no llegaba al
+// 1% (invisible) y con 2 se disparaba al 28%.
 const FAVOR_PARA_RESCATE = 3
 
 // Busca a alguien que te deba lo bastante Y que pinte algo en esta caída.
@@ -410,13 +391,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       }
     }
 
-    // Al elegir en la carta del "Pues..." ya solo queda cerrar la partida:
-    // sus dos opciones son la misma y no tocan nada.
-    if (card.id === EPILOGO_ID) {
-      set({ gameOver: true })
-      return
-    }
-
     if (choice.epilogueText) {
       // ¿Hay alguien que te deba lo bastante como para sacarte de esta? Solo
       // si el rescate viene a cuento (te salva de la barra que te ha matado) y
@@ -450,15 +424,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
         scheduled: newScheduled,
         anger: newAnger,
         favor: newFavor,
-        // Todavía NO es game over: primero se enseña el epílogo como carta,
-        // con "Pues..." a los dos lados. La pantalla de fin llega después.
+        gameOver: true,
         deathReason: choice.epilogueText,
         // En una muerte por evento la causa es la situación, no una barra:
         // señalar un indicador ahí despista (te caes por la moción y te dice
         // "Medios por los suelos"). Solo se marca en las muertes por barra.
         deathStat: card.byEvent ? undefined : brokenStat(state.stats),
         lastEpilogue: choice.epilogueText,
-        currentCard: cartaDeEpilogo(choice.epilogueText, card),
       })
       return
     }
