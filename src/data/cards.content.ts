@@ -4221,19 +4221,19 @@ export const contentCards: Card[] = [
 
 
   // ============================================================================
-  // EL MAGISTRADO AFIN — el otro juez. Mientras El Juez instruye contra usted,
-  // este mueve papeles a su favor... y apunta cada favor en una libreta. Todo
-  // lo que le acepta enciende una bomba (scheduleCardId) que vuelve meses
-  // despues convertida en factura. Y si le deja tirado demasiadas veces, el
-  // enfado le cambia de bando: ver 'afin_traicion'.
-  // Su indicador de cabecera es MEDIOS, como el del Juez: los dos operan en el
-  // terreno del escandalo, uno para encenderlo y otro para apagarlo.
+  // EL FISCAL — al Fiscal General lo nombra el Gobierno, asi que juega a tu
+  // favor. Mientras El Juez instruye contra usted, el Fiscal decide a quien
+  // se acusa y a quien no... y apunta cada favor en una libreta. Todo lo que
+  // le acepta enciende una bomba que vuelve meses despues convertida en
+  // factura. Y si le deja tirado demasiadas veces cambia de bando: ver
+  // 'afin_traicion'. Su indicador es MEDIOS, como el del Juez: los dos operan
+  // en el terreno del escandalo, uno para encenderlo y otro para apagarlo.
   // ============================================================================
   {
     id: 'afin_aviso',
     phase: 2,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: 'Le llama a las once de la noche desde un teléfono que no es el suyo. "Mañana entra una denuncia contra usted. Se la van a repartir a mi compañero, que no es de los nuestros. Yo puedo intentar algo, pero tendría que ser esta noche."',
     left: { text: 'Que siga su curso normal', effects: { medios: 1, gobierno: -1 }, moralidad: 3 },
     right: {
@@ -4249,8 +4249,8 @@ export const contentCards: Card[] = [
   {
     id: 'afin_archiva',
     phase: 2,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: '"Lo de su consejero lo tengo encima de la mesa." Da golpecitos en una carpeta muy fina. "Puedo archivarlo por falta de indicios, que además es medio verdad. La otra mitad ya es cosa suya."',
     left: { text: 'Que lo investigue hasta el final', effects: { medios: 2, gobierno: -2 }, moralidad: 3 },
     right: {
@@ -4266,12 +4266,12 @@ export const contentCards: Card[] = [
   {
     id: 'afin_reparto',
     phase: 3,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
-    text: '"El reparto de causas es aleatorio, presidente." Sonríe. "Aleatorio del todo, del todo, tampoco. Digamos que hay días en los que estoy de guardia y días en los que me pongo de guardia."',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: '"La Fiscalía prioriza según criterios técnicos, presidente." Sonríe. "Técnicos del todo, del todo, tampoco. Hay expedientes que corren y expedientes que, si nadie los empuja, se echan una siesta muy larga."',
     left: { text: 'Preferir no saber cómo funciona', effects: { medios: 1 }, moralidad: 1 },
     right: {
-      text: 'Preguntarle qué días está de guardia',
+      text: 'Preguntarle qué expedientes están durmiendo',
       effects: { gobierno: 1, medios: -1 },
       moralidad: -3,
       addFlags: ['magistrado_debe'],
@@ -4283,8 +4283,8 @@ export const contentCards: Card[] = [
   {
     id: 'afin_sumario',
     phase: 3,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: 'Le enseña un sumario que no debería enseñarle. Es de una causa contra la oposición y hay dentro cosas muy feas. "Esto sale público en dos meses. O en dos días, según a quién le interese."',
     left: { text: 'No tocar ese sumario', effects: { medios: 1 }, moralidad: 3 },
     right: {
@@ -4300,8 +4300,8 @@ export const contentCards: Card[] = [
   {
     id: 'afin_cena',
     phase: 2,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: '"Una cena entre amigos, sin agenda ni nada." El problema es que él instruye tres causas que le tocan a usted de cerca, y las cenas entre amigos también se fotografían.',
     left: { text: 'Cancelar y verse cuando no instruya nada', effects: { medios: 1, gobierno: -1 }, moralidad: 2 },
     right: { text: 'Cenar en un reservado, sin móviles', effects: { gobierno: 1, medios: -2 }, moralidad: -2 },
@@ -4310,8 +4310,8 @@ export const contentCards: Card[] = [
   {
     id: 'afin_prensa',
     phase: 3,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: '"Mi compañero el instructor filtra a la prensa todo lo que hace." Se recuesta. "Yo también sé filtrar, presidente. Solo que yo filtro cosas que le ayudan. Dígame cuándo."',
     left: { text: 'Pedirle que no filtre nada', effects: { medios: 2, gobierno: -1 }, moralidad: 2 },
     right: { text: '"Cuando yo te avise"', effects: { medios: -1, gobierno: 1 }, moralidad: -2 },
@@ -4323,8 +4323,8 @@ export const contentCards: Card[] = [
     id: 'afin_cobro_ascenso',
     phase: 1,
     weight: 0,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: '"¿Se acuerda de aquella noche que le llamé?" Claro que se acuerda. "Sale plaza en el tribunal de arriba. Yo no le pido nada, presidente. Solo digo que estaría bien que el nombramiento lo firme alguien que me conozca."',
     left: {
       text: 'Que el tribunal decida sin usted',
@@ -4344,8 +4344,8 @@ export const contentCards: Card[] = [
     id: 'afin_cobro_hijo',
     phase: 1,
     weight: 0,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: 'Trae el currículum de su hijo dentro de la misma carpeta fina de hace unos meses. "Es un chico brillante. Y ya sabe que en esta vida una mano lava la otra, y las dos lavan la cara."',
     left: {
       text: 'Que se presente como todos',
@@ -4364,8 +4364,8 @@ export const contentCards: Card[] = [
     id: 'afin_cobro_sala',
     phase: 1,
     weight: 0,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: '"Tengo un problemilla con Hacienda de hace años." Lo dice como quien comenta la lluvia. "Nada grave. Pero si a alguien se le ocurriera mirarlo con lupa ahora, sería un momento muy malo para los dos."',
     left: {
       text: 'Que Hacienda mire lo que tenga que mirar',
@@ -4404,25 +4404,25 @@ export const contentCards: Card[] = [
   {
     id: 'anger_afin',
     phase: 3,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: 'Ya no llama de noche. Ya no trae carpetas. Cuando se cruzan en un acto le saluda con la cabeza, mirando a otro lado, como se saluda a alguien con quien uno prefiere no salir en la misma foto.',
     left: { text: 'Buscarle y arreglarlo como sea', effects: { gobierno: 1, medios: -1, caja: -1 }, moralidad: -2 },
     right: { text: 'Dejar que se enfríe', effects: { medios: 1, gobierno: -1 }, moralidad: 1 },
-    condition: (_s, _m, ctx) => (ctx.anger['El Magistrado Afín'] ?? 0) >= 3,
-    weight: (_s, _m, ctx) => (ctx.anger['El Magistrado Afín'] ?? 0) - 1,
+    condition: (_s, _m, ctx) => (ctx.anger['El Fiscal'] ?? 0) >= 3,
+    weight: (_s, _m, ctx) => (ctx.anger['El Fiscal'] ?? 0) - 1,
   },
   {
     id: 'afin_traicion',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.svg',
-    text: 'Hay un magistrado que ha declarado como testigo esta mañana. Ha contado llamadas nocturnas, carpetas y un reparto de causas que no era tan aleatorio. Sabe muchísimo, y ahora está muy motivado.',
+    text: 'El Fiscal ha declarado como testigo esta mañana. Ha contado llamadas nocturnas, carpetas y una lista de expedientes que corrían más que otros. Sabe muchísimo, y ahora está muy motivado.',
     left: { text: 'Reconocer las llamadas', effects: { medios: 1, gobierno: -3 }, moralidad: 3 },
     right: { text: '"Ese señor miente por despecho"', effects: { medios: -3, gobierno: 1 }, moralidad: -2 },
     // Solo si se le hizo un favor Y luego se le dejó tirado lo suficiente.
     condition: (_s, _m, ctx) =>
-      (ctx.anger['El Magistrado Afín'] ?? 0) >= 4 &&
+      (ctx.anger['El Fiscal'] ?? 0) >= 4 &&
       (ctx.flags.has('magistrado_colocado') || ctx.flags.has('causa_archivada')),
     weight: 6,
   },
@@ -4431,7 +4431,7 @@ export const contentCards: Card[] = [
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.svg',
-    text: 'Hay causas suyas que llevan meses cayendo siempre en el mismo juzgado, y no es el mío. El reparto es aleatorio, dice la norma. Voy a pedir el listado de los últimos dos años.',
+    text: 'La Fiscalía lleva meses archivando todo lo que le toca a usted de cerca, siempre con el mismo argumento. Yo no puedo obligar a nadie a acusar, pero sí puedo preguntar por qué. Y voy a preguntar.',
     left: { text: 'Entregar el listado entero', effects: { medios: 1, gobierno: -1 }, moralidad: 2 },
     right: { text: 'Que el listado tarde en aparecer', effects: { medios: -2, gobierno: 1 }, moralidad: -2 },
     condition: (_s, _m, ctx) =>
@@ -4547,8 +4547,8 @@ export const contentCards: Card[] = [
     phase: 1,
     weight: 0,
     rescatePara: 'evento',
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: 'Le llama otra vez de noche, otra vez desde un teléfono que no es el suyo. "Lo que le viene encima puedo pararlo veinticuatro horas. No más. En veinticuatro horas usted puede hacer muchas cosas, presidente. Yo, después de esto, ya no podré hacer ninguna."',
     left: {
       text: 'Aceptar las veinticuatro horas',
@@ -4651,8 +4651,8 @@ export const contentCards: Card[] = [
     id: 'rescate_cobro_magistrado',
     phase: 1,
     weight: 0,
-    character: 'El Magistrado Afín',
-    characterImage: 'magistrado.svg',
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
     text: 'Aquellas veinticuatro horas le costaron el prestigio y una información reservada. Ahora está fuera del escalafón y muy tranquilo. "No vengo a pedirle nada, presidente. Vengo a recordarle que sigo teniendo la copia de todo."',
     left: {
       text: 'Contarlo usted antes que él',
