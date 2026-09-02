@@ -207,9 +207,9 @@ export const contentCards: Card[] = [
     phase: 1,
     character: 'El Escudero',
     characterImage: 'ministrolameculos.webp',
-    text: '¡PRESIDENTE, ES USTED UN ICONO! Que te pregunten lo que te pregunten, tú a lo tuyo. Esto hay que subirlo a redes ya.',
+    text: '¡PRESIDENTE, ES USTED UN ICONO! Que le pregunten lo que le pregunten, usted a lo suyo. Esto hay que subirlo a redes ya.',
     left: { text: 'Pedirle mesura', effects: { medios: 1 } },
-    right: { text: 'Dejarla seguir', effects: { gobierno: 1, medios: -1 } },
+    right: { text: 'Dejarle seguir', effects: { gobierno: 1, medios: -1 } },
   },
   {
     id: 'meme_liado_parda',
@@ -289,7 +289,7 @@ export const contentCards: Card[] = [
       nextCardId: 'react_enchufe_juez',
     },
     right: {
-      text: 'Que opose como todos',
+      text: 'Que oposite como todos',
       effects: { gobierno: -1, calle: 1 }, moralidad: 2,
     },
   },
