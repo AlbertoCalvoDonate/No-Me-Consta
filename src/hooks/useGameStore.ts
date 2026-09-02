@@ -260,7 +260,13 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
         ? electionCards.filter((c) => c.id.endsWith('_final'))
         : electionCards.filter((c) => !c.id.endsWith('_final'))
       const chosen = pool.length > 0 ? pool : electionCards
-      return chosen[Math.floor(Math.random() * chosen.length)]
+      // Si alguna carta electoral encaja por su `condition` (derrota,
+      // triunfo, el Guru partiendo el voto...), tiene prioridad sobre la
+      // generica "apretada", que no lleva condicion y siempre entra. Asi
+      // el resultado refleja como has llegado, no un dado.
+      const especificas = chosen.filter((c) => c.condition)
+      const finales = especificas.length > 0 ? especificas : chosen
+      return finales[Math.floor(Math.random() * finales.length)]
     }
   }
 

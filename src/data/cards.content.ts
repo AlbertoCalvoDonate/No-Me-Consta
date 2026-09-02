@@ -432,6 +432,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_decreto_amigo',
+    weight: 2,
     phase: 2,
     character: 'El Ministro Caído',
     characterImage: 'ministrocorrupto.webp',
@@ -2712,6 +2713,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'guru_fundacion',
+    weight: 2,
     pleases: 'right',
     phase: 3,
     character: 'El Gurú',
@@ -3362,6 +3364,7 @@ export const contentCards: Card[] = [
   // ============================================================================
   {
     id: 'bomba_sobre',
+    weight: 2,
     phase: 1,
     character: 'El Hermano',
     characterImage: 'hermano.webp',
@@ -3694,6 +3697,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ministra_datos',
+    weight: 2,
     phase: 2,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.webp',
@@ -3780,6 +3784,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'oposicion_transfuga',
+    weight: 2,
     phase: 3,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
@@ -3882,6 +3887,7 @@ export const contentCards: Card[] = [
   // --- LA PRIMERA DAMA (caja) ---
   {
     id: 'dama_catedra',
+    weight: 2,
     phase: 2,
     character: 'La Primera Dama',
     characterImage: 'primeradama.webp',
@@ -4038,6 +4044,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'caido_favor',
+    weight: 2,
     phase: 3,
     character: 'El Ministro Caído',
     characterImage: 'ministrocorrupto.webp',
@@ -4183,6 +4190,7 @@ export const contentCards: Card[] = [
       text: 'Reclamar el dinero y denunciarlo',
       effects: { medios: 2, caja: 1, calle: 1 },
       moralidad: 3,
+      addFlags: ['guru_ruptura'],
       removeFlags: ['subvencion_guru'],
     },
     right: {
@@ -4658,6 +4666,123 @@ export const contentCards: Card[] = [
       moralidad: -3,
     },
     pleases: 'right',
+  },
+
+
+  // ============================================================================
+  // TRAMA DEL GURU — el faro moral de la izquierda decide que este Gobierno ya
+  // no esta a su altura, se va, monta "un movimiento ciudadano" y acaba
+  // presentandose para partir el voto. Entra por dos sitios:
+  //   A) le denuncias cuando estalla lo de su fundacion (bomba_fundacion_guru)
+  //   B) le desairas lo suficiente (guru_desprecio, mira el enfado)
+  // Los dos encienden 'guru_ruptura' y de ahi la cadena tira sola. El flag
+  // 'guru_candidato' lo leen las cartas de elecciones (mas abajo).
+  // ============================================================================
+  {
+    id: 'guru_desprecio',
+    phase: 2,
+    character: 'El Gurú',
+    characterImage: 'guru.webp',
+    text: 'Desde un festival de ideas en una isla, entrada a 600 euros, ha dicho que "este Gobierno ha perdido el alma". Sus seguidores le han aplaudido de pie. Son muchos, y casi todos le votarian a usted.',
+    left: {
+      text: 'Llamarle y ofrecerle algo gordo',
+      effects: { calle: 1, medios: -2, caja: -1 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Que predique en su isla',
+      effects: { medios: 1, calle: -1 },
+      moralidad: 1,
+      addFlags: ['guru_ruptura'],
+    },
+    condition: (_s, m, ctx) =>
+      ((ctx.anger['El Gurú'] ?? 0) >= 2 || m <= 3) && !ctx.flags.has('guru_ruptura'),
+    weight: (_s, m, ctx) => 2 + (ctx.anger['El Gurú'] ?? 0) + (m <= 3 ? 2 : 0),
+  },
+  {
+    id: 'guru_movimiento',
+    phase: 3,
+    character: 'El Gurú',
+    characterImage: 'guru.webp',
+    text: 'Ha montado un "movimiento ciudadano". Sin siglas, sin sede fiscal conocida y con mucho merchandising. Llena pabellones y cobra la entrada. Todavia no es un partido. Todavia.',
+    left: {
+      text: 'Ignorarlo y que se desinfle solo',
+      effects: { medios: 1, calle: -1 },
+      moralidad: 1,
+      addFlags: ['guru_movimiento_activo'],
+      removeFlags: ['guru_ruptura'],
+    },
+    right: {
+      text: 'Mandarle a alguien a tantear un pacto',
+      effects: { gobierno: -1, medios: -1 },
+      moralidad: -1,
+      addFlags: ['guru_movimiento_activo'],
+      removeFlags: ['guru_ruptura'],
+    },
+    condition: (_s, _m, ctx) => ctx.flags.has('guru_ruptura'),
+    weight: 12,
+  },
+  {
+    id: 'guru_lista',
+    phase: 4,
+    character: 'El Gurú',
+    characterImage: 'guru.webp',
+    text: 'El movimiento ya tiene nombre de partido, logo y listas cerradas. Se presenta. Cada voto que saque sale del suyo, y las encuestas dicen que va a sacar unos cuantos.',
+    left: {
+      text: 'Negociar por lo alto que no se presente',
+      effects: { caja: -2, gobierno: -1, medios: -1 },
+      moralidad: -2,
+      removeFlags: ['guru_movimiento_activo'],
+    },
+    right: {
+      text: 'Que se presente y parta el voto',
+      effects: { medios: 1, calle: -1 },
+      moralidad: 1,
+      addFlags: ['guru_candidato'],
+      removeFlags: ['guru_movimiento_activo'],
+    },
+    condition: (_s, _m, ctx) => ctx.flags.has('guru_movimiento_activo') && ctx.turn >= 24,
+    weight: 8,
+  },
+
+  // ============================================================================
+  // AVISO DE MITAD DE LEGISLATURA — a los 3 anos (turno 36) y a los 7 (turno
+  // 84). Es un balance mas (isRecap), pero electoral: dice como irian las
+  // urnas si fueran hoy, para que las elecciones no lleguen de sorpresa.
+  // Reusa la rama de balance del motor, sin tocar codigo.
+  // ============================================================================
+  {
+    id: 'midterm_bien',
+    phase: 3,
+    isRecap: true,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.svg',
+    text: 'Quedan doce meses para las urnas y le traigo el corte de hoy: ganaria, y con holgura. Ahora bien, doce meses en politica son una eternidad. No lo enmarque todavia.',
+    left: { text: 'Jugar a lo seguro hasta el final', effects: { gobierno: 1, calle: -1 }, moralidad: 1 },
+    right: { text: 'Arriesgar ahora que hay margen', effects: { calle: 1, medios: 1, gobierno: -1 } },
+    condition: (s, _m, ctx) => (ctx.turn === 36 || ctx.turn === 84) && s.calle >= 6 && s.gobierno >= 5,
+  },
+  {
+    id: 'midterm_justo',
+    phase: 3,
+    isRecap: true,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.svg',
+    text: 'Doce meses para las urnas. El corte de hoy es un empate tecnico: se decide por un punto, para un lado o para el otro. Todo lo que haga a partir de ahora cuenta el doble.',
+    left: { text: 'Cerrar filas y no cometer errores', effects: { gobierno: 1, medios: -1 } },
+    right: { text: 'Buscar un golpe de efecto', effects: { calle: 1, caja: -1, medios: 1 } },
+    condition: (_s, _m, ctx) => ctx.turn === 36 || ctx.turn === 84,
+  },
+  {
+    id: 'midterm_mal',
+    phase: 3,
+    isRecap: true,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.svg',
+    text: 'Doce meses para las urnas y le voy a ser sincero: hoy las pierde. No de calle, pero las pierde. Con un ano por delante se remonta, pero hay que empezar ya y no fallar.',
+    left: { text: 'Volcarse en la calle este ultimo ano', effects: { calle: 2, gobierno: -1, medios: -1 }, moralidad: 1 },
+    right: { text: 'Movilizar todos los recursos, cueste lo que cueste', effects: { calle: 1, caja: -2, medios: 1 }, moralidad: -1 },
+    condition: (s, _m, ctx) => (ctx.turn === 36 || ctx.turn === 84) && (s.calle <= 4 || s.gobierno <= 4),
   },
 
 ]

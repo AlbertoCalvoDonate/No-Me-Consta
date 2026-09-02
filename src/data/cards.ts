@@ -400,6 +400,9 @@ const electionCards: Card[] = [
       text: 'Gobernar en minoría y sufrir cada votación',
       effects: { medios: 1, gobierno: -1 },
     },
+    // El caso normal: nada se ha hundido del todo, asi que sobrevives la
+    // noche. Lleva condicion para competir de tu a tu con derrota/triunfo/etc.
+    condition: (s) => [s.medios, s.gobierno, s.calle, s.caja].every((n) => n >= 3),
   },
   {
     id: 'elecciones_repeticion',
@@ -416,8 +419,26 @@ const electionCards: Card[] = [
       text: 'Campaña austera, casi de tapadillo',
       effects: { caja: 1, calle: -1, medios: -1 },
     },
-    condition: (s) => s.gobierno <= 5,
+    condition: (s) => s.gobierno <= 3,
   },
+  {
+    id: 'elecciones_guru',
+    phase: 4,
+    isElection: true,
+    character: 'Noche electoral',
+    characterImage: 'nocheelectoral.svg',
+    text: 'Cuatro años. El partido del Gurú ha sacado escaños, todos de su bolsillo. La izquierda va partida en dos y la suma no da. La culpa, dicen los suyos, es de usted por no haberlo comprado a tiempo.',
+    left: {
+      text: 'Ofrecerle entrar al Gobierno ahora',
+      effects: { gobierno: 1, caja: -2, medios: -1 },
+    },
+    right: {
+      text: 'Gobernar sin él y a ver cuánto dura',
+      effects: { medios: 1, gobierno: -2, calle: -1 },
+    },
+    condition: (_s, _m, ctx) => ctx.flags.has('guru_candidato'),
+  },
+
 
   {
     id: 'elecciones_sorpresa',
