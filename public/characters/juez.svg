@@ -1,16 +1,35 @@
-<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
-  <path d="M60,500 L95,350 L170,315 L230,315 L305,350 L340,500 Z" fill="#151515"/>
-  <path d="M200,500 L200,315 L230,315 L305,350 L320,500 Z" fill="#0a0a0a"/>
-  <path d="M150,330 L200,360 L165,420 L140,345 Z" fill="#f2f0ea"/>
-  <path d="M250,330 L200,360 L235,420 L260,345 Z" fill="#f2f0ea"/>
-  <rect x="178" y="270" width="44" height="70" fill="#d4a06f"/>
-  <path d="M118,222 L108,242 L118,267 L132,257 Z" fill="#d4a06f"/>
-  <path d="M282,222 L292,242 L282,267 L268,257 Z" fill="#d4a06f"/>
-  <path d="M200,120 L130,150 L120,240 L140,300 L172,335 L200,345 Z" fill="#e0b380"/>
-  <path d="M200,120 L270,150 L280,240 L260,300 L228,335 L200,345 Z" fill="#c99861"/>
-  <path d="M148,205 L182,199 L182,208 L150,215 Z" fill="#1a1310"/>
-  <path d="M218,199 L252,205 L250,215 L218,208 Z" fill="#1a1310"/>
-  <rect x="155" y="222" width="14" height="28" fill="#141010"/>
-  <rect x="231" y="222" width="14" height="28" fill="#141010"/>
-  <path d="M122,160 Q140,95 200,92 Q260,95 278,160 Q262,120 233,113 Q214,104 200,118 Q186,104 167,113 Q138,120 122,160 Z" fill="#cfcfd2"/>
+<svg viewBox="70 60 260 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- El Juez. Provisional (low-poly plano, a juego con el resto). El
+       viewBox recorta el hueco de arriba y sube el torso hasta el borde,
+       para que llene la carta como los retratos .webp en vez de flotar. -->
+  <!-- toga -->
+  <path d="M55,360 L88,300 L165,262 L235,262 L312,300 L345,360 Z" fill="#161616"/>
+  <path d="M200,360 L200,262 L235,262 L312,300 L322,360 Z" fill="#0b0b0b"/>
+  <!-- camisa -->
+  <path d="M150,278 L200,306 L166,352 L142,292 Z" fill="#f2f0ea"/>
+  <path d="M250,278 L200,306 L234,352 L258,292 Z" fill="#e6e4dd"/>
+  <!-- cuello -->
+  <path d="M180,225 h40 v52 l-20,14 l-20,-14 Z" fill="#d1a06f"/>
+  <!-- orejas -->
+  <path d="M120,182 L110,204 L121,228 L135,216 Z" fill="#d1a06f"/>
+  <path d="M280,182 L290,204 L279,228 L265,216 Z" fill="#bf8c58"/>
+  <!-- cara, dos tonos con mandibula angular -->
+  <path d="M200,86 L136,110 L124,196 L146,258 L178,292 L200,300 Z" fill="#e0b380"/>
+  <path d="M200,86 L264,110 L276,196 L254,258 L222,292 L200,300 Z" fill="#c99861"/>
+  <path d="M200,300 L178,292 L200,272 L222,292 Z" fill="#b98a53"/>
+  <path d="M146,258 L178,292 L160,240 Z" fill="#d3a674"/>
+  <path d="M254,258 L222,292 L240,240 Z" fill="#bd8d55"/>
+  <!-- cejas -->
+  <path d="M146,176 L182,168 L182,180 L148,188 Z" fill="#1a1310"/>
+  <path d="M218,168 L254,176 L252,188 L218,180 Z" fill="#1a1310"/>
+  <!-- ojos -->
+  <rect x="154" y="196" width="15" height="30" fill="#141010"/>
+  <rect x="231" y="196" width="15" height="30" fill="#141010"/>
+  <!-- nariz -->
+  <path d="M198,206 L188,244 L200,250 L212,244 L202,206 Z" fill="#c99861"/>
+  <!-- pelo cano, facetado -->
+  <path d="M120,140 Q140,70 200,66 Q260,70 280,140 L266,150 L244,112 L222,124 L200,104 L178,124 L156,112 L134,150 Z" fill="#cfcfd2"/>
+  <path d="M120,140 L134,150 L152,110 L134,150 Z" fill="#bcbcc0"/>
+  <path d="M280,140 L266,150 L248,110 L266,150 Z" fill="#e0e0e3"/>
+  <path d="M156,112 L200,66 L244,112 L222,124 L200,104 L178,124 Z" fill="#dcdce0"/>
 </svg>

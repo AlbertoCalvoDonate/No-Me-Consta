@@ -1,35 +1,39 @@
-<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
-  <!-- Variante del retrato de El Juez para El Magistrado Afín: misma toga y
-       mismo poligonaje, pero pelo oscuro con entradas, gafas y una sonrisa
-       leve. Los dos jueces salen en el mismo mazo y tienen que distinguirse de
-       un vistazo: el que te investiga no sonríe nunca. Provisional, como el
-       otro, a la espera de arte de verdad. -->
-  <path d="M60,500 L95,350 L170,315 L230,315 L305,350 L340,500 Z" fill="#151515"/>
-  <path d="M200,500 L200,315 L230,315 L305,350 L320,500 Z" fill="#0a0a0a"/>
-  <path d="M150,330 L200,360 L165,420 L140,345 Z" fill="#f2f0ea"/>
-  <path d="M250,330 L200,360 L235,420 L260,345 Z" fill="#f2f0ea"/>
-  <path d="M186,352 L200,368 L214,352 L208,430 L192,430 Z" fill="#8c2230"/>
-  <rect x="178" y="270" width="44" height="70" fill="#c9905c"/>
-  <path d="M118,222 L108,242 L118,267 L132,257 Z" fill="#c9905c"/>
-  <path d="M282,222 L292,242 L282,267 L268,257 Z" fill="#c9905c"/>
-  <path d="M200,120 L130,150 L120,240 L140,300 L172,335 L200,345 Z" fill="#dba876"/>
-  <path d="M200,120 L270,150 L280,240 L260,300 L228,335 L200,345 Z" fill="#c28c56"/>
-  <path d="M146,204 L182,200 L182,209 L148,214 Z" fill="#241812"/>
-  <path d="M218,200 L254,204 L252,214 L218,209 Z" fill="#241812"/>
-  <rect x="155" y="222" width="14" height="26" fill="#141010"/>
-  <rect x="231" y="222" width="14" height="26" fill="#141010"/>
-  <!-- Gafas: lo primero que distingue a los dos jueces de lejos. -->
-  <g fill="none" stroke="#2b2b2e" stroke-width="7">
-    <rect x="140" y="212" width="48" height="44" rx="7"/>
-    <rect x="212" y="212" width="48" height="44" rx="7"/>
-    <path d="M188,232 L212,232"/>
-    <path d="M140,228 L118,236"/>
-    <path d="M260,228 L282,236"/>
+<svg viewBox="70 60 260 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- El Magistrado Afín. Provisional, variante de El Juez: misma toga y
+       poligonaje, pero pelo oscuro con entradas, gafas y una sonrisa leve.
+       Los dos jueces salen en el mismo mazo y hay que distinguirlos de un
+       vistazo: el que te investiga no sonríe nunca. viewBox recortado para
+       que llene la carta como los .webp. -->
+  <path d="M55,360 L88,300 L165,262 L235,262 L312,300 L345,360 Z" fill="#161616"/>
+  <path d="M200,360 L200,262 L235,262 L312,300 L322,360 Z" fill="#0b0b0b"/>
+  <path d="M150,278 L200,306 L166,352 L142,292 Z" fill="#f2f0ea"/>
+  <path d="M250,278 L200,306 L234,352 L258,292 Z" fill="#e6e4dd"/>
+  <path d="M186,306 L200,322 L214,306 L208,360 L192,360 Z" fill="#8c2230"/>
+  <path d="M180,225 h40 v52 l-20,14 l-20,-14 Z" fill="#c9905c"/>
+  <path d="M120,182 L110,204 L121,228 L135,216 Z" fill="#c9905c"/>
+  <path d="M280,182 L290,204 L279,228 L265,216 Z" fill="#b07e4a"/>
+  <path d="M200,86 L136,110 L124,196 L146,258 L178,292 L200,300 Z" fill="#dba876"/>
+  <path d="M200,86 L264,110 L276,196 L254,258 L222,292 L200,300 Z" fill="#c28c56"/>
+  <path d="M200,300 L178,292 L200,272 L222,292 Z" fill="#b07f4a"/>
+  <path d="M146,258 L178,292 L160,240 Z" fill="#cf9c68"/>
+  <path d="M254,258 L222,292 L240,240 Z" fill="#ba8450"/>
+  <path d="M146,172 L182,166 L182,178 L148,184 Z" fill="#241812"/>
+  <path d="M218,166 L254,172 L252,184 L218,178 Z" fill="#241812"/>
+  <rect x="155" y="194" width="14" height="26" fill="#141010"/>
+  <rect x="231" y="194" width="14" height="26" fill="#141010"/>
+  <g fill="none" stroke="#2b2b2e" stroke-width="6">
+    <rect x="144" y="186" width="46" height="40" rx="6"/>
+    <rect x="210" y="186" width="46" height="40" rx="6"/>
+    <path d="M190,204 L210,204"/>
+    <path d="M144,198 L120,206"/>
+    <path d="M256,198 L280,206"/>
   </g>
-  <!-- Sonrisa leve: el favor siempre viene con una sonrisa. -->
-  <path d="M172,292 Q200,312 228,292 Q200,302 172,292 Z" fill="#7d4436"/>
-  <!-- Pelo oscuro con entradas, frente a las canas del otro juez. -->
-  <path d="M124,168 Q142,104 200,100 Q258,104 276,168 Q266,138 236,126 Q218,140 200,132 Q182,140 164,126 Q134,138 124,168 Z" fill="#2f2620"/>
-  <path d="M164,126 Q182,118 200,132 Q186,112 164,126 Z" fill="#dba876"/>
-  <path d="M236,126 Q218,118 200,132 Q214,112 236,126 Z" fill="#c28c56"/>
+  <path d="M198,208 L188,242 L200,248 L212,242 L202,208 Z" fill="#c28c56"/>
+  <!-- sonrisa leve: el favor siempre viene con una sonrisa -->
+  <path d="M174,262 Q200,282 226,262 Q200,272 174,262 Z" fill="#7d4436"/>
+  <!-- pelo oscuro con entradas, facetado -->
+  <path d="M124,144 Q142,72 200,68 Q258,72 276,144 L262,150 L238,104 L214,120 L200,132 L186,120 L162,104 L138,150 Z" fill="#2f2620"/>
+  <path d="M138,150 L124,190 L150,150 L162,104 Z" fill="#3d332a"/>
+  <path d="M162,104 L200,132 L186,120 Z" fill="#241d18"/>
+  <path d="M238,104 L262,150 L246,150 L226,116 Z" fill="#38302a"/>
 </svg>
