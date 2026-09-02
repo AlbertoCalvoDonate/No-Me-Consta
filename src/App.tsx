@@ -27,7 +27,7 @@ export default function App() {
     useGameStore()
 
   // Posición de arrastre de la carta actual, compartida con StatBars para
-  // que las flechas de efecto se vean arriba, sobre el icono de cada stat,
+  // que los puntos de efecto se vean arriba, sobre el icono de cada stat,
   // en tiempo real conforme se mueve la carta (sin re-renders de React:
   // framer-motion actualiza esto fuera del ciclo de render).
   // Solo para repintar el boton del altavoz; la fuente de verdad vive en sfx.

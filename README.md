@@ -259,33 +259,17 @@ enfado; jugando a decir que no a todo, el 48%.
 Cada indicador tiene **icono con relleno** (bonito, pero no comparable entre
 ellos: cada silueta tiene una forma distinta y el mismo nivel ocupa áreas muy
 distintas) y debajo una **barra de 10 segmentos**, uno por punto, que sí se
-lee igual en los cuatro y dice exactamente cuánto queda.
+lee igual en los cuatro y dice cuánto queda.
+
+Al arrastrar una carta, sobre el icono de cada indicador que va a moverse se
+encienden **puntos**: uno, dos o tres según la magnitud del efecto, pero **sin
+decir si sube o baja**. Es como Reigns: sabes que algo cambia y cuánto, y te
+toca aprender qué hace cada personaje. `SHOW_EFFECT_PIPS = false` en
+`src/components/StatBars.tsx` los esconde del todo (modo aún más a ciegas).
 
 Importante al mirarlos: el **rojo salta a 1 punto** (o a 9, por arriba), pero
-**se muere a 0** (o a 10) y con un turno de gracia por medio. Es decir, "todo
-rojo" no significa muerto, significa a un paso. La barra de segmentos existe
-justamente para poder distinguir esos dos estados de un vistazo.
-
-### Balance de fin de ano y bombas de relojeria
-
-Cada **12 turnos (1 ano)** se fuerza una carta `isRecap`: una parada para mirar
-atras y marcar el tono del ano siguiente. Una legislatura son 48 turnos y sin
-esto se hacia muy plana. Si el turno cae a la vez en balance y en elecciones,
-manda la noche electoral.
-
-Las **bombas de relojeria** son el otro mecanismo nuevo: una eleccion puede
-dejar programada una carta para dentro de N turnos con `scheduleCardId` y
-`scheduleIn`. La diferencia con `nextCardId` es el retardo, y con dejarlo al
-sorteo, que esta SI llega: la trama no se queda a medias por mala suerte.
-
-    right: { text: 'Aceptarlo y no hablar del tema', effects: { caja: 2 },
-             addFlags: ['sobre_hermano'],
-             scheduleCardId: 'bomba_sobre_explota', scheduleIn: 11 }
-
-Once meses despues, cuando ya no te acuerdas, aparece el periodista con el
-nombre del "amigo" que puso el dinero. Tambien existe `ctx.flagAge(flag)`, que
-dice cuantos turnos lleva encendido un flag, para condiciones del tipo "solo
-si esto lleva escondido medio ano".
+**se muere a 0** (o a 10) y con un turno de gracia por medio. "Todo rojo" no
+significa muerto, significa a un paso.
 
 ### El comodin de verano
 

@@ -1,6 +1,6 @@
 import { useTransform, type MotionValue } from 'framer-motion'
 import type { Card, Stats } from '../types'
-import { EffectArrow } from './EffectArrow'
+import { EffectPips } from './EffectPips'
 import { StatIcon } from './StatIcon'
 import { SWIPE_REVEAL_DISTANCE } from './SwipeCard'
 import { STAT_MAX } from '../data/cards'
@@ -39,12 +39,12 @@ const ITEMS: { key: keyof Stats; label: string }[] = [
   { key: 'caja', label: 'Caja B' },
 ]
 
-// Flechas ▲▼ que adelantan qué stat sube o baja con cada opción. De momento
-// se quedan porque vienen muy bien para probar el mazo, pero la idea es
-// quitarlas: Reigns enseña la MAGNITUD del cambio pero no la dirección, a
-// propósito, para que el jugador tenga que aprender qué hace cada personaje.
-// Ponlo en false y desaparecen; no hay que tocar nada más.
-const SHOW_EFFECT_ARROWS = true
+// Pista de efecto: al arrastrar la carta se encienden puntos sobre el icono
+// del indicador que va a moverse — uno, dos o tres según la magnitud, pero
+// SIN decir si sube o baja. Es como Reigns: te dice que algo cambia y cuánto,
+// y te toca aprender a ti qué hace cada personaje. Ponlo en false para
+// esconder también la magnitud (modo aún más a ciegas).
+const SHOW_EFFECT_PIPS = true
 
 interface Props {
   stats: Stats
@@ -54,7 +54,7 @@ interface Props {
 
 export function StatBars({ stats, card, x }: Props) {
   // Mismos umbrales que usa la carta para revelar el texto de cada lado al
-  // arrastrar, así las flechas de arriba aparecen exactamente a la vez.
+  // arrastrar, así los puntos de arriba aparecen exactamente a la vez.
   const fadeStart = SWIPE_REVEAL_DISTANCE / 4
   const leftOpacity = useTransform(x, [-SWIPE_REVEAL_DISTANCE, -fadeStart, 0], [1, 0, 0])
   const rightOpacity = useTransform(x, [0, fadeStart, SWIPE_REVEAL_DISTANCE], [0, 0, 1])
@@ -79,7 +79,7 @@ export function StatBars({ stats, card, x }: Props) {
         const rightVal = card?.right.effects[key] ?? 0
         return (
           <div key={key} style={{ flex: 1, textAlign: 'center' }} aria-label={`${label}: ${stats[key]}`}>
-            {/* La flecha de efecto se superpone sobre el icono al hacer swipe
+            {/* Los puntos de efecto se superponen sobre el icono al arrastrar
                 (position:absolute), así que el icono no salta al aparecer. */}
             <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
               <StatIcon statKey={key} value={stats[key]} critical={critical} />
@@ -93,11 +93,11 @@ export function StatBars({ stats, card, x }: Props) {
                   pointerEvents: 'none',
                 }}
               >
-                {SHOW_EFFECT_ARROWS && leftVal !== 0 && (
-                  <EffectArrow value={leftVal} opacity={leftOpacity} />
+                {SHOW_EFFECT_PIPS && leftVal !== 0 && (
+                  <EffectPips value={leftVal} opacity={leftOpacity} />
                 )}
-                {SHOW_EFFECT_ARROWS && rightVal !== 0 && (
-                  <EffectArrow value={rightVal} opacity={rightOpacity} />
+                {SHOW_EFFECT_PIPS && rightVal !== 0 && (
+                  <EffectPips value={rightVal} opacity={rightOpacity} />
                 )}
               </div>
             </div>

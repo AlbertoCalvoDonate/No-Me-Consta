@@ -41,8 +41,8 @@ function applyMoralidad(current: number, delta: number | undefined): number {
 // "resolver" con una estrategia perfecta: en una simulación jugando siempre
 // a la opción más segura, sin esto se ganaba en ~el 75% de las partidas
 // (y de forma predecible); con esto, gana en torno al 35-40%, y ninguna
-// partida se alarga de forma indefinida. Las flechas de arriba siguen
-// mostrando el efecto "de catálogo" tal cual está escrito en la carta — el
+// partida se alarga de forma indefinida. Los puntos de arriba siguen
+// mostrando la magnitud del efecto "de catálogo" — el
 // jitter es la parte de suerte que no se anuncia por adelantado.
 function jitter(base: number): number {
   if (base === 0) return 0

@@ -20,7 +20,7 @@ const CARD_TILT = 12
 const PORTRAIT_RATIO = '1020 / 1200'
 
 // Distancia de arrastre a la que un lado se considera "totalmente revelado".
-// Se exporta porque StatBars usa el mismo valor para las flechas de efecto —
+// Se exporta porque StatBars usa el mismo valor para los puntos de efecto —
 // deben moverse en sincronía.
 //
 // OJO con las unidades: esto se mide sobre `x`, que es el desplazamiento YA
