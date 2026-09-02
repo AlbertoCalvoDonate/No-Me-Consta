@@ -227,12 +227,19 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   }
   const ctx = contextOf(state)
 
-  // BOMBAS DE RELOJERIA: cartas que se dejaron programadas hace meses y a las
-  // que ya les toca. Van antes que nada (salvo una cadena forzada en curso):
-  // si se dejaran al sorteo se perderian, y la gracia de la bomba es que
-  // llega justo cuando ya no te acordabas.
+  // ELECCIONES y BALANCE mandan sobre las bombas: si una bomba cae justo en
+  // turno de elecciones (multiplo de ELECTION_INTERVAL) o de balance
+  // (multiplo de RECAP_EVERY), el hito va primero y la bomba espera al turno
+  // siguiente. Sin esto, la bomba se comia el turno del hito y la eleccion,
+  // que no se repite, se saltaba entera.
+  const esTurnoElecciones = state.turn > 0 && state.turn % ELECTION_INTERVAL === 0
+  const esTurnoBalance = state.turn > 0 && state.turn % RECAP_EVERY === 0
+
+  // BOMBAS DE RELOJERIA: cartas programadas hace meses a las que ya les toca.
+  // Van antes que el sorteo normal (si no, se perderian), pero ceden el paso
+  // a un turno de elecciones o de balance.
   const debida = state.scheduled.filter((s) => state.turn >= s.turn)
-  if (debida.length > 0) {
+  if (debida.length > 0 && !esTurnoElecciones && !esTurnoBalance) {
     const c = cards.find((x) => x.id === debida[0].id)
     if (c) return c
   }
@@ -243,7 +250,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   // triunfo), y en la tercera convocatoria el juego termina sí o sí.
   // Va ANTES de los finales por stat: si justo ese turno además tocabas
   // fondo, manda la noche electoral, que es mejor final.
-  if (state.turn > 0 && state.turn % ELECTION_INTERVAL === 0) {
+  if (esTurnoElecciones) {
     const electionCards = cards.filter((c) => c.isElection && cardAllowed(c, state, ctx))
     if (electionCards.length > 0) {
       // La última convocatoria tiene sus propias cartas (`_final`): si hay
@@ -261,7 +268,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   // decidir el tono del ano que viene. Va DESPUES de las elecciones (si el
   // turno cae en las dos cosas, manda la noche electoral, que es mas gorda) y
   // ANTES de todo lo demas, para que no se lo coma un final por barra.
-  if (state.turn > 0 && state.turn % RECAP_EVERY === 0) {
+  if (esTurnoBalance) {
     const recaps = cards.filter((c) => c.isRecap && cardAllowed(c, state, ctx))
     if (recaps.length > 0) {
       return recaps[Math.floor(Math.random() * recaps.length)]
