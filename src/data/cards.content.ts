@@ -410,7 +410,7 @@ export const contentCards: Card[] = [
     characterImage: 'hermano.webp',
     text: 'Su hermano quiere un puesto de asesor en un organismo público. Sin oposición, sin méritos: dice que "algo se merece" por ser de la familia.',
     left: { text: 'Proceso abierto', effects: { gobierno: -1, calle: 1 }, moralidad: 1 },
-    right: { text: 'Nombramiento a dedo', effects: { gobierno: 1, calle: -2, caja: -1 }, moralidad: -1, nextCardId: 'react_asesor_woke', addFlags: ['hermano_colocado'], scheduleCardId: 'trama_hermano_diligencias', scheduleIn: 7 },
+    right: { text: 'Nombramiento a dedo', effects: { gobierno: 1, calle: -2, caja: -1 }, moralidad: -1, nextCardId: 'react_asesor_socia', addFlags: ['hermano_colocado'], scheduleCardId: 'trama_hermano_diligencias', scheduleIn: 7 },
   },
   {
     id: 'gob_fiscal_general',
@@ -469,7 +469,7 @@ export const contentCards: Card[] = [
     right: { text: 'Filtrarlo a la prensa', effects: { gobierno: 2, medios: -2 }, moralidad: -2, nextCardId: 'react_cloacas_periodista' },
   },
   {
-    id: 'gob_juez_afin',
+    id: 'gob_juez_archivo',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.svg',
@@ -1386,7 +1386,7 @@ export const contentCards: Card[] = [
     characterImage: 'exiliadopesado.webp',
     text: 'O aprueba la amnistía fiscal para nuestro territorio antes de fin de mes, o retiramos el apoyo a los presupuestos.',
     left: { text: 'Buscar votos en otro sitio', effects: { gobierno: -1, calle: 1 }, moralidad: 1 },
-    right: { text: 'Ceder a la amnistía', effects: { gobierno: 2, caja: -2 }, moralidad: -1, nextCardId: 'react_amnistia_ultra' },
+    right: { text: 'Ceder a la amnistía', effects: { gobierno: 2, caja: -2 }, moralidad: -1, nextCardId: 'react_amnistia_cruzado' },
   },
   {
     id: 'gob_ultima_encuesta',
@@ -1792,7 +1792,7 @@ export const contentCards: Card[] = [
     right: { text: 'Blindarlo como discrecional', effects: { gobierno: 1, medios: -2 }, moralidad: -2 },
   },
   {
-    id: 'react_asesor_woke',
+    id: 'react_asesor_socia',
     phase: 1,
     maxTurn: 0,
     weight: 0,
@@ -1825,7 +1825,7 @@ export const contentCards: Card[] = [
     right: { text: 'Dar marcha atrás al indulto', effects: { medios: 2, calle: 1, gobierno: -2 } },
   },
   {
-    id: 'react_amnistia_ultra',
+    id: 'react_amnistia_cruzado',
     phase: 4,
     maxTurn: 0,
     weight: 0,
@@ -1836,7 +1836,7 @@ export const contentCards: Card[] = [
     right: { text: 'Rebajar la letra pequeña', effects: { medios: 1, gobierno: -2 } },
   },
   {
-    id: 'react_woke_expresidente',
+    id: 'react_socia_expresidente',
     phase: 2,
     maxTurn: 0,
     weight: 0,
@@ -1934,7 +1934,7 @@ export const contentCards: Card[] = [
     character: 'La Vicepresidenta',
     characterImage: 'vicepresi.webp',
     text: 'La Vicepresidenta y La Socia Incómoda llevan una semana midiéndose en cada entrevista por ver quién es "de verdad de izquierdas". Las dos quieren el mismo hueco, y el hueco es de una plaza.',
-    left: { text: 'Arrimarse a la Vicepresidenta', effects: { gobierno: 1, calle: -1 }, nextCardId: 'feud_woke_vice_react' },
+    left: { text: 'Arrimarse a la Vicepresidenta', effects: { gobierno: 1, calle: -1 }, nextCardId: 'feud_socia_vice_react' },
     right: { text: 'Dejar que se maten en directo', effects: { medios: 1, gobierno: -1 } },
   },
   {
@@ -1992,7 +1992,7 @@ export const contentCards: Card[] = [
     right: { text: 'Pedir a las dos que se calmen', effects: { medios: 1, gobierno: -1 } },
   },
   {
-    id: 'feud_woke_vice_react',
+    id: 'feud_socia_vice_react',
     phase: 2,
     maxTurn: 0,
     weight: 0,
@@ -2120,17 +2120,17 @@ export const contentCards: Card[] = [
 
   // --- LA COMUNISTA WOKE (combativa, moralista, asamblea permanente) ---
   {
-    id: 'woke_verguenza',
+    id: 'socia_verguenza',
     pleases: 'left',
     phase: 2,
     character: 'La Socia Incómoda',
     characterImage: 'sociaincomoda.webp',
     text: '"Esto es una vergüenza y no vamos a permitir que se normalice." Exige vetar un acuerdo que llevaba meses cerrado. Lo dice en el Consejo, en el pleno y en tres pódcast.',
-    left: { text: 'Vetar el acuerdo y comerse el marrón', effects: { calle: 1, medios: -1, gobierno: -1 }, nextCardId: 'react_woke_expresidente' },
+    left: { text: 'Vetar el acuerdo y comerse el marrón', effects: { calle: 1, medios: -1, gobierno: -1 }, nextCardId: 'react_socia_expresidente' },
     right: { text: 'Firmarlo igual y que proteste', effects: { gobierno: 1, calle: -1 } },
   },
   {
-    id: 'woke_gente_centro',
+    id: 'socia_gente_centro',
     pleases: 'left',
     phase: 1,
     character: 'La Socia Incómoda',
@@ -2140,7 +2140,7 @@ export const contentCards: Card[] = [
     right: { text: 'Convertirla en un plan piloto de tres pueblos', effects: { medios: 1, calle: -1 } },
   },
   {
-    id: 'woke_asamblea',
+    id: 'socia_asamblea',
     pleases: 'left',
     phase: 2,
     character: 'La Socia Incómoda',
@@ -2150,7 +2150,7 @@ export const contentCards: Card[] = [
     right: { text: 'Cortar y pasar a votar ya', effects: { gobierno: 1, calle: -1 } },
   },
   {
-    id: 'woke_purismo',
+    id: 'socia_purismo',
     pleases: 'left',
     phase: 3,
     character: 'La Socia Incómoda',
@@ -2160,7 +2160,7 @@ export const contentCards: Card[] = [
     right: { text: 'Recordarle que también gobierna ella', effects: { gobierno: 1, calle: -1 } },
   },
   {
-    id: 'woke_lineas_rojas',
+    id: 'socia_lineas_rojas',
     pleases: 'left',
     phase: 4,
     character: 'La Socia Incómoda',
@@ -2516,7 +2516,7 @@ export const contentCards: Card[] = [
 
   // --- LA ULTRADERECHA (combativo, cruzada perpetua, "¡la patria!") ---
   {
-    id: 'ultra_patria',
+    id: 'cruzado_patria',
     pleases: 'left',
     phase: 1,
     character: 'El Cruzado',
@@ -2526,7 +2526,7 @@ export const contentCards: Card[] = [
     right: { text: 'Ni caso', effects: { gobierno: 1, calle: -1 } },
   },
   {
-    id: 'ultra_fronteras',
+    id: 'cruzado_fronteras',
     pleases: 'left',
     phase: 2,
     character: 'El Cruzado',
@@ -2536,7 +2536,7 @@ export const contentCards: Card[] = [
     right: { text: 'Rechazarlo y buscar los votos en otro sitio', effects: { gobierno: -1, medios: 1 } },
   },
   {
-    id: 'ultra_guerra_cultural',
+    id: 'cruzado_guerra_cultural',
     pleases: 'left',
     phase: 2,
     character: 'El Cruzado',
@@ -2546,7 +2546,7 @@ export const contentCards: Card[] = [
     right: { text: 'Defender lo señalado y aguantar el chaparrón', effects: { calle: 1, medios: -1 } },
   },
   {
-    id: 'ultra_soberania',
+    id: 'cruzado_soberania',
     pleases: 'right',
     phase: 3,
     character: 'El Cruzado',
@@ -2556,7 +2556,7 @@ export const contentCards: Card[] = [
     right: { text: 'Retrasar la aplicación "por soberanía"', effects: { calle: 1, caja: -1, medios: -1 } },
   },
   {
-    id: 'ultra_cruzada',
+    id: 'cruzado_cruzada',
     phase: 3,
     character: 'El Cruzado',
     characterImage: 'cruzado.webp',
@@ -2565,7 +2565,7 @@ export const contentCards: Card[] = [
     right: { text: 'Responderle al mismo volumen', effects: { calle: -1, medios: -2, gobierno: 1 } },
   },
   {
-    id: 'ultra_bulo',
+    id: 'cruzado_bulo',
     phase: 3,
     character: 'El Cruzado',
     characterImage: 'cruzado.webp',
@@ -2574,14 +2574,14 @@ export const contentCards: Card[] = [
     right: { text: 'Ni contestar y que se hunda solo', effects: { medios: -1, calle: -1 } },
   },
   {
-    id: 'ultra_pinza',
+    id: 'cruzado_pinza',
     pleases: 'right',
     phase: 4,
     character: 'El Cruzado',
     characterImage: 'cruzado.webp',
     text: 'En una votación clave ofrece sumarse al "no" junto a la oposición moderada, que ya ha puesto cara de no saber dónde meterse. Una pinza rarísima, pero los números son los números.',
     left: { text: 'Reventar la pinza negociando con el centro', effects: { gobierno: 1, calle: -1 } },
-    right: { text: 'Dejar que voten juntos y hacerse la foto', effects: { gobierno: -2, medios: 1 }, nextCardId: 'react_ultra_calle' },
+    right: { text: 'Dejar que voten juntos y hacerse la foto', effects: { gobierno: -2, medios: 1 }, nextCardId: 'react_cruzado_calle' },
   },
 
   // --- EL ESCUDERO (leal hasta el ridículo, sale a defender lo indefendible) ---
@@ -2739,7 +2739,7 @@ export const contentCards: Card[] = [
   // mirando para otro lado, que también es elegir).
   // ============================================================================
   {
-    id: 'feud_guru_woke',
+    id: 'feud_guru_socia',
     phase: 2,
     character: 'La Socia Incómoda',
     characterImage: 'sociaincomoda.webp',
@@ -2776,7 +2776,7 @@ export const contentCards: Card[] = [
     right: { text: 'Respaldar al ministro contra el juez', effects: { gobierno: 1, medios: -2 }, moralidad: -1 },
   },
   {
-    id: 'feud_ultra_regional',
+    id: 'feud_cruzado_regional',
     phase: 3,
     character: 'El Cruzado',
     characterImage: 'cruzado.webp',
@@ -2979,7 +2979,7 @@ export const contentCards: Card[] = [
     right: { text: '"No me consta"', effects: { gobierno: 1, medios: -2 }, moralidad: -2 },
   },
   {
-    id: 'react_ultra_calle',
+    id: 'react_cruzado_calle',
     phase: 3,
     maxTurn: 0,
     weight: 0,
@@ -3023,7 +3023,7 @@ export const contentCards: Card[] = [
     weight: (_s, _m, ctx) => (ctx.anger['La Vicepresidenta'] ?? 0) - 1,
   },
   {
-    id: 'anger_woke',
+    id: 'anger_socia',
     phase: 2,
     character: 'La Socia Incómoda',
     characterImage: 'sociaincomoda.webp',
@@ -3056,7 +3056,7 @@ export const contentCards: Card[] = [
     weight: (_s, _m, ctx) => (ctx.anger['El Independentista'] ?? 0) - 1,
   },
   {
-    id: 'anger_ultra',
+    id: 'anger_cruzado',
     phase: 3,
     character: 'El Cruzado',
     characterImage: 'cruzado.webp',
@@ -3441,7 +3441,7 @@ export const contentCards: Card[] = [
     pleases: 'left',
   },
   {
-    id: 'roce_guru_woke',
+    id: 'roce_guru_socia',
     phase: 3,
     character: 'La Socia Incómoda',
     characterImage: 'sociaincomoda.webp',
@@ -3491,7 +3491,7 @@ export const contentCards: Card[] = [
     pleases: 'left',
   },
   {
-    id: 'roce_ultra_ministra',
+    id: 'roce_cruzado_ministra',
     phase: 3,
     character: 'El Cruzado',
     characterImage: 'cruzado.webp',
@@ -3552,7 +3552,7 @@ export const contentCards: Card[] = [
 
   // --- LA COMUNISTA WOKE (gobierno) ---
   {
-    id: 'woke_ministerio_felicidad',
+    id: 'socia_ministerio_felicidad',
     phase: 2,
     character: 'La Socia Incómoda',
     characterImage: 'sociaincomoda.webp',
@@ -3562,7 +3562,7 @@ export const contentCards: Card[] = [
     pleases: 'left',
   },
   {
-    id: 'woke_bloque',
+    id: 'socia_bloque',
     phase: 3,
     character: 'La Socia Incómoda',
     characterImage: 'sociaincomoda.webp',
@@ -3572,7 +3572,7 @@ export const contentCards: Card[] = [
     pleases: 'left',
   },
   {
-    id: 'woke_alfombra',
+    id: 'socia_alfombra',
     phase: 2,
     character: 'La Socia Incómoda',
     characterImage: 'sociaincomoda.webp',
@@ -3582,7 +3582,7 @@ export const contentCards: Card[] = [
     pleases: 'right',
   },
   {
-    id: 'woke_vivienda',
+    id: 'socia_vivienda',
     phase: 2,
     character: 'La Socia Incómoda',
     characterImage: 'sociaincomoda.webp',
@@ -3592,7 +3592,7 @@ export const contentCards: Card[] = [
     pleases: 'left',
   },
   {
-    id: 'woke_entrevista',
+    id: 'socia_entrevista',
     phase: 3,
     character: 'La Socia Incómoda',
     characterImage: 'sociaincomoda.webp',
@@ -4226,11 +4226,11 @@ export const contentCards: Card[] = [
   // se acusa y a quien no... y apunta cada favor en una libreta. Todo lo que
   // le acepta enciende una bomba que vuelve meses despues convertida en
   // factura. Y si le deja tirado demasiadas veces cambia de bando: ver
-  // 'afin_traicion'. Su indicador es MEDIOS, como el del Juez: los dos operan
+  // 'fiscal_traicion'. Su indicador es MEDIOS, como el del Juez: los dos operan
   // en el terreno del escandalo, uno para encenderlo y otro para apagarlo.
   // ============================================================================
   {
-    id: 'afin_aviso',
+    id: 'fiscal_aviso',
     phase: 2,
     character: 'El Fiscal',
     characterImage: 'fiscal.webp',
@@ -4241,13 +4241,13 @@ export const contentCards: Card[] = [
       effects: { medios: 1, gobierno: 1 },
       moralidad: -3,
       addFlags: ['magistrado_debe'],
-      scheduleCardId: 'afin_cobro_ascenso',
+      scheduleCardId: 'fiscal_cobro_ascenso',
       scheduleIn: 9,
     },
     pleases: 'right',
   },
   {
-    id: 'afin_archiva',
+    id: 'fiscal_archiva',
     phase: 2,
     character: 'El Fiscal',
     characterImage: 'fiscal.webp',
@@ -4258,13 +4258,13 @@ export const contentCards: Card[] = [
       effects: { medios: 1, gobierno: 1, caja: 1 },
       moralidad: -3,
       addFlags: ['causa_archivada'],
-      scheduleCardId: 'afin_cobro_hijo',
+      scheduleCardId: 'fiscal_cobro_hijo',
       scheduleIn: 11,
     },
     pleases: 'right',
   },
   {
-    id: 'afin_reparto',
+    id: 'fiscal_reparto',
     phase: 3,
     character: 'El Fiscal',
     characterImage: 'fiscal.webp',
@@ -4275,13 +4275,13 @@ export const contentCards: Card[] = [
       effects: { gobierno: 1, medios: -1 },
       moralidad: -3,
       addFlags: ['magistrado_debe'],
-      scheduleCardId: 'afin_cobro_sala',
+      scheduleCardId: 'fiscal_cobro_sala',
       scheduleIn: 8,
     },
     pleases: 'right',
   },
   {
-    id: 'afin_sumario',
+    id: 'fiscal_sumario',
     phase: 3,
     character: 'El Fiscal',
     characterImage: 'fiscal.webp',
@@ -4292,13 +4292,13 @@ export const contentCards: Card[] = [
       effects: { calle: 1, gobierno: 1, medios: -2 },
       moralidad: -3,
       addFlags: ['sumario_filtrado'],
-      scheduleCardId: 'afin_filtracion_vuelve',
+      scheduleCardId: 'fiscal_filtracion_vuelve',
       scheduleIn: 10,
     },
     pleases: 'right',
   },
   {
-    id: 'afin_cena',
+    id: 'fiscal_cena',
     phase: 2,
     character: 'El Fiscal',
     characterImage: 'fiscal.webp',
@@ -4308,7 +4308,7 @@ export const contentCards: Card[] = [
     pleases: 'right',
   },
   {
-    id: 'afin_prensa',
+    id: 'fiscal_prensa',
     phase: 3,
     character: 'El Fiscal',
     characterImage: 'fiscal.webp',
@@ -4320,7 +4320,7 @@ export const contentCards: Card[] = [
 
   // --- LAS FACTURAS (solo llegan programadas, nunca por sorteo) ---
   {
-    id: 'afin_cobro_ascenso',
+    id: 'fiscal_cobro_ascenso',
     phase: 1,
     weight: 0,
     character: 'El Fiscal',
@@ -4341,7 +4341,7 @@ export const contentCards: Card[] = [
     pleases: 'right',
   },
   {
-    id: 'afin_cobro_hijo',
+    id: 'fiscal_cobro_hijo',
     phase: 1,
     weight: 0,
     character: 'El Fiscal',
@@ -4361,7 +4361,7 @@ export const contentCards: Card[] = [
     pleases: 'right',
   },
   {
-    id: 'afin_cobro_sala',
+    id: 'fiscal_cobro_sala',
     phase: 1,
     weight: 0,
     character: 'El Fiscal',
@@ -4381,7 +4381,7 @@ export const contentCards: Card[] = [
     pleases: 'right',
   },
   {
-    id: 'afin_filtracion_vuelve',
+    id: 'fiscal_filtracion_vuelve',
     phase: 1,
     weight: 0,
     character: 'El Periodista',
@@ -4402,7 +4402,7 @@ export const contentCards: Card[] = [
 
   // --- CUANDO SE LE HARTA UNO ---
   {
-    id: 'anger_afin',
+    id: 'anger_fiscal',
     phase: 3,
     character: 'El Fiscal',
     characterImage: 'fiscal.webp',
@@ -4413,7 +4413,7 @@ export const contentCards: Card[] = [
     weight: (_s, _m, ctx) => (ctx.anger['El Fiscal'] ?? 0) - 1,
   },
   {
-    id: 'afin_traicion',
+    id: 'fiscal_traicion',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.svg',
