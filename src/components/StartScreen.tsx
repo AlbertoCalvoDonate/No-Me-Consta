@@ -73,16 +73,26 @@ export function StartScreen({
       style={{
         flex: 1,
         minHeight: 0,
+        overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
         textAlign: 'center',
-        padding: '28px 26px',
-        gap: 18,
         color: '#f2f2f2',
       }}
     >
+      {/* `margin: auto` centra el bloque cuando cabe; cuando no (móviles muy
+          pequeños, 320px), el contenedor de arriba hace scroll. */}
+      <div
+        style={{
+          margin: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '24px 26px',
+          gap: 16,
+        }}
+      >
       <div>
         <h1
           style={{
@@ -184,13 +194,10 @@ export function StartScreen({
         onClick={tocarBuild}
         style={{
           ...pixel,
-          position: 'absolute',
-          bottom: 10,
-          left: 0,
-          right: 0,
+          marginTop: 4,
           textAlign: 'center',
           fontWeight: 500,
-          fontSize: 14,
+          fontSize: 13,
           color: reseteado ? '#e0b84d' : '#5a5650',
           // Zona de toque cómoda para el reset oculto, sin cambiar el aspecto.
           padding: '8px 0',
@@ -200,6 +207,7 @@ export function StartScreen({
         }}
       >
         {reseteado ? 'Logros borrados' : `v${__APP_VERSION__} · ${buildDate}`}
+      </div>
       </div>
     </div>
   )
