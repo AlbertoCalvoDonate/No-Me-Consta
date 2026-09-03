@@ -11,12 +11,14 @@ import { StatIcon } from './components/StatIcon'
 import type { StatKey } from './types'
 import { epitetoDe } from './data/epitetos'
 import { sfx } from './utils/sfx'
+import { haptics } from './utils/haptics'
 import { registrarPartida } from './hooks/useLogros'
 import type { Logro } from './data/logros'
 import { LogroToast } from './components/LogroToast'
 import { LogrosPanel } from './components/LogrosPanel'
 import { corruptionScore } from './components/SwipeCard'
 import { hayPartidaEnCurso } from './hooks/persistPartida'
+import { textoResultado, compartirResultado } from './utils/compartir'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
@@ -41,6 +43,7 @@ export default function App() {
   // framer-motion actualiza esto fuera del ciclo de render).
   const [colaLogros, setColaLogros] = useState<Logro[]>([])
   const [verLogros, setVerLogros] = useState(false)
+  const [compartido, setCompartido] = useState<'idle' | 'copiado' | 'error'>('idle')
 
   // El sonido va aqui y no en el store a proposito: es presentacion, no reglas
   // del juego. Suena segun lo turbia que sea la opcion elegida, usando el
@@ -51,6 +54,7 @@ export default function App() {
     if (propia > otra) sfx.moneda()
     else if (propia < otra) sfx.campana()
     else sfx.papel()
+    haptics.eleccion()
     choose(side)
   }
 
@@ -71,7 +75,10 @@ export default function App() {
       return
     }
     if (currentCard.isElection && turn > 100) sfx.triunfo()
-    else sfx.trombon()
+    else {
+      sfx.trombon()
+      haptics.muerte()
+    }
     if (yaComprobado.current) return
     yaComprobado.current = true
     const nuevos = registrarPartida({
@@ -84,7 +91,10 @@ export default function App() {
       cartas: history,
       flags: flagsVistos,
     })
-    if (nuevos.length) setColaLogros(nuevos)
+    if (nuevos.length) {
+      setColaLogros(nuevos)
+      haptics.logro()
+    }
   }, [gameOver, currentCard, turn, moralidad, stats, history, flagsVistos])
 
   // Cartas de hito: el balance de fin de ano y la noche electoral se anuncian.
@@ -101,7 +111,10 @@ export default function App() {
   ).length
   const criticasPrevias = useRef(0)
   useEffect(() => {
-    if (!gameOver && criticas > criticasPrevias.current) sfx.alarma()
+    if (!gameOver && criticas > criticasPrevias.current) {
+      sfx.alarma()
+      haptics.critico()
+    }
     criticasPrevias.current = criticas
   }, [criticas, gameOver])
 
@@ -337,23 +350,61 @@ export default function App() {
                     </div>
                     </div>
                     </div>
-                    <button
-                      onClick={() => restart()}
+                    <div
                       style={{
                         flexShrink: 0,
                         marginTop: 14,
-                        background: '#e0b84d',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '12px 18px',
-                        fontFamily: 'var(--font-pixel)',
-                        fontWeight: 400,
-                        fontSize: 21,
-                        cursor: 'pointer',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 8,
+                        width: '100%',
                       }}
                     >
-                      Nueva legislatura
-                    </button>
+                      <button
+                        onClick={() => restart()}
+                        style={{
+                          background: '#e0b84d',
+                          border: 'none',
+                          borderRadius: 8,
+                          padding: '12px 20px',
+                          fontFamily: 'var(--font-pixel)',
+                          fontWeight: 400,
+                          fontSize: 21,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Nueva legislatura
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const res = await compartirResultado(
+                            textoResultado(turn - 1, moralidad, stats)
+                          )
+                          if (res !== 'compartido') {
+                            setCompartido(res)
+                            window.setTimeout(() => setCompartido('idle'), 2200)
+                          }
+                        }}
+                        style={{
+                          background: 'transparent',
+                          border: '2px solid rgba(224,184,77,0.45)',
+                          borderRadius: 8,
+                          padding: '7px 18px',
+                          fontFamily: 'var(--font-pixel)',
+                          fontWeight: 400,
+                          fontSize: 16,
+                          color: '#e0b84d',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {compartido === 'copiado'
+                          ? 'Copiado al portapapeles'
+                          : compartido === 'error'
+                            ? 'No se pudo copiar'
+                            : 'Compartir'}
+                      </button>
+                    </div>
                   </motion.div>
                 )}
               </div>
