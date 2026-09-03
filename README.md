@@ -215,9 +215,13 @@ y encaja con la estetica pixel, que ya es medio chiptune.
 | **cae el gobierno** | **el trombon triste** |
 | aguantas las tres legislaturas | fanfarria buena y aplausos |
 
-El altavoz de arriba a la derecha silencia, y la preferencia se recuerda entre
-sesiones. El AudioContext no se crea hasta el primer sonido, porque los
-navegadores bloquean el audio que no viene detras de un gesto del usuario.
+El botón de volumen (`src/components/SoundButton.tsx`) recorre un ciclo de
+pasos: 25 → 50 → 75 → 100 % → mudo → 25... El paso elegido se recuerda entre
+sesiones (`nomeconsta.volumen`) y ajusta la ganancia del bus principal. Vive
+en la barra de abajo mientras juegas y arriba a la derecha en la pantalla de
+inicio (ahí no tapa nada). El AudioContext no se crea hasta el primer sonido,
+porque los navegadores bloquean el audio que no viene detrás de un gesto del
+usuario; en mudo se cierra y se libera.
 
 ## Narrativa adaptativa (el modelo de Reigns)
 

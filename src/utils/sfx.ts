@@ -8,33 +8,42 @@
 //    sonido, que siempre viene detrás de un clic o un swipe.
 //  - Todo sonido es corto (< 1s salvo el final) y va a un volumen bajo: esto
 //    acompaña, no compite con el texto.
-//  - Se puede silenciar, y la preferencia se recuerda. Un juego que suena sin
-//    permiso en una pestaña es un juego que se cierra.
+//  - El volumen se ajusta en pasos (25/50/75/100 % y mudo) y la preferencia se
+//    recuerda. Un juego que suena sin permiso en una pestaña es un juego que
+//    se cierra.
 
-const STORAGE_KEY = 'nomeconsta.sonido'
+const STORAGE_KEY = 'nomeconsta.volumen'
+
+// Ganancia del bus principal al 100 %. Los pasos son fracciones de esta.
+const BASE_GAIN = 0.16
+
+// El ciclo que recorre el botón, en orden: 25 → 50 → 75 → 100 → mudo → 25...
+const PASOS = [0.25, 0.5, 0.75, 1, 0] as const
+const POR_DEFECTO = 3 // 100 %
 
 let ctx: AudioContext | null = null
 let master: GainNode | null = null
-let enabled = leerPreferencia()
+let paso = leerPaso()
 
-function leerPreferencia(): boolean {
+function leerPaso(): number {
   try {
-    return localStorage.getItem(STORAGE_KEY) !== 'off'
+    const v = Number.parseInt(localStorage.getItem(STORAGE_KEY) ?? '', 10)
+    return Number.isInteger(v) && v >= 0 && v < PASOS.length ? v : POR_DEFECTO
   } catch {
     // Modo incógnito o cookies bloqueadas: no es motivo para quedarse mudo.
-    return true
+    return POR_DEFECTO
   }
 }
 
 function getCtx(): AudioContext | null {
-  if (!enabled) return null
+  if (PASOS[paso] === 0) return null
   if (ctx) return ctx
   try {
     const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
     if (!Ctor) return null
     ctx = new Ctor()
     master = ctx.createGain()
-    master.gain.value = 0.16
+    master.gain.value = BASE_GAIN * PASOS[paso]
     master.connect(ctx.destination)
   } catch {
     return null
@@ -163,22 +172,32 @@ export const sfx = {
     ruido(1.1, { retraso: 0.6, volumen: 0.2, filtro: 1500 })
   },
 
-  // --- silenciador -------------------------------------------------------
-  activo(): boolean {
-    return enabled
+  // --- volumen ----------------------------------------------------------
+  // Paso actual (0..PASOS.length-1) y su porcentaje (0 = mudo).
+  paso(): number {
+    return paso
   },
-  alternar(): boolean {
-    enabled = !enabled
+  porcentaje(): number {
+    return Math.round(PASOS[paso] * 100)
+  },
+  // Avanza un paso del ciclo y devuelve el nuevo porcentaje.
+  ciclar(): number {
+    paso = (paso + 1) % PASOS.length
     try {
-      localStorage.setItem(STORAGE_KEY, enabled ? 'on' : 'off')
+      localStorage.setItem(STORAGE_KEY, String(paso))
     } catch {
       /* sin persistencia, pero la sesión actual respeta la elección */
     }
-    if (!enabled && ctx) {
-      void ctx.close()
-      ctx = null
-      master = null
+    const factor = PASOS[paso]
+    if (factor === 0) {
+      if (ctx) {
+        void ctx.close()
+        ctx = null
+        master = null
+      }
+    } else if (master) {
+      master.gain.value = BASE_GAIN * factor
     }
-    return enabled
+    return this.porcentaje()
   },
 }

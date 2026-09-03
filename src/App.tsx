@@ -6,6 +6,7 @@ import { StatBars } from './components/StatBars'
 import { SituationBanner } from './components/SituationBanner'
 import { BottomBar } from './components/BottomBar'
 import { StartScreen } from './components/StartScreen'
+import { SoundButton } from './components/SoundButton'
 import { StatIcon } from './components/StatIcon'
 import type { StatKey } from './types'
 import { epitetoDe } from './data/epitetos'
@@ -34,8 +35,6 @@ export default function App() {
   // que los puntos de efecto se vean arriba, sobre el icono de cada stat,
   // en tiempo real conforme se mueve la carta (sin re-renders de React:
   // framer-motion actualiza esto fuera del ciclo de render).
-  // Solo para repintar el boton del altavoz; la fuente de verdad vive en sfx.
-  const [sonido, setSonido] = useState(sfx.activo())
   const [colaLogros, setColaLogros] = useState<Logro[]>([])
   const [verLogros, setVerLogros] = useState(false)
 
@@ -142,29 +141,14 @@ export default function App() {
             />
           )}
 
-          {/* Altavoz para silenciar. Arriba a la derecha y discreto: tiene que
-              estar a mano desde el primer momento, pero sin robar atencion. */}
-          <button
-            onClick={() => setSonido(sfx.alternar())}
-            aria-label={sonido ? 'Silenciar' : 'Activar sonido'}
-            style={{
-              position: 'absolute',
-              top: 8,
-              right: 10,
-              zIndex: 10,
-              width: 34,
-              height: 34,
-              border: 'none',
-              borderRadius: 8,
-              background: 'rgba(0,0,0,0.35)',
-              color: sonido ? '#e0b84d' : '#6b6656',
-              fontSize: 17,
-              lineHeight: 1,
-              cursor: 'pointer',
-            }}
-          >
-            {sonido ? '🔊' : '🔇'}
-          </button>
+          {/* Control de volumen. Durante la partida vive en la barra de abajo
+              (BottomBar); en la pantalla de inicio, donde no hay barra, va
+              suelto arriba a la derecha, que ahi no tapa nada. */}
+          {!started && (
+            <div style={{ position: 'absolute', top: 8, right: 10, zIndex: 10 }}>
+              <SoundButton />
+            </div>
+          )}
 
           {started && (
             <>
