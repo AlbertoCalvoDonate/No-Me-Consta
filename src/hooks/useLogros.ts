@@ -118,6 +118,11 @@ export function registrarPartida(d: DatosPartida): Logro[] {
   return nuevos
 }
 
+// Ids que existen HOY. Un guardado viejo puede tener ids que ya no estan (si
+// alguna vez se renombra un logro): siguen en localStorage por si vuelven,
+// pero no cuentan para el "X de Y" ni descuadran el total.
+const IDS_VIGENTES = new Set(LOGROS.map((l) => l.id))
+
 // Estado para la pantalla de la lista. Se relee cada vez que se monta el panel.
 export function useLogrosEstado() {
   const [tick, setTick] = useState(0)
@@ -127,7 +132,7 @@ export function useLogrosEstado() {
   return {
     conseguidos: new Set(g.conseguidos),
     total: LOGROS.length,
-    hechos: g.conseguidos.length,
+    hechos: g.conseguidos.filter((id) => IDS_VIGENTES.has(id)).length,
     partidas: g.partidas,
     refrescar,
   }
