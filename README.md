@@ -316,6 +316,46 @@ las 4 stats, la moralidad, los flags de trama y el enfado de cada personaje.
 No hay reinicio ni pantalla intermedia — la legislatura siguiente arranca con
 las consecuencias de la anterior encima de la mesa.
 
+### Guardar y reanudar (`src/hooks/persistPartida.ts`)
+
+El estado completo de la partida en curso se vuelca a `localStorage`
+(`nomeconsta.partida`) tras cada decisión: barras, turno, moralidad, flags,
+bombas programadas, enfado/favor, historial y qué carta toca. Se borra al
+morir y al empezar de cero. La pantalla de inicio ofrece **Continuar · mes N**
+si hay un guardado válido (la carta guardada tiene que seguir existiendo en el
+mazo — entre despliegues puede cambiar). Es lo que hace que cerrar la pestaña
+o bloquear el móvil a mitad no cueste la partida.
+
+### La "puntuación" (o por qué no hay)
+
+**Reigns no tiene puntos.** Lo que registra es: años de reinado, el museo de
+muertes (todos los finales que has visto) y las quests. Aquí igual — no hay
+score que optimizar. Lo que se guarda y se enseña en el inicio es un
+**historial**: tu legislatura más larga y su epíteto, cuántos de los 11
+epítetos has sacado, cuántos logros llevas. El "compartir" del final
+(`src/utils/compartir.ts`) va en la misma línea: meses aguantados, una tira de
+bloques con cómo quedó cada barra, y el epíteto con su frase. Ningún número
+que sirva para picarse en una tabla.
+
+### Ritmo visual y carta de favor
+
+Las cartas de hito no se leen igual que un turno de trámite: el banner cambia
+de color y saca una etiqueta —dorado en la noche electoral, azul en el balance
+de fin de año, verde en la carta de favor (ver `BannerKind` en
+`SituationBanner`)—.
+
+La carta `favor_ganado` la fuerza `useGameStore` la primera vez que te ganas a
+alguien lo bastante como para que pueda aparecer a salvarte (favor >=
+`FAVOR_PARA_RESCATE`). Es genérica: `App` le pone el nombre y el color del
+personaje que ahora te debe una. Existe para que el favor, que es un contador
+invisible, se note — y para que el rescate, cuando pasa, tenga sentido.
+
+### Vibración (`src/utils/haptics.ts`)
+
+Un toque al elegir, un doble al entrar una barra en rojo, uno largo al caer el
+gobierno. Solo Android (iOS Safari no tiene `navigator.vibrate`) y atada al
+volumen: si está en mudo, tampoco vibra.
+
 ### Logros
 
 Lista de metas en `src/data/logros.ts`: supervivencia incremental (12 / 24 /
@@ -352,6 +392,11 @@ es el ejército. Ves quién habla y ya sabes qué te juegas. Aquí igual:
 **Regla al escribir cartas:** la carta de un personaje debería tocar *siempre*
 su indicador, en al menos una de las dos opciones. Ahora mismo lo cumplen 291
 de 305.
+
+En el juego, tocar cualquiera de las cuatro barras baja un panel con esta
+misma info (qué mide y quién la mueve). El mapa está duplicado en `INFO`
+dentro de `src/components/StatBars.tsx` — si se renombra un personaje, hay que
+tocarlo ahí también.
 
 ### Por qué se renombraron
 
