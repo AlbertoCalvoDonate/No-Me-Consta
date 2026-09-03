@@ -41,40 +41,41 @@ const K4: StatKey[] = ['medios', 'gobierno', 'calle', 'caja']
 
 export const LOGROS: Logro[] = [
   // --- SUPERVIVENCIA (incremental) ---
-  { id: 'sobrevive_12', nombre: 'Un ano en el cargo', desc: 'Aguanta 12 meses.', check: (r) => r.meses >= 12 },
+  { id: 'sobrevive_12', nombre: 'Un año en el cargo', desc: 'Aguanta 12 meses.', check: (r) => r.meses >= 12 },
   { id: 'sobrevive_24', nombre: 'Reincidente', desc: 'Aguanta 24 meses.', check: (r) => r.meses >= 24 },
   { id: 'sobrevive_36', nombre: 'Cuesta abajo', desc: 'Aguanta 36 meses.', check: (r) => r.meses >= 36 },
   { id: 'sobrevive_48', nombre: 'Legislatura completa', desc: 'Aguanta 48 meses: una legislatura entera.', check: (r) => r.meses >= 48 },
-  { id: 'sobrevive_96', nombre: 'La reeleccion', desc: 'Aguanta 96 meses: dos legislaturas.', check: (r) => r.meses >= 96 },
-  { id: 'sobrevive_140', nombre: 'Doce anos', desc: 'Aguanta 140 meses: casi tres legislaturas enteras.', check: (r) => r.meses >= 140 },
+  { id: 'sobrevive_96', nombre: 'La reelección', desc: 'Aguanta 96 meses: dos legislaturas.', check: (r) => r.meses >= 96 },
+  { id: 'sobrevive_140', nombre: 'Doce años', desc: 'Aguanta 140 meses: casi tres legislaturas enteras.', check: (r) => r.meses >= 140 },
 
   // --- ESTADOS DE MORAL (los 11 epitetos) ---
   // Visibles a proposito: la lista ensena que existe un espectro moral (de
   // saqueador a santo), pero NO como se mueve. Al empezar no sabes cual te va
-  // a tocar; el numero sigue oculto toda la partida.
-  { id: 'moral_0', nombre: 'El Saqueador', desc: 'Termina como El Saqueador.', check: (r) => r.epitetoIndex === 0 },
-  { id: 'moral_1', nombre: 'El Felon', desc: 'Termina como El Felon.', check: (r) => r.epitetoIndex === 1 },
-  { id: 'moral_2', nombre: 'El Trincon', desc: 'Termina como El Trincon.', check: (r) => r.epitetoIndex === 2 },
-  { id: 'moral_3', nombre: 'El Escurridizo', desc: 'Termina como El Escurridizo.', check: (r) => r.epitetoIndex === 3 },
-  { id: 'moral_4', nombre: 'El Tibio', desc: 'Termina como El Tibio.', check: (r) => r.epitetoIndex === 4 },
-  { id: 'moral_5', nombre: 'El Equidistante', desc: 'Termina como El Equidistante.', check: (r) => r.epitetoIndex === 5 },
-  { id: 'moral_6', nombre: 'El Correcto', desc: 'Termina como El Correcto.', check: (r) => r.epitetoIndex === 6 },
-  { id: 'moral_7', nombre: 'El Prudente', desc: 'Termina como El Prudente.', check: (r) => r.epitetoIndex === 7 },
-  { id: 'moral_8', nombre: 'El Integro', desc: 'Termina como El Integro.', check: (r) => r.epitetoIndex === 8 },
-  { id: 'moral_9', nombre: 'El Sabio', desc: 'Termina como El Sabio.', check: (r) => r.epitetoIndex === 9 },
-  { id: 'moral_10', nombre: 'El Santo', desc: 'Termina como El Santo, con la moralidad perfecta.', check: (r) => r.epitetoIndex === 10 },
-  { id: 'moral_todos', nombre: 'Todos los santos y todos los pecados', desc: 'Consigue los 11 epitetos a lo largo de tus partidas.', check: (r) => r.epitetosVistos >= 11 },
+  // a tocar; el numero sigue oculto toda la partida. Los nombres calcan los de
+  // epitetos.ts para que la lista y la pantalla de fin digan lo mismo.
+  { id: 'moral_0', nombre: 'El Saqueador', desc: 'Termina la partida siendo recordado como El Saqueador.', check: (r) => r.epitetoIndex === 0 },
+  { id: 'moral_1', nombre: 'El Felón', desc: 'Termina la partida siendo recordado como El Felón.', check: (r) => r.epitetoIndex === 1 },
+  { id: 'moral_2', nombre: 'El Trincón', desc: 'Termina la partida siendo recordado como El Trincón.', check: (r) => r.epitetoIndex === 2 },
+  { id: 'moral_3', nombre: 'El Escurridizo', desc: 'Termina la partida siendo recordado como El Escurridizo.', check: (r) => r.epitetoIndex === 3 },
+  { id: 'moral_4', nombre: 'El Tibio', desc: 'Termina la partida siendo recordado como El Tibio.', check: (r) => r.epitetoIndex === 4 },
+  { id: 'moral_5', nombre: 'El Equidistante', desc: 'Termina la partida siendo recordado como El Equidistante.', check: (r) => r.epitetoIndex === 5 },
+  { id: 'moral_6', nombre: 'El Correcto', desc: 'Termina la partida siendo recordado como El Correcto.', check: (r) => r.epitetoIndex === 6 },
+  { id: 'moral_7', nombre: 'El Prudente', desc: 'Termina la partida siendo recordado como El Prudente.', check: (r) => r.epitetoIndex === 7 },
+  { id: 'moral_8', nombre: 'El Íntegro', desc: 'Termina la partida siendo recordado como El Íntegro.', check: (r) => r.epitetoIndex === 8 },
+  { id: 'moral_9', nombre: 'El Sabio', desc: 'Termina la partida siendo recordado como El Sabio.', check: (r) => r.epitetoIndex === 9 },
+  { id: 'moral_10', nombre: 'El Santo', desc: 'Termina con la moralidad perfecta. Nadie se lo va a creer.', check: (r) => r.epitetoIndex === 10 },
+  { id: 'moral_todos', nombre: 'Todos los santos y todos los pecados', desc: 'Consigue los 11 epítetos a lo largo de tus partidas.', check: (r) => r.epitetosVistos >= 11 },
 
   // --- FINALES: por donde caes ---
   // Solo el desplome (barra a 0). Reventar por arriba es otro final: 'cae_techo'.
   { id: 'cae_medios', nombre: 'Muerto en portada', desc: 'Cae con la prensa por los suelos.', oculto: true, check: (r) => r.deathStat === 'medios' && r.stats.medios <= 0 },
-  { id: 'cae_gobierno', nombre: 'Punalada por la espalda', desc: 'Cae porque tu propio Gobierno te suelta la mano.', oculto: true, check: (r) => r.deathStat === 'gobierno' && r.stats.gobierno <= 0 },
+  { id: 'cae_gobierno', nombre: 'Puñalada por la espalda', desc: 'Cae porque tu propio Gobierno te suelta la mano.', oculto: true, check: (r) => r.deathStat === 'gobierno' && r.stats.gobierno <= 0 },
   { id: 'cae_calle', nombre: 'A la calle', desc: 'Cae con la gente en tu contra.', oculto: true, check: (r) => r.deathStat === 'calle' && r.stats.calle <= 0 },
   { id: 'cae_caja', nombre: 'Sin un duro', desc: 'Cae con la caja a cero.', oculto: true, check: (r) => r.deathStat === 'caja' && r.stats.caja <= 0 },
-  { id: 'cae_techo', nombre: 'Demasiado de algo bueno', desc: 'Cae porque un contrapoder te elimina por haberte hecho fuerte de mas.', oculto: true, check: (r) => /_max_/.test(r.endingId) },
-  { id: 'cae_mocion', nombre: 'Mocion de censura', desc: 'Te tumban en el Parlamento.', oculto: true, check: (r) => r.endingId === 'final_evento_mocion' },
-  { id: 'cae_ruptura', nombre: 'Solo ante el peligro', desc: 'Se rompe la coalicion y te quedas sin nadie.', oculto: true, check: (r) => r.endingId === 'final_evento_ruptura' },
-  { id: 'cae_registro', nombre: 'A las seis de la manana', desc: 'Coches en la puerta y una orden de registro.', oculto: true, check: (r) => r.endingId === 'final_evento_registro' },
+  { id: 'cae_techo', nombre: 'Demasiado de algo bueno', desc: 'Cae porque un contrapoder te elimina por haberte hecho demasiado fuerte.', oculto: true, check: (r) => /_max_/.test(r.endingId) },
+  { id: 'cae_mocion', nombre: 'Moción de censura', desc: 'Te tumban en el Parlamento.', oculto: true, check: (r) => r.endingId === 'final_evento_mocion' },
+  { id: 'cae_ruptura', nombre: 'Solo ante el peligro', desc: 'Se rompe la coalición y te quedas sin nadie.', oculto: true, check: (r) => r.endingId === 'final_evento_ruptura' },
+  { id: 'cae_registro', nombre: 'A las seis de la mañana', desc: 'Coches en la puerta y una orden de registro.', oculto: true, check: (r) => r.endingId === 'final_evento_registro' },
   { id: 'cae_mes_1', nombre: 'Un suspiro', desc: 'Cae en el primer o segundo mes.', check: (r) => r.meses <= 2 && !r.gano },
 
   // --- FINALES: coleccionista ---
@@ -83,21 +84,21 @@ export const LOGROS: Logro[] = [
   { id: 'finales_20', nombre: 'Lo has visto todo', desc: 'Ve 20 finales distintos.', check: (r) => r.finalesDistintos >= 20 },
 
   // --- ELECCIONES ---
-  { id: 'gana_elecciones', nombre: 'Cuatro anos mas', desc: 'Gana unas elecciones y sigue gobernando.', check: (r) => r.gano },
-  { id: 'gana_triunfo', nombre: 'Mayoria absoluta', desc: 'Llega a una noche electoral con los cuatro indicadores en verde.', oculto: true, check: (r) => r.endingId === 'elecciones_triunfo' },
-  { id: 'leyenda', nombre: 'Nombre para una plaza', desc: 'Aguanta las tres legislaturas y retirate invicto.', oculto: true, check: (r) => r.endingId === 'elecciones_leyenda_final' },
+  { id: 'gana_elecciones', nombre: 'Cuatro años más', desc: 'Gana unas elecciones y sigue gobernando.', check: (r) => r.gano },
+  { id: 'gana_triunfo', nombre: 'Mayoría absoluta', desc: 'Llega a una noche electoral con los cuatro indicadores en verde.', oculto: true, check: (r) => r.endingId === 'elecciones_triunfo' },
+  { id: 'leyenda', nombre: 'Nombre para una plaza', desc: 'Aguanta las tres legislaturas y retírate invicto.', oculto: true, check: (r) => r.endingId === 'elecciones_leyenda_final' },
   { id: 'aguanta_tres', nombre: 'Hasta el final', desc: 'Llega al final de la tercera legislatura, como sea.', check: (r) => r.aguantoLasTres },
 
   // --- TRAMAS ---
   { id: 'hermano_condena', nombre: 'Cosas de familia', desc: 'Deja que la trama de tu hermano llegue hasta el juicio.', oculto: true, check: (r) => r.flags.includes('hermano_juicio') },
-  { id: 'guru_candidato', nombre: 'La izquierda partida', desc: 'El Guru monta su partido y se presenta contra ti.', oculto: true, check: (r) => r.flags.includes('guru_candidato') },
+  { id: 'guru_candidato', nombre: 'La izquierda partida', desc: 'El Gurú monta su partido y se presenta contra ti.', oculto: true, check: (r) => r.flags.includes('guru_candidato') },
   { id: 'te_salvan', nombre: 'Una mano lava la otra', desc: 'Alguien a quien has hecho muchos favores aparece a salvarte de caer.', oculto: true, check: (r) => r.flags.includes('ya_te_salvaron') },
   { id: 'fiscal_debe', nombre: 'El fiscal amigo', desc: 'Acepta un favor del Fiscal.', oculto: true, check: (r) => r.flags.includes('magistrado_debe') || r.flags.includes('magistrado_colocado') },
-  { id: 'bomba', nombre: 'Todo tiene consecuencias', desc: 'Enciende una bomba de relojeria y aguanta hasta que estalla.', oculto: true, check: (r) => r.cartas.some((c) => (c.startsWith('bomba_') && c !== 'bomba_sobre') || /_cobro_/.test(c) || /_vuelve$/.test(c)) },
-  { id: 'vacaciones', nombre: 'Vacaciones tecnicas', desc: 'Coge las vacaciones de agosto.', oculto: true, check: (r) => r.cartas.includes('vacaciones_tecnicas') },
+  { id: 'bomba', nombre: 'Todo tiene consecuencias', desc: 'Enciende una bomba de relojería y aguanta hasta que estalla.', oculto: true, check: (r) => r.cartas.some((c) => (c.startsWith('bomba_') && c !== 'bomba_sobre') || /_cobro_/.test(c) || /_vuelve$/.test(c)) },
+  { id: 'vacaciones', nombre: 'Vacaciones técnicas', desc: 'Coge las vacaciones de agosto.', oculto: true, check: (r) => r.cartas.includes('vacaciones_tecnicas') },
 
   // --- RAREZAS ---
-  { id: 'equilibrio', nombre: 'Funambulista', desc: 'Cae con las cuatro barras a la vez entre 4 y 6. Ni frio ni calor.', oculto: true, check: (r) => !r.gano && K4.every((k) => r.stats[k] >= 4 && r.stats[k] <= 6) },
+  { id: 'equilibrio', nombre: 'Funambulista', desc: 'Cae con las cuatro barras a la vez entre 4 y 6. Ni frío ni calor.', oculto: true, check: (r) => !r.gano && K4.every((k) => r.stats[k] >= 4 && r.stats[k] <= 6) },
   { id: 'rechazas_rescate', nombre: 'Yo solo', desc: 'Rechaza un rescate y cae por tu cuenta.', oculto: true, check: (r) => r.cartas.some((c) => c.startsWith('rescate_') && !c.includes('cobro')) && !r.flags.includes('ya_te_salvaron') },
 
   // --- META ---
