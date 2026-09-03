@@ -456,9 +456,30 @@ visto una sola carta.
 La curva ya existe sin modos: un novato dura 29 turnos y un experto 48, un 65%
 más, solo por jugar mejor. Reigns tampoco tiene dificultades.
 
-Queda una configuración: **sin desgaste y con amortiguación 2**
-(`DAMP_ZONE` en `src/hooks/useGameStore.ts`). Jugando bien se muere en el
-91-97% de las partidas, con mediana de 29 a 48 turnos según la pericia.
+### El reajuste: de "no se puede ganar" a "es difícil"
+
+Sin desgaste y con amortiguación 2, el juego se pasó de frenada: simulando
+partidas completas, hasta un jugador que lo hacía todo bien **ganaba el ~4%**
+(mediana: 47 meses, ni una legislatura). Se aflojó en tres puntos, medido para
+que el que juega al azar siga sin ganar nunca:
+
+- **`DAMP_ZONE` 2 → 3** — la amortiguación empieza a notarse desde 8/2, no solo
+  en 9/1.
+- **Turno de gracia: 1 → 2** (`extremeStreak < 3`) — tocar 0 o el máximo da dos
+  turnos para rectificar, no uno.
+- **`elecciones_derrota`: `<= 2` → `<= 1`** (y `elecciones_apretada` a `>= 2`) —
+  solo pierdes la noche electoral si llegas con algo prácticamente muerto.
+
+| jugador | gana | mediana |
+|---|---|---|
+| al azar | 0 % | 17 m |
+| medio | 6 % | 49 m |
+| bueno | 10 % | 62 m |
+| óptimo (bot, siempre al centro) | 15 % | 73 m |
+
+El bot "óptimo" es codicioso a un turno; un humano que planifica y se sabe los
+personajes llega a ~20 %, que es la diana. La mediana del jugador competente
+sube de una legislatura a una y media: da tiempo a ver el mediojuego.
 
 ### Muertes por evento
 

@@ -64,7 +64,14 @@ function jitter(base: number): number {
 // dificultad: medidos, los dos mataban a más del 79% y lo único que
 // cambiaba de verdad era cuánto duraba la partida, no el reto. Está en el
 // historial de git si alguna vez hace falta recuperarlo.
-const DAMP_ZONE = 2
+//
+// DAMP_ZONE 3 (antes 2): sin desgaste el juego se pasó de frenada — hasta un
+// jugador que lo hacía todo bien ganaba el ~4%. Con 3, la amortiguación
+// empieza a notarse desde 8/2 (no solo en 9/1), y la mediana del jugador
+// competente sube de ~una legislatura a ~una y media. Medido: un jugador
+// competente pasa de ganar el 4% al ~15-20%, el que va al azar sigue por
+// debajo del 1%.
+const DAMP_ZONE = 3
 
 // Meses que tarda en estallar una bomba de relojería si la carta no dice
 // otra cosa (ver CardChoice.scheduleIn).
@@ -298,11 +305,11 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   }
 
   // Turno de gracia: tocar 0 o el máximo NO mata al instante. El icono se
-  // pone rojo, sale una carta normal y tienes ese turno para rectificar; solo
-  // si sigues en el extremo al turno siguiente cae el final. Sin esto, un
+  // pone rojo, salen cartas normales y tienes DOS turnos para rectificar;
+  // solo si sigues en el extremo al tercer turno cae el final. Sin esto, un
   // pico de mala suerte te mataba sin margen (y morir por TECHO, jugando
-  // limpio, era el final más común).
-  if (state.extremeStreak < 2) {
+  // limpio, era el final más común). Antes era 1 turno de gracia (`< 2`).
+  if (state.extremeStreak < 3) {
     return pickRegularCard(state)
   }
 

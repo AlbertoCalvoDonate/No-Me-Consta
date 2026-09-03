@@ -357,7 +357,10 @@ const electionCards: Card[] = [
       effects: {},
       epilogueText: 'No sale a comparecer. La silla vacía en la sala de prensa es la última imagen de su gobierno, y da la vuelta al mundo. Fin del gobierno.',
     },
-    condition: (s) => s.medios <= 2 || s.gobierno <= 2 || s.calle <= 2 || s.caja <= 2,
+    // Solo pierdes la noche electoral si llegas con algo PRÁCTICAMENTE muerto
+    // (1 o menos). Antes era <= 2 y se comía demasiadas partidas por los
+    // pelos: la mediana del jugador competente ni llegaba a una legislatura.
+    condition: (s) => s.medios <= 1 || s.gobierno <= 1 || s.calle <= 1 || s.caja <= 1,
   },
   // --- TRIUNFO: llegas fuerte en todo ---
   {
@@ -402,7 +405,9 @@ const electionCards: Card[] = [
     },
     // El caso normal: nada se ha hundido del todo, asi que sobrevives la
     // noche. Lleva condicion para competir de tu a tu con derrota/triunfo/etc.
-    condition: (s) => [s.medios, s.gobierno, s.calle, s.caja].every((n) => n >= 3),
+    // >= 2 (no >= 3) para que no quede hueco entre esta y la derrota (<= 1):
+    // con una barra a 2, sobrevives por los pelos, no te quedas sin carta.
+    condition: (s) => [s.medios, s.gobierno, s.calle, s.caja].every((n) => n >= 2),
   },
   {
     id: 'elecciones_repeticion',
