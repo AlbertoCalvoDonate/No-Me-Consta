@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
 import { useGameStore } from './hooks/useGameStore'
 import { SwipeCard } from './components/SwipeCard'
@@ -26,6 +26,19 @@ const STAT_LABEL: Record<StatKey, string> = {
   gobierno: 'Gobierno',
   calle: 'Calle',
   caja: 'Caja B',
+}
+
+// Botones secundarios de la pantalla de fin (compartir / logros).
+const botonGameOverSec: CSSProperties = {
+  background: 'transparent',
+  border: '2px solid rgba(224,184,77,0.45)',
+  borderRadius: 8,
+  padding: '7px 16px',
+  fontFamily: 'var(--font-pixel)',
+  fontWeight: 400,
+  fontSize: 16,
+  color: '#e0b84d',
+  cursor: 'pointer',
 }
 
 export default function App() {
@@ -395,34 +408,29 @@ export default function App() {
                       >
                         Nueva legislatura
                       </button>
-                      <button
-                        onClick={async () => {
-                          const res = await compartirResultado(
-                            textoResultado(turn - 1, moralidad, stats)
-                          )
-                          if (res !== 'compartido') {
-                            setCompartido(res)
-                            window.setTimeout(() => setCompartido('idle'), 2200)
-                          }
-                        }}
-                        style={{
-                          background: 'transparent',
-                          border: '2px solid rgba(224,184,77,0.45)',
-                          borderRadius: 8,
-                          padding: '7px 18px',
-                          fontFamily: 'var(--font-pixel)',
-                          fontWeight: 400,
-                          fontSize: 16,
-                          color: '#e0b84d',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {compartido === 'copiado'
-                          ? 'Copiado al portapapeles'
-                          : compartido === 'error'
-                            ? 'No se pudo copiar'
-                            : 'Compartir'}
-                      </button>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button
+                          onClick={async () => {
+                            const res = await compartirResultado(
+                              textoResultado(turn - 1, moralidad, stats)
+                            )
+                            if (res !== 'compartido') {
+                              setCompartido(res)
+                              window.setTimeout(() => setCompartido('idle'), 2200)
+                            }
+                          }}
+                          style={botonGameOverSec}
+                        >
+                          {compartido === 'copiado'
+                            ? '¡Copiado!'
+                            : compartido === 'error'
+                              ? 'No se pudo'
+                              : 'Compartir'}
+                        </button>
+                        <button onClick={() => setVerLogros(true)} style={botonGameOverSec}>
+                          Logros
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 )}
