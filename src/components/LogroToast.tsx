@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { Logro } from '../data/logros'
 
-// Pop-up estilo logro de Xbox: entra deslizándose desde arriba, se queda unos
-// segundos y se va. Si hay varios, se muestran uno detrás de otro.
+// Pop-up estilo logro de Xbox: aparece justo debajo de los indicadores, se
+// queda unos segundos y se va. Si hay varios, se muestran uno detrás de otro
+// (mode="wait": el anterior termina de salir antes de que entre el siguiente,
+// si no se solapaban un instante y el nuevo parecía entrar de lado).
 export function LogroToast({
   cola,
   onVaciar,
@@ -33,7 +35,7 @@ export function LogroToast({
     <div
       style={{
         position: 'absolute',
-        top: 0,
+        top: 104,
         left: 0,
         right: 0,
         display: 'flex',
@@ -42,14 +44,14 @@ export function LogroToast({
         zIndex: 100,
       }}
     >
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {actual && (
           <motion.div
             key={actual.id}
-            initial={{ y: -80, opacity: 0 }}
-            animate={{ y: 104, opacity: 1 }}
-            exit={{ y: -80, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 30 }}
+            initial={{ opacity: 0, y: -14, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -14, scale: 0.94 }}
+            transition={{ duration: 0.24, ease: 'easeOut' }}
             style={{
               display: 'flex',
               alignItems: 'center',

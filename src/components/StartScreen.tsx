@@ -1,7 +1,16 @@
+import { useRef, useState } from 'react'
 import type { Stats } from '../types'
 import { StatIcon } from './StatIcon'
 
 const TUTORIAL_STATS: (keyof Stats)[] = ['medios', 'gobierno', 'calle', 'caja']
+
+// Reset oculto para pruebas: 10 toques seguidos en el número de build borran
+// TODO lo guardado de logros (conseguidos y los contadores acumulados). Los
+// toques tienen que ir rápidos: si pasan más de 800 ms sin tocar, se
+// reinicia la cuenta, así un toque suelto por error no suma.
+const RESET_KEY = 'nomeconsta.logros'
+const TOQUES_RESET = 10
+const VENTANA_MS = 800
 
 // Fecha de build formateada una sola vez (no cambia durante la sesión).
 const buildDate = new Date(__BUILD_DATE__).toLocaleString('es-ES', {
@@ -19,6 +28,26 @@ export function StartScreen({
   onStart: () => void
   onVerLogros: () => void
 }) {
+  const toques = useRef(0)
+  const ultimoToque = useRef(0)
+  const [reseteado, setReseteado] = useState(false)
+
+  const tocarBuild = () => {
+    const ahora = Date.now()
+    toques.current = ahora - ultimoToque.current < VENTANA_MS ? toques.current + 1 : 1
+    ultimoToque.current = ahora
+    if (toques.current >= TOQUES_RESET) {
+      toques.current = 0
+      try {
+        localStorage.removeItem(RESET_KEY)
+      } catch {
+        /* modo incógnito: no había nada que borrar de todos modos */
+      }
+      setReseteado(true)
+      window.setTimeout(() => setReseteado(false), 2500)
+    }
+  }
+
   return (
     <div
       style={{
@@ -117,6 +146,7 @@ export function StartScreen({
 
 
       <div
+        onClick={tocarBuild}
         style={{
           position: 'absolute',
           bottom: 10,
@@ -126,10 +156,15 @@ export function StartScreen({
           fontFamily: 'var(--font-pixel)',
           fontWeight: 500,
           fontSize: 14,
-          color: '#5a5650',
+          color: reseteado ? '#e0b84d' : '#5a5650',
+          // Zona de toque cómoda para el reset oculto, sin cambiar el aspecto.
+          padding: '8px 0',
+          cursor: 'default',
+          userSelect: 'none',
+          WebkitTapHighlightColor: 'transparent',
         }}
       >
-        v{__APP_VERSION__} · {buildDate}
+        {reseteado ? 'Logros borrados' : `v${__APP_VERSION__} · ${buildDate}`}
       </div>
     </div>
   )
