@@ -9,6 +9,7 @@ import {
   ELECTION_MAX_TERMS,
   RECAP_EVERY,
 } from '../data/cards'
+import { guardarPartida, borrarPartida, cargarPartida } from './persistPartida'
 
 function cardMinTurn(c: Card): number {
   return c.minTurn ?? PHASE_MIN_TURN[c.phase]
@@ -392,6 +393,23 @@ interface GameStore extends GameState {
   restart: () => void
 }
 
+// Lo que se vuelca a localStorage tras cada decisión, para poder retomar.
+function snapshot(s: GameStore): Parameters<typeof guardarPartida>[0] {
+  const {
+    stats, extremeStreak, moralidad, turn, history, gameOver, deathReason,
+    deathStat, flags, flagTurn, scheduled, anger, favor,
+  } = s
+  return {
+    estado: {
+      stats, extremeStreak, moralidad, turn, history, gameOver, deathReason,
+      deathStat, flags, flagTurn, scheduled, anger, favor,
+    },
+    currentCardId: s.currentCard.id,
+    flagsVistos: s.flagsVistos,
+    lastEpilogue: s.lastEpilogue,
+  }
+}
+
 function initialStats(): Stats {
   return { medios: STAT_START, gobierno: STAT_START, calle: STAT_START, caja: STAT_START }
 }
@@ -416,23 +434,47 @@ function pickIntro(): Card {
   return cards.find((c) => c.id === id) ?? cards.find((c) => c.id === 'presi_intro')!
 }
 
-const firstCard = pickIntro()
+// Estado de una partida recién empezada (carta de arranque al azar).
+type EstadoStore = Omit<GameStore, 'choose' | 'restart'>
+function estadoNuevo(): EstadoStore {
+  const intro = pickIntro()
+  return {
+    stats: initialStats(),
+    extremeStreak: 0,
+    moralidad: MORALIDAD_START,
+    turn: 1,
+    history: [intro.id],
+    gameOver: false,
+    deathReason: undefined,
+    deathStat: undefined,
+    flags: [],
+    flagTurn: {},
+    scheduled: [],
+    anger: {},
+    favor: {},
+    currentCard: intro,
+    lastEpilogue: undefined,
+    flagsVistos: [],
+  }
+}
+
+// Estado con el que arranca el store: la partida guardada si hay una a medias
+// y sigue siendo válida, si no una nueva.
+function estadoArranque(): EstadoStore {
+  const g = cargarPartida()
+  if (!g) return estadoNuevo()
+  const card = cards.find((c) => c.id === g.currentCardId)
+  if (!card) return estadoNuevo()
+  return {
+    ...g.estado,
+    currentCard: card,
+    lastEpilogue: g.lastEpilogue,
+    flagsVistos: g.flagsVistos,
+  }
+}
 
 export const useGameStore = create<GameStore>((set, get) => ({
-  stats: initialStats(),
-  extremeStreak: 0,
-  moralidad: MORALIDAD_START,
-  turn: 1,
-  history: [firstCard.id],
-  gameOver: false,
-  flags: [],
-  flagTurn: {},
-  scheduled: [],
-  anger: {},
-  favor: {},
-  currentCard: firstCard,
-  lastEpilogue: undefined,
-  flagsVistos: [],
+  ...estadoArranque(),
 
   choose: (side) => {
     const state = get()
@@ -512,6 +554,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
           lastEpilogue: choice.epilogueText,
           currentCard: salvador,
         })
+        // El rescate NO termina la partida: sigue en juego, así que se guarda.
+        guardarPartida(snapshot(get()))
         return
       }
       set({
@@ -531,6 +575,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         deathStat: card.byEvent ? undefined : brokenStat(state.stats),
         lastEpilogue: choice.epilogueText,
       })
+      // Partida terminada: no hay nada que retomar.
+      borrarPartida()
       return
     }
 
@@ -559,28 +605,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
       currentCard: nextCard,
       flagsVistos,
     })
+    guardarPartida(snapshot(get()))
   },
 
   restart: () => {
     decayCooldown()
-    const intro = pickIntro()
+    borrarPartida()
     set({
-      stats: initialStats(),
-      extremeStreak: 0,
-      moralidad: MORALIDAD_START,
-      turn: 1,
-      history: [intro.id],
-      gameOver: false,
-      flagsVistos: [],
-      flags: [],
-      flagTurn: {},
-      scheduled: [],
-      anger: {},
-      favor: {},
-      deathReason: undefined,
-      deathStat: undefined,
-      lastEpilogue: undefined,
-      currentCard: intro,
+      ...estadoNuevo(),
     })
   },
 }))

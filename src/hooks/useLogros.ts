@@ -12,6 +12,7 @@ interface Guardado {
   partidas: number
   finales: string[]
   mesesRecord: number
+  epitetoRecord: number // epíteto (índice 0-10) de la partida más larga
   epitetos: number[] // índices 0-10
 }
 
@@ -20,6 +21,7 @@ const VACIO: Guardado = {
   partidas: 0,
   finales: [],
   mesesRecord: 0,
+  epitetoRecord: -1,
   epitetos: [],
 }
 
@@ -33,6 +35,7 @@ function cargar(): Guardado {
       partidas: p.partidas || 0,
       finales: Array.isArray(p.finales) ? p.finales : [],
       mesesRecord: p.mesesRecord || 0,
+      epitetoRecord: typeof p.epitetoRecord === 'number' ? p.epitetoRecord : -1,
       epitetos: Array.isArray(p.epitetos) ? p.epitetos : [],
     }
   } catch {
@@ -73,8 +76,11 @@ export function registrarPartida(d: DatosPartida): Logro[] {
 
   g.partidas += 1
   if (!g.finales.includes(d.endingId)) g.finales.push(d.endingId)
-  if (d.meses > g.mesesRecord) g.mesesRecord = d.meses
   const epi = Math.max(0, Math.min(10, Math.round(d.moralidad)))
+  if (d.meses > g.mesesRecord) {
+    g.mesesRecord = d.meses
+    g.epitetoRecord = epi
+  }
   if (!g.epitetos.includes(epi)) g.epitetos.push(epi)
 
   const gano =
@@ -134,6 +140,10 @@ export function useLogrosEstado() {
     total: LOGROS.length,
     hechos: g.conseguidos.filter((id) => IDS_VIGENTES.has(id)).length,
     partidas: g.partidas,
+    mesesRecord: g.mesesRecord,
+    epitetoRecord: g.epitetoRecord,
+    finalesVistos: g.finales.length,
+    epitetosVistos: g.epitetos.length,
     refrescar,
   }
 }

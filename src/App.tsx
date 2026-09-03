@@ -16,6 +16,7 @@ import type { Logro } from './data/logros'
 import { LogroToast } from './components/LogroToast'
 import { LogrosPanel } from './components/LogrosPanel'
 import { corruptionScore } from './components/SwipeCard'
+import { hayPartidaEnCurso } from './hooks/persistPartida'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
@@ -28,6 +29,9 @@ export default function App() {
   // Pantalla de inicio: solo se ve una vez al cargar la web, no vuelve a
   // salir al reiniciar partida (restart lleva directo a jugar de nuevo).
   const [started, setStarted] = useState(false)
+  // ¿Había una partida a medias en localStorage al cargar? (snapshot al montar;
+  // el store ya la ha restaurado — "Continuar" solo tiene que enseñar el juego.)
+  const [reanudable] = useState(hayPartidaEnCurso)
   const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, history, flagsVistos, choose, restart } =
     useGameStore()
 
@@ -137,6 +141,8 @@ export default function App() {
                 restart()
                 setStarted(true)
               }}
+              onContinuar={reanudable ? () => setStarted(true) : undefined}
+              mesEnCurso={turn}
               onVerLogros={() => setVerLogros(true)}
             />
           )}
