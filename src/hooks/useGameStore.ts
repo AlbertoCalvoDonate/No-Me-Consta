@@ -527,6 +527,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
         newFavor[card.character] = Math.max(0, favores - 1)
       }
     }
+    // ¿Acabas de cruzar el umbral del rescate con este personaje? Solo la
+    // primera vez: a partir de ahí ya puede aparecer a salvarte, y toca
+    // avisar con la carta de favor (ver más abajo).
+    const cruzoFavor = Boolean(
+      card.pleases &&
+        side === card.pleases &&
+        (state.favor[card.character] ?? 0) < FAVOR_PARA_RESCATE &&
+        (newFavor[card.character] ?? 0) >= FAVOR_PARA_RESCATE
+    )
 
     if (choice.epilogueText) {
       // ¿Hay alguien que te deba lo bastante como para sacarte de esta? Solo
@@ -597,8 +606,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
       anger: newAnger,
       favor: newFavor,
     }
-    const nextCard = pickNextCard(nextState, choice.nextCardId)
-    markSeen(nextCard, Boolean(choice.nextCardId))
+    let nextCard = pickNextCard(nextState, choice.nextCardId)
+    // La carta de favor se cuela ANTES del sorteo normal, pero cede el paso a
+    // un hito (elecciones / balance) o a un final: esos mandan siempre.
+    if (
+      cruzoFavor &&
+      !choice.nextCardId &&
+      !nextCard.isEnding &&
+      !nextCard.isElection &&
+      !nextCard.isRecap
+    ) {
+      const favorCard = cards.find((c) => c.id === 'favor_ganado')
+      if (favorCard) nextCard = favorCard
+    }
+    markSeen(nextCard, Boolean(choice.nextCardId) || nextCard.id === 'favor_ganado')
 
     set({
       ...nextState,

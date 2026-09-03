@@ -1776,6 +1776,24 @@ export const contentCards: Card[] = [
     right: { text: 'Fiarse de su versión', effects: { medios: -1, gobierno: 1 }, moralidad: -1 },
   },
   // ============================================================================
+  // CARTA DE FAVOR — la fuerza useGameStore la primera vez que te ganas a
+  // alguien lo bastante (favor >= FAVOR_PARA_RESCATE, el umbral del rescate).
+  // Es genérica: App le pone el nombre y el color del personaje que ahora te
+  // debe una. Está para que el favor, que es un contador invisible, se NOTE —
+  // y para que, si ese alguien aparece luego a salvarte, tenga sentido.
+  // ============================================================================
+  {
+    id: 'favor_ganado',
+    phase: 1,
+    maxTurn: 0,
+    weight: 0,
+    character: 'Un aliado',
+    text: 'Te para en un pasillo, lejos de las cámaras. "Lo de estos meses no se me olvida. El día que te veas de verdad con el agua al cuello, me llamas: yo te saco de esa. Una vez."',
+    left: { text: 'Agradecerlo y seguir andando', effects: { gobierno: 1 } },
+    right: { text: '«Espero no tener que llamarte»', effects: { medios: 1 }, moralidad: 1 },
+  },
+
+  // ============================================================================
   // CARTAS DE REACCIÓN — no salen en el sorteo normal (maxTurn: 0, weight: 0).
   // Solo aparecen forzadas por el `nextCardId` de otra carta: eliges la opción
   // jugosa y otro personaje "salta" para responder a lo que acabas de hacer.

@@ -5,22 +5,58 @@
 // que manda visualmente — estilo Reigns.
 const BANNER_HEIGHT = 168
 
-export function SituationBanner({ text }: { text: string }) {
+// Ritmo visual: las cartas de hito no se leen igual que una carta cualquiera.
+// El banner cambia de color y saca una etiqueta pequeña arriba, para que se
+// note de un vistazo que esto NO es un turno de trámite.
+export type BannerKind = 'normal' | 'eleccion' | 'balance' | 'favor'
+
+const ESTILO: Record<
+  BannerKind,
+  { bg: string; borde: string; etiqueta?: string; color: string }
+> = {
+  normal: { bg: '#1c1c1e', borde: 'rgba(224,184,77,0.25)', color: '#e0b84d' },
+  eleccion: { bg: '#221c0e', borde: 'rgba(224,184,77,0.65)', etiqueta: 'Noche electoral', color: '#e0b84d' },
+  balance: { bg: '#0e1c21', borde: 'rgba(120,199,214,0.55)', etiqueta: 'Balance del año', color: '#9bd6e2' },
+  favor: { bg: '#0f1f18', borde: 'rgba(107,214,154,0.55)', etiqueta: 'Te deben una', color: '#8fe0b4' },
+}
+
+export function SituationBanner({ text, kind = 'normal' }: { text: string; kind?: BannerKind }) {
+  const e = ESTILO[kind]
   return (
     <div
       style={{
+        position: 'relative',
         flexShrink: 0,
         height: BANNER_HEIGHT,
         boxSizing: 'border-box',
-        background: '#1c1c1e',
-        borderBottom: '1px solid rgba(224,184,77,0.25)',
-        padding: '8px 14px',
+        background: e.bg,
+        borderBottom: `1px solid ${e.borde}`,
+        padding: e.etiqueta ? '20px 14px 8px' : '8px 14px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
       }}
     >
+      {e.etiqueta && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 6,
+            left: 0,
+            right: 0,
+            textAlign: 'center',
+            fontFamily: 'var(--font-pixel)',
+            fontWeight: 500,
+            fontSize: 12,
+            letterSpacing: 1,
+            textTransform: 'uppercase',
+            color: e.color,
+          }}
+        >
+          ◆ {e.etiqueta} ◆
+        </div>
+      )}
       <div
         // Marca para las pruebas automáticas: sin ella hay que localizar este
         // texto recorriendo todos los divs con getComputedStyle, que fuerza un
@@ -37,7 +73,7 @@ export function SituationBanner({ text }: { text: string }) {
           color: '#f7ecd2',
           display: '-webkit-box',
           WebkitBoxOrient: 'vertical',
-          WebkitLineClamp: 8,
+          WebkitLineClamp: e.etiqueta ? 7 : 8,
           overflow: 'hidden',
         }}
       >

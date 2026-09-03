@@ -3,7 +3,8 @@ import { motion, useMotionValue } from 'framer-motion'
 import { useGameStore } from './hooks/useGameStore'
 import { SwipeCard } from './components/SwipeCard'
 import { StatBars } from './components/StatBars'
-import { SituationBanner } from './components/SituationBanner'
+import { SituationBanner, type BannerKind } from './components/SituationBanner'
+import { cards } from './data/cards'
 import { BottomBar } from './components/BottomBar'
 import { StartScreen } from './components/StartScreen'
 import { SoundButton } from './components/SoundButton'
@@ -57,6 +58,24 @@ export default function App() {
     haptics.eleccion()
     choose(side)
   }
+
+  // Ritmo visual: la carta de hito (elecciones, balance, favor) tiñe el banner
+  // y saca una etiqueta arriba, para que se note que no es un turno de trámite.
+  const bannerKind: BannerKind = currentCard.isElection
+    ? 'eleccion'
+    : currentCard.isRecap
+      ? 'balance'
+      : currentCard.id === 'favor_ganado'
+        ? 'favor'
+        : 'normal'
+
+  // La carta de favor es genérica; se le pone el nombre (y de rebote el color)
+  // del personaje que ahora te debe una: el de la carta que acabas de responder.
+  const favorChar =
+    currentCard.id === 'favor_ganado'
+      ? cards.find((c) => c.id === history[history.length - 1])?.character
+      : undefined
+  const cartaMostrada = favorChar ? { ...currentCard, character: favorChar } : currentCard
 
   const x = useMotionValue(0)
   useEffect(() => {
@@ -182,7 +201,7 @@ export default function App() {
                   overflow: 'hidden',
                 }}
               >
-                {!gameOver && <SituationBanner text={currentCard.text} />}
+                {!gameOver && <SituationBanner text={cartaMostrada.text} kind={bannerKind} />}
 
                 {/* Sin AnimatePresence a propósito: con ella, al cambiar de
                     key React mantenía montada la carta saliente un frame de
@@ -192,7 +211,7 @@ export default function App() {
                     condicional normal, React sustituye la carta en el mismo
                     commit, tal cual pide el comentario de más abajo. */}
                 {!gameOver ? (
-                  <SwipeCard key={currentCard.id} card={currentCard} onChoose={elegir} x={x} />
+                  <SwipeCard key={currentCard.id} card={cartaMostrada} onChoose={elegir} x={x} />
                 ) : (
                   <motion.div
                     key="gameover"
