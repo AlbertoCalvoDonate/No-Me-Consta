@@ -296,14 +296,14 @@ El botón de reiniciar vive FUERA de la zona con scroll del panel de fin, para
 que no pueda salirse de pantalla por mucho que crezca el texto. Comprobado con
 los 64 epílogos del juego en cuatro resoluciones, hasta 320x568.
 
-### Flechas de efecto (temporal)
+### Puntos de efecto
 
-Las flechas ▲▼ sobre los iconos adelantan qué stat sube o baja con cada
-opción. Están para poder probar el mazo cómodamente, pero la intención es
-quitarlas: Reigns muestra la magnitud del cambio pero **no** la dirección, a
-propósito, para que el jugador aprenda qué hace cada personaje. Se apagan con
-`SHOW_EFFECT_ARROWS = false` en `src/components/StatBars.tsx`, sin tocar nada
-más.
+Al arrastrar la carta se enciende un **punto** sobre el icono de cada stat que
+va a moverse. Dice QUÉ indicador cambia y CUÁNTO —un solo círculo, pequeño /
+mediano / gordo según la magnitud (±1, ±2, ±3 o más)— pero **no** hacia dónde,
+igual que en Reigns: la dirección se aprende jugando. El tamaño se ajusta en
+`pipSize()` de `src/components/EffectPips.tsx`; para esconder también la
+magnitud, `SHOW_EFFECT_PIPS = false` en `src/components/StatBars.tsx`.
 
 ### Qué persiste entre legislaturas
 
@@ -311,6 +311,27 @@ Al pasar unas elecciones (turno 48, 96) la partida **continúa**: se conservan
 las 4 stats, la moralidad, los flags de trama y el enfado de cada personaje.
 No hay reinicio ni pantalla intermedia — la legislatura siguiente arranca con
 las consecuencias de la anterior encima de la mesa.
+
+### Logros
+
+Lista de metas en `src/data/logros.ts`: supervivencia incremental (12 / 24 /
+36 / 48 / 96 / 140 meses), los 11 epítetos de moral, por dónde caes (cada
+barra, el techo, moción / registro / ruptura), coleccionar finales distintos,
+elecciones, las tramas (hermano, Gurú, Fiscal...) y algunas rarezas. Cada uno
+es un `check(r)` que mira el `ResultadoPartida` —lo que se sabe al terminar,
+más los totales acumulados de todas las partidas (`nomeconsta.logros` en
+localStorage)—.
+
+Se comprueban todos al morir (`registrarPartida` en `src/hooks/useLogros.ts`);
+los recién conseguidos saltan de uno en uno como un pop-up estilo Xbox
+(`LogroToast`) y se tachan de la lista, que se abre desde el botón **Logros**
+del inicio (`LogrosPanel`). Los `oculto: true` no enseñan su descripción hasta
+desbloquearlos, para no destripar tramas y finales; los epítetos sí se ven
+desde el principio (marcan que existe un espectro moral, no cómo se recorre).
+
+Para añadir uno: una entrada más en `LOGROS` con un `id` estable (es la clave
+en localStorage) y su `check`. Nada más — el total y el panel se actualizan
+solos.
 
 ## Los cuatro indicadores (y por qué son esos)
 

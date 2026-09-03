@@ -384,6 +384,10 @@ function pickRegularCard(state: GameState): Card {
 interface GameStore extends GameState {
   currentCard: Card
   lastEpilogue?: string
+  // Flags que se han encendido EN ALGUN MOMENTO de esta partida (aunque luego
+  // se apagaran). Lo usan los logros al terminar: "la trama del hermano llego
+  // al juicio", "te salvaron"...
+  flagsVistos: string[]
   choose: (side: 'left' | 'right') => void
   restart: () => void
 }
@@ -428,6 +432,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   favor: {},
   currentCard: firstCard,
   lastEpilogue: undefined,
+  flagsVistos: [],
 
   choose: (side) => {
     const state = get()
@@ -451,6 +456,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       delete newFlagTurn[f]
     })
     const newFlags = [...flagSet]
+    const nuevosVistos = (choice.addFlags ?? []).filter((f) => !state.flagsVistos.includes(f))
+    const flagsVistos = nuevosVistos.length
+      ? [...state.flagsVistos, ...nuevosVistos]
+      : state.flagsVistos
 
     // Bomba de relojeria: se apunta para dentro de unos meses.
     const newScheduled = state.scheduled.filter((s) => s.id !== state.currentCard.id)
@@ -492,6 +501,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
           // infinito hasta tumbar la pestaña.
           flags: [...newFlags, 'ya_te_salvaron'],
           flagTurn: newFlagTurn,
+          flagsVistos: flagsVistos.includes('ya_te_salvaron')
+            ? flagsVistos
+            : [...flagsVistos, 'ya_te_salvaron'],
           scheduled: newScheduled,
           anger: newAnger,
           favor: newFavor,
@@ -507,6 +519,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         moralidad: newMoralidad,
         flags: newFlags,
         flagTurn: newFlagTurn,
+        flagsVistos,
         scheduled: newScheduled,
         anger: newAnger,
         favor: newFavor,
@@ -544,6 +557,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({
       ...nextState,
       currentCard: nextCard,
+      flagsVistos,
     })
   },
 
@@ -557,6 +571,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       turn: 1,
       history: [intro.id],
       gameOver: false,
+      flagsVistos: [],
       flags: [],
       flagTurn: {},
       scheduled: [],

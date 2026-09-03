@@ -10,6 +10,10 @@ import { StatIcon } from './components/StatIcon'
 import type { StatKey } from './types'
 import { epitetoDe } from './data/epitetos'
 import { sfx } from './utils/sfx'
+import { registrarPartida } from './hooks/useLogros'
+import type { Logro } from './data/logros'
+import { LogroToast } from './components/LogroToast'
+import { LogrosPanel } from './components/LogrosPanel'
 import { corruptionScore } from './components/SwipeCard'
 
 const STAT_LABEL: Record<StatKey, string> = {
@@ -23,7 +27,7 @@ export default function App() {
   // Pantalla de inicio: solo se ve una vez al cargar la web, no vuelve a
   // salir al reiniciar partida (restart lleva directo a jugar de nuevo).
   const [started, setStarted] = useState(false)
-  const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, choose, restart } =
+  const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, history, flagsVistos, choose, restart } =
     useGameStore()
 
   // Posición de arrastre de la carta actual, compartida con StatBars para
@@ -32,6 +36,8 @@ export default function App() {
   // framer-motion actualiza esto fuera del ciclo de render).
   // Solo para repintar el boton del altavoz; la fuente de verdad vive en sfx.
   const [sonido, setSonido] = useState(sfx.activo())
+  const [colaLogros, setColaLogros] = useState<Logro[]>([])
+  const [verLogros, setVerLogros] = useState(false)
 
   // El sonido va aqui y no en el store a proposito: es presentacion, no reglas
   // del juego. Suena segun lo turbia que sea la opcion elegida, usando el
@@ -55,11 +61,28 @@ export default function App() {
 
   // Fin de partida: trombon triste, o fanfarria si aguanto las tres
   // legislaturas (los finales de la ultima convocatoria son isElection).
+  const yaComprobado = useRef(false)
   useEffect(() => {
-    if (!gameOver) return
+    if (!gameOver) {
+      yaComprobado.current = false
+      return
+    }
     if (currentCard.isElection && turn > 100) sfx.triunfo()
     else sfx.trombon()
-  }, [gameOver, currentCard, turn])
+    if (yaComprobado.current) return
+    yaComprobado.current = true
+    const nuevos = registrarPartida({
+      meses: turn - 1,
+      moralidad,
+      endingId: currentCard.id,
+      esEleccion: Boolean(currentCard.isElection),
+      porEvento: Boolean(currentCard.byEvent),
+      stats,
+      cartas: history,
+      flags: flagsVistos,
+    })
+    if (nuevos.length) setColaLogros(nuevos)
+  }, [gameOver, currentCard, turn, moralidad, stats, history, flagsVistos])
 
   // Cartas de hito: el balance de fin de ano y la noche electoral se anuncian.
   useEffect(() => {
@@ -115,6 +138,7 @@ export default function App() {
                 restart()
                 setStarted(true)
               }}
+              onVerLogros={() => setVerLogros(true)}
             />
           )}
 
@@ -347,6 +371,9 @@ export default function App() {
               <BottomBar turn={turn} />
             </>
           )}
+
+          <LogroToast cola={colaLogros} onVaciar={() => setColaLogros([])} />
+          {verLogros && <LogrosPanel onCerrar={() => setVerLogros(false)} />}
         </div>
       </div>
     </>

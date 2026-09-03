@@ -12,7 +12,13 @@ const buildDate = new Date(__BUILD_DATE__).toLocaleString('es-ES', {
   minute: '2-digit',
 })
 
-export function StartScreen({ onStart }: { onStart: () => void }) {
+export function StartScreen({
+  onStart,
+  onVerLogros,
+}: {
+  onStart: () => void
+  onVerLogros: () => void
+}) {
   return (
     <div
       style={{
@@ -89,6 +95,24 @@ export function StartScreen({ onStart }: { onStart: () => void }) {
         }}
       >
         Empezar legislatura
+      </button>
+
+      <button
+        onClick={onVerLogros}
+        style={{
+          background: 'transparent',
+          border: '2px solid rgba(224,184,77,0.55)',
+          borderRadius: 10,
+          padding: '9px 22px',
+          marginTop: -4,
+          fontFamily: 'var(--font-pixel)',
+          fontWeight: 400,
+          fontSize: 16,
+          color: '#e0b84d',
+          cursor: 'pointer',
+        }}
+      >
+        Logros
       </button>
 
 
