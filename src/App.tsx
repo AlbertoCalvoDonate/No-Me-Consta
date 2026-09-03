@@ -28,6 +28,18 @@ const STAT_LABEL: Record<StatKey, string> = {
   caja: 'Caja B',
 }
 
+// Cómo cayó el gobierno, en una línea, para el texto de compartir. Solo los
+// finales que NO son "una barra a 0" (esos ya dicen qué pilar reventó).
+const CAUSA_COMPARTIR: Record<string, string> = {
+  final_evento_mocion: 'Me tumbaron con una moción de censura.',
+  final_evento_ruptura: 'Se rompió la coalición y me quedé solo.',
+  final_evento_registro: 'Vinieron a registrar a las seis de la mañana.',
+  elecciones_derrota: 'Perdí las elecciones.',
+  elecciones_quemado_final: 'Doce años y me quemé: ni me presenté.',
+  elecciones_retirada_final: 'Me retiré tras doce años en el cargo.',
+  elecciones_leyenda_final: 'Me retiré invicto, tras doce años.',
+}
+
 // Botones secundarios de la pantalla de fin (compartir / logros).
 const botonGameOverSec: CSSProperties = {
   background: 'transparent',
@@ -89,6 +101,19 @@ export default function App() {
       ? cards.find((c) => c.id === history[history.length - 1])?.character
       : undefined
   const cartaMostrada = favorChar ? { ...currentCard, character: favorChar } : currentCard
+
+  // Frase corta de "qué te tumbó" para el compartir. Los finales concretos
+  // (moción, registro, urnas...) tienen su línea; los de barra dicen qué pilar
+  // reventó; si no, la última frase del epílogo.
+  const causaCompartir = (() => {
+    const evento = CAUSA_COMPARTIR[currentCard.id]
+    if (evento) return evento
+    if (deathStat) {
+      return `${STAT_LABEL[deathStat]} ${stats[deathStat] <= 0 ? 'por los suelos' : 'por las nubes'}.`
+    }
+    const m = deathReason?.match(/Fin del gobierno[^.!?]*[.!?]/)
+    return m ? m[0] : ''
+  })()
 
   const x = useMotionValue(0)
   useEffect(() => {
@@ -412,7 +437,7 @@ export default function App() {
                         <button
                           onClick={async () => {
                             const res = await compartirResultado(
-                              textoResultado(turn - 1, moralidad, stats)
+                              textoResultado(turn - 1, moralidad, causaCompartir)
                             )
                             if (res !== 'compartido') {
                               setCompartido(res)

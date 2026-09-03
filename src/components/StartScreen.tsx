@@ -107,7 +107,7 @@ export function StartScreen({
           No Me Consta
         </h1>
         <p style={{ ...pixel, margin: '8px 0 0', fontWeight: 500, fontSize: 17, color: '#a89f8c' }}>
-          Aguante una legislatura entera. O al menos las portadas.
+          Gobierna el país y vive para contarlo.
         </p>
       </div>
 
@@ -185,7 +185,7 @@ export function StartScreen({
           </button>
         )}
 
-        <button onClick={onVerLogros} style={{ ...botonSecundario, borderColor: 'transparent', color: '#8a8272' }}>
+        <button onClick={onVerLogros} style={botonSecundario}>
           Logros
         </button>
       </div>
@@ -224,14 +224,16 @@ const botonPrimario: CSSProperties = {
   cursor: 'pointer',
 }
 
+// Mismo aspecto que los botones secundarios de la pantalla de fin
+// (compartir / logros), por consistencia.
 const botonSecundario: CSSProperties = {
   ...pixel,
   background: 'transparent',
-  border: '2px solid rgba(224,184,77,0.5)',
-  borderRadius: 10,
-  padding: '8px 20px',
+  border: '2px solid rgba(224,184,77,0.45)',
+  borderRadius: 8,
+  padding: '7px 18px',
   fontWeight: 400,
-  fontSize: 15,
+  fontSize: 16,
   color: '#e0b84d',
   cursor: 'pointer',
 }
