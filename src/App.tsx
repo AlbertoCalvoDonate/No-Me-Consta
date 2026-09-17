@@ -40,6 +40,28 @@ const CAUSA_COMPARTIR: Record<string, string> = {
   elecciones_leyenda_final: 'Me retiré invicto, tras doce años.',
 }
 
+// Ilustración de la pantalla de fin: una escena por indicador y dirección
+// (techo/fondo), más específicas para los finales que no son "una barra a 0"
+// (electorales) o que encajan mejor con SU texto en concreto que la genérica
+// de su indicador ("final_partido_alta" es literalmente el Comité Ejecutivo).
+const ILUSTRACION_ESPECIFICA: Record<string, string> = {
+  final_partido_alta: 'comite.webp',
+  elecciones_derrota: 'nocheelectoral.webp',
+  elecciones_triunfo: 'nocheelectoral.webp',
+  elecciones_quemado_final: 'nocheelectoral.webp',
+  elecciones_retirada_final: 'nocheelectoral.webp',
+  elecciones_leyenda_final: 'nocheelectoral.webp',
+}
+function ilustracionFin(endingId: string): string | undefined {
+  if (ILUSTRACION_ESPECIFICA[endingId]) return ILUSTRACION_ESPECIFICA[endingId]
+  const techo = endingId.includes('_max_')
+  if (endingId.startsWith('final_medios')) return techo ? 'max_medios.webp' : 'min_medios.webp'
+  if (endingId.startsWith('final_partido')) return techo ? 'max_gobierno.webp' : 'min_gobierno.webp'
+  if (endingId.startsWith('final_votantes')) return techo ? 'max_pueblo.webp' : 'min_pueblo.webp'
+  if (endingId.startsWith('final_caja')) return techo ? 'max_cajab.webp' : 'min_cajab.webp'
+  return undefined
+}
+
 // Botones secundarios de la pantalla de fin (compartir / logros).
 const botonGameOverSec: CSSProperties = {
   background: 'transparent',
@@ -101,6 +123,24 @@ export default function App() {
       ? cards.find((c) => c.id === history[history.length - 1])?.character
       : undefined
   const cartaMostrada = favorChar ? { ...currentCard, character: favorChar } : currentCard
+
+  // La pantalla de fin tiene bastante "chrome" fijo (título, indicador,
+  // "duró X meses", epíteto) además del propio epílogo, y a veces una
+  // ilustración (ver ilustracionFin). En moviles bajitos (iPhone SE, 375x667;
+  // Android de 360x640) los epílogos largos no cabían sin scroll — medido,
+  // hasta 108px de sobra en el peor caso (292 caracteres). Con el texto y los
+  // márgenes más compactos, cabe entero hasta esa altura; por debajo (320x568)
+  // sigue habiendo scroll de último recurso, que para eso está.
+  //
+  // La ilustración ocupa sitio (~85px): con un epílogo largo no compensa —
+  // se prescinde de ella y se prioriza que quepa el texto sin scroll. Con una
+  // corta, el modo compacto salta antes (100 en vez de 160 caracteres) para
+  // dejarle sitio. Medido igual que el resto, sigue sin hacer falta scroll
+  // hasta 360x640.
+  const textoLen = deathReason?.length ?? 0
+  const imagenDisponible = gameOver ? ilustracionFin(currentCard.id) : undefined
+  const ilustracion = imagenDisponible && textoLen <= 190 ? imagenDisponible : undefined
+  const modoCompacto = textoLen > (ilustracion ? 65 : 160)
 
   // Frase corta de "qué te tumbó" para el compartir. Los finales concretos
   // (moción, registro, urnas...) tienen su línea; los de barra dicen qué pilar
@@ -261,7 +301,7 @@ export default function App() {
                       margin: '12px 10px',
                       background: '#1c1c1e',
                       borderRadius: 16,
-                      padding: '16px 18px',
+                      padding: '12px 18px',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -290,26 +330,44 @@ export default function App() {
                       }}
                     >
                     <div style={{ margin: 'auto 0', width: '100%' }}>
+                    {ilustracion && (
+                      <div
+                        style={{
+                          width: '100%',
+                          height: 82,
+                          borderRadius: 10,
+                          overflow: 'hidden',
+                          marginBottom: 10,
+                          border: '1px solid rgba(255,255,255,0.12)',
+                        }}
+                      >
+                        <img
+                          src={`/characters/${ilustracion}`}
+                          alt=""
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }}
+                        />
+                      </div>
+                    )}
                     <h2
                       style={{
                         color: '#ff4d4d',
-                        marginBottom: 12,
+                        marginBottom: modoCompacto ? 6 : 10,
                         marginTop: 0,
                         fontFamily: 'var(--font-pixel)',
                         fontWeight: 400,
-                        fontSize: 27,
-                        lineHeight: 1.3,
+                        fontSize: modoCompacto ? 23 : 27,
+                        lineHeight: 1.2,
                       }}
                     >
                       Fin del gobierno
                     </h2>
                     <p
                       style={{
-                        lineHeight: 1.45,
-                        margin: '0 0 16px',
+                        lineHeight: modoCompacto ? 1.28 : 1.45,
+                        margin: modoCompacto ? '0 0 8px' : '0 0 16px',
                         fontFamily: 'var(--font-pixel)',
                         fontWeight: 500,
-                        fontSize: 19,
+                        fontSize: modoCompacto ? 16 : 19,
                       }}
                     >
                       {deathReason}
@@ -322,21 +380,21 @@ export default function App() {
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 10,
-                          margin: '0 auto 14px',
+                          gap: 8,
+                          margin: modoCompacto ? '0 auto 8px' : '0 auto 14px',
                           width: 'fit-content',
-                          padding: '8px 14px',
+                          padding: modoCompacto ? '5px 12px' : '8px 14px',
                           borderRadius: 10,
                           background: 'rgba(255,77,77,0.12)',
                           border: '1px solid rgba(255,77,77,0.35)',
                         }}
                       >
-                        <StatIcon statKey={deathStat} value={stats[deathStat]} critical size={30} />
+                        <StatIcon statKey={deathStat} value={stats[deathStat]} critical size={modoCompacto ? 22 : 30} />
                         <span
                           style={{
                             fontFamily: 'var(--font-pixel)',
                             fontWeight: 500,
-                            fontSize: 19,
+                            fontSize: modoCompacto ? 16 : 19,
                             color: '#ff9b9b',
                           }}
                         >
@@ -348,9 +406,9 @@ export default function App() {
                     <p
                       style={{
                         color: '#888',
-                        fontSize: 16,
-                        lineHeight: 1.4,
-                        margin: '0 0 18px',
+                        fontSize: modoCompacto ? 14 : 16,
+                        lineHeight: 1.3,
+                        margin: modoCompacto ? '0 0 8px' : '0 0 18px',
                         fontFamily: 'var(--font-pixel)',
                         fontWeight: 500,
                       }}
@@ -365,7 +423,7 @@ export default function App() {
                     <div
                       style={{
                         margin: '0',
-                        paddingTop: 14,
+                        paddingTop: modoCompacto ? 8 : 14,
                         borderTop: '1px solid rgba(224,184,77,0.22)',
                         width: '100%',
                       }}
@@ -374,7 +432,7 @@ export default function App() {
                         style={{
                           fontFamily: 'var(--font-pixel)',
                           fontWeight: 500,
-                          fontSize: 14,
+                          fontSize: 13,
                           letterSpacing: 0.4,
                           color: '#8a8272',
                         }}
@@ -385,10 +443,10 @@ export default function App() {
                         style={{
                           fontFamily: 'var(--font-pixel)',
                           fontWeight: 400,
-                          fontSize: 25,
-                          lineHeight: 1.25,
+                          fontSize: modoCompacto ? 21 : 25,
+                          lineHeight: 1.2,
                           color: '#e0b84d',
-                          margin: '4px 0 5px',
+                          margin: modoCompacto ? '2px 0 3px' : '4px 0 5px',
                         }}
                       >
                         {epitetoDe(moralidad).nombre}
@@ -397,8 +455,8 @@ export default function App() {
                         style={{
                           fontFamily: 'var(--font-pixel)',
                           fontWeight: 500,
-                          fontSize: 15,
-                          lineHeight: 1.35,
+                          fontSize: modoCompacto ? 13 : 15,
+                          lineHeight: 1.25,
                           color: '#9a927f',
                         }}
                       >
@@ -410,11 +468,11 @@ export default function App() {
                     <div
                       style={{
                         flexShrink: 0,
-                        marginTop: 14,
+                        marginTop: 10,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: 8,
+                        gap: 6,
                         width: '100%',
                       }}
                     >
