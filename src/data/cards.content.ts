@@ -1799,6 +1799,39 @@ export const contentCards: Card[] = [
   // jugosa y otro personaje "salta" para responder a lo que acabas de hacer.
   // ============================================================================
   {
+    id: 'react_igualdad_ministro',
+    phase: 1,
+    maxTurn: 0,
+    weight: 0,
+    character: 'El Escudero',
+    characterImage: 'ministrolameculos.webp',
+    text: 'Me cesa por una frase de hace once años. Once, presi. Yo he salido a defender lo indefendible todas las mañanas de mi vida. ¿Y me pasa por delante ella, que no ha sacado una ley adelante?',
+    left: { text: 'Prometerle otro puesto más adelante', effects: { gobierno: 1, caja: -1 }, moralidad: -1 },
+    right: { text: 'Confirmarle que sí, que le pasa por delante', effects: { gobierno: -2, calle: 1 } },
+  },
+  {
+    id: 'react_igualdad_vice',
+    phase: 1,
+    maxTurn: 0,
+    weight: 0,
+    character: 'La Vicepresidenta',
+    characterImage: 'vicepresi.webp',
+    text: 'Menos mal que alguien le ha parado los pies. Llevaba dos años usando un ministerio entero de altavoz personal. Y que conste: yo también soy feminista. Por eso me revienta tanto.',
+    left: { text: 'Agradecerle el respaldo', effects: { gobierno: 1, calle: -1 } },
+    right: { text: 'Pedirle que eso no lo diga fuera', effects: { medios: 1, gobierno: -1 } },
+  },
+  {
+    id: 'react_igualdad_cruzado',
+    phase: 1,
+    maxTurn: 0,
+    weight: 0,
+    character: 'El Cruzado',
+    characterImage: 'cruzado.webp',
+    text: '¡Discriminación! ¡Lo dice la Constitución y lo dice el sentido común! Han convertido un ministerio en un club privado con dinero de todos, y usted ha firmado debajo. Nos vemos en los tribunales.',
+    left: { text: 'Contestarle en su mismo tono', effects: { calle: 1, medios: -1 } },
+    right: { text: 'Ignorarle y que recurra', effects: { medios: 1, gobierno: -1 } },
+  },
+  {
     id: 'react_enchufe_juez',
     phase: 1,
     maxTurn: 0,
@@ -1946,6 +1979,33 @@ export const contentCards: Card[] = [
   // ENEMISTADES — el reparto no solo te da la brasa a ti: también se pelea
   // entre sí, y a veces te toca elegir bando (o mirar para otro lado).
   // ============================================================================
+  {
+    id: 'feud_igualdad_socia',
+    phase: 3,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Ella y La Socia Incómoda llevan tres días midiéndose por ver quién es más feminista. El espacio es el mismo, el votante es el mismo y en la foto del domingo solo cabe una de las dos.',
+    left: { text: 'Arbitrar y repartir el foco', effects: { gobierno: 1, calle: -1, medios: -1 } },
+    right: { text: 'Dejar que se maten en directo', effects: { medios: 1, gobierno: -2 } },
+  },
+  {
+    id: 'feud_igualdad_hermano',
+    phase: 3,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Su hermano ha soltado en una comida que "con estas se puede hablar poco". Había un móvil grabando. Ella pide su cabeza en un hilo de catorce tuits y ya lo ha citado el telediario.',
+    left: {
+      text: 'Sacrificar a su hermano en público',
+      effects: { medios: 2, calle: 1, caja: -2 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Defender a su hermano',
+      effects: { medios: -2, calle: -1, caja: 1 },
+      moralidad: -2,
+      addFlags: ['igualdad_humillada'],
+    },
+  },
   {
     id: 'feud_izquierdas',
     phase: 2,
@@ -2186,6 +2246,197 @@ export const contentCards: Card[] = [
     text: '"Hay líneas rojas, y esta es una." Es la cuarta línea roja este mes. Amenaza con sacar a sus ministros si sale adelante un pacto con quien no le gusta.',
     left: { text: 'Retirar el pacto para no perderla', effects: { calle: 1, gobierno: -1, medios: -1 } },
     right: { text: 'Seguir con el pacto y despedirse de sus ministros', effects: { gobierno: -2, calle: -1 } },
+  },
+
+  // --- LA MINISTRA DE IGUALDAD (mucho ruido, poca ley; el hombre como enemigo
+  //     y, por debajo, puro instinto de supervivencia) ---
+  //
+  // Su mecánica propia: lo que hagas con ella deja flag. `igualdad_respaldada`
+  // (le diste la razón en público) enciende la reacción de los personajes
+  // masculinos; `igualdad_humillada` (la dejaste tirada delante de todos)
+  // enciende la de las femeninas. Es el "se nota en el resto del reparto" sin
+  // tocar el motor: mismas cartas condicionadas de siempre.
+  {
+    id: 'igualdad_ley_estrella',
+    pleases: 'left',
+    phase: 2,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Trae su ley estrella: doscientas páginas, un preámbulo precioso y un articulado que en el ministerio no ha leído entero nadie. "Es histórica." Los técnicos piden dos meses. Ella, dos días.',
+    left: {
+      text: 'Aprobarla tal cual, que es histórica',
+      effects: { calle: 2, gobierno: -1, medios: -1 },
+      moralidad: -1,
+      addFlags: ['igualdad_ley'],
+      scheduleCardId: 'bomba_igualdad_rebajas',
+      scheduleIn: 9,
+    },
+    right: { text: 'Mandarla a revisión técnica', effects: { medios: 1, gobierno: 1, calle: -2 } },
+  },
+  {
+    id: 'igualdad_dato',
+    pleases: 'left',
+    phase: 1,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: '"El ochenta por ciento de las denuncias falsas son un bulo machista." Se lo han preguntado tres veces de dónde sale ese ochenta. Ha dado tres respuestas distintas y ninguna era una fuente.',
+    left: { text: 'Respaldar el dato sin mirarlo', effects: { calle: 1, medios: -2 }, moralidad: -1 },
+    right: {
+      text: 'Pedirle la fuente en público',
+      effects: { medios: 2, calle: -1, gobierno: -1 },
+      addFlags: ['igualdad_humillada'],
+    },
+  },
+  {
+    id: 'igualdad_ocho_marzo',
+    pleases: 'left',
+    phase: 2,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'El 8-M sale a manifestarse. Contra usted. Siendo ministra suya, con megáfono y una pancarta que dice que este Gobierno no la representa. Abre los telediarios de la noche.',
+    left: { text: 'Aplaudir su compromiso desde el atril', effects: { calle: 2, gobierno: -2 } },
+    right: {
+      text: 'Recordarle que ella ES el Gobierno',
+      effects: { gobierno: 1, medios: 1, calle: -2 },
+      addFlags: ['igualdad_humillada'],
+      nextCardId: 'react_igualdad_vice',
+    },
+  },
+  {
+    id: 'igualdad_veto_ministro',
+    pleases: 'left',
+    phase: 3,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Pide el cese de un ministro por una frase de hace once años en una cena. Ha montado el hilo, ha avisado a la prensa y ya ha dicho en tres sitios aquello de "o él, o yo".',
+    left: {
+      text: 'Cesar al ministro y quedar bien',
+      effects: { calle: 1, gobierno: -2 },
+      nextCardId: 'react_igualdad_ministro',
+    },
+    right: {
+      text: 'Decirle que aquí el que cesa es usted',
+      effects: { gobierno: 2, calle: -2 },
+      addFlags: ['igualdad_humillada'],
+    },
+  },
+  {
+    id: 'igualdad_presupuesto',
+    phase: 2,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Su ministerio se ha fundido el presupuesto anual en campañas, congresos y una consultora que lleva una amiga de la facultad. Viene a preguntar cuándo llega la ampliación. Estamos en octubre.',
+    left: {
+      text: 'Ampliarle la partida sin hacer ruido',
+      effects: { caja: -2, calle: 1 },
+      moralidad: -1,
+      addFlags: ['igualdad_chiringuito'],
+      scheduleCardId: 'bomba_igualdad_chiringuito',
+      scheduleIn: 8,
+    },
+    right: { text: 'Congelarle el presupuesto', effects: { caja: 1, calle: -1, gobierno: -1 } },
+  },
+  {
+    id: 'igualdad_paso_atras',
+    pleases: 'left',
+    phase: 3,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: '"Los hombres tienen que dar un paso atrás." Propone que los cargos nuevos de su ministerio sean solo para mujeres. Se lo ha contado a un periodista antes que a usted, como siempre.',
+    left: {
+      text: 'Respaldarlo en público',
+      effects: { calle: 1, medios: -2, gobierno: -1 },
+      addFlags: ['igualdad_respaldada'],
+      nextCardId: 'react_igualdad_cruzado',
+    },
+    right: {
+      text: 'Frenarlo por ilegal, que lo es',
+      effects: { medios: 1, gobierno: 1, calle: -2 },
+      addFlags: ['igualdad_humillada'],
+    },
+  },
+  {
+    id: 'igualdad_podcast',
+    phase: 3,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Hora y media de pódcast amigo. Cincuenta minutos los dedica a explicar que dentro de su propio Gobierno la boicotean. No da nombres. No hace falta: todo el mundo mira hacia el mismo despacho.',
+    left: {
+      text: 'Llamarla y cantarle las cuarenta',
+      effects: { gobierno: 1, calle: -1 },
+      addFlags: ['igualdad_humillada'],
+    },
+    right: { text: 'Dejarlo pasar, total ya da igual', effects: { medios: -1, calle: 1 } },
+  },
+  {
+    id: 'igualdad_organigrama',
+    phase: 2,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Le enseña el organigrama de su ministerio: catorce direcciones generales nuevas. Doce las ocupa gente de su antigua asociación. Las otras dos están "en proceso de selección".',
+    left: {
+      text: 'Firmarlo entero sin leerlo',
+      effects: { calle: 1, caja: -1, medios: -1 },
+      moralidad: -2,
+      addFlags: ['igualdad_chiringuito'],
+    },
+    right: { text: 'Recortarle el organigrama a la mitad', effects: { caja: 1, gobierno: -1, calle: -1 } },
+  },
+  {
+    id: 'igualdad_careta',
+    phase: 4,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Se sienta sin que la invite y baja la voz por primera vez en cuatro años. "Sé que no le caigo bien. Usted a mí tampoco. Pero si yo caigo, se le va el ala izquierda entera detrás."',
+    left: {
+      text: 'Ofrecerle sitio seguro y dormir tranquilo',
+      effects: { gobierno: 1, calle: -1 },
+      moralidad: -1,
+      addFlags: ['igualdad_respaldada'],
+    },
+    right: { text: 'Dejar que se busque la vida', effects: { gobierno: -2, medios: 1 } },
+  },
+  {
+    id: 'igualdad_numero_dos',
+    pleases: 'left',
+    phase: 4,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Quiere el número dos de la lista. Por escrito y con testigos. "No es por mí, es por lo que represento." Lo dice con una carpeta en la mano que no ha soltado en toda la reunión.',
+    left: { text: 'Dárselo y quitarse el problema', effects: { gobierno: 1, calle: -1, medios: -1 } },
+    right: { text: 'Ofrecerle el número catorce', effects: { gobierno: -2, calle: 1 } },
+  },
+  // Las dos caras de la moneda: el precio de respaldarla y el de humillarla.
+  // Solo salen si has hecho una cosa o la otra, y se apagan al rectificar.
+  {
+    id: 'igualdad_hombres_hartos',
+    phase: 3,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.webp',
+    text: 'Mire este cruce y no me mate al mensajero: los hombres de treinta a cincuenta se le han caído doce puntos en dos meses. No es la economía. Es una firma suya muy concreta.',
+    left: {
+      text: 'Corregir el rumbo y soltarle la mano',
+      effects: { calle: 2, gobierno: -1 },
+      removeFlags: ['igualdad_respaldada'],
+    },
+    right: { text: 'Aguantar el tipo, que era lo correcto', effects: { calle: -2, medios: 1 }, moralidad: 2 },
+    condition: (_s, _m, ctx) => ctx.flags.has('igualdad_respaldada'),
+    weight: 3,
+  },
+  {
+    id: 'igualdad_mujeres_hartas',
+    phase: 3,
+    character: 'La Vicepresidenta',
+    characterImage: 'vicepresi.webp',
+    text: 'Tiene a media bancada femenina en pie de guerra. Y no por ella, que no la aguanta ni su sombra: por cómo la ha tratado delante de todo el mundo. "Hoy es ella. Mañana cualquiera de nosotras."',
+    left: {
+      text: 'Rectificar en privado y pedir perdón',
+      effects: { gobierno: 2, calle: 1, medios: -1 },
+      removeFlags: ['igualdad_humillada'],
+    },
+    right: { text: 'No dar el brazo a torcer', effects: { gobierno: -2, calle: -1 } },
+    condition: (_s, _m, ctx) => ctx.flags.has('igualdad_humillada'),
+    weight: 3,
   },
 
   // --- EL EXILIADO (dramático, eterno, "desde el exilio", el conflicto sigue vivo) ---
@@ -4120,6 +4371,44 @@ export const contentCards: Card[] = [
   // una que ya existia en el mazo: se acepta un favor cualquiera y la cuenta
   // aparece cuando ya no te acuerdas de haberlo pedido.
   // ============================================================================
+  {
+    id: 'bomba_igualdad_rebajas',
+    phase: 1,
+    weight: 0,
+    character: 'El Juez',
+    characterImage: 'juez.webp',
+    text: 'Su ley estrella tiene un efecto que no previó nadie: llevo cuarenta revisiones de condena a la baja firmadas esta semana. Todas amparadas en su articulado. El que no revisó ningún técnico.',
+    left: {
+      text: 'Reformarla de urgencia y tragarse el ridículo',
+      effects: { medios: 1, calle: -1, gobierno: -2 },
+      moralidad: 2,
+      removeFlags: ['igualdad_ley'],
+    },
+    right: {
+      text: '"La ley no tiene nada que ver"',
+      effects: { medios: -3, calle: -1, gobierno: 1 },
+      moralidad: -2,
+    },
+  },
+  {
+    id: 'bomba_igualdad_chiringuito',
+    phase: 1,
+    weight: 0,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'Hemos cruzado el organigrama de Igualdad con el registro de socias de una asociación. Coinciden doce nombres. Una de ellas cobra de dos sitios a la vez. ¿Quiere comentar algo antes de que salga?',
+    left: {
+      text: 'Cesar a las doce hoy mismo',
+      effects: { medios: 2, calle: -1, gobierno: -2 },
+      moralidad: 2,
+      removeFlags: ['igualdad_chiringuito'],
+    },
+    right: {
+      text: '"Son perfiles altamente cualificados"',
+      effects: { medios: -2, caja: -1 },
+      moralidad: -2,
+    },
+  },
   {
     id: 'bomba_favor_cobro',
     phase: 1,
