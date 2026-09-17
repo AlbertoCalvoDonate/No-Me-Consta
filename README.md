@@ -98,9 +98,13 @@ No hace falta importar nada ni tocar código — Vite sirve todo lo que hay en
 hasta ahora (solo el nombre en texto), así que puedes ir añadiendo retratos
 poco a poco.
 
-El reparto usa retratos propios en `.webp` salvo dos personajes que siguen con
-SVG provisional a la espera de arte nuevo: `encuestador.svg` y `juez.svg`.
-`nocheelectoral.svg` es de las cartas de elecciones, no de un personaje.
+Los 22 personajes tienen ya retrato propio en `.webp`. El único SVG que queda
+es `nocheelectoral.svg`, y es de las cartas de elecciones, no de un personaje.
+
+`npm run validate-cards` comprueba que el fichero de cada `characterImage`
+exista de verdad en `public/characters/`. Sin esa comprobación, escribir mal
+el nombre no fallaba en ningún sitio: la carta salía en el juego con un hueco
+donde debería estar la cara.
 
 Los retratos están en **.webp** (ver abajo) y **re-encuadrados a un lienzo común** (1020×1200, poco aire
 sobre la cabeza, torso sangrando por abajo) con `scripts/normalize-portraits.mjs`,
@@ -148,8 +152,14 @@ así:
 `nextCardId` sí pueden repetirlo, para eso están.
 
 ### Ideas para las siguientes cartas
-- El mazo tiene ~313 cartas de contenido + finales + elecciones, así que
-  toca más pulir contenido que sumar
+- El mazo tiene 450 cartas de contenido + 27 finales + 10 de elecciones (487
+  en total), así que toca más pulir contenido que sumar
+- **Ánclalo en política española real y, a poder ser, en figuras concretas**
+  (el Tamayazo, la convalidación de decretos, la cátedra a medida, Eurostat
+  contra el dato cocinado, la filtración de un sumario). No es una regla
+  rígida, pero es de donde sale el chiste que se entiende solo
+- El reparto está desigual: El Ministro Caído tiene 53 cartas y Mopongo 10.
+  Al escribir, mira el reparto antes de elegir quién habla
 - Añade `condition` a algunas cartas para que solo aparezcan en rangos
   concretos de stats (ej. una carta de "escándalo mediático" solo si
   `medios < 3`)
@@ -212,8 +222,21 @@ y encaja con la estetica pixel, que ya es medio chiptune.
 | una barra entra en rojo | dos pitidos de alarma barata |
 | balance de fin de ano | campanita de calendario |
 | noche electoral | fanfarria de telediario con murmullo |
+| alguien te debe un favor | dos notas que suben, cortitas |
+| salta un logro | arpegio de cuatro notas y un brillo |
 | **cae el gobierno** | **el trombon triste** |
 | aguantas las tres legislaturas | fanfarria buena y aplausos |
+
+La cadena no es un oscilador suelto por sonido: todo pasa por un bus
+(`mezcla → master → compresor → salida`) con un envío a una reverb de sala
+corta generada al vuelo (`salaCorta`, ~0.9s). El compresor evita que dos
+sonidos a la vez saturen, y cada nota lleva un desafinado aleatorio de ±0.7%
+(`pizcaDeAzar`) para que repetir la misma no suene a copia pegada. El
+trombón además barre su filtro paso bajo de 1400 a 260 Hz mientras cae, que
+es lo que le da el desinfle.
+
+Los logros suenan de uno en uno, según va saliendo cada pop-up (lo dispara
+`LogroToast`), no todos de golpe al morir.
 
 El botón de volumen (`src/components/SoundButton.tsx`) recorre un ciclo de
 pasos: 25 → 50 → 75 → 100 % → mudo → 25... El paso elegido se recuerda entre
@@ -246,6 +269,24 @@ a otros. Ejemplo completo en el mazo: la **trama del hermano**
 (`trama_hermano_*`), que va de colocarle a dedo → diligencias → prensa →
 imputación → juicio, y en la que cada paso sube el peso de la trama.
 
+**Lo que tapaste sigue ahí.** Las bombas de relojería apagan su flag *solo* en
+la opción decente: si eliges taparlo, el flag se queda encendido el resto de
+la partida. Durante un tiempo eso no lo leía nadie y mentir salía gratis a
+partir del segundo asalto. Ahora hay segundo asalto: las cartas `secuela_*`
+están condicionadas a `ctx.flagAge('<flag>') >= N`, con la N por encima del
+`scheduleIn` original, así que llegan doce o diecisiete meses después de que
+estallara la bomba y te ofrecen una última salida cara. Medido en 20.000
+partidas con un jugador medio, cada una sale entre el 9% y el 35% de las
+veces.
+
+Ojo al escribirlas: una condición que no se pueda cumplir nunca es contenido
+muerto y no falla en ningún sitio. `acreedor_unico` habla de un solo acreedor
+porque `ya_te_salvaron` solo permite **un rescate por partida** — escrita en
+plural ("cuando te reclaman dos") no habría salido jamás. La forma de
+cazarlo es medir el alcance en simulación, no leer el código y suponer.
+
+`npm run validate-cards` avisa de flags que se encienden y no lee nadie.
+
 ### Enfado por personaje
 
 Reigns lleva un nivel de "stress" por personaje según cuántas veces le
@@ -257,6 +298,19 @@ es que te lo eche en cara.
 
 Medido en simulación: jugando al azar, el 8% de las partidas ve una carta de
 enfado; jugando a decir que no a todo, el 48%.
+
+**Un personaje sin `pleases` no existe para este sistema.** Durante un tiempo
+El Juez tenía 24 cartas y ninguna con `pleases`: no podía enfadarse nunca, así
+que obstruirle no costaba nada. Lo mismo La Oposición, El Encuestador y
+Mopongo. Al repasarlo se repartieron 47 `pleases` y se añadió una rama a
+`final_evento_registro` para que taparle el sumario al juez con la caja llena
+acabe en registro. Si añades un personaje, asegúrate de que sus cartas dicen
+de qué lado está — la auditoría del mazo lista cuántas tiene cada uno.
+
+Y al revés: el enfado de **quien no te sostiene** no debería tumbarte el
+gobierno. `final_evento_ruptura` solo cuenta el enfado de los socios de
+coalición; que el juez o el periodista te odien es otra cosa, y tiene su
+propio final.
 
 ### Leer los indicadores
 
@@ -402,6 +456,36 @@ Para añadir uno: una entrada más en `LOGROS` con un `id` estable (es la clave
 en localStorage) y su `check`. Nada más — el total y el panel se actualizan
 solos.
 
+### La colección de cartas
+
+El mazo tiene casi 500 cartas y en una partida buena se ven ochenta. Los ids
+vistos se acumulan en `nomeconsta.logros` (`cartasVistas`) entre partidas, y
+la pantalla de inicio dice **"has visto 137 de 487 cartas"**, con cuatro
+logros detrás (100 / 200 / 350 / todas). Es lo que hace Reigns, y es la razón
+de volver a jugar cuando ya sabes durar: lo que queda no es más puntuación,
+son situaciones que no has visto.
+
+Al contar se descartan los ids que ya no existen en el mazo, para que
+renombrar una carta no infle el contador para siempre.
+
+### La marca a batir
+
+Al morir, debajo de "duró X meses", una línea te enfrenta a tu propio récord:
+*"Nuevo récord. Antes eran 47 meses."*, *"A 3 meses de su récord."* o *"Su
+récord sigue siendo 47 meses."* En la primera partida no hay con qué comparar
+y si lo clavas tampoco hay nada que decir, así que se calla.
+
+Por eso `registrarPartida` devuelve `{ nuevos, recordPrevio }`: hace falta el
+récord de **antes** de esta partida. Leerlo del guardado después no sirve, ya
+incluiría la partida que acaba de terminar y la comparación diría siempre
+cero.
+
+Cuidado al tocarla: la pantalla de fin va justa. Esta línea, con los tamaños
+normales, hacía desbordar quince de los setenta y cuatro lados a 360×640 (por
+5px exactos). Por eso en modo compacto va a 12px/1.2 y con márgenes negativos.
+Y no puede partirse en dos líneas — medido, el peor caso posible (tres
+dígitos) cabe en una sola a 360px.
+
 ## Los cuatro indicadores (y por qué son esos)
 
 En Reigns cada pilar **tiene dueño**: el cardenal es la iglesia, el general
@@ -410,7 +494,7 @@ es el ejército. Ves quién habla y ya sabes qué te juegas. Aquí igual:
 | Indicador | Qué mide | Quién lo encarna |
 |---|---|---|
 | **Medios** | el relato, lo que se publica | Periodista, Jefe de Comunicación, Escudero, Juez |
-| **Gobierno** | que la coalición no se rompa | Vicepresidenta, Comunista Woke, Exiliado, Independentista, Expresidente, Ministra |
+| **Gobierno** | que la coalición no se rompa | Vicepresidenta, Comunista Woke, Exiliado, Independentista, Expresidente, Ministra, Ministra de Igualdad |
 | **Calle** | lo que piensa la gente | Encuestador, Ultraderecha, Presidenta Regional, Oposición |
 | **Caja B** | el dinero opaco | Ministro Caído, Hermano, Gurú, Primera Dama |
 
@@ -505,6 +589,12 @@ que el que juega al azar siga sin ganar nunca:
 El bot "óptimo" es codicioso a un turno; un humano que planifica y se sabe los
 personajes llega a ~20 %, que es la diana. La mediana del jugador competente
 sube de una legislatura a una y media: da tiempo a ver el mediojuego.
+
+Vuelve a medirlo cada vez que añadas cartas o toques una condición de final:
+el script de simulación está en el scratchpad y juega 5.000 partidas por
+modelo de jugador. Las últimas tandas (29 cartas del personaje nuevo, luego
+10 cartas más y 47 `pleases`) no movieron la aguja — 1,7 / 5,0 / 10,6 / 16,3 —
+pero eso hay que comprobarlo, no suponerlo.
 
 ### Muertes por evento
 

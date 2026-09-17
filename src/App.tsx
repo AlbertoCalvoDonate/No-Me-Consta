@@ -90,6 +90,8 @@ export default function App() {
   // en tiempo real conforme se mueve la carta (sin re-renders de React:
   // framer-motion actualiza esto fuera del ciclo de render).
   const [colaLogros, setColaLogros] = useState<Logro[]>([])
+  // Récord anterior a esta partida, para la comparación de la pantalla de fin.
+  const [recordPrevio, setRecordPrevio] = useState(0)
   const [verLogros, setVerLogros] = useState(false)
   const [compartido, setCompartido] = useState<'idle' | 'copiado' | 'error'>('idle')
 
@@ -142,6 +144,19 @@ export default function App() {
   const ilustracion = imagenDisponible && textoLen <= 190 ? imagenDisponible : undefined
   const modoCompacto = textoLen > (ilustracion ? 65 : 160)
 
+  // La marca a batir. Solo hay algo que decir si ya habías jugado (récord > 0)
+  // y no empataste. Cuando queda cerca se dice a cuánto, que pica más que el
+  // número pelado.
+  const meses = turn - 1
+  const esRecord = recordPrevio > 0 && meses > recordPrevio
+  const marcaTexto = (() => {
+    if (recordPrevio === 0 || meses === recordPrevio) return undefined
+    if (esRecord) return `Nuevo récord. Antes eran ${recordPrevio} meses.`
+    const faltan = recordPrevio - meses
+    if (faltan <= 6) return `A ${faltan} ${faltan === 1 ? 'mes' : 'meses'} de su récord.`
+    return `Su récord sigue siendo ${recordPrevio} meses.`
+  })()
+
   // Frase corta de "qué te tumbó" para el compartir. Los finales concretos
   // (moción, registro, urnas...) tienen su línea; los de barra dicen qué pilar
   // reventó; si no, la última frase del epílogo.
@@ -178,7 +193,7 @@ export default function App() {
     }
     if (yaComprobado.current) return
     yaComprobado.current = true
-    const nuevos = registrarPartida({
+    const { nuevos, recordPrevio } = registrarPartida({
       meses: turn - 1,
       moralidad,
       endingId: currentCard.id,
@@ -188,6 +203,7 @@ export default function App() {
       cartas: history,
       flags: flagsVistos,
     })
+    setRecordPrevio(recordPrevio)
     // El sonido y la vibración de logro los pone LogroToast, uno por uno
     // según van saliendo, no todos de golpe aquí.
     if (nuevos.length) setColaLogros(nuevos)
@@ -417,6 +433,27 @@ export default function App() {
                       Duró {turn - 1} {turn - 1 === 1 ? 'mes' : 'meses'} en el cargo
                       {turn - 1 >= 12 ? ` (${(( turn - 1) / 12).toFixed(1)} años)` : ''}.
                     </p>
+                    {/* La marca a batir, como en Reigns: enfrentarte a tu propio
+                        récord justo al morir es media razón para volver a darle.
+                        En la primera partida no hay con qué comparar, y si lo
+                        clavaste tampoco hay nada que decir: se calla. */}
+                    {marcaTexto && (
+                      <p
+                        style={{
+                          color: esRecord ? '#e0b84d' : '#8a8272',
+                          // En compacto va más apretada a propósito: medido a
+                          // 360x640, con los valores de siempre quince finales
+                          // se pasaban por 5px y obligaban a hacer scroll.
+                          fontSize: modoCompacto ? 12 : 13,
+                          lineHeight: modoCompacto ? 1.2 : 1.3,
+                          margin: modoCompacto ? '-7px 0 6px' : '-12px 0 18px',
+                          fontFamily: 'var(--font-pixel)',
+                          fontWeight: 500,
+                        }}
+                      >
+                        {marcaTexto}
+                      </p>
+                    )}
                     {/* Cómo le recordarán: el único momento en que se
                         enseña la moralidad acumulada, y sin número — solo el
                         título que se ha ganado, como los apodos que la

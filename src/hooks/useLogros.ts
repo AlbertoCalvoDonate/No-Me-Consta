@@ -78,10 +78,20 @@ function statRota(stats: Stats): StatKey | undefined {
   return ks.find((k) => stats[k] <= 0 || stats[k] >= 10)
 }
 
+export interface ResumenPartida {
+  nuevos: Logro[] // logros recién conseguidos, para el pop-up
+  // El récord ANTES de esta partida (0 si era la primera). La pantalla de fin
+  // lo necesita para poder decir "a cuatro meses de su récord": si se leyera
+  // el guardado después, el récord ya incluiría la partida que acaba de
+  // terminar y la comparación diría siempre cero.
+  recordPrevio: number
+}
+
 // Se llama una vez al terminar la partida. Actualiza los totales, comprueba
 // todos los logros y devuelve los que se acaban de conseguir (para el pop-up).
-export function registrarPartida(d: DatosPartida): Logro[] {
+export function registrarPartida(d: DatosPartida): ResumenPartida {
   const g = cargar()
+  const recordPrevio = g.mesesRecord
 
   g.partidas += 1
   if (!g.finales.includes(d.endingId)) g.finales.push(d.endingId)
@@ -138,7 +148,7 @@ export function registrarPartida(d: DatosPartida): Logro[] {
   }
 
   guardar(g)
-  return nuevos
+  return { nuevos, recordPrevio }
 }
 
 // Ids que existen HOY. Un guardado viejo puede tener ids que ya no estan (si
