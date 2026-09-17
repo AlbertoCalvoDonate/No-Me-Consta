@@ -299,11 +299,17 @@ const endingCards: Card[] = [
     right: { text: 'Resistir hasta que le echen', effects: {}, epilogueText: 'Aguanta tres semanas gobernando sin mayoría, sin socios y sin presupuesto. Luego ya no. Fin del gobierno.' },
     isEnding: true,
     byEvent: true,
-    // Tres personajes distintos con el enfado muy alto: no es un enfado
-    // puntual, es que te has quedado solo.
+    // Socios de verdad con el enfado muy alto: no es un enfado puntual, es que
+    // te has quedado solo. Cuenta SOLO a quien te sostiene el Gobierno — que
+    // el juez o el periodista estén hartos de ti no rompe ninguna coalición,
+    // y desde que ellos también acumulan enfado había que acotarlo.
     condition: (_s, _m, ctx) => {
-      const angers = Object.values(ctx.anger)
-      return angers.filter((a) => a >= 5).length >= 2 || angers.filter((a) => a >= 3).length >= 4
+      const socios = [
+        'La Vicepresidenta', 'La Socia Incómoda', 'El Exiliado', 'El Independentista',
+        'La Ministra', 'La Ministra de Igualdad', 'El Escudero',
+      ]
+      const enfados = socios.map((n) => ctx.anger[n] ?? 0)
+      return enfados.filter((a) => a >= 5).length >= 2 || enfados.filter((a) => a >= 3).length >= 4
     },
   },
   {
@@ -316,7 +322,12 @@ const endingCards: Card[] = [
     right: { text: 'Llamar al abogado y ganar horas', effects: {}, epilogueText: 'Los abogados retrasan el registro cuatro horas. Cuatro horas que salen en el auto, subrayadas. Fin del gobierno, y con agravante.' },
     isEnding: true,
     byEvent: true,
-    condition: (s, m) => s.caja >= 8 && s.medios <= 3 && m <= 3,
+    // Dos caminos al mismo sitio: la caja llena con la prensa encima y la
+    // moralidad por los suelos, o haberle dicho que no al juez una y otra vez
+    // hasta hartarle. Lo segundo es nuevo: sus cartas ya acumulan enfado.
+    condition: (s, m, ctx) =>
+      (s.caja >= 8 && s.medios <= 3 && m <= 3) ||
+      ((ctx.anger['El Juez'] ?? 0) >= 6 && s.caja >= 6),
   },
 
 ]

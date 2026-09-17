@@ -326,6 +326,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'juez',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -414,6 +415,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_fiscal_general',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -470,6 +472,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_juez_archivo',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -525,6 +528,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_dato_ine',
+    pleases: 'left',
     phase: 2,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
@@ -543,6 +547,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_uco',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -588,6 +593,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_encuesta_cis',
+    pleases: 'left',
     phase: 2,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
@@ -606,6 +612,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_contrato_covid',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -707,6 +714,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_pin_parental',
+    pleases: 'left',
     phase: 2,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
@@ -725,6 +733,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_caso_archivado',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -743,6 +752,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_sondeo_interno',
+    pleases: 'left',
     phase: 4,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
@@ -870,6 +880,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_dimision_exigida',
+    pleases: 'left',
     phase: 2,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
@@ -942,6 +953,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_registro_domicilio',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -951,6 +963,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_comision_investigacion',
+    pleases: 'left',
     phase: 3,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
@@ -1006,6 +1019,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_auditoria_externa',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -1015,6 +1029,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_extradicion',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -1069,6 +1084,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_urna_electoral',
+    pleases: 'left',
     phase: 4,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
@@ -1198,6 +1214,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_estudio_encargado',
+    pleases: 'left',
     phase: 2,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
@@ -1363,6 +1380,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_filtracion_sumario',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -1372,6 +1390,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_voto_particular',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -1390,6 +1409,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_ultima_encuesta',
+    pleases: 'left',
     phase: 4,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
@@ -1446,6 +1466,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_resultado_ajustado',
+    pleases: 'left',
     phase: 4,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
@@ -1525,6 +1546,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_al_ataque',
+    pleases: 'left',
     phase: 2,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
@@ -1534,6 +1556,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_menos_lobos',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -1543,6 +1566,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_quedao_pegao',
+    pleases: 'right',
     phase: 2,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
@@ -1833,6 +1857,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'react_enchufe_juez',
+    pleases: 'left',
     phase: 1,
     maxTurn: 0,
     weight: 0,
@@ -1866,6 +1891,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'react_indulto_oposicion',
+    pleases: 'right',
     phase: 4,
     maxTurn: 0,
     weight: 0,
@@ -1910,6 +1936,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'react_mascarillas_juez',
+    pleases: 'left',
     phase: 2,
     maxTurn: 0,
     weight: 0,
@@ -2654,6 +2681,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'mopongo_dos',
+    pleases: 'left',
     phase: 3,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
@@ -2663,6 +2691,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'mopongo_tres',
+    pleases: 'right',
     phase: 2,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
@@ -2672,6 +2701,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'mopongo_cuatro',
+    pleases: 'left',
     phase: 4,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
@@ -2681,6 +2711,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'mopongo_millones',
+    pleases: 'left',
     phase: 2,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
@@ -2692,6 +2723,7 @@ export const contentCards: Card[] = [
   // --- LA OPOSICIÓN (moderado, paciente, siempre a punto de ganar y nunca) ---
   {
     id: 'oposicion_no_es_serio',
+    pleases: 'left',
     phase: 2,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
@@ -2701,6 +2733,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'oposicion_comparecencia',
+    pleases: 'left',
     phase: 2,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
@@ -2719,6 +2752,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'oposicion_investidura',
+    pleases: 'right',
     phase: 4,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
@@ -3037,6 +3071,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'feud_juez_ministro',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -3091,6 +3126,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'feud_mopongo_todos',
+    pleases: 'right',
     phase: 3,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
@@ -3100,6 +3136,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'feud_oposicion_regional_2',
+    pleases: 'left',
     phase: 4,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
@@ -3238,6 +3275,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'react_dama_juez',
+    pleases: 'left',
     phase: 3,
     maxTurn: 0,
     weight: 0,
@@ -3388,6 +3426,7 @@ export const contentCards: Card[] = [
   // ============================================================================
   {
     id: 'trama_hermano_diligencias',
+    pleases: 'left',
     phase: 1,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -3433,6 +3472,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'trama_hermano_juicio',
+    pleases: 'left',
     phase: 2,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -3676,6 +3716,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'bomba_sobre_juez',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -4219,6 +4260,7 @@ export const contentCards: Card[] = [
   // --- MOPONGO (gobierno) ---
   {
     id: 'mopongo_cinco',
+    pleases: 'left',
     phase: 2,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
@@ -4373,6 +4415,7 @@ export const contentCards: Card[] = [
   // ============================================================================
   {
     id: 'bomba_igualdad_rebajas',
+    pleases: 'left',
     phase: 1,
     weight: 0,
     character: 'El Juez',
@@ -4431,6 +4474,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'bomba_catedra',
+    pleases: 'left',
     phase: 1,
     weight: 0,
     character: 'El Juez',
@@ -4469,6 +4513,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'bomba_decreto_tumbado',
+    pleases: 'left',
     phase: 1,
     weight: 0,
     character: 'El Juez',
@@ -4721,6 +4766,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'fiscal_traicion',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
@@ -4735,6 +4781,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'juez_sospecha',
+    pleases: 'left',
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
