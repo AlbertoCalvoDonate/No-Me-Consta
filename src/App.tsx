@@ -188,17 +188,18 @@ export default function App() {
       cartas: history,
       flags: flagsVistos,
     })
-    if (nuevos.length) {
-      setColaLogros(nuevos)
-      haptics.logro()
-    }
+    // El sonido y la vibración de logro los pone LogroToast, uno por uno
+    // según van saliendo, no todos de golpe aquí.
+    if (nuevos.length) setColaLogros(nuevos)
   }, [gameOver, currentCard, turn, moralidad, stats, history, flagsVistos])
 
-  // Cartas de hito: el balance de fin de ano y la noche electoral se anuncian.
+  // Cartas de hito: el balance de fin de ano, la noche electoral y la carta de
+  // favor se anuncian con su propio sonido.
   useEffect(() => {
     if (gameOver) return
     if (currentCard.isElection) sfx.eleccion()
     else if (currentCard.isRecap) sfx.balance()
+    else if (currentCard.id === 'favor_ganado') sfx.favor()
   }, [currentCard, gameOver])
 
   // Aviso al entrar una barra en zona critica (el mismo umbral que las pinta

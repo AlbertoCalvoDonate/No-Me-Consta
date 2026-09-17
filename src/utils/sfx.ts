@@ -11,6 +11,13 @@
 //  - El volumen se ajusta en pasos (25/50/75/100 % y mudo) y la preferencia se
 //    recuerda. Un juego que suena sin permiso en una pestaña es un juego que
 //    se cierra.
+//
+// CADENA: cada sonido entra por seco (`mezcla`) y, si quiere, manda una copia
+// al envío de reverb. Todo pasa por un compresor antes de salir, porque en una
+// partida rápida se solapan tres o cuatro sonidos y sin él saturaba.
+//
+//   nota/ruido ──┬─────────────────────► mezcla ─► master(volumen) ─► comp ─► out
+//                └─► envio ─► convolver ─┘
 
 const STORAGE_KEY = 'nomeconsta.volumen'
 
@@ -23,6 +30,8 @@ const POR_DEFECTO = 3 // 100 %
 
 let ctx: AudioContext | null = null
 let master: GainNode | null = null
+let mezcla: GainNode | null = null
+let envio: GainNode | null = null
 let paso = leerPaso()
 
 function leerPaso(): number {
@@ -35,6 +44,24 @@ function leerPaso(): number {
   }
 }
 
+// Respuesta al impulso de una sala pequeña, generada al vuelo: ruido que decae
+// exponencialmente. Corta (0,9 s) a propósito — queremos que los sonidos tengan
+// aire, no que suenen dentro de una catedral.
+function salaCorta(c: AudioContext): AudioBuffer {
+  const dur = 0.9
+  const n = Math.floor(c.sampleRate * dur)
+  const buf = c.createBuffer(2, n, c.sampleRate)
+  for (let canal = 0; canal < 2; canal++) {
+    const d = buf.getChannelData(canal)
+    for (let i = 0; i < n; i++) {
+      // El (1 - i/n)^3 da la caída; el arranque suave evita el "clic" inicial.
+      const caida = Math.pow(1 - i / n, 3)
+      d[i] = (Math.random() * 2 - 1) * caida * Math.min(1, i / 400)
+    }
+  }
+  return buf
+}
+
 function getCtx(): AudioContext | null {
   if (PASOS[paso] === 0) return null
   if (ctx) return ctx
@@ -42,48 +69,111 @@ function getCtx(): AudioContext | null {
     const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
     if (!Ctor) return null
     ctx = new Ctor()
+
+    const comp = ctx.createDynamicsCompressor()
+    comp.threshold.value = -18
+    comp.knee.value = 12
+    comp.ratio.value = 6
+    comp.attack.value = 0.004
+    comp.release.value = 0.18
+    comp.connect(ctx.destination)
+
     master = ctx.createGain()
     master.gain.value = BASE_GAIN * PASOS[paso]
-    master.connect(ctx.destination)
+    master.connect(comp)
+
+    mezcla = ctx.createGain()
+    mezcla.connect(master)
+
+    const conv = ctx.createConvolver()
+    conv.buffer = salaCorta(ctx)
+    conv.connect(mezcla)
+    envio = ctx.createGain()
+    envio.gain.value = 1
+    envio.connect(conv)
   } catch {
     return null
   }
   return ctx
 }
 
-// Una nota. `bend` sube o baja el tono durante la nota (para los glissandos).
-function nota(
-  freq: number,
-  dur: number,
-  {
-    tipo = 'square' as OscillatorType,
-    retraso = 0,
-    volumen = 1,
-    bend = 0,
-  } = {}
-) {
+// Micro-desafinado aleatorio (±12 céntimos). El roce y los "papeles" suenan en
+// cada carta: sin esto se oyen como una ametralladora, siempre el mismo clip.
+function pizcaDeAzar(): number {
+  return 1 + (Math.random() - 0.5) * 0.014
+}
+
+interface OpcionesNota {
+  tipo?: OscillatorType
+  retraso?: number
+  volumen?: number
+  /** Sube o baja el tono durante la nota (glissandos). */
+  bend?: number
+  /** Segundo oscilador desafinado en céntimos: engorda el timbre. */
+  unison?: number
+  /** Filtro paso-bajo; si se da `barridoA`, hace un barrido hasta esa frecuencia. */
+  filtro?: number
+  barridoA?: number
+  /** Cuánto se manda a la reverb (0-1). */
+  reverb?: number
+  /** Deja el tono exacto (para acordes y fanfarrias). */
+  exacto?: boolean
+}
+
+function nota(freq: number, dur: number, o: OpcionesNota = {}) {
   const c = getCtx()
-  if (!c || !master) return
+  if (!c || !mezcla || !envio) return
+  const {
+    tipo = 'square', retraso = 0, volumen = 1, bend = 0,
+    unison = 0, filtro, barridoA, reverb = 0, exacto = false,
+  } = o
   const t0 = c.currentTime + retraso
-  const osc = c.createOscillator()
+  const f = exacto ? freq : freq * pizcaDeAzar()
+
   const g = c.createGain()
-  osc.type = tipo
-  osc.frequency.setValueAtTime(freq, t0)
-  if (bend) osc.frequency.exponentialRampToValueAtTime(Math.max(20, freq + bend), t0 + dur)
   // Ataque muy corto y caída exponencial: sin esto se oye un "clic" al cortar.
   g.gain.setValueAtTime(0.0001, t0)
   g.gain.exponentialRampToValueAtTime(volumen, t0 + 0.012)
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
-  osc.connect(g)
-  g.connect(master)
-  osc.start(t0)
-  osc.stop(t0 + dur + 0.02)
+
+  let salida: AudioNode = g
+  if (filtro) {
+    const lp = c.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.Q.value = 6
+    lp.frequency.setValueAtTime(filtro, t0)
+    if (barridoA) lp.frequency.exponentialRampToValueAtTime(Math.max(60, barridoA), t0 + dur)
+    g.connect(lp)
+    salida = lp
+  }
+  salida.connect(mezcla)
+  if (reverb > 0) {
+    const env = c.createGain()
+    env.gain.value = reverb
+    salida.connect(env)
+    env.connect(envio)
+  }
+
+  const voces = unison ? [0, unison, -unison] : [0]
+  for (const cents of voces) {
+    const osc = c.createOscillator()
+    osc.type = tipo
+    osc.frequency.setValueAtTime(f, t0)
+    osc.detune.value = cents
+    if (bend) osc.frequency.exponentialRampToValueAtTime(Math.max(20, f + bend), t0 + dur)
+    osc.connect(g)
+    osc.start(t0)
+    osc.stop(t0 + dur + 0.02)
+  }
 }
 
-// Ruido blanco con envolvente: sirve para papeles, murmullos y aplausos.
-function ruido(dur: number, { retraso = 0, volumen = 0.5, filtro = 1200 } = {}) {
+// Ruido con envolvente: sirve para papeles, murmullos y aplausos.
+function ruido(
+  dur: number,
+  { retraso = 0, volumen = 0.5, filtro = 1200, tipoFiltro = 'bandpass' as BiquadFilterType, barridoA = 0, reverb = 0 } = {}
+) {
   const c = getCtx()
-  if (!c || !master) return
+  if (!c || !mezcla || !envio) return
   const t0 = c.currentTime + retraso
   const n = Math.floor(c.sampleRate * dur)
   const buf = c.createBuffer(1, n, c.sampleRate)
@@ -92,15 +182,22 @@ function ruido(dur: number, { retraso = 0, volumen = 0.5, filtro = 1200 } = {}) 
   const src = c.createBufferSource()
   src.buffer = buf
   const bp = c.createBiquadFilter()
-  bp.type = 'bandpass'
-  bp.frequency.value = filtro
+  bp.type = tipoFiltro
+  bp.frequency.setValueAtTime(filtro, t0)
+  if (barridoA) bp.frequency.exponentialRampToValueAtTime(Math.max(60, barridoA), t0 + dur)
   const g = c.createGain()
   g.gain.setValueAtTime(0.0001, t0)
   g.gain.exponentialRampToValueAtTime(volumen, t0 + 0.02)
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
   src.connect(bp)
   bp.connect(g)
-  g.connect(master)
+  g.connect(mezcla)
+  if (reverb > 0) {
+    const env = c.createGain()
+    env.gain.value = reverb
+    g.connect(env)
+    env.connect(envio)
+  }
   src.start(t0)
   src.stop(t0 + dur)
 }
@@ -108,59 +205,89 @@ function ruido(dur: number, { retraso = 0, volumen = 0.5, filtro = 1200 } = {}) 
 export const sfx = {
   // Al empezar a arrastrar la carta: un toque seco, casi imperceptible.
   roce() {
-    nota(320, 0.05, { tipo: 'triangle', volumen: 0.25 })
+    nota(320, 0.05, { tipo: 'triangle', volumen: 0.22, filtro: 1800 })
   },
 
   // Elección turbia: la moneda de toda la vida, dos notas rápidas hacia
   // arriba. Suena a premio, que es justo el chiste.
   moneda() {
-    nota(988, 0.07, { tipo: 'square', volumen: 0.5 })
-    nota(1319, 0.22, { tipo: 'square', retraso: 0.07, volumen: 0.5 })
+    nota(988, 0.07, { tipo: 'square', volumen: 0.45, unison: 8, reverb: 0.12 })
+    nota(1319, 0.24, { tipo: 'square', retraso: 0.07, volumen: 0.45, unison: 8, reverb: 0.2 })
   },
 
   // Elección honesta: una campanita limpia. Suena bien y no da nada.
   campana() {
-    nota(880, 0.16, { tipo: 'triangle', volumen: 0.45 })
-    nota(1320, 0.3, { tipo: 'triangle', retraso: 0.05, volumen: 0.28 })
+    nota(880, 0.18, { tipo: 'triangle', volumen: 0.42, unison: 5, reverb: 0.25 })
+    nota(1320, 0.34, { tipo: 'triangle', retraso: 0.05, volumen: 0.24, reverb: 0.3 })
   },
 
   // Elección neutra: papeles.
   papel() {
-    ruido(0.13, { volumen: 0.28, filtro: 2600 })
+    ruido(0.13, { volumen: 0.26, filtro: 2600, barridoA: 1500, reverb: 0.08 })
   },
 
   // Una barra entra en zona crítica: dos pitidos de alarma barata.
   alarma() {
-    nota(440, 0.1, { tipo: 'sawtooth', volumen: 0.35 })
-    nota(440, 0.1, { tipo: 'sawtooth', retraso: 0.15, volumen: 0.35 })
+    nota(440, 0.1, { tipo: 'sawtooth', volumen: 0.32, filtro: 2200, reverb: 0.1 })
+    nota(440, 0.1, { tipo: 'sawtooth', retraso: 0.15, volumen: 0.32, filtro: 2200, reverb: 0.1 })
   },
 
   // Balance de fin de año: campanita de calendario, tres notas subiendo.
   balance() {
-    nota(659, 0.12, { tipo: 'triangle', volumen: 0.4 })
-    nota(784, 0.12, { tipo: 'triangle', retraso: 0.11, volumen: 0.4 })
-    nota(1047, 0.26, { tipo: 'triangle', retraso: 0.22, volumen: 0.4 })
+    const notas = [659, 784, 1047]
+    notas.forEach((f, i) =>
+      nota(f, i === 2 ? 0.28 : 0.13, {
+        tipo: 'triangle', retraso: i * 0.11, volumen: 0.38, unison: 5, exacto: true, reverb: 0.3,
+      })
+    )
   },
 
   // Noche electoral: fanfarria cutre de telediario, con su murmullo detrás.
   eleccion() {
-    nota(523, 0.13, { tipo: 'square', volumen: 0.4 })
-    nota(659, 0.13, { tipo: 'square', retraso: 0.12, volumen: 0.4 })
-    nota(784, 0.13, { tipo: 'square', retraso: 0.24, volumen: 0.4 })
-    nota(1047, 0.34, { tipo: 'square', retraso: 0.36, volumen: 0.45 })
-    ruido(0.5, { retraso: 0.36, volumen: 0.14, filtro: 900 })
+    const notas = [523, 659, 784, 1047]
+    notas.forEach((f, i) =>
+      nota(f, i === 3 ? 0.36 : 0.13, {
+        tipo: 'square', retraso: i * 0.12, volumen: 0.4, unison: 9, exacto: true, reverb: 0.25,
+      })
+    )
+    ruido(0.5, { retraso: 0.36, volumen: 0.12, filtro: 900, reverb: 0.4 })
+  },
+
+  // Te acabas de ganar a alguien de verdad (carta de favor): dos notas
+  // cómplices, en corto, como un apretón de manos que nadie ve.
+  favor() {
+    nota(587, 0.12, { tipo: 'triangle', volumen: 0.34, unison: 6, exacto: true, reverb: 0.25 })
+    nota(880, 0.3, { tipo: 'triangle', retraso: 0.1, volumen: 0.3, unison: 6, exacto: true, reverb: 0.35 })
+  },
+
+  // Logro desbloqueado: el "ding" que le faltaba al pop-up. Arpegio brillante
+  // de cuatro notas con una chispa de ruido agudo encima.
+  logro() {
+    const notas = [784, 1047, 1319, 1568]
+    notas.forEach((f, i) =>
+      nota(f, i === 3 ? 0.42 : 0.1, {
+        tipo: 'triangle', retraso: i * 0.07, volumen: 0.36, unison: 6, exacto: true, reverb: 0.35,
+      })
+    )
+    ruido(0.35, { retraso: 0.2, volumen: 0.07, filtro: 7000, barridoA: 11000, reverb: 0.4 })
   },
 
   // Fin del gobierno: el trombón triste de toda la vida. Cuatro notas que
-  // caen, cada una arrastrando el tono hacia abajo. Es LA broma del juego.
+  // caen, cada una arrastrando el tono hacia abajo, con el filtro cerrándose
+  // detrás — ese "wah" que se cierra es lo que lo hace trombón y no pitido.
   trombon() {
     const notas = [392, 349, 330, 262]
     notas.forEach((f, i) => {
-      nota(f, i === notas.length - 1 ? 0.75 : 0.28, {
+      const ultima = i === notas.length - 1
+      nota(f, ultima ? 0.85 : 0.28, {
         tipo: 'sawtooth',
         retraso: i * 0.26,
-        volumen: 0.5,
+        volumen: 0.48,
         bend: -28,
+        unison: 7,
+        filtro: 1400,
+        barridoA: ultima ? 260 : 600,
+        reverb: 0.3,
       })
     })
   },
@@ -168,8 +295,12 @@ export const sfx = {
   // Sobrevivir las tres legislaturas: la fanfarria buena, con aplausos.
   triunfo() {
     const notas = [523, 659, 784, 1047, 1319]
-    notas.forEach((f, i) => nota(f, 0.2, { tipo: 'square', retraso: i * 0.12, volumen: 0.42 }))
-    ruido(1.1, { retraso: 0.6, volumen: 0.2, filtro: 1500 })
+    notas.forEach((f, i) =>
+      nota(f, i === 4 ? 0.5 : 0.2, {
+        tipo: 'square', retraso: i * 0.12, volumen: 0.4, unison: 10, exacto: true, reverb: 0.3,
+      })
+    )
+    ruido(1.2, { retraso: 0.6, volumen: 0.18, filtro: 1500, reverb: 0.5 })
   },
 
   // --- volumen ----------------------------------------------------------
@@ -194,6 +325,8 @@ export const sfx = {
         void ctx.close()
         ctx = null
         master = null
+        mezcla = null
+        envio = null
       }
     } else if (master) {
       master.gain.value = BASE_GAIN * factor

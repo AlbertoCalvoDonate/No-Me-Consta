@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { Logro } from '../data/logros'
+import { sfx } from '../utils/sfx'
+import { haptics } from '../utils/haptics'
 
 // Pop-up estilo logro de Xbox: aparece justo debajo de los indicadores, se
 // queda unos segundos y se va. Si hay varios, se muestran uno detrás de otro
@@ -25,6 +27,9 @@ export function LogroToast({
       onVaciar()
       return
     }
+    // Un "ding" por logro, según va saliendo cada uno — no todos de golpe.
+    sfx.logro()
+    haptics.logro()
     const t = setTimeout(() => setI((n) => n + 1), 3600)
     return () => clearTimeout(t)
   }, [i, cola, onVaciar])
