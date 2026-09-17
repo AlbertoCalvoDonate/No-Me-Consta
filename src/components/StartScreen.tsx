@@ -48,6 +48,10 @@ export function StartScreen({
 }) {
   const { partidas, mesesRecord, epitetoRecord, epitetosVistos, hechos, total } = useLogrosEstado()
 
+  // "Empezar de cero" con partida guardada borra esa partida sin avisar —
+  // un toque de más y se pierde. Un paso de confirmación de por medio.
+  const [confirmando, setConfirmando] = useState(false)
+
   const toques = useRef(0)
   const ultimoToque = useRef(0)
   const [reseteado, setReseteado] = useState(false)
@@ -175,7 +179,7 @@ export function StartScreen({
             <button onClick={onContinuar} style={botonPrimario}>
               Continuar · mes {Math.max(1, mesEnCurso)}
             </button>
-            <button onClick={onStart} style={botonSecundario}>
+            <button onClick={() => setConfirmando(true)} style={botonSecundario}>
               Empezar de cero
             </button>
           </>
@@ -209,6 +213,66 @@ export function StartScreen({
         {reseteado ? 'Logros borrados' : `v${__APP_VERSION__} · ${buildDate}`}
       </div>
       </div>
+
+      {/* Confirmación antes de tirar la partida guardada: un toque de más en
+          "Empezar de cero" no debería costar el mes 30 sin avisar. */}
+      {confirmando && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 30,
+            background: 'rgba(0,0,0,0.65)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 24,
+          }}
+        >
+          <div
+            style={{
+              background: '#1c1c1e',
+              borderRadius: 14,
+              padding: '22px 20px',
+              maxWidth: 300,
+              width: '100%',
+              boxSizing: 'border-box',
+              textAlign: 'center',
+              border: '1px solid rgba(255,77,77,0.35)',
+            }}
+          >
+            <p style={{ ...pixel, margin: '0 0 18px', fontWeight: 500, fontSize: 18, lineHeight: 1.4, color: '#f2ede0' }}>
+              ¿Empezar de cero?
+              <br />
+              Perderás la partida del mes {mesEnCurso}.
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button onClick={() => setConfirmando(false)} style={botonSecundario}>
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  setConfirmando(false)
+                  onStart()
+                }}
+                style={{
+                  ...pixel,
+                  background: '#ff4d4d',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '9px 18px',
+                  fontWeight: 400,
+                  fontSize: 16,
+                  color: '#1a1a1a',
+                  cursor: 'pointer',
+                }}
+              >
+                Sí, borrarla
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
