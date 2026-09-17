@@ -5139,4 +5139,244 @@ export const contentCards: Card[] = [
     condition: (s, _m, ctx) => (ctx.turn === 36 || ctx.turn === 84) && (s.calle <= 4 || s.gobierno <= 4),
   },
 
+  // ============================================================================
+  // LO QUE TAPÓ SIGUE AHÍ
+  //
+  // Cada bomba de relojería apaga su flag SOLO en la opción decente. Si usted
+  // eligió taparlo, el flag se queda encendido para siempre y hasta ahora no
+  // lo leía nadie: la mentira salía gratis a partir del segundo asalto. Estas
+  // cartas son ese segundo asalto. Aparecen bastante después de que la bomba
+  // haya estallado (`flagAge` por encima del `scheduleIn` original) y todas
+  // ofrecen lo mismo: una última salida cara, o hundirse un poco más.
+  //
+  // Repartidas a propósito entre los personajes con menos cartas del mazo.
+  // ============================================================================
+  {
+    id: 'secuela_transfuga',
+    phase: 3,
+    weight: 3,
+    character: 'La Presidenta Regional',
+    characterImage: 'oposicionvacilona.webp',
+    text: 'Su diputado prestado me ha llamado a mí. Dice que aquí se le valoraría mejor. Le he dicho que me lo pensaré, y se lo cuento delante para que sepa en qué consiste hoy su mayoría: un señor y un teléfono.',
+    left: {
+      text: 'Mejorarle lo que ella le ofrezca',
+      effects: { gobierno: 1, caja: -2, calle: -1 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Que se vaya, y contar cuánto pedía',
+      effects: { gobierno: -2, medios: 2 },
+      moralidad: 2,
+      removeFlags: ['transfuga'],
+    },
+    pleases: 'left',
+    condition: (_s, _m, ctx) => ctx.flagAge('transfuga') >= 13,
+  },
+  {
+    id: 'secuela_catedra',
+    phase: 3,
+    weight: 3,
+    character: 'La Primera Dama',
+    characterImage: 'primeradama.webp',
+    text: 'La universidad le ha pedido que dé la lección inaugural del curso. Ya tiene hasta el vestido. "Es un honor y además calla bocas." En primera fila estará sentado, aplaudiendo mucho, el decano que firmó aquella plaza.',
+    left: {
+      text: 'Que la dé: es un honor',
+      effects: { medios: -2, gobierno: 1 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Que ese día le surja algo importantísimo',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: 1,
+      removeFlags: ['catedra_dama'],
+    },
+    pleases: 'left',
+    condition: (_s, _m, ctx) => ctx.flagAge('catedra_dama') >= 17,
+  },
+  {
+    id: 'secuela_dato_cocinado',
+    phase: 2,
+    weight: 3,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.webp',
+    text: 'Eurostat ha publicado los suyos esta mañana. No coinciden con los nuestros justo en la cifra que usted ha citado nueve veces. La diferencia son dos décimas. El titular son dos líneas y ya está escrito.',
+    left: {
+      text: 'Corregir la serie y aguantar el día',
+      effects: { medios: 2, gobierno: -2 },
+      moralidad: 2,
+      removeFlags: ['dato_cocinado'],
+    },
+    right: {
+      text: '"Son metodologías distintas"',
+      effects: { medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+    condition: (_s, _m, ctx) => ctx.flagAge('dato_cocinado') >= 12,
+  },
+  {
+    id: 'secuela_sumario_filtrado',
+    phase: 3,
+    weight: 3,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'Aquel sumario sigue circulando. Ha llegado a un juzgado que pregunta de dónde salió, y el recorrido, por eliminación, acaba en muy poca gente. Yo estoy en esa lista. Usted todavía no.',
+    left: {
+      text: 'Dejar que la lista se acorte sola',
+      effects: { gobierno: 1, medios: -1 },
+      moralidad: -3,
+    },
+    right: {
+      text: 'Contarlo usted antes de que lo cuente el juzgado',
+      effects: { medios: 1, gobierno: -3 },
+      moralidad: 3,
+      removeFlags: ['sumario_filtrado'],
+    },
+    pleases: 'right',
+    condition: (_s, _m, ctx) => ctx.flagAge('sumario_filtrado') >= 15,
+  },
+  {
+    id: 'secuela_decreto_express',
+    phase: 3,
+    weight: 3,
+    character: 'El Independentista',
+    characterImage: 'independentista.webp',
+    text: 'Su decreto llega hoy a convalidación. Me lo he leído entero, que ya es más de lo que hizo usted. Hay una disposición adicional que nos afecta y que no nos consultó nadie. Podemos hablarlo ahora o en la votación.',
+    left: {
+      text: 'Negociar la disposición ahora',
+      effects: { gobierno: 1, caja: -2, medios: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Que vote lo que le parezca',
+      effects: { gobierno: -2, medios: 1 },
+      moralidad: 1,
+      removeFlags: ['decreto_express'],
+    },
+    pleases: 'left',
+    condition: (_s, _m, ctx) => ctx.flagAge('decreto_express') >= 16,
+  },
+  {
+    id: 'secuela_igualdad_ley',
+    phase: 3,
+    weight: 3,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Viene con una carpeta de recortes y la abre encima de la mesa. "Mire: cuatrocientas. Y lo siguen contando como un error mío." La cierra. "Yo no pienso tocar esa ley. Si la toca usted, que quede claro que fue usted."',
+    left: {
+      text: 'Reformarla por encima de ella',
+      effects: { medios: 2, calle: 1, gobierno: -2 },
+      moralidad: 2,
+      removeFlags: ['igualdad_ley'],
+    },
+    right: {
+      text: 'Sostenerla y que sigan contando',
+      effects: { medios: -2, gobierno: 1 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+    condition: (_s, _m, ctx) => ctx.flagAge('igualdad_ley') >= 14,
+  },
+  {
+    id: 'secuela_igualdad_chiringuito',
+    phase: 3,
+    weight: 3,
+    character: 'El Cruzado',
+    characterImage: 'cruzado.webp',
+    text: 'Traigo registrada una pregunta parlamentaria de una sola línea: cuántas de las doce siguen cobrando. Sé la respuesta. Usted también. La gracia está en oírsela decir a usted, en el hemiciclo y con la cámara puesta.',
+    left: {
+      text: 'Contestar la verdad: doce',
+      effects: { medios: 2, gobierno: -2 },
+      moralidad: 2,
+      removeFlags: ['igualdad_chiringuito'],
+    },
+    right: {
+      text: 'Contestar dieciséis folios y ningún número',
+      effects: { medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+    condition: (_s, _m, ctx) => ctx.flagAge('igualdad_chiringuito') >= 14,
+  },
+  {
+    id: 'secuela_subvencion_guru',
+    phase: 3,
+    weight: 3,
+    character: 'El Gurú',
+    characterImage: 'guru.webp',
+    text: 'Su fundación ha montado un ciclo de charlas. Se titula "Cómo nos fallaron" y la primera la da él. Abajo del todo, en letra pequeña, el cartel lleva el logotipo del ministerio que se lo paga.',
+    left: {
+      text: 'Retirarle la subvención hoy mismo',
+      effects: { medios: 1, calle: -2 },
+      moralidad: 1,
+      removeFlags: ['subvencion_guru'],
+    },
+    right: {
+      text: 'Pagarle el ciclo y tragarse las charlas',
+      effects: { caja: -2, calle: 1, medios: -1 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+    condition: (_s, _m, ctx) => ctx.flagAge('subvencion_guru') >= 15,
+  },
+  {
+    id: 'secuela_favor_debido',
+    phase: 3,
+    weight: 3,
+    character: 'El Hermano',
+    characterImage: 'hermano.webp',
+    text: 'Me ha llamado un señor diciendo que le debes un favor. No sé quién es. Sabía mi número, sabía dónde estudian mis hijos y sabía lo del favor. Le he dicho que sí, por si acaso. ¿He hecho bien?',
+    left: {
+      text: 'Cortar eso hoy mismo y de raíz',
+      effects: { gobierno: -2, medios: 1 },
+      moralidad: 2,
+      removeFlags: ['favor_debido'],
+    },
+    right: {
+      text: '"Dale lo que pida y no me cuentes más"',
+      effects: { caja: -1, calle: -1, medios: -1 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+    condition: (_s, _m, ctx) => ctx.flagAge('favor_debido') >= 14,
+  },
+  // Si le rescataron y luego cedió en la carta del cobro, la deuda se queda
+  // encendida para siempre y hasta ahora no la leía nadie más. Solo se puede
+  // deber a UNA persona por partida (`ya_te_salvaron` cierra la puerta a un
+  // segundo rescate), así que esta carta habla de un solo acreedor y llega
+  // muy tarde: veinte meses después de aquel domingo.
+  {
+    id: 'acreedor_unico',
+    phase: 3,
+    weight: 4,
+    character: 'El Presidente',
+    characterImage: 'presi.webp',
+    text: 'Despacho vacío, once de la noche. Coge un papel y apunta lo que debe y a quién. Es un solo nombre. Luego repasa lo que ha decidido este mes y se da cuenta de que no se le ocurrió a usted casi nada.',
+    left: {
+      text: 'Saldarlo entero mañana y quedar libre',
+      effects: { caja: -3, gobierno: -1, medios: 1 },
+      moralidad: 2,
+      removeFlags: [
+        'debe_favor_comunicacion',
+        'deuda_escudero',
+        'deuda_socia',
+        'deuda_ministro',
+        'deuda_magistrado',
+      ],
+    },
+    right: {
+      text: 'Romper el papel y seguir gobernando',
+      effects: { gobierno: 1, medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+    // Las cinco escritas una a una a propósito: así se ve de un vistazo qué
+    // deudas cuentan y la auditoría del mazo las encuentra.
+    condition: (_s, _m, ctx) =>
+      ctx.flagAge('debe_favor_comunicacion') >= 20 ||
+      ctx.flagAge('deuda_escudero') >= 20 ||
+      ctx.flagAge('deuda_socia') >= 20 ||
+      ctx.flagAge('deuda_ministro') >= 20 ||
+      ctx.flagAge('deuda_magistrado') >= 20,
+  },
+
 ]

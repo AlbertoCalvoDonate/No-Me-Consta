@@ -1,12 +1,18 @@
 import { useCallback, useState } from 'react'
 import { LOGROS, type Logro, type ResultadoPartida } from '../data/logros'
+import { cards } from '../data/cards'
 import type { Stats, StatKey } from '../types'
 
 const KEY = 'nomeconsta.logros'
 
+// Cuántas cartas distintas hay en total. Es el denominador de la colección:
+// como en Reigns, el mazo es tan grande que en una partida solo se ve un
+// pellizco, y saber cuánto queda por ver es media razón para volver a jugar.
+export const TOTAL_CARTAS = cards.length
+
 // Lo que se guarda: qué logros están conseguidos y los totales que hacen falta
 // para los logros acumulativos (partidas jugadas, finales distintos vistos,
-// récord de meses, qué epítetos han salido).
+// récord de meses, qué epítetos han salido, qué cartas se han visto alguna vez).
 interface Guardado {
   conseguidos: string[]
   partidas: number
@@ -14,6 +20,7 @@ interface Guardado {
   mesesRecord: number
   epitetoRecord: number // epíteto (índice 0-10) de la partida más larga
   epitetos: number[] // índices 0-10
+  cartasVistas: string[] // ids vistos en CUALQUIER partida (la colección)
 }
 
 const VACIO: Guardado = {
@@ -23,6 +30,7 @@ const VACIO: Guardado = {
   mesesRecord: 0,
   epitetoRecord: -1,
   epitetos: [],
+  cartasVistas: [],
 }
 
 function cargar(): Guardado {
@@ -37,6 +45,7 @@ function cargar(): Guardado {
       mesesRecord: p.mesesRecord || 0,
       epitetoRecord: typeof p.epitetoRecord === 'number' ? p.epitetoRecord : -1,
       epitetos: Array.isArray(p.epitetos) ? p.epitetos : [],
+      cartasVistas: Array.isArray(p.cartasVistas) ? p.cartasVistas : [],
     }
   } catch {
     return { ...VACIO }
@@ -83,6 +92,13 @@ export function registrarPartida(d: DatosPartida): Logro[] {
   }
   if (!g.epitetos.includes(epi)) g.epitetos.push(epi)
 
+  // La colección: se suman las cartas de esta partida a las de todas las
+  // anteriores. Solo cuentan ids que sigan existiendo en el mazo, para que
+  // renombrar una carta no infle el contador para siempre.
+  const coleccion = new Set(g.cartasVistas)
+  for (const id of d.cartas) if (IDS_CARTAS.has(id)) coleccion.add(id)
+  g.cartasVistas = [...coleccion]
+
   const gano =
     d.esEleccion && !/derrota|repeticion|quemado|retirada/.test(d.endingId)
 
@@ -103,6 +119,7 @@ export function registrarPartida(d: DatosPartida): Logro[] {
     finalesDistintos: g.finales.length,
     mesesRecord: g.mesesRecord,
     epitetosVistos: g.epitetos.length,
+    cartasColeccionadas: g.cartasVistas.length,
   }
 
   const nuevos: Logro[] = []
@@ -128,6 +145,7 @@ export function registrarPartida(d: DatosPartida): Logro[] {
 // alguna vez se renombra un logro): siguen en localStorage por si vuelven,
 // pero no cuentan para el "X de Y" ni descuadran el total.
 const IDS_VIGENTES = new Set(LOGROS.map((l) => l.id))
+const IDS_CARTAS = new Set(cards.map((c) => c.id))
 
 // Estado para la pantalla de la lista. Se relee cada vez que se monta el panel.
 export function useLogrosEstado() {
@@ -144,6 +162,8 @@ export function useLogrosEstado() {
     epitetoRecord: g.epitetoRecord,
     finalesVistos: g.finales.length,
     epitetosVistos: g.epitetos.length,
+    cartasVistas: g.cartasVistas.filter((id) => IDS_CARTAS.has(id)).length,
+    totalCartas: TOTAL_CARTAS,
     refrescar,
   }
 }

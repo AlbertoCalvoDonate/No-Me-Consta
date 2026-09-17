@@ -46,7 +46,8 @@ export function StartScreen({
   mesEnCurso: number
   onVerLogros: () => void
 }) {
-  const { partidas, mesesRecord, epitetoRecord, epitetosVistos, hechos, total } = useLogrosEstado()
+  const { partidas, mesesRecord, epitetoRecord, epitetosVistos, hechos, total, cartasVistas, totalCartas } =
+    useLogrosEstado()
 
   // "Empezar de cero" con partida guardada borra esa partida sin avisar —
   // un toque de más y se pierde. Un paso de confirmación de por medio.
@@ -169,6 +170,9 @@ export function StartScreen({
           </div>
           <div>
             {epitetosVistos}/{TOTAL_EPITETOS} epítetos · {hechos}/{total} logros
+          </div>
+          <div>
+            Has visto <span style={{ color: '#c9a24a' }}>{cartasVistas}</span> de {totalCartas} cartas
           </div>
         </div>
       )}

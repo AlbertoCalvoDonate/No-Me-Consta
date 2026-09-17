@@ -13,10 +13,12 @@
 // dentro de las cartas) — si eso deja de ser cierto, este script habrá
 // que actualizarlo.
 
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const CONTENT_FILE = fileURLToPath(new URL('../src/data/cards.content.ts', import.meta.url))
+const RETRATOS_DIR = fileURLToPath(new URL('../public/characters', import.meta.url))
+const RETRATOS = new Set(readdirSync(RETRATOS_DIR))
 const VALID_STATS = ['medios', 'gobierno', 'calle', 'caja']
 const VALID_PHASES = [1, 2, 3, 4]
 const EFFECT_MIN = -3
@@ -73,6 +75,19 @@ function validate(cards) {
 
     if (!card.character || typeof card.character !== 'string') {
       errors.push(`${label}: falta "character" (quién habla en la carta).`)
+    }
+
+    // El retrato tiene que existir en public/characters. Sin esto, escribir
+    // mal el nombre del fichero no falla en ningún sitio: la carta sale en
+    // el juego con un hueco donde debería estar la cara.
+    if (card.characterImage !== undefined) {
+      if (typeof card.characterImage !== 'string') {
+        errors.push(`${label}: "characterImage" debería ser el nombre del fichero, entre comillas.`)
+      } else if (!RETRATOS.has(card.characterImage)) {
+        errors.push(
+          `${label}: el retrato "${card.characterImage}" no está en public/characters/.`,
+        )
+      }
     }
 
     if (!card.text || typeof card.text !== 'string') {

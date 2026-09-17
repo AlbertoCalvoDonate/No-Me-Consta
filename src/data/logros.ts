@@ -1,4 +1,5 @@
 import type { Stats, StatKey } from '../types'
+import { cards } from './cards'
 
 // Sistema de logros. Cada logro tiene un check(r) que decide si se consigue,
 // mirando el RESULTADO de la partida que acaba de terminar (mas los totales
@@ -25,6 +26,7 @@ export interface ResultadoPartida {
   finalesDistintos: number // cuantos endingId distintos se han visto en total
   mesesRecord: number // el mejor "meses" de cualquier partida (ya incluye esta)
   epitetosVistos: number // cuantos epitetos distintos se han sacado
+  cartasColeccionadas: number // cartas distintas vistas en toda la vida (ya incluye esta partida)
 }
 
 export interface Logro {
@@ -104,6 +106,15 @@ export const LOGROS: Logro[] = [
   // --- META ---
   { id: 'partidas_10', nombre: 'Enganchado', desc: 'Juega 10 partidas.', check: (r) => r.partidasJugadas >= 10 },
   { id: 'partidas_50', nombre: 'Esto ya es vicio', desc: 'Juega 50 partidas.', check: (r) => r.partidasJugadas >= 50 },
+
+  // --- COLECCION ---
+  // El mazo tiene casi 500 cartas y en una partida buena se ven ochenta. Estos
+  // cuatro son la unica recompensa por seguir descubriendo situaciones nuevas
+  // en vez de por durar mas, y hacen de barra de progreso a muy largo plazo.
+  { id: 'coleccion_100', nombre: 'Le va cogiendo el tranquillo', desc: 'Descubre 100 cartas distintas entre todas tus partidas.', check: (r) => r.cartasColeccionadas >= 100 },
+  { id: 'coleccion_200', nombre: 'Se conoce la casa', desc: 'Descubre 200 cartas distintas.', check: (r) => r.cartasColeccionadas >= 200 },
+  { id: 'coleccion_350', nombre: 'Aquí ya no le sorprende nadie', desc: 'Descubre 350 cartas distintas.', check: (r) => r.cartasColeccionadas >= 350 },
+  { id: 'coleccion_todas', nombre: 'No me consta que quede ninguna', desc: 'Descubre todas las cartas del juego.', oculto: true, check: (r) => r.cartasColeccionadas >= cards.length },
 ]
 
 export const TOTAL_LOGROS = LOGROS.length
