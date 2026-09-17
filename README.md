@@ -350,6 +350,31 @@ alguien lo bastante como para que pueda aparecer a salvarte (favor >=
 personaje que ahora te debe una. Existe para que el favor, que es un contador
 invisible, se note — y para que el rescate, cuando pasa, tenga sentido.
 
+### Ilustraciones de la pantalla de fin
+
+Los finales por barra (`ilustracionFin` en `App.tsx`) tienen una escena propia
+por indicador y dirección — techo o fondo, `max_medios.webp` / `min_cajab.webp`
+etc. — más unas específicas: las 5 variantes de noche electoral comparten
+`nocheelectoral.webp`, y "el partido te echa en comité" usa `comite.webp` en
+vez de la genérica de gobierno porque encaja literal con su texto. Los finales
+por evento (moción, registro, ruptura) y los de rechazar un rescate se quedan
+sin ilustración — no hay arte para esos todavía.
+
+Con un epílogo largo se prescinde de la imagen: prioriza que la pantalla siga
+cabiendo sin scroll (ver el punto siguiente) antes que la decoración.
+
+### Que la pantalla de fin no obligue a hacer scroll
+
+Tiene bastante "chrome" fijo (título, indicador roto, "duró X meses", epíteto,
+a veces la ilustración de arriba) además del propio epílogo. En móviles bajitos
+(iPhone SE 375×667, Android 360×640) los epílogos largos no cabían sin
+scroll — medido, hasta 108px de sobra en el peor caso (292 caracteres). A
+partir de cierta longitud el texto y los márgenes se hacen más compactos
+(`modoCompacto` en `App.tsx`), y el umbral baja más si hay ilustración de por
+medio, para dejarle sitio. Medido con los 74 lados de los 37 finales del
+juego: 0 necesitan scroll a 360×640 y 375×667. Por debajo de eso (320×568)
+sigue habiendo scroll de último recurso — para eso está.
+
 ### Vibración (`src/utils/haptics.ts`)
 
 Un toque al elegir, un doble al entrar una barra en rojo, uno largo al caer el
