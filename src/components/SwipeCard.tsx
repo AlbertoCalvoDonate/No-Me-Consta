@@ -158,9 +158,28 @@ interface Props {
   card: Card
   onChoose: (side: 'left' | 'right') => void
   x: MotionValue<number>
+  // Cuantas veces le ha desairado (o dado la razon) al personaje que habla.
+  enfado: number
+  favorDebido: number
 }
 
-export function SwipeCard({ card, onChoose, x }: Props) {
+// El juego llevaba la cuenta del enfado y el favor de cada personaje desde el
+// principio, pero no se veia en ninguna parte: te sorprendia una carta de
+// enfado sin saber por que, o te salvaba alguien sin que supieras que le
+// caias bien. Esto lo saca a la superficie en una linea, debajo del nombre.
+//
+// Deliberadamente sin numeros: no es un marcador que optimizar, es lo que
+// notarias de alguien con quien tratas todos los dias.
+function estadoDelPersonaje(enfado: number, favor: number) {
+  if (enfado >= 6) return { texto: 'No le perdona una', color: '#e05a4d' }
+  if (enfado >= 3) return { texto: 'Harto de usted', color: '#e0904d' }
+  if (favor >= 3) return { texto: 'Le debe una', color: '#8fc98f' }
+  if (favor >= 2) return { texto: 'De su lado', color: '#7d8f7d' }
+  return undefined
+}
+
+export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
+  const estado = estadoDelPersonaje(enfado, favorDebido)
   const rotate = useTransform(x, [-100, 100], [-CARD_TILT, CARD_TILT])
 
   const leftIsCorrupt = corruptionScore(card.left.effects) > corruptionScore(card.right.effects)
@@ -320,18 +339,32 @@ export function SwipeCard({ card, onChoose, x }: Props) {
           retrato: en ese caso ya está rotulado dentro, en grande, y repetirlo
           aquí lo dejaba escrito dos veces en la misma pantalla. */}
       {card.characterImage && (
-        <div
-          style={{
-            flexShrink: 0,
-            textAlign: 'center',
-            marginTop: 7,
-            fontFamily: 'var(--font-pixel)',
-            fontWeight: 500,
-            fontSize: 22,
-            color: '#e0b84d',
-          }}
-        >
-          {card.character}
+        <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 7 }}>
+          <div
+            style={{
+              fontFamily: 'var(--font-pixel)',
+              fontWeight: 500,
+              fontSize: 22,
+              color: '#e0b84d',
+              lineHeight: 1.1,
+            }}
+          >
+            {card.character}
+          </div>
+          {estado && (
+            <div
+              style={{
+                fontFamily: 'var(--font-pixel)',
+                fontWeight: 500,
+                fontSize: 13,
+                color: estado.color,
+                lineHeight: 1.1,
+                marginTop: 2,
+              }}
+            >
+              {estado.texto}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -82,7 +82,7 @@ export default function App() {
   // ¿Había una partida a medias en localStorage al cargar? (snapshot al montar;
   // el store ya la ha restaurado — "Continuar" solo tiene que enseñar el juego.)
   const [reanudable] = useState(hayPartidaEnCurso)
-  const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, history, flagsVistos, choose, restart } =
+  const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, history, flagsVistos, anger, favor, choose, restart } =
     useGameStore()
 
   // Posición de arrastre de la carta actual, compartida con StatBars para
@@ -306,7 +306,14 @@ export default function App() {
                     condicional normal, React sustituye la carta en el mismo
                     commit, tal cual pide el comentario de más abajo. */}
                 {!gameOver ? (
-                  <SwipeCard key={currentCard.id} card={cartaMostrada} onChoose={elegir} x={x} />
+                  <SwipeCard
+                    key={currentCard.id}
+                    card={cartaMostrada}
+                    onChoose={elegir}
+                    x={x}
+                    enfado={anger[cartaMostrada.character] ?? 0}
+                    favorDebido={favor[cartaMostrada.character] ?? 0}
+                  />
                 ) : (
                   <motion.div
                     key="gameover"
