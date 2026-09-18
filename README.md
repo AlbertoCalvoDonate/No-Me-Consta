@@ -79,6 +79,21 @@ español):
 npm run validate-cards
 ```
 
+### El color de fondo de cada carta
+
+Sale del propio retrato: `scripts/colores-retrato.mjs` lee cada `.webp`,
+promedia el color de su franja inferior (la ropa, que es lo que toca los
+bordes de la carta), lo oscurece al 42% y escribe
+`src/data/coloresRetrato.ts`. Hay que volver a pasarlo al anadir o cambiar un
+retrato; lo que no este en el mapa cae al color por defecto y no rompe nada.
+
+Antes salia de un hash del NOMBRE (`hsl(hash % 360, 38%, 22%)`), o sea un tono
+al azar sin relacion con el dibujo. A `presi` le tocaba azul marino y, como
+lleva traje azul, su carta parecia llena de borde a borde; al resto le tocaba
+cualquier cosa y, como los retratos son transparentes y se estrechan al llegar
+a los hombros, las dos esquinas de abajo quedaban de un color ajeno al
+personaje. Eso era lo que se veia como "huecos" en la carta.
+
 ### Retratos de personaje
 
 Para ponerle cara a un personaje (ej. `presi_intro` en `cards.content.ts`,
@@ -152,8 +167,13 @@ así:
 `nextCardId` sí pueden repetirlo, para eso están.
 
 ### Ideas para las siguientes cartas
-- El mazo tiene 450 cartas de contenido + 27 finales + 10 de elecciones (487
+- El mazo tiene 426 cartas de contenido + 27 finales + 10 de elecciones (463
   en total), así que toca más pulir contenido que sumar
+- **El chiste tiene que nacer de la situación, no pegarse encima.** Se
+  quitaron 24 cartas `meme_` que existían solo para colocar una coletilla
+  ("¡Fistro!", "relaxing cup", "menos lobos Caperucita"): en un juego que
+  quiere ser cómico pero serio, eso canta. Las 27 que se quedaron son
+  escenas de verdad aunque el id empiece por `meme_`
 - **Ánclalo en política española real y, a poder ser, en figuras concretas**
   (el Tamayazo, la convalidación de decretos, la cátedra a medida, Eurostat
   contra el dato cocinado, la filtración de un sumario). No es una regla
@@ -260,6 +280,19 @@ una trama se vuelve más frecuente mientras está viva y se apaga sola (peso 0)
 cuando deja de tener sentido — igual que las cartas de guerra de Reigns, que
 entran en la baraja al empezar la guerra y salen al acabarla.
 
+### Ninguna carta se repite en la misma partida
+
+`pickRegularCard` descarta todo lo que ya ha salido (`state.history` entero),
+no solo lo reciente. Antes bloqueaba unicamente las cinco ultimas
+(`history.slice(-5)`), asi que la misma situacion podia volver seis meses
+despues — y eso rompe justo la ilusion que sostiene el juego, que es que el
+pais reacciona a lo que TU haces.
+
+Con 463 cartas sobra mazo para una partida larga. Si aun asi se agotara
+(condiciones muy estrechas), hay un escalon que permite repetir pero nunca
+algo de los ultimos 25 meses. Comprobado jugando de verdad: 70 meses, 70
+cartas distintas, 0 repetidas.
+
 ### Flags (estado narrativo)
 
 Cualquier elección puede encender o apagar flags con `addFlags` /
@@ -298,6 +331,13 @@ es que te lo eche en cara.
 
 Medido en simulación: jugando al azar, el 8% de las partidas ve una carta de
 enfado; jugando a decir que no a todo, el 48%.
+
+**Y ahora se ve.** Debajo del nombre del personaje aparece en que punto esta
+con usted: "Harto de usted", "No le perdona una", "Le debe una", "De su lado".
+Sin numeros a proposito — no es un marcador que optimizar, es lo que notarias
+de alguien con quien tratas a diario. Antes el sistema existia pero era
+invisible: te caia una carta de enfado sin saber por que, o te salvaba alguien
+sin que supieras que le caias bien.
 
 **Un personaje sin `pleases` no existe para este sistema.** Durante un tiempo
 El Juez tenía 24 cartas y ninguna con `pleases`: no podía enfadarse nunca, así

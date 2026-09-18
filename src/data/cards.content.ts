@@ -4960,12 +4960,12 @@ export const contentCards: Card[] = [
     text: 'La universidad le ha pedido que dé la lección inaugural del curso. Ya tiene hasta el vestido. "Es un honor y además calla bocas." En primera fila estará sentado, aplaudiendo mucho, el decano que firmó aquella plaza.',
     left: {
       text: 'Que la dé: es un honor',
-      effects: { medios: -2, gobierno: 1 },
+      effects: { medios: -2, caja: 1 },
       moralidad: -2,
     },
     right: {
       text: 'Que ese día le surja algo importantísimo',
-      effects: { medios: 1, calle: 1, gobierno: -1 },
+      effects: { medios: 1, calle: 1, caja: -1 },
       moralidad: 1,
       removeFlags: ['catedra_dama'],
     },
