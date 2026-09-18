@@ -344,16 +344,23 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
 // le da un tamaño (peso, que puede depender del estado) y se saca una.
 function pickRegularCard(state: GameState): Card {
   const ctx = contextOf(state)
-  // Cartas normales candidatas: no vistas recientemente, no son finales,
-  // dentro de su ventana de turno/fase, y cumplen su condición si la tienen.
-  const recent = new Set(state.history.slice(-5))
-  const base = (c: Card) =>
+  // NADA DE REPETIR CARTA EN LA MISMA PARTIDA. Antes solo se bloqueaban las 5
+  // ultimas, asi que la misma situacion podia volver seis meses despues — y
+  // eso rompe justo la ilusion que sostiene el juego, que es que el pais
+  // reacciona a lo que TU haces. Con 450 cartas de contenido y una partida
+  // larga de ~150 meses sobra mazo de sobra para no repetir ni una.
+  const vistas = new Set(state.history)
+  // Si algun dia se agota el mazo (partida larguisima o condiciones muy
+  // estrechas), se permite repetir, pero nunca algo de los ultimos 25 meses.
+  const recientes = new Set(state.history.slice(-25))
+  const jugable = (c: Card) =>
     !c.isEnding &&
     !c.isElection &&
     !c.isRecap &&
-    !recent.has(c.id) &&
     cardAllowed(c, state, ctx) &&
     cardWeight(c, state, ctx) > 0
+  const base = (c: Card) => jugable(c) && !vistas.has(c.id)
+  const repetible = (c: Card) => jugable(c) && !recientes.has(c.id)
 
   // No repetir el personaje de la carta anterior: dos cartas seguidas del
   // mismo personaje se leen como un bug. Las cadenas narrativas (nextCardId)
@@ -364,14 +371,22 @@ function pickRegularCard(state: GameState): Card {
 
   const inWindow = cards.filter((c) => base(c) && isInTurnWindow(c, state.turn))
   const anyBase = cards.filter(base)
+  // Solo se miran si lo de arriba viene vacio: son cartas ya vistas.
+  const repeWindow = cards.filter((c) => repetible(c) && isInTurnWindow(c, state.turn))
+  const anyRepe = cards.filter(repetible)
 
-  // Preferencia: en ventana y otro personaje > en ventana > base y otro
-  // personaje > base > (último recurso) cualquier carta no-final.
+  // Preferencia, de mejor a peor: sin ver y en su ventana y otro personaje >
+  // sin ver en ventana > sin ver > ya vista pero no reciente > (ultimo
+  // recurso) cualquier carta no-final.
   const candidates =
     inWindow.filter(otherChar).length ? inWindow.filter(otherChar) :
     inWindow.length ? inWindow :
     anyBase.filter(otherChar).length ? anyBase.filter(otherChar) :
     anyBase.length ? anyBase :
+    repeWindow.filter(otherChar).length ? repeWindow.filter(otherChar) :
+    repeWindow.length ? repeWindow :
+    anyRepe.filter(otherChar).length ? anyRepe.filter(otherChar) :
+    anyRepe.length ? anyRepe :
     cards.filter((c) => !c.isEnding && !c.isElection && otherChar(c))
 
   // Sorteo ponderado con pesos que pueden ser fraccionarios (el enfriamiento

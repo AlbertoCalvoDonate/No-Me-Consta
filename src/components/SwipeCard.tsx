@@ -228,7 +228,7 @@ export function SwipeCard({ card, onChoose, x }: Props) {
             inset: 0,
             zIndex: 1,
             boxSizing: 'border-box',
-            background: characterColor(card.character),
+            background: characterColor(card.character, card.characterImage),
             borderRadius: 16,
             border: '2px solid rgba(255,255,255,0.22)',
             boxShadow: '0 8px 30px rgba(0,0,0,0.45)',

@@ -244,14 +244,15 @@ export const contentCards: Card[] = [
   {
     id: 'inicio',
     phase: 1,
-    // "Su primer día en el cargo" — solo tiene sentido en el turno 2 (justo
-    // después de presi_intro, que la fuerza vía nextCardId). Sin maxTurn
-    // podía volver a salir por sorteo en cualquier turno de la partida —
-    // que es justo el bug reportado ("me salió en el mes 15").
+    // Va SIEMPRE justo detras de una presi_intro, que la fuerza via
+    // nextCardId, o sea en el turno 2 — y la barra de abajo ya marca "2
+    // meses". Por eso no puede decir "su primer dia": ese dia es el de la
+    // carta anterior. Sin maxTurn ademas podia volver a salir por sorteo en
+    // cualquier mes de la partida (el bug de "me salio en el mes 15").
     maxTurn: 2,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
-    text: 'Presidente, ha llegado. Su primer día en el cargo. ¿Cómo quiere empezar?',
+    text: 'Presidente, ya está dentro. El tono de una legislatura se marca esta primera semana y luego no hay quien lo cambie. ¿Cómo quiere empezar?',
     left: {
       text: 'Con mano dura, y que tiemble quien deba temblar',
       effects: { calle: 2, gobierno: -1 },
