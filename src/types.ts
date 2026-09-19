@@ -6,10 +6,11 @@
 //   MEDIOS    el relato, lo que se publica
 //             → El Periodista, El Jefe de Comunicación, El Escudero
 //   GOBIERNO  que la coalición no se rompa y te sigan sosteniendo
-//             → La Vicepresidenta, La Comunista Woke, El Exiliado,
-//               El Independentista, El Expresidente, La Ministra
+//             → La Vicepresidenta, La Socia Incómoda, El Exiliado,
+//               El Independentista, El Expresidente, La Ministra,
+//               La Ministra de Igualdad
 //   CALLE     lo que piensa la gente de a pie
-//             → El Encuestador, La Ultraderecha, La Presidenta Regional,
+//             → El Encuestador, El Cruzado, La Presidenta Regional,
 //               La Oposición
 //   CAJA B    el dinero opaco
 //             → El Ministro Caído, El Hermano, El Gurú, La Primera Dama

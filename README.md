@@ -6,7 +6,7 @@ presidente y tienes que aguantar una legislatura entera a tu propio gabinete
 y a la oposición, carta a carta.
 
 El reparto son arquetipos reconocibles —«El Jefe de Comunicación», «La
-Presidenta Regional», «El Exiliado», «La Comunista Woke», «El Hermano», «La
+Presidenta Regional», «El Exiliado», «La Socia Incómoda», «El Hermano», «La
 Primera Dama»…— sin nombres reales ni lugares concretos (nada de países,
 capitales ni instituciones con nombre). El tono busca reírse de todos por
 igual: los efectos de cada carta van del coste político, no de si la medida
@@ -534,8 +534,8 @@ es el ejército. Ves quién habla y ya sabes qué te juegas. Aquí igual:
 | Indicador | Qué mide | Quién lo encarna |
 |---|---|---|
 | **Medios** | el relato, lo que se publica | Periodista, Jefe de Comunicación, Escudero, Juez |
-| **Gobierno** | que la coalición no se rompa | Vicepresidenta, Comunista Woke, Exiliado, Independentista, Expresidente, Ministra, Ministra de Igualdad |
-| **Calle** | lo que piensa la gente | Encuestador, Ultraderecha, Presidenta Regional, Oposición |
+| **Gobierno** | que la coalición no se rompa | Vicepresidenta, Socia Incómoda, Exiliado, Independentista, Expresidente, Ministra, Ministra de Igualdad |
+| **Calle** | lo que piensa la gente | Encuestador, Cruzado, Presidenta Regional, Oposición |
 | **Caja B** | el dinero opaco | Ministro Caído, Hermano, Gurú, Primera Dama |
 
 **Regla al escribir cartas:** la carta de un personaje debería tocar *siempre*

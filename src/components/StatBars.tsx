@@ -45,12 +45,12 @@ const INFO: Record<keyof Stats, { label: string; que: string; quien: string }> =
   gobierno: {
     label: 'Gobierno',
     que: 'La coalición: que tus socios no te suelten la mano.',
-    quien: 'La Vicepresidenta · La Socia · El Exiliado · El Independentista · El Expresidente · La Ministra',
+    quien: 'La Vicepresidenta · La Socia Incómoda · El Exiliado · El Independentista · El Expresidente · La Ministra · La Ministra de Igualdad',
   },
   calle: {
     label: 'Calle',
     que: 'La gente: encuestas, manifestaciones, la conversación del bar.',
-    quien: 'El Encuestador · La Ultraderecha · La Presidenta Regional · La Oposición',
+    quien: 'El Encuestador · El Cruzado · La Presidenta Regional · La Oposición',
   },
   caja: {
     label: 'Caja B',
