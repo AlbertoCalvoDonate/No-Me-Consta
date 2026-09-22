@@ -292,8 +292,16 @@ const endingCards: Card[] = [
     right: { text: 'Dimitir antes de la votación', effects: {}, epilogueText: 'Dimite la víspera para no salir en la foto de la derrota. Sale igualmente en todas. Fin del gobierno.' },
     isEnding: true,
     byEvent: true,
+    // Hace falta que le salpique a USTED: si tapó algo en la trama del hermano
+    // (cualquiera de las cuatro cartas) y encima no le queda un solo medio que
+    // le defienda, la oposición tiene la foto que necesitaba. Quien la llevó
+    // limpia desde el principio no cae por esto.
     condition: (s, _m, ctx) =>
-      (ctx.flags.has('hermano_juicio') || ctx.flags.has('hermano_imputado')) && s.medios <= 4,
+      ctx.flags.has('hermano_tapadera') &&
+      (ctx.flags.has('hermano_condenado') ||
+        ctx.flags.has('hermano_juicio') ||
+        ctx.flags.has('hermano_imputado')) &&
+      s.medios <= 4,
   },
   {
     id: 'final_evento_ruptura',
