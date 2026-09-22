@@ -110,21 +110,25 @@ for (const f of files) {
         }
       }
       const muestras = [...urna.values()].reduce((a, v) => a + v.n, 0)
-      if (muestras < 200) return { saltado: 'ya venía recortado' }
-
       // Hasta dos tonos (el damero alterna dos) y solo si son CLAROS: un fondo
       // oscuro no se distingue de la ropa y no merece la pena arriesgarse.
-      const fondos = [...urna.values()]
-        .sort((a, b) => b.n - a.n)
-        .slice(0, 2)
-        .map((v) => ({ r: v.r / v.n, g: v.g / v.n, b: v.b / v.n }))
-        .filter((c0) => (c0.r + c0.g + c0.b) / 3 > 150)
-      if (!fondos.length) return { saltado: 'el fondo no es claro, no me fío' }
+      const fondos =
+        muestras < 200
+          ? []
+          : [...urna.values()]
+              .sort((a, b) => b.n - a.n)
+              .slice(0, 2)
+              .map((v) => ({ r: v.r / v.n, g: v.g / v.n, b: v.b / v.n }))
+              .filter((c0) => (c0.r + c0.g + c0.b) / 3 > 150)
+      // Aunque no haya fondo que quitar (retrato ya recortado) se sigue
+      // adelante: queda la pasada de motas sueltas, que tambien hace falta en
+      // arte que llega ya con transparencia.
+      const hayFondo = fondos.length > 0
 
       // Candidatos: parecidos a algún tono de fondo, o ya transparentes.
       const N = w * h
       const cand = new Uint8Array(N)
-      for (let p = 0; p < N; p++) {
+      for (let p = 0; hayFondo && p < N; p++) {
         const i = p * 4
         if (d[i + 3] < 40) {
           cand[p] = 1
@@ -172,11 +176,57 @@ for (const f of files) {
         if (y < h - 1) meter(p + w)
       }
 
-      if (fin / N > MAX_BORRADO) {
+      if (hayFondo && fin / N > MAX_BORRADO) {
         return { saltado: `borraría el ${Math.round((fin / N) * 100)}%, sospechoso` }
       }
 
-      for (let p = 0; p < N; p++) if (visto[p]) d[p * 4 + 3] = 0
+      if (hayFondo) for (let p = 0; p < N; p++) if (visto[p]) d[p * 4 + 3] = 0
+
+      // Motas sueltas: islas opacas diminutas separadas de la figura. Salen
+      // del recorte y tambien del arte que ya llega con transparencia, y sobre
+      // el fondo oscuro de la carta se ven como puntitos de suciedad. Se
+      // conserva solo la isla mas grande (la figura) y se borra lo que no
+      // llegue a MOTA_MIN pixeles.
+      const MOTA_MIN = 400
+      const isla = new Int32Array(N).fill(-1)
+      const pila = new Int32Array(N)
+      const islas = []
+      for (let s0 = 0; s0 < N; s0++) {
+        if (isla[s0] !== -1 || d[s0 * 4 + 3] <= 80) continue
+        const id = islas.length
+        let top = 0
+        let n = 0
+        pila[top++] = s0
+        isla[s0] = id
+        const miembros = []
+        while (top > 0) {
+          const q = pila[--top]
+          miembros.push(q)
+          n++
+          const qx = q % w
+          const qy = (q / w) | 0
+          const vecinos = [
+            qx > 0 ? q - 1 : -1,
+            qx < w - 1 ? q + 1 : -1,
+            qy > 0 ? q - w : -1,
+            qy < h - 1 ? q + w : -1,
+          ]
+          for (const v of vecinos) {
+            if (v >= 0 && isla[v] === -1 && d[v * 4 + 3] > 80) {
+              isla[v] = id
+              pila[top++] = v
+            }
+          }
+        }
+        islas.push({ n, miembros })
+      }
+      const mayor = islas.reduce((a, b) => (b.n > a.n ? b : a), { n: -1, miembros: [] })
+      let motas = 0
+      for (const is of islas) {
+        if (is === mayor || is.n >= MOTA_MIN) continue
+        motas++
+        for (const q of is.miembros) d[q * 4 + 3] = 0
+      }
 
       // Suavizado de 1 píxel en el borde, para que el recorte no quede de
       // sierra sobre el fondo de la carta.
@@ -200,9 +250,11 @@ for (const f of files) {
       cx.putImageData(imgData, 0, 0)
       // Se reexporta en el MISMO formato que entró: convertir un webp a png
       // lo devolvería a pesar diez veces más.
+      if (!hayFondo && motas === 0) return { saltado: 'ya venía recortado y limpio' }
       return {
         url: c.toDataURL(f.endsWith('.webp') ? 'image/webp' : 'image/png', 0.92),
-        borrado: Math.round((fin / N) * 100),
+        borrado: hayFondo ? Math.round((fin / N) * 100) : 0,
+        motas,
         fondos: fondos.map((c0) => `rgb(${[c0.r, c0.g, c0.b].map(Math.round).join(',')})`),
       }
     },
@@ -214,7 +266,10 @@ for (const f of files) {
     continue
   }
   writeFileSync(CHARDIR + f, Buffer.from(res.url.split(',')[1], 'base64'))
-  console.log(`  ${f}: fuera el ${res.borrado}% de fondo  [${res.fondos.join(' ')}]`)
+  const partes = []
+  if (res.borrado > 0) partes.push(`fuera el ${res.borrado}% de fondo [${res.fondos.join(' ')}]`)
+  if (res.motas > 0) partes.push(`${res.motas} motas sueltas limpiadas`)
+  console.log(`  ${f}: ${partes.join(', ')}`)
   tocados++
 }
 
