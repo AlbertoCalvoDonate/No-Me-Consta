@@ -12,7 +12,7 @@ export const COLOR_RETRATO: Record<string, string> = {
   'feminista.webp': '#36292e',
   'fiscal.webp': '#232124',
   'guru.webp': '#372525',
-  'hermano.webp': '#2b2b31',
+  'hermano.webp': '#1b1b17',
   'independentista.webp': '#26262c',
   'jefecomunicacion.webp': '#0d101e',
   'juez.webp': '#111010',
