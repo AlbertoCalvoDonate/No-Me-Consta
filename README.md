@@ -138,9 +138,31 @@ el retrato mas detallado.
     npm run dev                       # en otra terminal
     node scripts/to-webp.mjs          # convierte los .png que haya
 
-Al traer arte nuevo: pasalo primero por `to-webp.mjs` y luego por
-`normalize-portraits.mjs` (que ya entiende los dos formatos y reexporta en el
-mismo con el que entro, para no volver a inflarlo).
+### Al traer arte nuevo
+
+Deja el `.png` en `public/characters/` con el nombre que ya usan las cartas y
+pasa los cuatro scripts **en este orden**, con `npm run dev` levantado:
+
+    node scripts/recortar-fondo.mjs retrato.png     # quita el fondo liso
+    node scripts/normalize-portraits.mjs retrato.png # re-encuadra
+    node scripts/to-webp.mjs retrato.png             # a .webp
+    node scripts/colores-retrato.mjs                 # color de fondo de carta
+
+El orden importa, y no es el que parece. Lo que sale de ChatGPT trae un fondo
+claro **liso pero opaco** (a veces, incluso, el damero de transparencia
+rasterizado como píxeles de verdad). Si no se quita primero:
+
+- En la carta se ve un recuadro claro sobre el fondo oscuro, en vez de la
+  figura recortada.
+- `normalize-portraits` re-encuadra sobre el bounding box del canal alfa, y
+  si todo el lienzo es opaco ese bounding box es el lienzo entero: **no
+  re-encuadra nada** y la cabeza se queda pequeña y descentrada.
+
+Y ojo con darlo por bueno mirando el bounding box alfa: con el fondo pegado
+da `0/60/1020/1200` en todos, que es justo lo que se espera de un retrato
+bien encuadrado. La medida que sí distingue es el **porcentaje de píxeles
+opacos**: un retrato recortado ronda el 54-73%, y uno con el fondo puesto se
+va al 90-95%.
 
 ### Cartas de arranque
 
