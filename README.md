@@ -496,6 +496,25 @@ Para añadir uno: una entrada más en `LOGROS` con un `id` estable (es la clave
 en localStorage) y su `check`. Nada más — el total y el panel se actualizan
 solos.
 
+### El reparto (quién es quién)
+
+Botón en la pantalla de inicio. Lista los 22 personajes con su retrato, quién
+es cada uno en una línea, **qué indicador encarna** y cuántas de sus cartas
+llevas descubiertas. Los que aún no te has cruzado salen como silueta y con
+`¿?` en vez del nombre: descubrir el reparto es parte del juego.
+
+Existe porque saber quién mueve qué ES la habilidad central de un Reigns (ves
+quién habla y ya sabes qué te juegas), pero medido en simulación, una partida
+mediana dura 38 meses y un personaje concreto te sale unas **6 veces**: no da
+tiempo a aprendérselo jugando.
+
+El dato vive en `src/data/reparto.ts`, que además es ahora la ÚNICA fuente de
+"quién encarna qué indicador". Antes esa información estaba duplicada en tres
+sitios en forma de comentario (`types.ts`, `StatBars.tsx` y este README) y los
+tres se quedaron desactualizados cuando se renombraron personajes. El recuento
+de cartas por personaje se calcula del propio mazo, así que no se desactualiza
+al añadir cartas.
+
 ### La colección de cartas
 
 El mazo tiene casi 500 cartas y en una partida buena se ven ochenta. Los ids

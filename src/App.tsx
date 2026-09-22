@@ -17,6 +17,7 @@ import { registrarPartida } from './hooks/useLogros'
 import type { Logro } from './data/logros'
 import { LogroToast } from './components/LogroToast'
 import { LogrosPanel } from './components/LogrosPanel'
+import { RepartoPanel } from './components/RepartoPanel'
 import { corruptionScore } from './components/SwipeCard'
 import { hayPartidaEnCurso } from './hooks/persistPartida'
 import { textoResultado, compartirResultado } from './utils/compartir'
@@ -93,6 +94,7 @@ export default function App() {
   // Récord anterior a esta partida, para la comparación de la pantalla de fin.
   const [recordPrevio, setRecordPrevio] = useState(0)
   const [verLogros, setVerLogros] = useState(false)
+  const [verReparto, setVerReparto] = useState(false)
   const [compartido, setCompartido] = useState<'idle' | 'copiado' | 'error'>('idle')
 
   // El sonido va aqui y no en el store a proposito: es presentacion, no reglas
@@ -271,6 +273,7 @@ export default function App() {
               onContinuar={reanudable ? () => setStarted(true) : undefined}
               mesEnCurso={turn}
               onVerLogros={() => setVerLogros(true)}
+              onVerReparto={() => setVerReparto(true)}
             />
           )}
 
@@ -570,6 +573,7 @@ export default function App() {
 
           <LogroToast cola={colaLogros} onVaciar={() => setColaLogros([])} />
           {verLogros && <LogrosPanel onCerrar={() => setVerLogros(false)} />}
+          {verReparto && <RepartoPanel onCerrar={() => setVerReparto(false)} />}
         </div>
       </div>
     </>

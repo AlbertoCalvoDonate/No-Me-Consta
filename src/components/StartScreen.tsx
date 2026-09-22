@@ -37,6 +37,7 @@ export function StartScreen({
   onContinuar,
   mesEnCurso,
   onVerLogros,
+  onVerReparto,
 }: {
   onStart: () => void
   // Si hay una partida a medias que retomar. Ausente = no la hay.
@@ -45,6 +46,7 @@ export function StartScreen({
   // coincida con lo último que vio el jugador.
   mesEnCurso: number
   onVerLogros: () => void
+  onVerReparto: () => void
 }) {
   const { partidas, mesesRecord, epitetoRecord, epitetosVistos, hechos, total, cartasVistas, totalCartas } =
     useLogrosEstado()
@@ -193,9 +195,14 @@ export function StartScreen({
           </button>
         )}
 
-        <button onClick={onVerLogros} style={botonSecundario}>
-          Logros
-        </button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={onVerReparto} style={botonSecundario}>
+            El reparto
+          </button>
+          <button onClick={onVerLogros} style={botonSecundario}>
+            Logros
+          </button>
+        </div>
       </div>
 
       <div

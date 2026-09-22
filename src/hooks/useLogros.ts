@@ -174,6 +174,9 @@ export function useLogrosEstado() {
     epitetosVistos: g.epitetos.length,
     cartasVistas: g.cartasVistas.filter((id) => IDS_CARTAS.has(id)).length,
     totalCartas: TOTAL_CARTAS,
+    // Los ids en crudo, no solo el recuento: la pantalla del reparto necesita
+    // saber QUE cartas has visto para decir a quien conoces ya.
+    idsVistos: new Set(g.cartasVistas),
     refrescar,
   }
 }
