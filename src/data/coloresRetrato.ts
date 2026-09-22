@@ -18,7 +18,7 @@ export const COLOR_RETRATO: Record<string, string> = {
   'juez.webp': '#111010',
   'ministraincompetente.webp': '#42444c',
   'ministrocorrupto.webp': '#2d292d',
-  'ministrolameculos.webp': '#181a23',
+  'ministrolameculos.webp': '#262832',
   'mopongo.webp': '#3b2123',
   'oposicionsuave.webp': '#1f232f',
   'periodista.webp': '#0b090b',
