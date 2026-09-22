@@ -25,7 +25,6 @@ export const COLOR_RETRATO: Record<string, string> = {
   'presi.webp': '#2f2932',
   'presidentaregional.webp': '#522327',
   'primeradama.webp': '#5c4e44',
-  'sociaincomoda.webp': '#0d0b0b',
-  'sociaincomoda_anterior_backup.webp': '#332339',
+  'sociaincomoda.webp': '#312834',
   'vicepresi.webp': '#615b54',
 }
