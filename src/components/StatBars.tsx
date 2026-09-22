@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTransform, type MotionValue } from 'framer-motion'
 import type { Card, Stats } from '../types'
 import { EffectPips } from './EffectPips'
@@ -12,23 +12,47 @@ import { STAT_MAX, TURNOS_DE_GRACIA } from '../data/cards'
 // bocadillo" no parece lo mismo que "medio templo". Esto se lee igual en los
 // cuatro y dice exactamente cuántos puntos quedan, que es lo que importa
 // cuando estás en rojo: el aviso salta a 1 punto, pero se muere a 0.
-function LevelBar({ value, critical }: { value: number; critical: boolean }) {
+function LevelBar({
+  value,
+  critical,
+  desde,
+  pulso,
+}: {
+  value: number
+  critical: boolean
+  // Valor que tenia ANTES de la ultima decision (null = no hay nada que
+  // resaltar). Los segmentos entre los dos valores destellan un momento.
+  desde: number | null
+  pulso: number
+}) {
+  const lo = desde === null ? -1 : Math.min(value, desde)
+  const hi = desde === null ? -1 : Math.max(value, desde)
+  const subio = desde !== null && value > desde
   return (
     // El margen lateral es lo que separa visualmente las cuatro barras: sin
     // él se leen como una única tira de 40 segmentos y no se ve dónde acaba
     // un indicador y empieza el siguiente.
     <div style={{ display: 'flex', gap: 1.5, margin: '5px 11px 0', height: 6 }}>
-      {Array.from({ length: STAT_MAX }, (_, i) => (
-        <div
-          key={i}
-          style={{
-            flex: 1,
-            borderRadius: 1,
-            background:
-              i < value ? (critical ? '#ff4d4d' : '#e0b84d') : 'rgba(255,255,255,0.14)',
-          }}
-        />
-      ))}
+      {Array.from({ length: STAT_MAX }, (_, i) => {
+        const movido = i >= lo && i < hi
+        return (
+          // La `key` lleva el numero de pulso a proposito: al cambiar, React
+          // remonta el segmento y la animacion vuelve a empezar. Sin eso, dos
+          // decisiones seguidas sobre la misma barra solo destellarian una vez.
+          <div
+            key={movido ? `${i}-${pulso}` : i}
+            style={{
+              flex: 1,
+              borderRadius: 1,
+              background:
+                i < value ? (critical ? '#ff4d4d' : '#e0b84d') : 'rgba(255,255,255,0.14)',
+              animation: movido
+                ? `${subio ? 'nmc-gana' : 'nmc-pierde'} 620ms ease-out`
+                : undefined,
+            }}
+          />
+        )
+      })}
     </div>
   )
 }
@@ -86,6 +110,21 @@ export function StatBars({ stats, card, x, extremeStreak }: Props) {
 
   // Qué barra tiene abierta la explicación (null = ninguna). Se toca el icono.
   const [abierto, setAbierto] = useState<keyof Stats | null>(null)
+
+  // Tras cada decisión, destellan los segmentos que se han movido. Al deslizar,
+  // las barras saltaban de golpe y era fácil no enterarse de qué te había
+  // costado la carta, sobre todo leyendo ya la siguiente.
+  const anterior = useRef<Stats | null>(null)
+  const [pulso, setPulso] = useState<{ id: number; prev: Stats } | null>(null)
+  useEffect(() => {
+    const prev = anterior.current
+    anterior.current = { ...stats }
+    if (!prev || ITEMS.every((k) => prev[k] === stats[k])) return
+    const id = Date.now()
+    setPulso({ id, prev })
+    const t = window.setTimeout(() => setPulso((p) => (p?.id === id ? null : p)), 700)
+    return () => window.clearTimeout(t)
+  }, [stats])
 
   return (
     <div style={{ flexShrink: 0, position: 'relative', zIndex: 20 }}>
@@ -148,7 +187,12 @@ export function StatBars({ stats, card, x, extremeStreak }: Props) {
                   )}
                 </div>
               </div>
-              <LevelBar value={stats[key]} critical={critical} />
+              <LevelBar
+                value={stats[key]}
+                critical={critical}
+                desde={pulso && pulso.prev[key] !== stats[key] ? pulso.prev[key] : null}
+                pulso={pulso?.id ?? 0}
+              />
               {/* Etiqueta de texto: los iconos solos no siempre se entienden.
                   Salvo cuando este indicador ya ha reventado: ahi importa mas
                   cuanto queda que como se llama, y el icono ya dice cual es.
