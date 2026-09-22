@@ -342,7 +342,7 @@ const endingCards: Card[] = [
     // hasta hartarle. Lo segundo es nuevo: sus cartas ya acumulan enfado.
     condition: (s, m, ctx) =>
       (s.caja >= 8 && s.medios <= 3 && m <= 3) ||
-      ((ctx.anger['El Juez'] ?? 0) >= 6 && s.caja >= 6),
+      ((ctx.anger['El Juez'] ?? 0) >= 4 && s.caja >= 6),
   },
 
 ]

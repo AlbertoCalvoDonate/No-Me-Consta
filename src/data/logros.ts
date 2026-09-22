@@ -78,7 +78,9 @@ export const LOGROS: Logro[] = [
   { id: 'cae_mocion', nombre: 'Moción de censura', desc: 'Te tumban en el Parlamento.', oculto: true, check: (r) => r.endingId === 'final_evento_mocion' },
   { id: 'cae_ruptura', nombre: 'Solo ante el peligro', desc: 'Se rompe la coalición y te quedas sin nadie.', oculto: true, check: (r) => r.endingId === 'final_evento_ruptura' },
   { id: 'cae_registro', nombre: 'A las seis de la mañana', desc: 'Coches en la puerta y una orden de registro.', oculto: true, check: (r) => r.endingId === 'final_evento_registro' },
-  { id: 'cae_mes_1', nombre: 'Un suspiro', desc: 'Cae en el primer o segundo mes.', check: (r) => r.meses <= 2 && !r.gano },
+  // El minimo que permite el juego son 4 meses (amortiguador + 3 turnos de
+  // gracia), asi que pedir 2 era imposible. A 6 lo consigue el 2% de partidas.
+  { id: 'cae_mes_1', nombre: 'Un suspiro', desc: 'Cae antes de cumplir medio año.', check: (r) => r.meses <= 6 && !r.gano },
 
   // --- FINALES: coleccionista ---
   { id: 'finales_5', nombre: 'Se acaba de mil maneras', desc: 'Ve 5 finales distintos.', check: (r) => r.finalesDistintos >= 5 },
@@ -114,6 +116,13 @@ export const LOGROS: Logro[] = [
   { id: 'coleccion_100', nombre: 'Le va cogiendo el tranquillo', desc: 'Descubre 100 cartas distintas entre todas tus partidas.', check: (r) => r.cartasColeccionadas >= 100 },
   { id: 'coleccion_200', nombre: 'Se conoce la casa', desc: 'Descubre 200 cartas distintas.', check: (r) => r.cartasColeccionadas >= 200 },
   { id: 'coleccion_350', nombre: 'Aquí ya no le sorprende nadie', desc: 'Descubre 350 cartas distintas.', check: (r) => r.cartasColeccionadas >= 350 },
+  {
+    id: 'no_me_consta',
+    nombre: 'No me consta',
+    desc: 'Escurrir el bulto en dos interrogatorios de la misma partida.',
+    oculto: true,
+    check: (r) => r.flags.filter((f) => f.startsWith('nmc_')).length >= 2,
+  },
   { id: 'coleccion_todas', nombre: 'No me consta que quede ninguna', desc: 'Descubre todas las cartas del juego.', oculto: true, check: (r) => r.cartasColeccionadas >= cards.length },
 ]
 
