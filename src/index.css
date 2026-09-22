@@ -144,3 +144,11 @@ body {
     height: min(100vw, calc(100vh * 852 / 393));
   }
 }
+
+/* Alarma del ultimo mes de prorroga: parpadeo duro (steps, sin degradado)
+   para que se lea como aviso y no como decoracion. */
+@keyframes nmc-alarma {
+  0% { opacity: 1; }
+  50% { opacity: 0.25; }
+  100% { opacity: 1; }
+}

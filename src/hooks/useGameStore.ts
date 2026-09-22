@@ -8,6 +8,7 @@ import {
   ELECTION_INTERVAL,
   ELECTION_MAX_TERMS,
   RECAP_EVERY,
+  TURNOS_DE_GRACIA,
 } from '../data/cards'
 import { guardarPartida, borrarPartida, cargarPartida } from './persistPartida'
 
@@ -309,7 +310,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   // solo si sigues en el extremo al tercer turno cae el final. Sin esto, un
   // pico de mala suerte te mataba sin margen (y morir por TECHO, jugando
   // limpio, era el final más común). Antes era 1 turno de gracia (`< 2`).
-  if (state.extremeStreak < 3) {
+  if (state.extremeStreak < TURNOS_DE_GRACIA) {
     return pickRegularCard(state)
   }
 

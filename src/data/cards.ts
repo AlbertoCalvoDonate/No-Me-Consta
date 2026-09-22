@@ -575,4 +575,9 @@ const electionCards: Card[] = [
 export const cards: Card[] = [...contentCards, ...endingCards, ...electionCards]
 
 export const STAT_MAX = 10
+// Meses de prorroga cuando un indicador toca 0 o el maximo: tocar el extremo
+// NO mata al instante, hay margen para rectificar. La UI lo usa para poder
+// decirle al jugador cuantos le quedan, asi que vive aqui y no suelto en el
+// store: si cambia el numero, cambia el aviso.
+export const TURNOS_DE_GRACIA = 3
 export const STAT_START = 5

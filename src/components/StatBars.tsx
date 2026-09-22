@@ -4,7 +4,7 @@ import type { Card, Stats } from '../types'
 import { EffectPips } from './EffectPips'
 import { StatIcon } from './StatIcon'
 import { SWIPE_REVEAL_DISTANCE } from './SwipeCard'
-import { STAT_MAX } from '../data/cards'
+import { STAT_MAX, TURNOS_DE_GRACIA } from '../data/cards'
 
 // Barra de nivel: un segmento por punto (0 a STAT_MAX). El relleno del icono
 // es bonito pero NO se puede comparar entre indicadores: como cada silueta
@@ -72,9 +72,12 @@ interface Props {
   stats: Stats
   card?: Card
   x: MotionValue<number>
+  // Meses seguidos con algun indicador en el extremo. Sirve para decir cuantos
+  // quedan antes de que caiga el gobierno (ver TURNOS_DE_GRACIA).
+  extremeStreak: number
 }
 
-export function StatBars({ stats, card, x }: Props) {
+export function StatBars({ stats, card, x, extremeStreak }: Props) {
   // Mismos umbrales que usa la carta para revelar el texto de cada lado al
   // arrastrar, así los puntos de arriba aparecen exactamente a la vez.
   const fadeStart = SWIPE_REVEAL_DISTANCE / 4
@@ -101,6 +104,10 @@ export function StatBars({ stats, card, x }: Props) {
           // paso del final (<=1 o >=9), para que "rojo" signifique de verdad
           // "otra más y pierdes" y no "vas calentito".
           const critical = stats[key] <= 1 || stats[key] >= 9
+          // Reventado = ya esta en el extremo y corre la prorroga. Distinto de
+          // critical, que es solo "a un paso".
+          const reventado = stats[key] <= 0 || stats[key] >= STAT_MAX
+          const quedan = TURNOS_DE_GRACIA - extremeStreak
           const leftVal = card?.left.effects[key] ?? 0
           const rightVal = card?.right.effects[key] ?? 0
           return (
@@ -142,7 +149,11 @@ export function StatBars({ stats, card, x }: Props) {
                 </div>
               </div>
               <LevelBar value={stats[key]} critical={critical} />
-              {/* Etiqueta de texto: los iconos solos no siempre se entienden. */}
+              {/* Etiqueta de texto: los iconos solos no siempre se entienden.
+                  Salvo cuando este indicador ya ha reventado: ahi importa mas
+                  cuanto queda que como se llama, y el icono ya dice cual es.
+                  Sin esto, "voy justo" (rojo a 1 o 9) y "ya he reventado y me
+                  quedan dos meses" se veian exactamente igual. */}
               <div
                 style={{
                   fontFamily: 'var(--font-pixel)',
@@ -151,10 +162,19 @@ export function StatBars({ stats, card, x }: Props) {
                   letterSpacing: 0.4,
                   lineHeight: 1,
                   marginTop: 4,
-                  color: critical ? '#ff6b6b' : abierto === key ? '#e0b84d' : '#a8a08c',
+                  color: reventado
+                    ? '#ff4d4d'
+                    : critical
+                      ? '#ff6b6b'
+                      : abierto === key
+                        ? '#e0b84d'
+                        : '#a8a08c',
+                  // Parpadeo solo en el ultimo mes: si parpadeara siempre que
+                  // hay prorroga, dejaria de significar "ahora SI".
+                  animation: reventado && quedan <= 1 ? 'nmc-alarma 900ms steps(2) infinite' : undefined,
                 }}
               >
-                {label}
+                {reventado ? (quedan <= 1 ? 'ÚLTIMO MES' : `${quedan} MESES`) : label}
               </div>
             </button>
           )
