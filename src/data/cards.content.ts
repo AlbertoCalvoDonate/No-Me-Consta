@@ -319,6 +319,7 @@ export const contentCards: Card[] = [
     right: {
       text: '"No recuerdo"',
       effects: { gobierno: 1, medios: -2 }, moralidad: -2,
+      addFlags: ['nmc_juez'],
     },
   },
   {
@@ -949,8 +950,33 @@ export const contentCards: Card[] = [
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
     text: 'Comisión de investigación sobre los fondos de reconstrucción: con taquígrafos, con televisión y con cuatro horas de preguntas. Nos da igual lo que conteste. La foto ya la tenemos.',
-    left: { text: 'Comparecer y aportar todo', effects: { medios: 2, calle: 1 }, moralidad: 2 },
+    left: {
+      text: 'Comparecer y aportar todo',
+      effects: { medios: 2, calle: 1 },
+      moralidad: 2,
+      scheduleCardId: 'comision_comparecencia',
+      scheduleIn: 3,
+    },
     right: { text: 'Bloquear con tecnicismos', effects: { medios: -2, gobierno: 1 }, moralidad: -2 },
+  },
+  {
+    // Prometio aportarlo todo. Otra cosa es lo que conteste con la camara
+    // puesta y el reloj en la cuarta hora.
+    id: 'comision_comparecencia',
+    pleases: 'left',
+    phase: 3,
+    maxTurn: 0,
+    weight: 0,
+    character: 'La Oposición',
+    characterImage: 'oposicionsuave.webp',
+    text: 'Cuarta hora de comparecencia. El diputado que pregunta ya ni levanta la vista del papel: "¿Autorizó usted personalmente aquel pago?" Hay taquígrafos, hay dos cámaras y hay un país que ha dejado de hacer la comida.',
+    left: { text: 'Contestar con detalle', effects: { medios: 1, gobierno: -2 }, moralidad: 2 },
+    right: {
+      text: '"No me consta"',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -2,
+      addFlags: ['nmc_comision'],
+    },
   },
   {
     id: 'gob_cuenta_suiza',
@@ -3062,7 +3088,12 @@ export const contentCards: Card[] = [
     characterImage: 'juez.webp',
     text: 'La cátedra, la empresa y el libro de su mujer están ahora en el mismo expediente. Le pregunto formalmente: ¿usted sabía algo de todo esto?',
     left: { text: 'Decir la verdad, sea la que sea', effects: { medios: 1, gobierno: -2 }, moralidad: 2 },
-    right: { text: '"No me consta"', effects: { gobierno: 1, medios: -2 }, moralidad: -2 },
+    right: {
+      text: '"No me consta"',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -2,
+      addFlags: ['nmc_dama'],
+    },
   },
   {
     id: 'react_cruzado_calle',
@@ -3277,7 +3308,7 @@ export const contentCards: Card[] = [
       effects: { gobierno: 1, medios: -2, calle: -1 },
       moralidad: -3,
       removeFlags: ['hermano_imputado'],
-      addFlags: ['hermano_juicio', 'hermano_tapadera'],
+      addFlags: ['hermano_juicio', 'hermano_tapadera', 'nmc_hermano'],
       nextCardId: 'trama_hermano_condena',
     },
     condition: (_s, _m, ctx) => ctx.flags.has('hermano_imputado'),
@@ -4568,7 +4599,7 @@ export const contentCards: Card[] = [
     right: { text: '"Ese señor miente por despecho"', effects: { medios: -3, gobierno: 1 }, moralidad: -2 },
     // Solo si se le hizo un favor Y luego se le dejó tirado lo suficiente.
     condition: (_s, _m, ctx) =>
-      (ctx.anger['El Fiscal'] ?? 0) >= 4 &&
+      (ctx.anger['El Fiscal'] ?? 0) >= 2 &&
       (ctx.flags.has('magistrado_colocado') || ctx.flags.has('causa_archivada')),
     weight: 6,
   },
@@ -4944,6 +4975,29 @@ export const contentCards: Card[] = [
   //
   // Repartidas a propósito entre los personajes con menos cartas del mazo.
   // ============================================================================
+  {
+    // El remate de la frase que da titulo al juego: si la ha usado mas de una
+    // vez ante un juez o una comision, alguien acaba montando el video.
+    id: 'secuela_no_me_consta',
+    phase: 3,
+    weight: 5,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'Hemos montado un vídeo con todos sus "no me consta", "no me suena" y "no lo recuerdo" de esta legislatura. Dura once minutos. Va el domingo, después del partido.',
+    left: {
+      text: 'Exigir que no lo emitan',
+      effects: { medios: -2, gobierno: 1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Reírse: "es que es mi frase"',
+      effects: { calle: 1, medios: 1, gobierno: -1 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+    condition: (_s, _m, ctx) =>
+      ['nmc_juez', 'nmc_dama', 'nmc_hermano', 'nmc_comision'].some((f) => ctx.flags.has(f)),
+  },
   {
     id: 'secuela_transfuga',
     phase: 3,
