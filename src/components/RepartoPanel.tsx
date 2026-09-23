@@ -116,7 +116,14 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
                     objectPosition: 'center top',
                     // Sin descubrir: silueta. Se reconoce el pelo y la forma,
                     // no la cara — da pistas sin destriparlo.
-                    filter: conocido ? 'none' : 'brightness(0.12) contrast(0.4)',
+                    // Silueta de verdad: brightness(0) pone TODOS los canales
+                    // a cero (queda la forma del alfa, sin un solo detalle
+                    // dentro) e invert lo sube a un gris plano. El
+                    // 'brightness(0.12) contrast(0.4)' de antes solo oscurecia,
+                    // y el contraste devolvia la estructura: se reconocia a
+                    // cada personaje por la cara, que es justo lo que el "¿?"
+                    // trata de esconder.
+                    filter: conocido ? 'none' : 'brightness(0) invert(0.28)',
                   }}
                 />
               </div>
