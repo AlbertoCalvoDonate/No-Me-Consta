@@ -58,6 +58,13 @@ export const REPARTO: Personaje[] = [
 
 // Cuantas cartas tiene cada personaje en el mazo. Se calcula del propio mazo,
 // asi que nunca se desactualiza al anadir cartas.
+// Que barra "posee" cada personaje, en busqueda directa por nombre. Lo usa el
+// motor para el clima del sorteo: cuando una barra esta en apuros, la gente de
+// esa barra aparece mas.
+export const DUENO_DE_PERSONAJE: Record<string, StatKey | undefined> = Object.fromEntries(
+  REPARTO.map((p) => [p.nombre, p.dueno])
+)
+
 export const CARTAS_POR_PERSONAJE: Record<string, string[]> = (() => {
   const mapa: Record<string, string[]> = {}
   for (const c of cards) {

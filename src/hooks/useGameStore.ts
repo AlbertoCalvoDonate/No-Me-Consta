@@ -10,6 +10,7 @@ import {
   RECAP_EVERY,
   TURNOS_DE_GRACIA,
 } from '../data/cards'
+import { DUENO_DE_PERSONAJE } from '../data/reparto'
 import { guardarPartida, borrarPartida, cargarPartida } from './persistPartida'
 
 function cardMinTurn(c: Card): number {
@@ -221,8 +222,47 @@ function markSeen(card: Card, wasForced: boolean) {
 }
 
 // Peso de una carta en el sorteo normal, ya con el enfriamiento aplicado.
+// CLIMA. Sin esto el mazo se reparte como una baraja: 333 de las 420 cartas
+// jugables no declaran peso, asi que valen 1 y todo sale con la misma
+// probabilidad. Reigns hace lo contrario — sus cartas tienen tamanos distintos
+// DENTRO de la bolsa, y cuando estalla una crisis las cartas de ese tema
+// engordan; al resolverse vuelve el contenido ligero. Es lo que convierte un
+// sorteo en algo que parece un relato.
+//
+// No se toca carta a carta (serian 333 ficheros): se multiplica aqui, por
+// familias, con lo que ya sabe el estado. Y no se fuerza a nadie: solo cambia
+// la probabilidad, asi que el mazo sigue pudiendo sacar cualquier cosa.
+function clima(c: Card, state: GameState, ctx: CardContext): number {
+  let m = 1
+
+  // 1. A quien has cabreado, vuelve. No en la carta siguiente (eso lo impide
+  //    `otherChar` en el sorteo), pero si mucho antes de lo que tocaria.
+  const enfado = ctx.anger[c.character] ?? 0
+  if (enfado >= 3) m *= 3.4
+  else if (enfado >= 2) m *= 2.2
+  // Y quien te debe favores tambien se deja ver, mas discreto.
+  if ((ctx.favor[c.character] ?? 0) >= 3) m *= 1.4
+
+  // 2. La crisis trae a SU GENTE. Cuando una barra esta en apuros aparecen los
+  //    personajes de esa barra: si se hunde Medios vienen el Periodista, el
+  //    Jefe de Comunicacion, el Escudero y el Juez.
+  //
+  //    Se mira el dueno del personaje y NO si la carta toca esa barra: medido,
+  //    el 87% de las cartas tocan Medios y el 75% Gobierno, asi que "toca la
+  //    barra" no distingue nada. El dueno es entre el 15 y el 27% del mazo,
+  //    que es un grupo de verdad.
+  const dueno = DUENO_DE_PERSONAJE[c.character]
+  if (dueno) {
+    const v = state.stats[dueno]
+    if (v <= 1 || v >= STAT_MAX - 1) m *= 3.4
+    else if (v <= 2 || v >= STAT_MAX - 2) m *= 2.2
+  }
+
+  return m
+}
+
 function cooledWeight(c: Card, state: GameState, ctx: CardContext): number {
-  const w = cardWeight(c, state, ctx)
+  const w = cardWeight(c, state, ctx) * clima(c, state, ctx)
   const cd = seenCooldown[c.id] ?? 0
   if (w === 0 || cd === 0) return w
   // La penalizacion nunca deja el peso por debajo del 15% del original.
