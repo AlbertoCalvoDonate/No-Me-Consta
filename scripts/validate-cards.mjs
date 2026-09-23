@@ -142,6 +142,46 @@ function validate(cards) {
   // Referencias nextCardId: deben apuntar a un id que exista en este mismo
   // archivo. (Las cartas de final viven en cards.ts y no se pueden encadenar
   // con nextCardId, así que no hace falta comprobar contra esas).
+  // --- Repaso mecanico de los textos ---
+  // Nada de esto juzga la escritura: son fallos de tecleo que se cuelan al
+  // escribir cientos de cartas y que luego se ven en pantalla. Auditado el
+  // mazo entero de golpe la primera vez: 465 cartas, 0 avisos, asi que esto
+  // esta aqui para que siga asi.
+  const textosVistos = new Map()
+  cards.forEach((card, index) => {
+    const label = fmt(card.id, index)
+    const cuerpo = (card.text ?? '').trim()
+    if (cuerpo) {
+      const gemela = textosVistos.get(cuerpo)
+      if (gemela) warnings.push(`${label}: tiene el MISMO texto que "${gemela}".`)
+      else textosVistos.set(cuerpo, card.id)
+      if (!/[.!?»"…)]$/.test(cuerpo)) {
+        warnings.push(`${label}: el texto no acaba en signo de puntuación ("…${cuerpo.slice(-28)}").`)
+      }
+    }
+    const trozos = [
+      ['text', card.text],
+      ['left.text', card.left?.text],
+      ['right.text', card.right?.text],
+      ['left.epilogueText', card.left?.epilogueText],
+      ['right.epilogueText', card.right?.epilogueText],
+    ]
+    for (const [donde, txt] of trozos) {
+      if (typeof txt !== 'string' || !txt) continue
+      if ((txt.match(/"/g) ?? []).length % 2 !== 0) {
+        warnings.push(`${label}: comillas sin cerrar en "${donde}".`)
+      }
+      if (/\s{2,}/.test(txt)) warnings.push(`${label}: espacio doble en "${donde}".`)
+      if (/\s+[,.;:]/.test(txt)) warnings.push(`${label}: espacio antes de puntuación en "${donde}".`)
+    }
+    // Dos opciones con el mismo rotulo solo tiene sentido en las cartas de
+    // muerte, donde los dos lados acaban la partida y esa es la broma.
+    const esMuerte = Boolean(card.left?.epilogueText && card.right?.epilogueText)
+    if (card.left?.text && card.left.text === card.right?.text && !esMuerte) {
+      warnings.push(`${label}: las dos opciones dicen lo mismo ("${card.left.text}").`)
+    }
+  })
+
   const allIds = new Set(seenIds.keys())
   cards.forEach((card, index) => {
     const label = fmt(card.id, index)
