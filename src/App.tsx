@@ -365,7 +365,12 @@ export default function App() {
                         justifyContent: 'safe center',
                       }}
                     >
-                    <div style={{ margin: 'auto 0', width: '100%' }}>
+                    {/* Las piezas del desenlace entran una detras de otra en
+                        vez de aparecer todas de golpe: el titular, lo que paso,
+                        que barra se rompio, cuanto duro y como le recordaran.
+                        Es el momento de la partida que mas se lee, y escalonarlo
+                        obliga a leerlo en ese orden. Ver .nmc-desenlace. */}
+                    <div className="nmc-desenlace" style={{ margin: 'auto 0', width: '100%' }}>
                     {ilustracion && (
                       <div
                         style={{

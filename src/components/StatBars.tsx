@@ -150,6 +150,8 @@ export function StatBars({ stats, card, x, extremeStreak, acabada }: Props) {
           // critical, que es solo "a un paso".
           const reventado = !acabada && (stats[key] <= 0 || stats[key] >= STAT_MAX)
           const quedan = TURNOS_DE_GRACIA - extremeStreak
+          const movido = Boolean(pulso && pulso.prev[key] !== stats[key])
+          const subioIcono = Boolean(pulso && stats[key] > pulso.prev[key])
           const leftVal = card?.left.effects[key] ?? 0
           const rightVal = card?.right.effects[key] ?? 0
           return (
@@ -170,7 +172,21 @@ export function StatBars({ stats, card, x, extremeStreak, acabada }: Props) {
             >
               {/* Los puntos de efecto se superponen sobre el icono al arrastrar
                   (position:absolute), así que el icono no salta al aparecer. */}
-              <div style={{ position: 'relative', display: 'inline-block', lineHeight: 0 }}>
+              <div
+                style={{
+                  position: 'relative',
+                  display: 'inline-block',
+                  lineHeight: 0,
+                  // El icono acusa el golpe junto con los segmentos de la
+                  // barra: un respingo hacia arriba si sube, un bajon si baja.
+                  // La `key` del contenedor lleva el pulso para que React lo
+                  // remonte y la animacion reempiece en decisiones seguidas.
+                  animation: movido
+                    ? `${subioIcono ? 'nmc-icono-sube' : 'nmc-icono-baja'} 480ms ease-out`
+                    : undefined,
+                }}
+                key={movido ? `ico-${pulso?.id}` : 'ico'}
+              >
                 <StatIcon statKey={key} value={stats[key]} critical={critical} />
                 <div
                   style={{

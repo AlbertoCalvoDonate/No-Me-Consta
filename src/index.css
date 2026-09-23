@@ -164,3 +164,50 @@ body {
   0% { background: #ff8f8f; transform: scaleY(2.1); }
   100% { transform: scaleY(1); }
 }
+
+/* El icono del indicador acusa el cambio: sube dando un respingo, baja
+   hundiendose. Corto y sin desplazar el layout (transform, no margin). */
+@keyframes nmc-icono-sube {
+  0% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-5px) scale(1.12); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes nmc-icono-baja {
+  0% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(4px) scale(0.9); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Entrada escalonada de la pantalla de fin: cada hijo directo aparece un poco
+   despues que el anterior. `both` los deja invisibles antes de su turno. */
+@keyframes nmc-surgir {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.nmc-desenlace > * {
+  animation: nmc-surgir 380ms ease-out both;
+}
+.nmc-desenlace > *:nth-child(1) { animation-delay: 40ms; }
+.nmc-desenlace > *:nth-child(2) { animation-delay: 190ms; }
+.nmc-desenlace > *:nth-child(3) { animation-delay: 340ms; }
+.nmc-desenlace > *:nth-child(4) { animation-delay: 490ms; }
+.nmc-desenlace > *:nth-child(5) { animation-delay: 620ms; }
+.nmc-desenlace > *:nth-child(6) { animation-delay: 730ms; }
+.nmc-desenlace > *:nth-child(n + 7) { animation-delay: 820ms; }
+
+/* Quien tenga el sistema en "menos movimiento" no quiere nada de esto: ni la
+   entrada escalonada, ni el destello de las barras, ni el respingo de los
+   iconos, ni el parpadeo del ultimo mes. La informacion no depende de ninguna
+   (el color y el texto la dan igual), asi que se pueden apagar todas. */
+@media (prefers-reduced-motion: reduce) {
+  .nmc-desenlace > *,
+  .nmc-desenlace > *:nth-child(n) {
+    animation: none !important;
+  }
+  [style*="nmc-gana"],
+  [style*="nmc-pierde"],
+  [style*="nmc-icono"],
+  [style*="nmc-alarma"] {
+    animation: none !important;
+  }
+}
