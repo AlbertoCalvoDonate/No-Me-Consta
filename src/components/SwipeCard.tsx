@@ -308,21 +308,27 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
               rectángulo de color vacío. Se rotula con el nombre en grande,
               que además le da un aire de titular. */}
           {!card.characterImage && (
-            <div
-              style={{
-                padding: '0 26px',
-                textAlign: 'center',
-                fontFamily: 'var(--font-pixel)',
-                fontWeight: 400,
-                fontSize: 34,
-                lineHeight: 1.25,
-                letterSpacing: 0.5,
-                color: 'rgba(255,255,255,0.92)',
-                textShadow: '0 2px 10px rgba(0,0,0,0.45)',
-                overflowWrap: 'anywhere',
-              }}
-            >
-              {card.character}
+            <div style={{ padding: '0 22px', width: '100%', boxSizing: 'border-box', textAlign: 'center' }}>
+              <Filete />
+              <div
+                style={{
+                  fontFamily: 'var(--font-pixel)',
+                  fontWeight: 400,
+                  // El nombre manda en toda la carta, asi que se agranda hasta
+                  // donde quepa: los cortos ("La Calle") se comian el hueco a
+                  // 34px fijos y los largos se salian.
+                  fontSize: card.character.length > 22 ? 34 : card.character.length > 14 ? 40 : 48,
+                  lineHeight: 1.2,
+                  letterSpacing: 0.5,
+                  color: 'rgba(255,255,255,0.94)',
+                  textShadow: '0 2px 10px rgba(0,0,0,0.45)',
+                  overflowWrap: 'anywhere',
+                  margin: '18px 0',
+                }}
+              >
+                {card.character}
+              </div>
+              <Filete />
             </div>
           )}
 
@@ -367,6 +373,28 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
           )}
         </div>
       )}
+    </div>
+  )
+}
+
+// Filete de titular para las cartas sin retrato: las voces colectivas que
+// cierran la partida (La Calle, El Comite Ejecutivo, La Militancia...). No
+// tienen cara porque no son una persona, asi que la carta se resuelve como un
+// comunicado en vez de dejar el hueco del retrato vacio.
+function Filete() {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+        color: 'rgba(255,255,255,0.4)',
+      }}
+    >
+      <span style={{ flex: 1, maxWidth: 70, height: 1, background: 'currentColor' }} />
+      <span style={{ fontSize: 9, lineHeight: 1 }}>◆</span>
+      <span style={{ flex: 1, maxWidth: 70, height: 1, background: 'currentColor' }} />
     </div>
   )
 }

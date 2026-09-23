@@ -183,7 +183,7 @@ export function StartScreen({
         {onContinuar ? (
           <>
             <button onClick={onContinuar} style={botonPrimario}>
-              Continuar · mes {Math.max(1, mesEnCurso)}
+              Continuar · {Math.max(0, mesEnCurso - 1)} meses
             </button>
             <button onClick={() => setConfirmando(true)} style={botonSecundario}>
               Empezar de cero
@@ -255,7 +255,7 @@ export function StartScreen({
             <p style={{ ...pixel, margin: '0 0 18px', fontWeight: 500, fontSize: 18, lineHeight: 1.4, color: '#f2ede0' }}>
               ¿Empezar de cero?
               <br />
-              Perderás la partida del mes {mesEnCurso}.
+              Perderás la partida de {Math.max(0, mesEnCurso - 1)} meses.
             </p>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
               <button onClick={() => setConfirmando(false)} style={botonSecundario}>

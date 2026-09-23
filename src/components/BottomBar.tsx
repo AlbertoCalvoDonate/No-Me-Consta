@@ -11,6 +11,7 @@ function mesesParaUrnas(turn: number): number | undefined {
 
 export function BottomBar({ turn }: { turn: number }) {
   const faltan = mesesParaUrnas(turn)
+  const meses = Math.max(0, turn - 1)
   // Solo se avisa en el ultimo año: antes seria ruido en pantalla todo el
   // rato, y en el ultimo año es cuando de verdad cambia como juegas.
   const avisar = faltan !== undefined && faltan <= 12
@@ -33,8 +34,12 @@ export function BottomBar({ turn }: { turn: number }) {
     >
       <span style={{ color: '#e0b84d', whiteSpace: 'nowrap' }}>Presidente</span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+        {/* Meses CUMPLIDOS (turn - 1), que es lo que cuentan la pantalla de
+            fin, el record, los logros y el texto de compartir. Antes aqui se
+            pintaba `turn` crudo: el jugador miraba este numero toda la partida
+            y al terminar le decian uno menos en la misma pantalla. */}
         <span style={{ whiteSpace: 'nowrap' }}>
-          {turn} mes{turn === 1 ? '' : 'es'}
+          {meses} mes{meses === 1 ? '' : 'es'}
         </span>
         {avisar && (
           <span

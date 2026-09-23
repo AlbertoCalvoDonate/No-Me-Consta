@@ -99,9 +99,12 @@ interface Props {
   // Meses seguidos con algun indicador en el extremo. Sirve para decir cuantos
   // quedan antes de que caiga el gobierno (ver TURNOS_DE_GRACIA).
   extremeStreak: number
+  // Con la partida acabada las barras se quedan como registro del estado final,
+  // pero sin cuenta atras: prometeria meses que ya no existen.
+  acabada?: boolean
 }
 
-export function StatBars({ stats, card, x, extremeStreak }: Props) {
+export function StatBars({ stats, card, x, extremeStreak, acabada }: Props) {
   // Mismos umbrales que usa la carta para revelar el texto de cada lado al
   // arrastrar, así los puntos de arriba aparecen exactamente a la vez.
   const fadeStart = SWIPE_REVEAL_DISTANCE / 4
@@ -145,7 +148,7 @@ export function StatBars({ stats, card, x, extremeStreak }: Props) {
           const critical = stats[key] <= 1 || stats[key] >= 9
           // Reventado = ya esta en el extremo y corre la prorroga. Distinto de
           // critical, que es solo "a un paso".
-          const reventado = stats[key] <= 0 || stats[key] >= STAT_MAX
+          const reventado = !acabada && (stats[key] <= 0 || stats[key] >= STAT_MAX)
           const quedan = TURNOS_DE_GRACIA - extremeStreak
           const leftVal = card?.left.effects[key] ?? 0
           const rightVal = card?.right.effects[key] ?? 0

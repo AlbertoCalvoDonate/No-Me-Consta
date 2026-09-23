@@ -288,7 +288,16 @@ export default function App() {
 
           {started && (
             <>
-              <StatBars stats={stats} card={!gameOver ? currentCard : undefined} x={x} extremeStreak={extremeStreak} />
+              {/* Con la partida acabada las barras se quedan como registro del estado
+                  final, pero sin la cuenta atras: "ÚLTIMO MES" parpadeando en una
+                  partida que ya ha terminado promete un mes que no existe. */}
+              <StatBars
+                stats={stats}
+                card={!gameOver ? currentCard : undefined}
+                x={x}
+                extremeStreak={extremeStreak}
+                acabada={gameOver}
+              />
 
               <div
                 style={{
