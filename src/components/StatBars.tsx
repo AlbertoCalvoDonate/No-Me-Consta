@@ -117,6 +117,11 @@ export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor 
 
   // Qué barra tiene abierta la explicación (null = ninguna). Se toca el icono.
   const [abierto, setAbierto] = useState<keyof Stats | null>(null)
+  // Si la partida acaba con el panel abierto, se cierra solo: se quedaba
+  // flotando sobre la pantalla de fin.
+  useEffect(() => {
+    if (acabada) setAbierto(null)
+  }, [acabada])
 
   // Tras cada decisión, destellan los segmentos que se han movido. Al deslizar,
   // las barras saltaban de golpe y era fácil no enterarse de qué te había
@@ -162,15 +167,19 @@ export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor 
             <button
               key={key}
               type="button"
+              // Con la partida acabada las barras son solo el registro del
+              // estado final: abrir "que mide y quien lo mueve" encima de la
+              // pantalla de fin no lleva a ningun sitio.
+              disabled={acabada}
               onClick={() => setAbierto((a) => (a === key ? null : key))}
-              aria-label={`${label}: ${stats[key]}. Qué es`}
+              aria-label={acabada ? `${label}: ${stats[key]}` : `${label}: ${stats[key]}. Qué es`}
               style={{
                 flex: 1,
                 textAlign: 'center',
                 background: 'none',
                 border: 'none',
                 padding: 0,
-                cursor: 'pointer',
+                cursor: acabada ? 'default' : 'pointer',
                 WebkitTapHighlightColor: 'transparent',
               }}
             >
