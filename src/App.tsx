@@ -297,6 +297,8 @@ export default function App() {
                 x={x}
                 extremeStreak={extremeStreak}
                 acabada={gameOver}
+                anger={anger}
+                favor={favor}
               />
 
               <div

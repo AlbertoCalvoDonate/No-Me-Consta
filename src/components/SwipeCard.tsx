@@ -170,9 +170,14 @@ interface Props {
 //
 // Deliberadamente sin numeros: no es un marcador que optimizar, es lo que
 // notarias de alguien con quien tratas todos los dias.
+// El escalon de 2 existe porque el SORTEO actua ahi: a partir de enfado 2 el
+// motor le sube el peso a este personaje y vuelve antes (ver `clima` en
+// useGameStore). Sin este aviso, el juego empezaba a perseguirte sin ensenar
+// nada hasta el 3 — el mismo fallo que tenia la mocion de censura.
 function estadoDelPersonaje(enfado: number, favor: number) {
   if (enfado >= 6) return { texto: 'No le perdona una', color: '#e05a4d' }
   if (enfado >= 3) return { texto: 'Harto de usted', color: '#e0904d' }
+  if (enfado >= 2) return { texto: 'Empieza a hartarse', color: '#b08050' }
   if (favor >= 3) return { texto: 'Le debe una', color: '#8fc98f' }
   if (favor >= 2) return { texto: 'De su lado', color: '#7d8f7d' }
   return undefined

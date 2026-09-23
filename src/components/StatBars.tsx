@@ -5,6 +5,7 @@ import { EffectPips } from './EffectPips'
 import { StatIcon } from './StatIcon'
 import { SWIPE_REVEAL_DISTANCE } from './SwipeCard'
 import { STAT_MAX, TURNOS_DE_GRACIA } from '../data/cards'
+import { REPARTO } from '../data/reparto'
 
 // Barra de nivel: un segmento por punto (0 a STAT_MAX). El relleno del icono
 // es bonito pero NO se puede comparar entre indicadores: como cada silueta
@@ -60,26 +61,27 @@ function LevelBar({
 // Qué mide cada barra y quién la mueve. Es el corazón del juego (como en
 // Reigns: ves quién habla y ya sabes qué te juegas), pero hasta ahora vivía
 // solo en el README. Ahora se toca el icono y lo dice.
-const INFO: Record<keyof Stats, { label: string; que: string; quien: string }> = {
+// Quien mueve cada barra ya no se escribe aqui: sale de REPARTO, que es el
+// dato. Antes era una cadena a mano duplicada del reparto, y esas dos copias
+// ya se habian separado una vez (nombres viejos tras un rename).
+const QUIEN_MUEVE = (k: keyof Stats) => REPARTO.filter((p) => p.dueno === k)
+
+const INFO: Record<keyof Stats, { label: string; que: string }> = {
   medios: {
     label: 'Medios',
     que: 'El relato: lo que se publica y lo que se calla.',
-    quien: 'El Periodista · El Jefe de Comunicación · El Escudero · El Juez',
   },
   gobierno: {
     label: 'Gobierno',
     que: 'La coalición: que tus socios no te suelten la mano.',
-    quien: 'La Vicepresidenta · La Socia Incómoda · El Exiliado · El Independentista · El Expresidente · La Ministra · La Ministra de Igualdad',
   },
   calle: {
     label: 'Calle',
     que: 'La gente: encuestas, manifestaciones, la conversación del bar.',
-    quien: 'El Encuestador · El Cruzado · La Presidenta Regional · La Oposición',
   },
   caja: {
     label: 'Caja B',
     que: 'El dinero opaco: sobres, mordidas, lo que no se declara.',
-    quien: 'El Ministro Caído · El Hermano · El Gurú · La Primera Dama',
   },
 }
 
@@ -102,9 +104,11 @@ interface Props {
   // Con la partida acabada las barras se quedan como registro del estado final,
   // pero sin cuenta atras: prometeria meses que ya no existen.
   acabada?: boolean
+  anger: Record<string, number>
+  favor: Record<string, number>
 }
 
-export function StatBars({ stats, card, x, extremeStreak, acabada }: Props) {
+export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor }: Props) {
   // Mismos umbrales que usa la carta para revelar el texto de cada lado al
   // arrastrar, así los puntos de arriba aparecen exactamente a la vez.
   const fadeStart = SWIPE_REVEAL_DISTANCE / 4
@@ -283,7 +287,28 @@ export function StatBars({ stats, card, x, extremeStreak, acabada }: Props) {
                 marginTop: 6,
               }}
             >
-              Lo mueven: {INFO[abierto].quien}
+              Lo mueven:{' '}
+              {QUIEN_MUEVE(abierto).map((p, i) => {
+                const enf = anger[p.nombre] ?? 0
+                const fav = favor[p.nombre] ?? 0
+                // El estado de cada uno AHORA MISMO. Importa porque el sorteo
+                // lo usa: a quien has cabreado le sube el peso y vuelve antes.
+                const est =
+                  enf >= 3
+                    ? { t: ' (harto)', c: '#e0904d' }
+                    : enf >= 2
+                      ? { t: ' (incómodo)', c: '#b08050' }
+                      : fav >= 2
+                        ? { t: ' (de su lado)', c: '#7d9f7d' }
+                        : undefined
+                return (
+                  <span key={p.nombre} style={{ color: est?.c }}>
+                    {i > 0 ? ' · ' : ''}
+                    {p.nombre}
+                    {est?.t}
+                  </span>
+                )
+              })}
             </div>
           </div>
         </>
