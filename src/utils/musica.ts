@@ -25,8 +25,8 @@ type Papel = 'titulo' | 'partida' | 'final'
 // sitio de un fondo que no debe competir con el texto de la carta.
 const NIVEL: Record<Papel, number> = {
   titulo: 0.72,
-  partida: 0.32,
-  final: 0.65,
+  partida: 0.18,
+  final: 0.36,
 }
 
 // Cuatro variaciones para la partida. Se elige una por partida, no una fija:
