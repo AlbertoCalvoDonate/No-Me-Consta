@@ -162,8 +162,16 @@ export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor 
           const quedan = TURNOS_DE_GRACIA - extremeStreak
           const movido = Boolean(pulso && pulso.prev[key] !== stats[key])
           const subioIcono = Boolean(pulso && stats[key] > pulso.prev[key])
-          const leftVal = card?.left.effects[key] ?? 0
-          const rightVal = card?.right.effects[key] ?? 0
+          // El punto promete que ese indicador se va a mover. Si ya esta
+          // pegado al extremo hacia el que empuja la carta, no puede moverse y
+          // el punto estaria mintiendo: no se pinta. (La otra mitad del
+          // arreglo esta en `jitter`, en useGameStore.)
+          const puedeMoverse = (v: number) =>
+            v > 0 ? stats[key] < STAT_MAX : v < 0 ? stats[key] > 0 : false
+          const efectoIzq = card?.left.effects[key] ?? 0
+          const efectoDer = card?.right.effects[key] ?? 0
+          const leftVal = puedeMoverse(efectoIzq) ? efectoIzq : 0
+          const rightVal = puedeMoverse(efectoDer) ? efectoDer : 0
           return (
             <button
               key={key}

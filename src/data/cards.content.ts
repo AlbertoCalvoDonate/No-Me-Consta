@@ -745,11 +745,11 @@ export const contentCards: Card[] = [
   {
     id: 'gob_regalo_protocolo',
     phase: 1,
-    character: 'El Hermano',
-    characterImage: 'hermano.webp',
-    text: 'Un mandatario extranjero te ha regalado un reloj de lujo en la visita oficial. Por ley va al patrimonio del Estado... o te lo quedas y me lo dejas los findes.',
+    character: 'El Gurú',
+    characterImage: 'guru.webp',
+    text: 'Un mandatario extranjero le ha regalado un reloj de lujo en la visita oficial. "Por ley eso va al patrimonio del Estado y nadie lo discute. Pero permítame una reflexión: un objeto así, en manos de una fundación con fines sociales, multiplicaría su valor simbólico."',
     left: { text: 'Entregarlo por ley', effects: { calle: 1 }, moralidad: 1 },
-    right: { text: '"De recuerdo"', effects: { caja: 1, calle: -1 }, moralidad: -1 },
+    right: { text: 'Que lo custodie su fundación', effects: { caja: 1, calle: -1 }, moralidad: -1 },
   },
   {
     id: 'gob_coche_oficial',
@@ -4263,7 +4263,7 @@ export const contentCards: Card[] = [
     weight: 0,
     character: 'El Periodista',
     characterImage: 'periodista.webp',
-    text: 'Hemos cruzado el organigrama de Igualdad con el registro de socias de una asociación. Coinciden doce nombres. Una de ellas cobra de dos sitios a la vez. ¿Quiere comentar algo antes de que salga?',
+    text: 'Hemos cruzado el organigrama de Igualdad con el registro de socias de una asociación. Coinciden doce nombres. Una de ellas cobra de dos sitios a la vez. Si las cesa a todas de golpe, la asociación saldrá a la calle a decir que esto es una purga. ¿Quiere comentar algo antes de que salga?',
     left: {
       text: 'Cesar a las doce hoy mismo',
       effects: { medios: 2, calle: -1, gobierno: -2 },

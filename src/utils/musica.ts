@@ -139,6 +139,72 @@ async function arrancar(papel: Papel, nombre: string) {
   papelActual = papel
 }
 
+// Al minimizar el navegador o apagar la pantalla del movil, Web Audio sigue
+// sonando: el vals se queda tocando dentro del bolsillo. Al esconderse la
+// pestana se baja la musica y se suspende el contexto entero, que ademas deja
+// de gastar bateria y de ocupar la salida de audio.
+//
+// El corte no es seco. Un cuarto de segundo de bajada sobra para que no
+// chasquee, y hace falta de verdad: en el movil el sonido sigue saliendo por
+// el altavoz mientras la pantalla se apaga, asi que ese chasquido se oiria.
+const CORTE = 0.25
+let dormidaPorLaPestana = false
+let temporizador: number | null = null
+// En desarrollo React monta dos veces, y el oyente se engancharia dos veces con
+// el.
+let vigilando = false
+
+function vigilarLaPestana() {
+  if (vigilando) return
+  vigilando = true
+  document.addEventListener('visibilitychange', () => {
+    const bus = sfx.busDeMusica()
+    if (!bus) return
+    const { ctx } = bus
+    if (temporizador !== null) {
+      clearTimeout(temporizador)
+      temporizador = null
+    }
+    if (document.hidden) {
+      // Si no estaba sonando (nadie ha tocado nada todavia, o esta en mudo) no
+      // hay nada que dormir, y suspender aqui estropearia el despertar.
+      if (ctx.state !== 'running') return
+      dormidaPorLaPestana = true
+      if (ganancia) {
+        const t = ctx.currentTime
+        ganancia.gain.cancelScheduledValues(t)
+        ganancia.gain.setValueAtTime(ganancia.gain.value, t)
+        ganancia.gain.linearRampToValueAtTime(0, t + CORTE)
+      }
+      // Se espera a que acabe la bajada para suspender: suspender para el reloj
+      // del contexto, asi que hacerlo antes congelaria la rampa a medias y el
+      // corte volveria a ser seco. Los navegadores frenan los temporizadores de
+      // las pestanas ocultas, pero disparar tarde solo significa un poco mas de
+      // silencio antes de suspender, que no se nota.
+      temporizador = window.setTimeout(
+        () => {
+          temporizador = null
+          if (document.hidden) void ctx.suspend()
+        },
+        CORTE * 1000 + 50
+      )
+    } else {
+      if (!dormidaPorLaPestana) return
+      dormidaPorLaPestana = false
+      // Volver no necesita gesto: el contexto se suspendio estando ya despierto,
+      // y la norma solo exige el gesto la primera vez.
+      if (ctx.state === 'suspended') void ctx.resume()
+      const papel = papelActual
+      if (ganancia && papel) {
+        const t = ctx.currentTime
+        ganancia.gain.cancelScheduledValues(t)
+        ganancia.gain.setValueAtTime(Math.max(0.0001, ganancia.gain.value), t)
+        ganancia.gain.exponentialRampToValueAtTime(Math.max(0.0002, NIVEL[papel]), t + FUNDIDO)
+      }
+    }
+  })
+}
+
 // Los gestos que el navegador acepta como "el usuario ha interactuado". Se
 // escuchan todos porque cuanto antes se suelte el audio, mas natural queda:
 // mover el raton NO cuenta (no es un gesto de activacion segun la norma), asi
@@ -200,6 +266,7 @@ export const musica = {
   // con él se van todos los nodos. Esto reengancha la música que tocara.
   reengancharAlVolumen() {
     despertarAlPrimerGesto()
+    vigilarLaPestana()
     sfx.alCambiarElVolumen(() => {
       const papel = papelActual ?? papelPedido
       ganancia = null

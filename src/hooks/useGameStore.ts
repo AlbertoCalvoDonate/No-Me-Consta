@@ -50,9 +50,15 @@ function applyMoralidad(current: number, delta: number | undefined): number {
 function jitter(base: number): number {
   if (base === 0) return 0
   const r = Math.random()
-  if (r < 0.2) return base - 1
-  if (r > 0.8) return base + 1
-  return base
+  const out = r < 0.2 ? base - 1 : r > 0.8 ? base + 1 : base
+  // NUNCA anular el efecto. Antes un efecto de 1 se quedaba en 0 una de cada
+  // cinco veces: la carta encendia el punto sobre el indicador, el jugador
+  // decidia contando con que se movia, y no se movia. Es el peor fallo
+  // posible en un juego que esconde los numeros, porque el jugador no tiene
+  // forma de saber si se equivoco al leer o si el juego le mintio.
+  // El azar sigue estando (un 1 puede salir 2), pero solo hacia arriba.
+  if (out === 0) return base > 0 ? 1 : -1
+  return out
 }
 
 // Amortiguación en los extremos: un empujón hacia un extremo pierde fuerza
@@ -73,7 +79,7 @@ function jitter(base: number): number {
 // competente sube de ~una legislatura a ~una y media. Medido: un jugador
 // competente pasa de ganar el 4% al ~15-20%, el que va al azar sigue por
 // debajo del 1%.
-const DAMP_ZONE = 3
+const DAMP_ZONE = 2
 
 // Meses que tarda en estallar una bomba de relojería si la carta no dice
 // otra cosa (ver CardChoice.scheduleIn).
