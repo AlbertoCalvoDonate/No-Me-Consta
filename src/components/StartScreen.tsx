@@ -3,6 +3,7 @@ import type { Stats } from '../types'
 import { StatIcon } from './StatIcon'
 import { epitetoDe } from '../data/epitetos'
 import { useLogrosEstado } from '../hooks/useLogros'
+import { COLOR, pixel } from '../utils/estilo'
 
 const STATS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
@@ -30,7 +31,6 @@ const buildDate = new Date(__BUILD_DATE__).toLocaleString('es-ES', {
   minute: '2-digit',
 })
 
-const pixel = { fontFamily: 'var(--font-pixel)' } as const
 
 export function StartScreen({
   onStart,
@@ -107,7 +107,7 @@ export function StartScreen({
             margin: 0,
             fontWeight: 400,
             fontSize: 46,
-            color: '#e0b84d',
+            color: COLOR.oro,
             lineHeight: 1.05,
           }}
         >
@@ -121,7 +121,7 @@ export function StartScreen({
       {/* Tutorial: instrucciones claras, tono seco. */}
       <div
         style={{
-          background: '#1c1c1e',
+          background: COLOR.panel,
           borderRadius: 14,
           padding: '16px 18px',
           width: '100%',
@@ -134,7 +134,7 @@ export function StartScreen({
             fontWeight: 500,
             fontSize: 13,
             letterSpacing: 0.8,
-            color: '#8a8272',
+            color: COLOR.apagado,
             textTransform: 'uppercase',
             marginBottom: 10,
           }}
@@ -215,7 +215,7 @@ export function StartScreen({
           textAlign: 'center',
           fontWeight: 500,
           fontSize: 13,
-          color: reseteado ? '#e0b84d' : '#5a5650',
+          color: reseteado ? COLOR.oro : '#5a5650',
           // Zona de toque cómoda para el reset oculto, sin cambiar el aspecto.
           padding: '8px 0',
           cursor: 'default',
@@ -244,7 +244,7 @@ export function StartScreen({
         >
           <div
             style={{
-              background: '#1c1c1e',
+              background: COLOR.panel,
               borderRadius: 14,
               padding: '22px 20px',
               maxWidth: 300,
@@ -254,7 +254,7 @@ export function StartScreen({
               border: '1px solid rgba(255,77,77,0.35)',
             }}
           >
-            <p style={{ ...pixel, margin: '0 0 18px', fontWeight: 500, fontSize: 18, lineHeight: 1.4, color: '#f2ede0' }}>
+            <p style={{ ...pixel, margin: '0 0 18px', fontWeight: 500, fontSize: 18, lineHeight: 1.4, color: COLOR.texto }}>
               ¿Empezar de cero?
               <br />
               Perderás la partida de {Math.max(0, mesEnCurso - 1)} meses.
@@ -270,7 +270,7 @@ export function StartScreen({
                 }}
                 style={{
                   ...pixel,
-                  background: '#ff4d4d',
+                  background: COLOR.peligro,
                   border: 'none',
                   borderRadius: 8,
                   padding: '9px 18px',
@@ -292,7 +292,7 @@ export function StartScreen({
 
 const botonPrimario: CSSProperties = {
   ...pixel,
-  background: '#e0b84d',
+  background: COLOR.oro,
   border: 'none',
   borderRadius: 10,
   padding: '13px 30px',
@@ -311,6 +311,6 @@ const botonSecundario: CSSProperties = {
   padding: '7px 18px',
   fontWeight: 400,
   fontSize: 16,
-  color: '#e0b84d',
+  color: COLOR.oro,
   cursor: 'pointer',
 }

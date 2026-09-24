@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import type { Logro } from '../data/logros'
 import { sfx } from '../utils/sfx'
 import { haptics } from '../utils/haptics'
+import { COLOR, pixel } from '../utils/estilo'
 
 // Pop-up estilo logro de Xbox: aparece justo debajo de los indicadores, se
 // queda unos segundos y se va. Si hay varios, se muestran uno detrás de otro
@@ -64,7 +65,7 @@ export function LogroToast({
               maxWidth: '90%',
               padding: '10px 16px 10px 12px',
               borderRadius: 12,
-              background: '#1c1c1e',
+              background: COLOR.panel,
               border: '2px solid #e0b84d',
               boxShadow: '0 10px 30px rgba(0,0,0,0.55)',
             }}
@@ -75,7 +76,7 @@ export function LogroToast({
                 height: 34,
                 flexShrink: 0,
                 borderRadius: '50%',
-                background: '#e0b84d',
+                background: COLOR.oro,
                 color: '#1a1a1a',
                 display: 'flex',
                 alignItems: 'center',
@@ -89,11 +90,11 @@ export function LogroToast({
             <div style={{ minWidth: 0 }}>
               <div
                 style={{
-                  fontFamily: 'var(--font-pixel)',
+                  ...pixel,
                   fontWeight: 500,
                   fontSize: 11,
                   letterSpacing: 0.6,
-                  color: '#8a8272',
+                  color: COLOR.apagado,
                   textTransform: 'uppercase',
                 }}
               >
@@ -101,10 +102,10 @@ export function LogroToast({
               </div>
               <div
                 style={{
-                  fontFamily: 'var(--font-pixel)',
+                  ...pixel,
                   fontWeight: 400,
                   fontSize: 18,
-                  color: '#f2ede0',
+                  color: COLOR.texto,
                   lineHeight: 1.2,
                 }}
               >

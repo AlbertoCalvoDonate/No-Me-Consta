@@ -21,6 +21,7 @@ import { RepartoPanel } from './components/RepartoPanel'
 import { corruptionScore } from './components/SwipeCard'
 import { hayPartidaEnCurso } from './hooks/persistPartida'
 import { textoResultado, compartirResultado } from './utils/compartir'
+import { COLOR, pixel } from './utils/estilo'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
@@ -69,10 +70,10 @@ const botonGameOverSec: CSSProperties = {
   border: '2px solid rgba(224,184,77,0.45)',
   borderRadius: 8,
   padding: '7px 16px',
-  fontFamily: 'var(--font-pixel)',
+  ...pixel,
   fontWeight: 400,
   fontSize: 16,
-  color: '#e0b84d',
+  color: COLOR.oro,
   cursor: 'pointer',
 }
 
@@ -241,7 +242,7 @@ export default function App() {
       <div className="rotate-overlay">
         <div>
           <div style={{ fontSize: 40, marginBottom: 12 }}>📱↻</div>
-          <p style={{ maxWidth: 280, lineHeight: 1.5, fontFamily: 'var(--font-pixel)', fontWeight: 500, fontSize: 22 }}>
+          <p style={{ maxWidth: 280, lineHeight: 1.5, ...pixel, fontWeight: 500, fontSize: 22 }}>
             Este juego es solo para móvil, en vertical. Gira tu dispositivo para jugar.
           </p>
         </div>
@@ -337,7 +338,7 @@ export default function App() {
                       flex: 1,
                       minHeight: 0,
                       margin: '12px 10px',
-                      background: '#1c1c1e',
+                      background: COLOR.panel,
                       borderRadius: 16,
                       padding: '12px 18px',
                       display: 'flex',
@@ -393,10 +394,10 @@ export default function App() {
                     )}
                     <h2
                       style={{
-                        color: '#ff4d4d',
+                        color: COLOR.peligro,
                         marginBottom: modoCompacto ? 6 : 10,
                         marginTop: 0,
-                        fontFamily: 'var(--font-pixel)',
+                        ...pixel,
                         fontWeight: 400,
                         fontSize: modoCompacto ? 23 : 27,
                         lineHeight: 1.2,
@@ -408,7 +409,7 @@ export default function App() {
                       style={{
                         lineHeight: modoCompacto ? 1.28 : 1.45,
                         margin: modoCompacto ? '0 0 8px' : '0 0 16px',
-                        fontFamily: 'var(--font-pixel)',
+                        ...pixel,
                         fontWeight: 500,
                         fontSize: modoCompacto ? 16 : 19,
                       }}
@@ -435,7 +436,7 @@ export default function App() {
                         <StatIcon statKey={deathStat} value={stats[deathStat]} critical size={modoCompacto ? 22 : 30} />
                         <span
                           style={{
-                            fontFamily: 'var(--font-pixel)',
+                            ...pixel,
                             fontWeight: 500,
                             fontSize: modoCompacto ? 16 : 19,
                             color: '#ff9b9b',
@@ -452,7 +453,7 @@ export default function App() {
                         fontSize: modoCompacto ? 14 : 16,
                         lineHeight: 1.3,
                         margin: modoCompacto ? '0 0 8px' : '0 0 18px',
-                        fontFamily: 'var(--font-pixel)',
+                        ...pixel,
                         fontWeight: 500,
                       }}
                     >
@@ -466,14 +467,14 @@ export default function App() {
                     {marcaTexto && (
                       <p
                         style={{
-                          color: esRecord ? '#e0b84d' : '#8a8272',
+                          color: esRecord ? COLOR.oro : COLOR.apagado,
                           // En compacto va más apretada a propósito: medido a
                           // 360x640, con los valores de siempre quince finales
                           // se pasaban por 5px y obligaban a hacer scroll.
                           fontSize: modoCompacto ? 12 : 13,
                           lineHeight: modoCompacto ? 1.2 : 1.3,
                           margin: modoCompacto ? '-7px 0 6px' : '-12px 0 18px',
-                          fontFamily: 'var(--font-pixel)',
+                          ...pixel,
                           fontWeight: 500,
                         }}
                       >
@@ -494,22 +495,22 @@ export default function App() {
                     >
                       <div
                         style={{
-                          fontFamily: 'var(--font-pixel)',
+                          ...pixel,
                           fontWeight: 500,
                           fontSize: 13,
                           letterSpacing: 0.4,
-                          color: '#8a8272',
+                          color: COLOR.apagado,
                         }}
                       >
                         LOS LIBROS LE LLAMARÁN
                       </div>
                       <div
                         style={{
-                          fontFamily: 'var(--font-pixel)',
+                          ...pixel,
                           fontWeight: 400,
                           fontSize: modoCompacto ? 21 : 25,
                           lineHeight: 1.2,
-                          color: '#e0b84d',
+                          color: COLOR.oro,
                           margin: modoCompacto ? '2px 0 3px' : '4px 0 5px',
                         }}
                       >
@@ -517,7 +518,7 @@ export default function App() {
                       </div>
                       <div
                         style={{
-                          fontFamily: 'var(--font-pixel)',
+                          ...pixel,
                           fontWeight: 500,
                           fontSize: modoCompacto ? 13 : 15,
                           lineHeight: 1.25,
@@ -543,11 +544,11 @@ export default function App() {
                       <button
                         onClick={() => restart()}
                         style={{
-                          background: '#e0b84d',
+                          background: COLOR.oro,
                           border: 'none',
                           borderRadius: 8,
                           padding: '12px 20px',
-                          fontFamily: 'var(--font-pixel)',
+                          ...pixel,
                           fontWeight: 400,
                           fontSize: 21,
                           cursor: 'pointer',

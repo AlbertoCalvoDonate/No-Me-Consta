@@ -1,4 +1,5 @@
 import { motion, type MotionValue } from 'framer-motion'
+import { COLOR } from '../utils/estilo'
 
 // Un punto que se enciende sobre el icono al arrastrar la carta: dice QUE ese
 // indicador va a moverse y CUANTO (punto pequeño, mediano o gordo según la
@@ -35,7 +36,7 @@ export function EffectPips({ value, opacity }: { value: number; opacity: MotionV
           width: d,
           height: d,
           borderRadius: '50%',
-          background: '#f2ede0',
+          background: COLOR.texto,
           // Se despega del icono que tiene debajo, sea claro u oscuro.
           boxShadow: '0 0 0 1.5px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)',
         }}

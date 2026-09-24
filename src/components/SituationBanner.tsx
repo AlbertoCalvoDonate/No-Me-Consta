@@ -1,3 +1,4 @@
+import { COLOR, pixel } from '../utils/estilo'
 // Altura fija a propósito: así el retrato de abajo siempre ocupa el mismo
 // espacio, sin importar si el texto de la carta es corto o largo. Los
 // textos muy largos se recortan con "…" en vez de agrandar el banner.
@@ -14,8 +15,8 @@ const ESTILO: Record<
   BannerKind,
   { bg: string; borde: string; etiqueta?: string; color: string }
 > = {
-  normal: { bg: '#1c1c1e', borde: 'rgba(224,184,77,0.25)', color: '#e0b84d' },
-  eleccion: { bg: '#221c0e', borde: 'rgba(224,184,77,0.65)', etiqueta: 'Noche electoral', color: '#e0b84d' },
+  normal: { bg: COLOR.panel, borde: 'rgba(224,184,77,0.25)', color: COLOR.oro },
+  eleccion: { bg: '#221c0e', borde: 'rgba(224,184,77,0.65)', etiqueta: 'Noche electoral', color: COLOR.oro },
   balance: { bg: '#0e1c21', borde: 'rgba(120,199,214,0.55)', etiqueta: 'Balance del año', color: '#9bd6e2' },
   favor: { bg: '#0f1f18', borde: 'rgba(107,214,154,0.55)', etiqueta: 'Te deben una', color: '#8fe0b4' },
 }
@@ -46,7 +47,7 @@ export function SituationBanner({ text, kind = 'normal' }: { text: string; kind?
             left: 0,
             right: 0,
             textAlign: 'center',
-            fontFamily: 'var(--font-pixel)',
+            ...pixel,
             fontWeight: 500,
             fontSize: 12,
             letterSpacing: 1,
@@ -64,7 +65,7 @@ export function SituationBanner({ text, kind = 'normal' }: { text: string; kind?
         // de veces.
         data-testid="situacion"
         style={{
-          fontFamily: 'var(--font-pixel)',
+          ...pixel,
           fontWeight: 500,
           fontSize: 18,
           lineHeight: 1.3,

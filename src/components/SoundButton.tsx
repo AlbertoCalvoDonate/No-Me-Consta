@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { sfx } from '../utils/sfx'
+import { COLOR, pixel } from '../utils/estilo'
 
 // Un solo botón que recorre el ciclo de volumen: 25 → 50 → 75 → 100 → mudo.
 // El icono cambia con el nivel y, salvo mudo, lleva el porcentaje al lado para
@@ -28,8 +29,8 @@ export function SoundButton() {
         border: 'none',
         borderRadius: 8,
         background: 'rgba(0,0,0,0.35)',
-        color: pct === 0 ? '#6b6656' : '#e0b84d',
-        fontFamily: 'var(--font-pixel)',
+        color: pct === 0 ? '#6b6656' : COLOR.oro,
+        ...pixel,
         fontWeight: 500,
         fontSize: 14,
         lineHeight: 1,

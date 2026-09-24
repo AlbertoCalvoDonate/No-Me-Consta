@@ -3,6 +3,7 @@ import { motion, useTransform, type MotionValue, type PanInfo } from 'framer-mot
 import type { Card, StatEffects } from '../types'
 import { characterColor } from '../utils/color'
 import { sfx } from '../utils/sfx'
+import { COLOR, pixel } from '../utils/estilo'
 
 // Tamaño FIJO a propósito — no crece ni encoge con el largo del texto, para
 // que la carta de debajo se vea siempre, no solo un hueco pequeño. El texto
@@ -48,7 +49,7 @@ export function corruptionScore(effects: StatEffects) {
 }
 
 const CLEAN = { bg: '#12331f', accent: '#4dff88' }
-const CORRUPT = { bg: '#3a1414', accent: '#ff4d4d' }
+const CORRUPT = { bg: '#3a1414', accent: COLOR.peligro }
 // Para cuando no hay nada que elegir de verdad.
 const NEUTRO = { bg: '#26262a', accent: '#8d8677' }
 
@@ -138,7 +139,7 @@ function ChoicePanel({
       <div
         style={{
           width: '100%',
-          fontFamily: 'var(--font-pixel)',
+          ...pixel,
           // 400: es el único peso que existe de verdad para esta fuente (ver
           // nota en index.css) — un 700 aquí forzaría un "bold" sintético
           // que se ve borroso, sobre todo a este tamaño.
@@ -396,7 +397,7 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
               <Filete />
               <div
                 style={{
-                  fontFamily: 'var(--font-pixel)',
+                  ...pixel,
                   fontWeight: 400,
                   // El nombre manda en toda la carta, asi que se agranda hasta
                   // donde quepa: los cortos ("La Calle") se comian el hueco a
@@ -432,10 +433,10 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
         <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 7 }}>
           <div
             style={{
-              fontFamily: 'var(--font-pixel)',
+              ...pixel,
               fontWeight: 500,
               fontSize: 22,
-              color: '#e0b84d',
+              color: COLOR.oro,
               lineHeight: 1.1,
             }}
           >
@@ -444,7 +445,7 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
           {estado && (
             <div
               style={{
-                fontFamily: 'var(--font-pixel)',
+                ...pixel,
                 fontWeight: 500,
                 fontSize: 13,
                 color: estado.color,

@@ -6,6 +6,7 @@ import { StatIcon } from './StatIcon'
 import { SWIPE_REVEAL_DISTANCE } from './SwipeCard'
 import { STAT_MAX, TURNOS_DE_GRACIA } from '../data/cards'
 import { REPARTO } from '../data/reparto'
+import { COLOR, pixel } from '../utils/estilo'
 
 // Barra de nivel: un segmento por punto (0 a STAT_MAX). El relleno del icono
 // es bonito pero NO se puede comparar entre indicadores: como cada silueta
@@ -46,7 +47,7 @@ function LevelBar({
               flex: 1,
               borderRadius: 1,
               background:
-                i < value ? (critical ? '#ff4d4d' : '#e0b84d') : 'rgba(255,255,255,0.14)',
+                i < value ? (critical ? COLOR.peligro : COLOR.oro) : 'rgba(255,255,255,0.14)',
               animation: movido
                 ? `${subio ? 'nmc-gana' : 'nmc-pierde'} 620ms ease-out`
                 : undefined,
@@ -232,18 +233,18 @@ export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor 
                   quedan dos meses" se veian exactamente igual. */}
               <div
                 style={{
-                  fontFamily: 'var(--font-pixel)',
+                  ...pixel,
                   fontWeight: 500,
                   fontSize: 14,
                   letterSpacing: 0.4,
                   lineHeight: 1,
                   marginTop: 4,
                   color: reventado
-                    ? '#ff4d4d'
+                    ? COLOR.peligro
                     : critical
                       ? '#ff6b6b'
                       : abierto === key
-                        ? '#e0b84d'
+                        ? COLOR.oro
                         : '#a8a08c',
                   // Parpadeo solo en el ultimo mes: si parpadeara siempre que
                   // hay prorroga, dejaria de significar "ahora SI".
@@ -277,11 +278,11 @@ export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor 
               borderRadius: 12,
               padding: '12px 14px',
               boxShadow: '0 12px 30px rgba(0,0,0,0.55)',
-              fontFamily: 'var(--font-pixel)',
+              ...pixel,
               textAlign: 'left',
             }}
           >
-            <div style={{ fontWeight: 500, fontSize: 15, color: '#e0b84d', marginBottom: 4 }}>
+            <div style={{ fontWeight: 500, fontSize: 15, color: COLOR.oro, marginBottom: 4 }}>
               {INFO[abierto].label}
             </div>
             <div style={{ fontWeight: 500, fontSize: 15, lineHeight: 1.35, color: '#e8e2d4' }}>
@@ -292,7 +293,7 @@ export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor 
                 fontWeight: 500,
                 fontSize: 13,
                 lineHeight: 1.4,
-                color: '#8a8272',
+                color: COLOR.apagado,
                 marginTop: 6,
               }}
             >

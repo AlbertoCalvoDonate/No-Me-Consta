@@ -131,4 +131,3 @@ export const LOGROS: Logro[] = [
   { id: 'coleccion_todas', grupo: 'Descubrir cartas', nombre: 'No me consta que quede ninguna', desc: 'Descubre todas las cartas del juego.', oculto: true, check: (r) => r.cartasColeccionadas >= cards.length },
 ]
 
-export const TOTAL_LOGROS = LOGROS.length

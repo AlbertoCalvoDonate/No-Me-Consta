@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { LOGROS } from '../data/logros'
 import { useLogrosEstado } from '../hooks/useLogros'
+import { COLOR, pixel } from '../utils/estilo'
 
 // Lista completa de logros. Los conseguidos van tachados y en dorado; los que
 // faltan, en gris. Los ocultos que aún no tienes no revelan la descripción.
@@ -33,20 +34,20 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
         <div>
           <div
             style={{
-              fontFamily: 'var(--font-pixel)',
+              ...pixel,
               fontWeight: 400,
               fontSize: 22,
-              color: '#e0b84d',
+              color: COLOR.oro,
             }}
           >
             Logros
           </div>
           <div
             style={{
-              fontFamily: 'var(--font-pixel)',
+              ...pixel,
               fontWeight: 500,
               fontSize: 13,
-              color: '#8a8272',
+              color: COLOR.apagado,
               marginTop: 2,
             }}
           >
@@ -62,7 +63,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
             border: 'none',
             borderRadius: 8,
             background: 'rgba(255,255,255,0.08)',
-            color: '#f2ede0',
+            color: COLOR.texto,
             fontSize: 20,
             lineHeight: 1,
             cursor: 'pointer',
@@ -125,7 +126,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                   flexShrink: 0,
                   marginTop: 1,
                   borderRadius: '50%',
-                  background: hecho ? '#e0b84d' : 'rgba(255,255,255,0.1)',
+                  background: hecho ? COLOR.oro : 'rgba(255,255,255,0.1)',
                   color: '#1a1a1a',
                   display: 'flex',
                   alignItems: 'center',
@@ -139,10 +140,10 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
               <div style={{ minWidth: 0 }}>
                 <div
                   style={{
-                    fontFamily: 'var(--font-pixel)',
+                    ...pixel,
                     fontWeight: 400,
                     fontSize: 16,
-                    color: hecho ? '#f2ede0' : '#b7b1a3',
+                    color: hecho ? COLOR.texto : '#b7b1a3',
                     lineHeight: 1.25,
                   }}
                 >
@@ -150,10 +151,10 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                 </div>
                 <div
                   style={{
-                    fontFamily: 'var(--font-pixel)',
+                    ...pixel,
                     fontWeight: 500,
                     fontSize: 13,
-                    color: '#8a8272',
+                    color: COLOR.apagado,
                     lineHeight: 1.35,
                     marginTop: 2,
                   }}
@@ -198,22 +199,22 @@ function Cabecera({
     >
       <span
         style={{
-          fontFamily: 'var(--font-pixel)',
+          ...pixel,
           fontWeight: 500,
           fontSize: 12,
           letterSpacing: 1,
           textTransform: 'uppercase',
-          color: '#8a8272',
+          color: COLOR.apagado,
         }}
       >
         {grupo}
       </span>
       <span
         style={{
-          fontFamily: 'var(--font-pixel)',
+          ...pixel,
           fontWeight: 500,
           fontSize: 12,
-          color: hechos === total ? '#e0b84d' : '#5f5a50',
+          color: hechos === total ? COLOR.oro : '#5f5a50',
         }}
       >
         {hechos}/{total}
@@ -247,10 +248,10 @@ function FilaOcultos({ n }: { n: number }) {
       />
       <div
         style={{
-          fontFamily: 'var(--font-pixel)',
+          ...pixel,
           fontWeight: 500,
           fontSize: 14,
-          color: '#8a8272',
+          color: COLOR.apagado,
         }}
       >
         {n === 1 ? '1 logro oculto por descubrir' : `${n} logros ocultos por descubrir`}

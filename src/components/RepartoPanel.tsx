@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { REPARTO, CARTAS_POR_PERSONAJE, ETIQUETA_INDICADOR } from '../data/reparto'
 import { StatIcon } from './StatIcon'
 import { useLogrosEstado } from '../hooks/useLogros'
+import { COLOR, pixel } from '../utils/estilo'
 
 // EL REPARTO. Quien es quien y que indicador mueve cada uno.
 //
@@ -14,7 +15,6 @@ import { useLogrosEstado } from '../hooks/useLogros'
 // Los personajes que aun no has visto salen tapados, a proposito: descubrir
 // el reparto es parte del juego, no se regala en la primera pantalla.
 
-const pixel = { fontFamily: 'var(--font-pixel)' } as const
 
 export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
   const { cartasVistas: _n, idsVistos } = useLogrosEstado()
@@ -48,8 +48,8 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
         }}
       >
         <div>
-          <div style={{ ...pixel, fontWeight: 400, fontSize: 22, color: '#e0b84d' }}>El reparto</div>
-          <div style={{ ...pixel, fontWeight: 500, fontSize: 13, color: '#8a8272', marginTop: 2 }}>
+          <div style={{ ...pixel, fontWeight: 400, fontSize: 22, color: COLOR.oro }}>El reparto</div>
+          <div style={{ ...pixel, fontWeight: 500, fontSize: 13, color: COLOR.apagado, marginTop: 2 }}>
             Has conocido a {conocidos} de {REPARTO.length}
           </div>
         </div>
@@ -62,7 +62,7 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
             border: 'none',
             borderRadius: 8,
             background: 'rgba(255,255,255,0.08)',
-            color: '#f2ede0',
+            color: COLOR.texto,
             fontSize: 20,
             lineHeight: 1,
             cursor: 'pointer',
@@ -134,7 +134,7 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
                     ...pixel,
                     fontWeight: 400,
                     fontSize: 17,
-                    color: conocido ? '#f2ede0' : '#6b6558',
+                    color: conocido ? COLOR.texto : '#6b6558',
                     lineHeight: 1.2,
                   }}
                 >
@@ -145,7 +145,7 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
                     ...pixel,
                     fontWeight: 500,
                     fontSize: 12.5,
-                    color: '#8a8272',
+                    color: COLOR.apagado,
                     lineHeight: 1.35,
                     marginTop: 2,
                   }}

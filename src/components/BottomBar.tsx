@@ -1,5 +1,6 @@
 import { SoundButton } from './SoundButton'
 import { ELECTION_INTERVAL, ELECTION_MAX_TERMS } from '../data/cards'
+import { COLOR, pixel } from '../utils/estilo'
 
 // Meses que faltan para la proxima noche electoral, o undefined si ya no
 // quedan (la ultima convocatoria cierra la partida).
@@ -26,13 +27,13 @@ export function BottomBar({ turn }: { turn: number }) {
         justifyContent: 'space-between',
         alignItems: 'center',
         gap: 10,
-        fontFamily: 'var(--font-pixel)',
+        ...pixel,
         fontSize: 20,
         fontWeight: 500,
         color: '#a89f8c',
       }}
     >
-      <span style={{ color: '#e0b84d', whiteSpace: 'nowrap' }}>Presidente</span>
+      <span style={{ color: COLOR.oro, whiteSpace: 'nowrap' }}>Presidente</span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
         {/* Meses CUMPLIDOS (turn - 1), que es lo que cuentan la pantalla de
             fin, el record, los logros y el texto de compartir. Antes aqui se

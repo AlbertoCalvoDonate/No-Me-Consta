@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import type { Stats } from '../types'
 import { STAT_MAX } from '../data/cards'
+import { COLOR } from '../utils/estilo'
 
 // Iconos planos de una sola pieza (estilo Reigns original), con el propio
 // dibujo haciendo de máscara para un relleno que sube desde abajo según el
@@ -80,7 +81,7 @@ export function StatIcon({
   const fillHeight = VB * pct
   const fillY = VB - fillHeight
   const clipId = `stat-icon-clip-${statKey}`
-  const fillColor = critical ? '#ff4d4d' : '#e0b84d'
+  const fillColor = critical ? COLOR.peligro : COLOR.oro
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${VB} ${VB}`} aria-hidden="true">
