@@ -3,8 +3,12 @@
 // plano y de pocos colores, justo lo que mejor comprime.
 //
 // Medido sobre los 16 retratos del juego: 14,20 MB -> 1,16 MB (92% menos).
-// La calidad 0.9 es deliberada: bajar a 0.65 solo ahorraba 0,4 MB más y ya
-// empezaba a ensuciar los degradados de la piel.
+// La calidad 0.82 sale de medir, no de tantear: con los 22 retratos actuales
+// baja de 1,81 a 1,29 MB (29% menos) y el peor PSNR del lote es 38,5 dB, que
+// a ojo es indistinguible en arte plano de pocos colores como este. Importa
+// porque la pantalla de carga espera a que esten los 22: cada MB ahorrado son
+// veinte segundos menos en 3G. Por debajo de 0.75 si empieza a ensuciar los
+// degradados de la piel.
 //
 // Uso (hace falta un servidor de dev levantado):
 //   1. npm run dev            (en otra terminal)
@@ -36,7 +40,7 @@ const chromium = await loadChromium()
 
 const CHARDIR = fileURLToPath(new URL('../public/characters/', import.meta.url))
 const DEV_URL = process.env.DEV_URL || 'http://localhost:5173/'
-const CALIDAD = Number(process.env.CALIDAD || 0.9)
+const CALIDAD = Number(process.env.CALIDAD || 0.82)
 
 const args = process.argv.slice(2)
 const files = args.length > 0 ? args : readdirSync(CHARDIR).filter((f) => f.endsWith('.png'))

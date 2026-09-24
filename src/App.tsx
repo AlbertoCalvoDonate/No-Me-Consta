@@ -23,6 +23,8 @@ import { hayPartidaEnCurso } from './hooks/persistPartida'
 import { textoResultado, compartirResultado } from './utils/compartir'
 import { COLOR, pixel } from './utils/estilo'
 import { precargarRetratos } from './utils/precarga'
+import { REPARTO } from './data/reparto'
+import { PantallaCarga } from './components/PantallaCarga'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
@@ -55,6 +57,9 @@ const ILUSTRACION_ESPECIFICA: Record<string, string> = {
   elecciones_retirada_final: 'nocheelectoral.webp',
   elecciones_leyenda_final: 'nocheelectoral.webp',
 }
+// Los 22 retratos del reparto, que son los que espera la pantalla de carga.
+const RETRATOS = REPARTO.map((p) => p.imagen)
+
 // Las ilustraciones que puede sacar la pantalla de fin, para precargarlas al
 // final de la cola (ver ilustracionFin justo debajo).
 const ILUSTRACIONES_FIN = [
@@ -90,9 +95,13 @@ export default function App() {
   // Pantalla de inicio: solo se ve una vez al cargar la web, no vuelve a
   // salir al reiniciar partida (restart lleva directo a jugar de nuevo).
   const [started, setStarted] = useState(false)
-  // Los retratos se traen de fondo en cuanto se entra a jugar. Ver
-  // utils/precarga: de uno en uno y en huecos libres, para no pelearse con la
-  // imagen de la carta que se esta viendo.
+  // Entre darle a jugar y la primera carta hay una pantalla de carga que se
+  // espera a los 22 retratos. Medido: las quince primeras cartas tocan casi
+  // quince personajes distintos, asi que no vale con precargar unos pocos.
+  // A cambio, de ahi en adelante toda carta sale al instante.
+  const [cargando, setCargando] = useState(false)
+  // Las ilustraciones de final NO entran en la espera: no hacen falta hasta
+  // que acaba la partida, y para entonces han venido de fondo.
   useEffect(() => {
     if (started) precargarRetratos(ILUSTRACIONES_FIN)
   }, [started])
@@ -280,13 +289,23 @@ export default function App() {
             fontFamily: 'system-ui, sans-serif',
           }}
         >
-          {!started && (
+          {cargando && (
+            <PantallaCarga
+              imagenes={RETRATOS}
+              onListo={() => {
+                setCargando(false)
+                setStarted(true)
+              }}
+            />
+          )}
+
+          {!started && !cargando && (
             <StartScreen
               onStart={() => {
                 restart()
-                setStarted(true)
+                setCargando(true)
               }}
-              onContinuar={reanudable ? () => setStarted(true) : undefined}
+              onContinuar={reanudable ? () => setCargando(true) : undefined}
               mesEnCurso={turn}
               onVerLogros={() => setVerLogros(true)}
               onVerReparto={() => setVerReparto(true)}
