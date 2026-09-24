@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react'
 import { motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion'
 import type { Card, StatEffects } from '../types'
 import { characterColor } from '../utils/color'
@@ -13,6 +14,8 @@ const PANEL_HIDDEN = PANEL_WIDTH + 24
 // Inclinación máxima de la carta al arrastrar (grados). El panel de respuesta
 // es hijo de la carta y gira con ella, como una pegatina pegada encima.
 const CARD_TILT = 12
+// Cuanto se desplaza la carta al asomar una opcion sin arrastrar.
+const PEEK_DISTANCE = 58
 
 // Proporción común de todos los retratos (scripts/normalize-portraits.mjs los
 // re-encuadra a 1020x1200). El <img> se dimensiona a este ratio y se escala
@@ -208,6 +211,53 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
   const leftColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CORRUPT : CLEAN
   const rightColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CLEAN : CORRUPT
 
+  // TOCAR Y TECLADO, no solo arrastrar. Hasta ahora la carta no tenia ni
+  // onClick ni teclas ni foco: el juego solo se podia jugar arrastrando con un
+  // puntero. Y como el texto de cada opcion SOLO se ve mientras arrastras,
+  // quien tocaba no podia ni leer entre que elegia.
+  //
+  // Va en dos pasos a proposito, igual que el arrastre: el primero asoma la
+  // opcion (y se puede leer), el segundo la elige. Un toque suelto nunca
+  // decide nada, que en un juego sin deshacer importa.
+  const [asomado, setAsomado] = useState<'left' | 'right' | null>(null)
+  const elegir = useCallback(
+    (lado: 'left' | 'right') => {
+      x.stop()
+      x.set(0)
+      setAsomado(null)
+      onChoose(lado)
+    },
+    [onChoose, x]
+  )
+  const activar = useCallback(
+    (lado: 'left' | 'right') => {
+      if (asomado === lado) elegir(lado)
+      else {
+        setAsomado(lado)
+        // Un pelo mas que el umbral de revelado, para que el panel entre del
+        // todo y la carta se incline como si estuvieras arrastrando.
+        x.set(lado === 'left' ? -PEEK_DISTANCE : PEEK_DISTANCE)
+      }
+    },
+    [asomado, elegir, x]
+  )
+  // Al cambiar de carta se olvida el vistazo: la carta nueva empieza recta.
+  useEffect(() => {
+    setAsomado(null)
+    x.set(0)
+  }, [card.id, x])
+
+  useEffect(() => {
+    const alPulsar = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); activar('left') }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); activar('right') }
+      else if (e.key === 'Escape' && asomado) { setAsomado(null); x.set(0) }
+      else if ((e.key === 'Enter' || e.key === ' ') && asomado) { e.preventDefault(); elegir(asomado) }
+    }
+    window.addEventListener('keydown', alPulsar)
+    return () => window.removeEventListener('keydown', alPulsar)
+  }, [activar, asomado, elegir, x])
+
   // Sin animación de salida a propósito: la carta siguiente entra al
   // instante en cuanto se decide (nada que esperar, nada que se pueda
   // quedar a medias). Solo se anima la entrada (initial → animate).
@@ -222,10 +272,12 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
       // se pasa del 0 hacia el signo contrario y asoma un trozo del panel
       // de la otra opción en la carta nueva. `x.set(0)` deja la carta
       // siguiente en su sitio desde el primer frame.
+      setAsomado(null)
       x.stop()
       x.set(0)
       onChoose('left')
     } else if (decidedRight) {
+      setAsomado(null)
       x.stop()
       x.set(0)
       onChoose('right')
@@ -273,6 +325,24 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+          }}
+          // Enfocable y anunciable: antes la carta no tenia ni rol ni foco ni
+          // etiqueta, asi que con lector de pantalla el juego no se podia
+          // jugar. El aria-label lleva la situacion y las dos salidas, que es
+          // justo lo que el jugador vidente ve al asomar cada lado.
+          tabIndex={0}
+          role="group"
+          aria-label={
+            `${card.character}. ${card.text} ` +
+            `Izquierda: ${textoIzq}. Derecha: ${textoDer}. ` +
+            'Flecha izquierda o derecha para asomar una opción, otra vez para elegirla.'
+          }
+          onPointerUp={(e) => {
+            // Solo un toque limpio: si el puntero se ha movido, es un arrastre
+            // y de eso se encarga onDragEnd.
+            if (Math.abs(x.get()) > 4 && asomado === null) return
+            const r = e.currentTarget.getBoundingClientRect()
+            activar(e.clientX - r.left < r.width / 2 ? 'left' : 'right')
           }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}

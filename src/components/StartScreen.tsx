@@ -145,6 +145,8 @@ export function StartScreen({
         <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: 17, lineHeight: 1.45, color: '#e8e2d4' }}>
           Desliza cada carta a un lado o al otro para decidir.
           <br />
+          O toca un lado para ver esa opción, y otra vez para elegirla.
+          <br />
           Rara vez hay una opción buena. Esa es la gracia.
         </p>
 
