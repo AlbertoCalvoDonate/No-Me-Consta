@@ -39,7 +39,11 @@ export function BottomBar({ turn }: { turn: number }) {
             pintaba `turn` crudo: el jugador miraba este numero toda la partida
             y al terminar le decian uno menos en la misma pantalla. */}
         <span style={{ whiteSpace: 'nowrap' }}>
-          {meses} mes{meses === 1 ? '' : 'es'}
+          {/* El primer mes aun no se ha cumplido, asi que el contador vale 0 y
+              ahi parece un dato sin cargar. Se dice con palabras y a partir del
+              mes 1 ya va el numero, que es el mismo que dira la pantalla de
+              fin. */}
+          {meses === 0 ? 'recién llegado' : meses + ' mes' + (meses === 1 ? '' : 'es')}
         </span>
         {avisar && (
           <span

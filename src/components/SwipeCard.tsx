@@ -102,11 +102,20 @@ function ChoicePanel({
     <motion.div
       style={{
         position: 'absolute',
-        top: 26,
+        // ABAJO, no arriba. Los retratos llevan la cara en la mitad superior,
+        // asi que un panel anclado arriba se le come. Medido: con top:26 y
+        // altura fija tapaba el 100% de la cara en 320x568, 360x640 y 375x667
+        // (iPhone SE y 8, que son muchos telefonos) y el 51% en 390x844.
+        // Abajo cae sobre el torso, que no dice nada.
+        bottom: '6%',
         left: '50%',
         marginLeft: -PANEL_WIDTH / 2,
         width: PANEL_WIDTH,
-        height: PANEL_HEIGHT,
+        // Proporcional a la carta y con tope: en una carta baja, 130px fijos
+        // eran tres cuartas partes de la carta.
+        height: '34%',
+        minHeight: 88,
+        maxHeight: PANEL_HEIGHT,
         x: panelX,
         background: colors.bg,
         opacity,
