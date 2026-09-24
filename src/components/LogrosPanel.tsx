@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { LOGROS } from '../data/logros'
 import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
@@ -9,9 +8,13 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
   const { conseguidos, total, hechos } = useLogrosEstado()
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+    // El fondo va SOLIDO desde el primer fotograma. Antes el panel entero
+    // entraba desde opacity 0, asi que mientras duraba el fundido se veian las
+    // dos pantallas superpuestas: el listado encima del menu, con el titulo y
+    // los botones transparentandose por debajo. Parecia un parpadeo.
+    // Quien anima ahora es el contenido, con .nmc-panel en index.css.
+    <div
+      className="nmc-panel"
       style={{
         position: 'absolute',
         inset: 0,
@@ -169,7 +172,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
           )
         })}
       </div>
-    </motion.div>
+    </div>
   )
 }
 
