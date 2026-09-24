@@ -25,6 +25,7 @@ import { COLOR, pixel } from './utils/estilo'
 import { precargarRetratos } from './utils/precarga'
 import { REPARTO } from './data/reparto'
 import { PantallaCarga } from './components/PantallaCarga'
+import { musica } from './utils/musica'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
@@ -105,11 +106,27 @@ export default function App() {
   useEffect(() => {
     if (started) precargarRetratos(ILUSTRACIONES_FIN)
   }, [started])
+
   // ¿Había una partida a medias en localStorage al cargar? (snapshot al montar;
   // el store ya la ha restaurado — "Continuar" solo tiene que enseñar el juego.)
   const [reanudable] = useState(hayPartidaEnCurso)
   const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, history, flagsVistos, anger, favor, extremeStreak, choose, restart } =
     useGameStore()
+  // MUSICA. Tres momentos con tres papeles: el titulo y el final se oyen, y en
+  // partida baja mucho para no pelearse con el texto de la carta (ver NIVEL en
+  // utils/musica). La primera pieza no puede sonar hasta que el jugador toque
+  // algo -los navegadores no dejan-, y aqui eso se cumple solo: la pantalla de
+  // inicio no suena hasta que se interactua con ella.
+  useEffect(() => {
+    musica.reengancharAlVolumen()
+    return () => sfx.alCambiarElVolumen(null)
+  }, [])
+  useEffect(() => {
+    if (cargando) return
+    if (!started) musica.poner('titulo')
+    else if (gameOver) musica.poner('final')
+    else musica.poner('partida')
+  }, [started, cargando, gameOver])
 
   // Posición de arrastre de la carta actual, compartida con StatBars para
   // que los puntos de efecto se vean arriba, sobre el icono de cada stat,
@@ -303,6 +320,7 @@ export default function App() {
             <StartScreen
               onStart={() => {
                 restart()
+                musica.barajarPartida()
                 setCargando(true)
               }}
               onContinuar={reanudable ? () => setCargando(true) : undefined}

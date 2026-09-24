@@ -33,6 +33,12 @@ let master: GainNode | null = null
 let mezcla: GainNode | null = null
 let envio: GainNode | null = null
 let paso = leerPaso()
+// La musica cuelga del mismo master que los efectos, para que el boton de
+// volumen que ya existe la gobierne sin logica aparte. Va por su propio nodo
+// porque tiene su propia mezcla (el fondo de partida suena mas bajo que el del
+// titulo) y porque hay que poder fundirla sin tocar los efectos.
+let busMusica: GainNode | null = null
+let avisarCambio: (() => void) | null = null
 
 function leerPaso(): number {
   try {
@@ -91,6 +97,10 @@ function getCtx(): AudioContext | null {
     envio = ctx.createGain()
     envio.gain.value = 1
     envio.connect(conv)
+
+    busMusica = ctx.createGain()
+    busMusica.gain.value = 1
+    busMusica.connect(master)
   } catch {
     return null
   }
@@ -327,10 +337,26 @@ export const sfx = {
         master = null
         mezcla = null
         envio = null
+        busMusica = null
       }
     } else if (master) {
       master.gain.value = BASE_GAIN * factor
     }
+    avisarCambio?.()
     return this.porcentaje()
+  },
+
+  // Bus por el que entra la musica de fondo (ver utils/musica). Devuelve null
+  // si el juego esta en mudo: ahi no hay contexto de audio siquiera.
+  busDeMusica(): { ctx: AudioContext; destino: GainNode } | null {
+    const c = getCtx()
+    if (!c || !busMusica) return null
+    return { ctx: c, destino: busMusica }
+  },
+
+  // Se llama al tocar el boton de volumen. La musica lo necesita porque al
+  // mutear se cierra el contexto entero y al volver hay que rearrancarla.
+  alCambiarElVolumen(fn: (() => void) | null) {
+    avisarCambio = fn
   },
 }

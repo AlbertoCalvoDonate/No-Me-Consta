@@ -4,3 +4,8 @@ dist
 *.local
 
 tsconfig.tsbuildinfo
+
+# Las pistas originales de la OST (23 MB de mp3). Lo que se publica son los
+# bucles ya cortados y comprimidos de public/musica, generados con
+# scripts/musica.mjs. Los originales se quedan fuera del repo.
+ost-fuentes
