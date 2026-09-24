@@ -45,6 +45,19 @@ function fmt(id, index) {
   return id ? `"${id}" (carta #${index + 1})` : `carta sin id (posición #${index + 1})`
 }
 
+// Caracteres que delatan texto pegado de un procesador o de una IA. El mazo
+// estaba limpio salvo nueve rayas, reescritas a mano; esto es para que no
+// vuelvan a colarse.
+const RAROS = [
+  ['—', 'raya (em dash)'],
+  ['–', 'guion medio (en dash)'],
+  ['…', 'puntos suspensivos de un caracter'],
+  ['“', 'comilla curva de apertura'],
+  ['”', 'comilla curva de cierre'],
+  ['’', 'apostrofo curvo'],
+  [' ', 'espacio duro'],
+]
+
 function validate(cards) {
   const errors = []
   const warnings = []
@@ -172,6 +185,13 @@ function validate(cards) {
         warnings.push(`${label}: comillas sin cerrar en "${donde}".`)
       }
       if (/\s{2,}/.test(txt)) warnings.push(`${label}: espacio doble en "${donde}".`)
+      // Tipografia de procesador de textos: la raya, el guion medio, las
+      // comillas curvas y los puntos suspensivos de un solo caracter cantan a
+      // texto pegado, no a alguien hablando. El juego escribe con guion normal,
+      // comillas rectas y tres puntos.
+      for (const [ch, nombre] of RAROS) {
+        if (txt.includes(ch)) warnings.push(`${label}: ${nombre} en "${donde}". Reescribelo hablado.`)
+      }
       if (/\s+[,.;:]/.test(txt)) warnings.push(`${label}: espacio antes de puntuación en "${donde}".`)
     }
     // Dos opciones con el mismo rotulo solo tiene sentido en las cartas de
