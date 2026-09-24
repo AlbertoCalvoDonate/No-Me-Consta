@@ -58,6 +58,15 @@ const RAROS = [
   [' ', 'espacio duro'],
 ]
 
+// Al jugador se le trata de USTED en todo el juego. Las dos excepciones son
+// de familia y estan puestas a proposito: el hermano y la mujer tutean, y eso
+// es justo lo que los caracteriza frente a los otros veinte personajes.
+// Medido: El Hermano 36% de tuteo, La Primera Dama 25%, todos los demas 0%.
+const TUTEAN = new Set(['El Hermano', 'La Primera Dama'])
+// Formas de tu dirigidas al jugador. Solo se miran FUERA de las comillas: lo
+// que un personaje cita de otro puede tutear sin problema.
+const FORMAS_TU = /\b(te ha|te van|te lo|te la|te pido|te cuento|tienes|puedes|quieres|sabes|contigo|tuyo|tuya|preguntaste|firmaste|dijiste|hiciste)\b/i
+
 function validate(cards) {
   const errors = []
   const warnings = []
@@ -194,6 +203,14 @@ function validate(cards) {
       }
       if (/\s+[,.;:]/.test(txt)) warnings.push(`${label}: espacio antes de puntuación en "${donde}".`)
     }
+    if (card.text && !TUTEAN.has(card.character)) {
+      const sinCitas = card.text.replace(/"[^"]*"/g, '')
+      const m = sinCitas.match(FORMAS_TU)
+      if (m) {
+        warnings.push(`${label}: ${card.character} tutea al jugador ("${m[0]}") y el juego habla de usted.`)
+      }
+    }
+
     // Dos opciones con el mismo rotulo solo tiene sentido en las cartas de
     // muerte, donde los dos lados acaban la partida y esa es la broma.
     const esMuerte = Boolean(card.left?.epilogueText && card.right?.epilogueText)
