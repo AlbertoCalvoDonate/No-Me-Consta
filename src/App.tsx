@@ -22,6 +22,7 @@ import { corruptionScore } from './components/SwipeCard'
 import { hayPartidaEnCurso } from './hooks/persistPartida'
 import { textoResultado, compartirResultado } from './utils/compartir'
 import { COLOR, pixel } from './utils/estilo'
+import { precargarRetratos } from './utils/precarga'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
@@ -54,6 +55,14 @@ const ILUSTRACION_ESPECIFICA: Record<string, string> = {
   elecciones_retirada_final: 'nocheelectoral.webp',
   elecciones_leyenda_final: 'nocheelectoral.webp',
 }
+// Las ilustraciones que puede sacar la pantalla de fin, para precargarlas al
+// final de la cola (ver ilustracionFin justo debajo).
+const ILUSTRACIONES_FIN = [
+  'max_medios.webp', 'min_medios.webp', 'max_gobierno.webp', 'min_gobierno.webp',
+  'max_pueblo.webp', 'min_pueblo.webp', 'max_cajab.webp', 'min_cajab.webp',
+  ...Object.values(ILUSTRACION_ESPECIFICA),
+]
+
 function ilustracionFin(endingId: string): string | undefined {
   if (ILUSTRACION_ESPECIFICA[endingId]) return ILUSTRACION_ESPECIFICA[endingId]
   const techo = endingId.includes('_max_')
@@ -81,6 +90,12 @@ export default function App() {
   // Pantalla de inicio: solo se ve una vez al cargar la web, no vuelve a
   // salir al reiniciar partida (restart lleva directo a jugar de nuevo).
   const [started, setStarted] = useState(false)
+  // Los retratos se traen de fondo en cuanto se entra a jugar. Ver
+  // utils/precarga: de uno en uno y en huecos libres, para no pelearse con la
+  // imagen de la carta que se esta viendo.
+  useEffect(() => {
+    if (started) precargarRetratos(ILUSTRACIONES_FIN)
+  }, [started])
   // ¿Había una partida a medias en localStorage al cargar? (snapshot al montar;
   // el store ya la ha restaurado — "Continuar" solo tiene que enseñar el juego.)
   const [reanudable] = useState(hayPartidaEnCurso)
