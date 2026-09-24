@@ -35,7 +35,18 @@ const NIVEL: Record<Papel, number> = {
 // cansa por bueno que sea.
 const PARTIDA = ['partida-1', 'partida-2', 'partida-3', 'partida-4']
 
+// Cambiar de pantalla cruza una pieza con otra: 1,2 s basta y no se arrastra.
 const FUNDIDO = 1.2
+// La PRIMERA vez es otra cosa. El navegador no deja sonar nada hasta que el
+// jugador toca algo, asi que la musica entra desde el silencio absoluto y en
+// un momento que el no ha pedido: con el fundido corto era un portazo. Cinco
+// segundos la convierten en algo que aparece en vez de algo que arranca.
+//
+// Juega a favor un detalle de Web Audio: mientras el contexto esta suspendido
+// su reloj NO avanza, asi que la rampa se programa y se ejecuta entera a
+// partir del momento en que se despierta. No hay que sincronizar nada.
+const FUNDIDO_FRIO = 5
+let yaSono = false
 
 // Lo que SUENA ahora mismo.
 let papelActual: Papel | null = null
@@ -110,13 +121,30 @@ async function arrancar(papel: Papel, nombre: string) {
   f.connect(g)
   f.start()
   const t = ctx.currentTime
+  const subida = yaSono ? FUNDIDO : FUNDIDO_FRIO
+  // Solo cuenta como "ya ha sonado" si el contexto estaba despierto: si el
+  // jugador entro a jugar antes de tocar nada, la del titulo no llego a oirse
+  // y la de partida sigue siendo la primera. Sin esto entraba con el fundido
+  // corto, que desde el silencio es el portazo que se trataba de evitar.
+  if (ctx.state === 'running') yaSono = true
   g.gain.setValueAtTime(0, t)
-  g.gain.linearRampToValueAtTime(NIVEL[papel], t + FUNDIDO)
+  // Rampa exponencial y no lineal: el oido no percibe el volumen de forma
+  // lineal, y una rampa recta se oye como que "salta" al principio y se
+  // arrastra al final. Se arranca desde un valor minusculo porque
+  // exponentialRamp no admite empezar en cero.
+  g.gain.setValueAtTime(0.0001, t)
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, NIVEL[papel]), t + subida)
 
   ganancia = g
   fuente = f
   papelActual = papel
 }
+
+// Los gestos que el navegador acepta como "el usuario ha interactuado". Se
+// escuchan todos porque cuanto antes se suelte el audio, mas natural queda:
+// mover el raton NO cuenta (no es un gesto de activacion segun la norma), asi
+// que el primero suele ser el clic en cualquier sitio.
+const EVENTOS = ['pointerdown', 'pointerup', 'mousedown', 'keydown', 'touchstart', 'touchend']
 
 // Mientras el contexto siga suspendido, cualquier gesto sirve para soltarlo.
 // Se desengancha solo en cuanto lo consigue.
@@ -128,13 +156,9 @@ function despertarAlPrimerGesto() {
       void bus.ctx.resume()
       return
     }
-    for (const ev of ['pointerdown', 'keydown', 'touchstart']) {
-      window.removeEventListener(ev, intentar)
-    }
+    for (const ev of EVENTOS) window.removeEventListener(ev, intentar)
   }
-  for (const ev of ['pointerdown', 'keydown', 'touchstart']) {
-    window.addEventListener(ev, intentar, { passive: true })
-  }
+  for (const ev of EVENTOS) window.addEventListener(ev, intentar, { passive: true })
 }
 
 export const musica = {
