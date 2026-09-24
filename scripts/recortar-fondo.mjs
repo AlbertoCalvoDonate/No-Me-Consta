@@ -110,8 +110,16 @@ for (const f of files) {
         }
       }
       const muestras = [...urna.values()].reduce((a, v) => a + v.n, 0)
-      // Hasta dos tonos (el damero alterna dos) y solo si son CLAROS: un fondo
-      // oscuro no se distingue de la ropa y no merece la pena arriesgarse.
+      // Hasta dos tonos (el damero alterna dos). Se aceptan fondos CLAROS y
+      // fondos casi NEGROS, y nada de en medio: el gris intermedio es
+      // exactamente el color de una americana y no hay forma de distinguirlo.
+      //
+      // El negro puro SI existe en el arte (los ojos en T, la toga del juez,
+      // media chaqueta del periodista), pero el relleno va por contiguidad
+      // desde el borde y los ojos estan encerrados por la cara, asi que no se
+      // tocan. Lo que si podria perderse es una chaqueta negra que llegue al
+      // borde de abajo; para eso esta el tope de MAX_BORRADO, que aborta y
+      // deja el archivo como estaba.
       const fondos =
         muestras < 200
           ? []
@@ -119,7 +127,10 @@ for (const f of files) {
               .sort((a, b) => b.n - a.n)
               .slice(0, 2)
               .map((v) => ({ r: v.r / v.n, g: v.g / v.n, b: v.b / v.n }))
-              .filter((c0) => (c0.r + c0.g + c0.b) / 3 > 150)
+              .filter((c0) => {
+                const media = (c0.r + c0.g + c0.b) / 3
+                return media > 150 || media < 25
+              })
       // Aunque no haya fondo que quitar (retrato ya recortado) se sigue
       // adelante: queda la pasada de motas sueltas, que tambien hace falta en
       // arte que llega ya con transparencia.

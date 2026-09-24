@@ -5,7 +5,7 @@
 // con `node scripts/colores-retrato.mjs` cada vez que anadas o cambies un
 // retrato; lo que no este aqui cae al color por defecto y no rompe nada.
 export const COLOR_RETRATO: Record<string, string> = {
-  'cruzado.webp': '#221f15',
+  'cruzado.webp': '#222015',
   'encuestador.webp': '#24232f',
   'exiliadopesado.webp': '#1a1c25',
   'expresidentecompetente.webp': '#171620',
@@ -13,18 +13,18 @@ export const COLOR_RETRATO: Record<string, string> = {
   'fiscal.webp': '#232124',
   'guru.webp': '#372525',
   'hermano.webp': '#14141b',
-  'independentista.webp': '#26262c',
+  'independentista.webp': '#26262b',
   'jefecomunicacion.webp': '#0d101e',
   'juez.webp': '#111010',
   'ministraincompetente.webp': '#42444c',
-  'ministrocorrupto.webp': '#2d292d',
-  'ministrolameculos.webp': '#0e111e',
+  'ministrocorrupto.webp': '#262228',
+  'ministrolameculos.webp': '#615858',
   'mopongo.webp': '#452625',
   'oposicionsuave.webp': '#1f232f',
   'periodista.webp': '#0b090b',
   'presi.webp': '#2f2932',
   'presidentaregional.webp': '#522327',
   'primeradama.webp': '#5c4e44',
-  'sociaincomoda.webp': '#1f1223',
+  'sociaincomoda.webp': '#30090e',
   'vicepresi.webp': '#4a443f',
 }
