@@ -212,14 +212,16 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
   const leftColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CORRUPT : CLEAN
   const rightColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CLEAN : CORRUPT
 
-  // TOCAR Y TECLADO, no solo arrastrar. Hasta ahora la carta no tenia ni
-  // onClick ni teclas ni foco: el juego solo se podia jugar arrastrando con un
-  // puntero. Y como el texto de cada opcion SOLO se ve mientras arrastras,
-  // quien tocaba no podia ni leer entre que elegia.
+  // TECLADO. La carta no tenia teclas ni foco, asi que sin puntero no habia
+  // forma de jugar, ni con lector de pantalla tampoco.
   //
-  // Va en dos pasos a proposito, igual que el arrastre: el primero asoma la
-  // opcion (y se puede leer), el segundo la elige. Un toque suelto nunca
-  // decide nada, que en un juego sin deshacer importa.
+  // Va en dos pasos, igual que el arrastre: la flecha asoma la opcion (y se
+  // puede leer, que si no el texto solo aparece arrastrando) y repetirla la
+  // elige. Una pulsacion suelta nunca decide nada.
+  //
+  // Hubo tambien un toque en los lados de la carta para elegir sin arrastrar,
+  // y se quito: se pisaba con el arrastre y el resultado era impredecible. En
+  // tactil manda el gesto de deslizar, que es el del genero.
   const [asomado, setAsomado] = useState<'left' | 'right' | null>(null)
   const elegir = useCallback(
     (lado: 'left' | 'right') => {
@@ -338,13 +340,6 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
             `Izquierda: ${textoIzq}. Derecha: ${textoDer}. ` +
             'Flecha izquierda o derecha para asomar una opción, otra vez para elegirla.'
           }
-          onPointerUp={(e) => {
-            // Solo un toque limpio: si el puntero se ha movido, es un arrastre
-            // y de eso se encarga onDragEnd.
-            if (Math.abs(x.get()) > 4 && asomado === null) return
-            const r = e.currentTarget.getBoundingClientRect()
-            activar(e.clientX - r.left < r.width / 2 ? 'left' : 'right')
-          }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.7}
