@@ -121,11 +121,18 @@ export default function App() {
     musica.reengancharAlVolumen()
     return () => sfx.alCambiarElVolumen(null)
   }, [])
+  // En la pantalla de inicio NO hay musica. El navegador no deja sonar nada
+  // hasta que el jugador toca algo, asi que una pieza de titulo solo podia
+  // entrar a destiempo, despues de un clic que el jugador no dio para eso. La
+  // musica empieza cuando empieza la partida, que ahi el gesto ya esta dado y
+  // no se nota.
   useEffect(() => {
+    if (!started) {
+      musica.callar()
+      return
+    }
     if (cargando) return
-    if (!started) musica.poner('titulo')
-    else if (gameOver) musica.poner('final')
-    else musica.poner('partida')
+    musica.poner(gameOver ? 'final' : 'partida')
   }, [started, cargando, gameOver])
 
   // Posición de arrastre de la carta actual, compartida con StatBars para
@@ -594,7 +601,7 @@ export default function App() {
                       }}
                     >
                       <button
-                        onClick={() => restart()}
+                        onClick={() => { sfx.boton(); restart() }}
                         style={{
                           background: COLOR.oro,
                           border: 'none',
@@ -611,6 +618,7 @@ export default function App() {
                       <div style={{ display: 'flex', gap: 8 }}>
                         <button
                           onClick={async () => {
+                            sfx.boton()
                             const res = await compartirResultado(
                               textoResultado(turn - 1, moralidad, causaCompartir)
                             )
@@ -627,7 +635,7 @@ export default function App() {
                               ? 'No se pudo'
                               : 'Compartir'}
                         </button>
-                        <button onClick={() => setVerLogros(true)} style={botonGameOverSec}>
+                        <button onClick={() => { sfx.boton(); setVerLogros(true) }} style={botonGameOverSec}>
                           Logros
                         </button>
                       </div>

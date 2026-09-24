@@ -37,15 +37,14 @@ const PARTIDA = ['partida-1', 'partida-2', 'partida-3', 'partida-4']
 
 // Cambiar de pantalla cruza una pieza con otra: 1,2 s basta y no se arrastra.
 const FUNDIDO = 1.2
-// La PRIMERA vez es otra cosa. El navegador no deja sonar nada hasta que el
-// jugador toca algo, asi que la musica entra desde el silencio absoluto y en
-// un momento que el no ha pedido: con el fundido corto era un portazo. Cinco
-// segundos la convierten en algo que aparece en vez de algo que arranca.
+// La PRIMERA vez entra desde el silencio absoluto, asi que sube un poco mas
+// despacio para no dar un portazo. Poco mas: la musica ya no suena en el menu
+// sino al empezar la partida, y ahi lo que se quiere es que este cuanto antes.
 //
 // Juega a favor un detalle de Web Audio: mientras el contexto esta suspendido
 // su reloj NO avanza, asi que la rampa se programa y se ejecuta entera a
 // partir del momento en que se despierta. No hay que sincronizar nada.
-const FUNDIDO_FRIO = 5
+const FUNDIDO_FRIO = 1.8
 let yaSono = false
 
 // Lo que SUENA ahora mismo.

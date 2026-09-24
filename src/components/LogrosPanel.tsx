@@ -1,6 +1,7 @@
 import { LOGROS } from '../data/logros'
 import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
+import { sfx } from '../utils/sfx'
 
 // Lista completa de logros. Los conseguidos van tachados y en dorado; los que
 // faltan, en gris. Los ocultos que aún no tienes no revelan la descripción.
@@ -58,7 +59,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
           </div>
         </div>
         <button
-          onClick={onCerrar}
+          onClick={() => { sfx.boton(); onCerrar() }}
           aria-label="Cerrar"
           style={{
             width: 38,

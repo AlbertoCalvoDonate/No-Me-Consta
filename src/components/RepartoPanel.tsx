@@ -2,6 +2,7 @@ import { REPARTO, CARTAS_POR_PERSONAJE, ETIQUETA_INDICADOR } from '../data/repar
 import { StatIcon } from './StatIcon'
 import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
+import { sfx } from '../utils/sfx'
 
 // EL REPARTO. Quien es quien y que indicador mueve cada uno.
 //
@@ -57,7 +58,7 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
           </div>
         </div>
         <button
-          onClick={onCerrar}
+          onClick={() => { sfx.boton(); onCerrar() }}
           aria-label="Cerrar"
           style={{
             width: 38,

@@ -4,6 +4,7 @@ import { StatIcon } from './StatIcon'
 import { epitetoDe } from '../data/epitetos'
 import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
+import { sfx } from '../utils/sfx'
 
 const STATS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
@@ -182,24 +183,24 @@ export function StartScreen({
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, marginTop: 2 }}>
         {onContinuar ? (
           <>
-            <button onClick={onContinuar} style={botonPrimario}>
+            <button onClick={() => { sfx.boton(); onContinuar() }} style={botonPrimario}>
               Continuar · {Math.max(0, mesEnCurso - 1)} meses
             </button>
-            <button onClick={() => setConfirmando(true)} style={botonSecundario}>
+            <button onClick={() => { sfx.boton(); setConfirmando(true) }} style={botonSecundario}>
               Empezar de cero
             </button>
           </>
         ) : (
-          <button onClick={onStart} style={botonPrimario}>
+          <button onClick={() => { sfx.boton(); onStart() }} style={botonPrimario}>
             Empezar legislatura
           </button>
         )}
 
         <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={onVerReparto} style={botonSecundario}>
+          <button onClick={() => { sfx.boton(); onVerReparto() }} style={botonSecundario}>
             El reparto
           </button>
-          <button onClick={onVerLogros} style={botonSecundario}>
+          <button onClick={() => { sfx.boton(); onVerLogros() }} style={botonSecundario}>
             Logros
           </button>
         </div>
@@ -258,11 +259,12 @@ export function StartScreen({
               Perderás la partida de {Math.max(0, mesEnCurso - 1)} meses.
             </p>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-              <button onClick={() => setConfirmando(false)} style={botonSecundario}>
+              <button onClick={() => { sfx.boton(); setConfirmando(false) }} style={botonSecundario}>
                 Cancelar
               </button>
               <button
                 onClick={() => {
+                  sfx.boton()
                   setConfirmando(false)
                   onStart()
                 }}

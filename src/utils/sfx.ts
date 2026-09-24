@@ -220,6 +220,16 @@ function ruido(
 }
 
 export const sfx = {
+  // Cualquier boton de la interfaz (empezar, logros, reparto, compartir...).
+  // Seco y corto: no es un acontecimiento del juego, solo la confirmacion de
+  // que el dedo ha dado donde queria. Dos capas, que un solo tono suena a
+  // pitido y no a boton: el chasquido del contacto y debajo un golpe con
+  // cuerpo que baja de tono.
+  boton() {
+    ruido(0.03, { volumen: 0.2, filtro: 3200, tipoFiltro: 'highpass' })
+    nota(300, 0.06, { tipo: 'square', volumen: 0.2, filtro: 1400, bend: -90 })
+  },
+
   // Al empezar a arrastrar la carta: un toque seco, casi imperceptible.
   roce() {
     nota(320, 0.05, { tipo: 'triangle', volumen: 0.22, filtro: 1800 })
