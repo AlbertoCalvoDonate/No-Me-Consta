@@ -18,10 +18,15 @@ type Papel = 'titulo' | 'partida' | 'final'
 // bajo a propósito: ahí lo que manda es el texto de la carta, y la música solo
 // tiene que estar. En el título y en el final no compite con nada, así que
 // puede oírse de verdad.
+// Estos valores multiplican un archivo que ya esta a -20 LUFS. Medido en la
+// salida real del navegador con estos numeros: el titulo sale a -19,6 dBFS de
+// media con picos en -5, que deja margen de sobra para que los efectos se
+// sumen sin saturar; la partida a -30, doce decibelios por debajo, que es el
+// sitio de un fondo que no debe competir con el texto de la carta.
 const NIVEL: Record<Papel, number> = {
-  titulo: 0.55,
-  partida: 0.2,
-  final: 0.5,
+  titulo: 0.72,
+  partida: 0.32,
+  final: 0.65,
 }
 
 // Cuatro variaciones para la partida. Se elige una por partida, no una fija:

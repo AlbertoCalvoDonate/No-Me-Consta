@@ -98,9 +98,16 @@ function getCtx(): AudioContext | null {
     envio.gain.value = 1
     envio.connect(conv)
 
+    // La musica NO pasa por `master` ni por el compresor. BASE_GAIN (0,16)
+    // esta calibrado para osciladores a escala completa, y los archivos de
+    // musica ya vienen normalizados a -20 LUFS: encadenar las dos atenuaciones
+    // dejaba el fondo en -41 dBFS, o sea inaudible. Medido con la cadena real
+    // en el navegador: 0,55 x 0,16 = 0,088.
+    // Cuelga del destino con el PASO de volumen como unica ganancia, asi el
+    // boton lo sigue gobernando y al mutear el contexto se cierra igual.
     busMusica = ctx.createGain()
-    busMusica.gain.value = 1
-    busMusica.connect(master)
+    busMusica.gain.value = PASOS[paso]
+    busMusica.connect(ctx.destination)
   } catch {
     return null
   }
@@ -339,8 +346,9 @@ export const sfx = {
         envio = null
         busMusica = null
       }
-    } else if (master) {
-      master.gain.value = BASE_GAIN * factor
+    } else {
+      if (master) master.gain.value = BASE_GAIN * factor
+      if (busMusica) busMusica.gain.value = factor
     }
     avisarCambio?.()
     return this.porcentaje()
