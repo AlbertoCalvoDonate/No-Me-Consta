@@ -13,6 +13,15 @@ const soporta =
 
 function v(patron: number | number[]) {
   if (!soporta || sfx.porcentaje() === 0) return
+  // Sin un toque previo del usuario el navegador BLOQUEA la vibracion y deja
+  // un error en la consola por cada intento. No lanza, asi que el try/catch no
+  // lo tapa: hay que no llamar. Lo encontro el QA a lo bruto, que abre la
+  // pagina, restaura un guardado y juega sin tocar nada con el dedo; ahi
+  // salian tres errores de consola seguidos, y los errores de consola son la
+  // senal con la que se vigila todo lo demas.
+  const act = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } })
+    .userActivation
+  if (act && !act.hasBeenActive) return
   try {
     navigator.vibrate(patron)
   } catch {
