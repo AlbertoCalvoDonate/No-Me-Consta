@@ -512,12 +512,15 @@ function pickIntro(): Card {
 // La carta de arranque cuando se hereda un pais: una por cada forma de caer
 // del anterior. Sale SIEMPRE en vez de la intro normal, porque es de lo que va
 // la primera semana de cualquier gobierno.
-const HERENCIA_IDS: Record<string, string> = {
-  medios: 'herencia_medios',
-  gobierno: 'herencia_gobierno',
-  calle: 'herencia_calle',
-  caja: 'herencia_caja',
-  evento: 'herencia_evento',
+// Dos por cada forma de caer, y se sortea. Con una sola, la de medios salia
+// en una de cada tres partidas -es la muerte mas comun- y a la tercera vez ya
+// no se leia.
+const HERENCIA_IDS: Record<string, string[]> = {
+  medios: ['herencia_medios', 'herencia_medios_b', 'herencia_medios_c'],
+  gobierno: ['herencia_gobierno', 'herencia_gobierno_b', 'herencia_gobierno_c'],
+  calle: ['herencia_calle', 'herencia_calle_b', 'herencia_calle_c'],
+  caja: ['herencia_caja', 'herencia_caja_b', 'herencia_caja_c'],
+  evento: ['herencia_evento', 'herencia_evento_b', 'herencia_evento_c'],
 }
 
 // Estado de una partida recién empezada (carta de arranque al azar, salvo que
@@ -525,7 +528,10 @@ const HERENCIA_IDS: Record<string, string> = {
 type EstadoStore = Omit<GameStore, 'choose' | 'restart'>
 function estadoNuevo(): EstadoStore {
   const herencia = cargarHerencia()
-  const idHerencia = herencia ? HERENCIA_IDS[herencia.causa ?? 'evento'] : undefined
+  const variantes = herencia ? HERENCIA_IDS[herencia.causa ?? 'evento'] : undefined
+  const idHerencia = variantes
+    ? variantes[Math.floor(Math.random() * variantes.length)]
+    : undefined
   const cartaHerencia = idHerencia ? cards.find((c) => c.id === idHerencia) : undefined
   const intro = cartaHerencia ?? pickIntro()
   // El indicador que tumbo al anterior empieza tocado. Un punto, no mas: la

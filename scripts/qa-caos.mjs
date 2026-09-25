@@ -413,7 +413,7 @@ await gamberrada('la herencia pasa a la partida siguiente', async (page) => {
   })
   let mal = 0
   for (const x of r) {
-    if (x.carta !== 'herencia_' + x.causa) {
+    if (!x.carta.startsWith('herencia_' + x.causa)) {
       mal++
       apunta('la herencia pasa a la partida siguiente', `murio por ${x.causa} y la carta fue ${x.carta}`)
     }
