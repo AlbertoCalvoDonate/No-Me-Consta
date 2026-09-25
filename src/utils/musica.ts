@@ -57,6 +57,9 @@ let papelPedido: Papel | null = null
 let pistaPedida: string | null = null
 let fuente: AudioBufferSourceNode | null = null
 let ganancia: GainNode | null = null
+// El contexto sobre el que esta sonando lo que suena. Sirve para distinguir
+// "han cambiado el volumen" de "han mutado y el contexto es otro".
+let ctxActual: AudioContext | null = null
 const cache = new Map<string, AudioBuffer>()
 let enCurso = 0
 
@@ -136,6 +139,7 @@ async function arrancar(papel: Papel, nombre: string) {
 
   ganancia = g
   fuente = f
+  ctxActual = ctx
   papelActual = papel
 }
 
@@ -268,13 +272,30 @@ export const musica = {
     despertarAlPrimerGesto()
     vigilarLaPestana()
     sfx.alCambiarElVolumen(() => {
+      const bus = sfx.busDeMusica()
+      // Si el contexto es el MISMO y la pista sigue sonando, no hay nada que
+      // hacer: el boton de volumen ya ha movido la ganancia del bus.
+      //
+      // Aqui estaba el fallo de "suenan cuatro canciones a la vez". Esto
+      // rearrancaba en cada paso del volumen, y ademas ponia `fuente` y
+      // `ganancia` a null ANTES de llamar a arrancar, asi que el `parar` que
+      // arrancar hace lo primero recibia dos nulos y no paraba nada: la pista
+      // vieja se quedaba sonando para siempre y encima entraba otra. Cuatro
+      // toques al boton, cuatro valses a la vez.
+      if (bus && bus.ctx === ctxActual && fuente) return
       const papel = papelActual ?? papelPedido
+      // Solo se sueltan los nodos cuando de verdad han muerto con su contexto
+      // (mutear lo cierra). Si siguieran vivos, soltarlos aqui es lo que
+      // impedia pararlos.
       ganancia = null
       fuente = null
+      ctxActual = null
       papelActual = null
       papelPedido = papel
       pistaPedida = null
-      if (papel) void arrancar(papel, papel === 'partida' ? (pistaEnPartida ?? PARTIDA[0]) : papel)
+      if (papel && bus) {
+        void arrancar(papel, papel === 'partida' ? (pistaEnPartida ?? PARTIDA[0]) : papel)
+      }
     })
   },
 }

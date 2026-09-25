@@ -39,12 +39,43 @@ function enHueco(fn: () => void) {
   else window.setTimeout(fn, 200)
 }
 
-export function precargarRetratos(extra: string[] = []) {
-  if (arrancada || typeof window === 'undefined') return
-  arrancada = true
-  if (!redDecente()) return
+// EN VUELO A LA VEZ. De una en una tardaba demasiado en calentar: entre el
+// hueco que hay que esperar y la descarga, los veintidos retratos podian
+// llevar mas de veinte segundos, y el jugador ya iba por la sexta carta.
+// Dos a la vez lo parte casi por la mitad y sigue siendo trafico de baja
+// prioridad, que es lo que importaba: no adelantar nunca a la imagen que se
+// esta mirando.
+const A_LA_VEZ = 2
 
-  const cola = [
+let cola: string[] = []
+let enMarcha = 0
+
+// `respetarRed`: en el MENU se baja siempre, aunque la conexion sea mala,
+// porque ahi no hay ninguna carta esperando su imagen y todo el ancho de
+// banda esta libre. La comprobacion de la red solo tiene sentido con la
+// partida ya empezada, que es cuando la precarga puede robarle el sitio a la
+// imagen que el jugador esta mirando.
+//
+// Esto importa mas de lo que parece: con la red clasificada como 2g -y Chrome
+// la clasifica asi con menos de lo que uno cree- no se precargaba NADA, ni en
+// el menu ni jugando, y cada personaje se descargaba con su carta ya en
+// pantalla. Era justo el "las cartas tardan en cargar" del que se quejaba.
+export function precargarRetratos(extra: string[] = [], respetarRed = true) {
+  if (typeof window === 'undefined') return
+  if (respetarRed && !redDecente()) return
+  // Se puede llamar varias veces: al abrir el juego con el reparto, y mas
+  // tarde con las ilustraciones de final. La segunda llamada no reinicia
+  // nada, solo anade a la cola lo que falte.
+  if (arrancada) {
+    const nuevos = extra.filter((x) => !cola.includes(x))
+    if (nuevos.length === 0) return
+    cola.push(...nuevos)
+    tirar()
+    return
+  }
+  arrancada = true
+
+  cola = [
     ...[...REPARTO]
       .sort(
         (a, b) =>
@@ -58,15 +89,24 @@ export function precargarRetratos(extra: string[] = []) {
     ...extra,
   ]
 
-  let i = 0
-  const siguiente = () => {
-    if (i >= cola.length) return
-    const img = new Image()
-    // Baja prioridad donde se soporte: esto nunca debe adelantar a la imagen
-    // de la carta que se está viendo.
-    ;(img as HTMLImageElement & { fetchPriority?: string }).fetchPriority = 'low'
-    img.onload = img.onerror = () => enHueco(siguiente)
-    img.src = '/characters/' + cola[i++]
+  tirar()
+}
+
+let i = 0
+function tirar() {
+  while (enMarcha < A_LA_VEZ && i < cola.length) {
+    enMarcha++
+    const cual = cola[i++]
+    enHueco(() => {
+      const img = new Image()
+      // Baja prioridad donde se soporte: esto nunca debe adelantar a la imagen
+      // de la carta que se está viendo.
+      ;(img as HTMLImageElement & { fetchPriority?: string }).fetchPriority = 'low'
+      img.onload = img.onerror = () => {
+        enMarcha--
+        tirar()
+      }
+      img.src = '/characters/' + cual
+    })
   }
-  enHueco(siguiente)
 }

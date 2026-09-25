@@ -1,27 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion'
 import type { Card, StatEffects } from '../types'
-import { characterColor } from '../utils/color'
+import { characterBackground } from '../utils/color'
 import { sfx } from '../utils/sfx'
 import { COLOR, pixel } from '../utils/estilo'
 
-// Tamaño FIJO a propósito — no crece ni encoge con el largo del texto, para
-// que la carta de debajo se vea siempre, no solo un hueco pequeño. El texto
-// que no quepa se recorta (overflow hidden) en vez de agrandar la etiqueta.
-const PANEL_WIDTH = 216
-const PANEL_HEIGHT = 130
-const PANEL_HIDDEN = PANEL_WIDTH + 24
-
-// Inclinación máxima de la carta al arrastrar (grados). El panel de respuesta
-// es hijo de la carta y gira con ella, como una pegatina pegada encima.
+// Inclinación máxima de la carta al arrastrar (grados).
 const CARD_TILT = 12
 // Cuanto se desplaza la carta al asomar una opcion sin arrastrar.
 const PEEK_DISTANCE = 58
-
-// Proporción común de todos los retratos (scripts/normalize-portraits.mjs los
-// re-encuadra a 1020x1200). El <img> se dimensiona a este ratio y se escala
-// para caber entero en la carta, así todos se ven igual en cualquier pantalla.
-const PORTRAIT_RATIO = '1020 / 1200'
 
 // Distancia de arrastre a la que un lado se considera "totalmente revelado".
 // Se exporta porque StatBars usa el mismo valor para los puntos de efecto —
@@ -66,97 +53,6 @@ const NEUTRO = { bg: '#26262a', accent: '#8d8677' }
 //  - Queda CENTRADA en horizontal, no pegada a un lateral. Pegada al borde se
 //    salía de la carta al inclinarse esta, y encima ese borde es justo el que
 //    se va de pantalla al arrastrar, así que el panel se cortaba con él.
-function ChoicePanel({
-  text,
-  side,
-  colors,
-  x,
-}: {
-  text: string
-  side: 'left' | 'right'
-  colors: { bg: string; accent: string }
-  x: MotionValue<number>
-}) {
-  // El deslizamiento arranca en 0, no en una zona muerta: el panel empieza a
-  // asomar desde el primer píxel de arrastre y entra de forma gradual. Con
-  // zona muerta entraba tarde y de golpe, y no daba tiempo a leerlo. Para el
-  // rebote al soltar no hace falta colchón aquí: de eso se encarga `opacity`,
-  // que apaga el panel en cuanto el arrastre cruza al lado contrario.
-  const slideRaw = useTransform(
-    x,
-    side === 'left' ? [-SWIPE_REVEAL_DISTANCE, 0] : [0, SWIPE_REVEAL_DISTANCE],
-    side === 'left' ? [0, -PANEL_HIDDEN] : [PANEL_HIDDEN, 0]
-  )
-  // Solo el deslizamiento de entrada: el panel NO acompaña a la carta. Una vez
-  // dentro se queda QUIETO en pantalla aunque se siga arrastrando, y es la
-  // carta la que se va por debajo (como en el Reigns original). Antes le
-  // sumaba el desplazamiento de la carta y, pasada la distancia de revelado,
-  // el panel se iba con ella en vez de quedarse a la vista.
-  // Redondeado a píxel entero: sin esto, al llegar al valor máximo el
-  // navegador podía renderizar un subpíxel de más y se veía un salto de 1px.
-  const panelX = useTransform(slideRaw, (v) => Math.round(v))
-  // El panel de un lado NO existe (opacity 0) en cuanto el arrastre está en
-  // el lado contrario — incluso 1px. Así, pase lo que pase con el rebote al
-  // soltar (que puede cruzar el 0 hacia el otro signo), el panel que no se ha
-  // elegido nunca llega a verse. Cuando se empieza a arrastrar hacia este
-  // lado el panel ya está a 0.93 pero todavía fuera de pantalla (zona muerta),
-  // así que tampoco se ve "aparecer".
-  const opacity = useTransform(x, (v) => ((side === 'left' ? v < 0 : v > 0) ? 0.93 : 0))
-  return (
-    <motion.div
-      style={{
-        position: 'absolute',
-        // ABAJO, no arriba. Los retratos llevan la cara en la mitad superior,
-        // asi que un panel anclado arriba se le come. Medido: con top:26 y
-        // altura fija tapaba el 100% de la cara en 320x568, 360x640 y 375x667
-        // (iPhone SE y 8, que son muchos telefonos) y el 51% en 390x844.
-        // Abajo cae sobre el torso, que no dice nada.
-        bottom: '6%',
-        left: '50%',
-        marginLeft: -PANEL_WIDTH / 2,
-        width: PANEL_WIDTH,
-        // Proporcional a la carta y con tope: en una carta baja, 130px fijos
-        // eran tres cuartas partes de la carta.
-        height: '34%',
-        minHeight: 88,
-        maxHeight: PANEL_HEIGHT,
-        x: panelX,
-        background: colors.bg,
-        opacity,
-        border: `2px solid ${colors.accent}`,
-        borderRadius: 12,
-        boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        padding: '8px 10px',
-        boxSizing: 'border-box',
-        zIndex: 4,
-        pointerEvents: 'none',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          ...pixel,
-          // 400: es el único peso que existe de verdad para esta fuente (ver
-          // nota en index.css) — un 700 aquí forzaría un "bold" sintético
-          // que se ve borroso, sobre todo a este tamaño.
-          fontWeight: 400,
-          fontSize: 18,
-          lineHeight: 1.2,
-          color: '#fff',
-          textAlign: 'center',
-          overflowWrap: 'anywhere',
-        }}
-      >
-        {text}
-      </div>
-    </motion.div>
-  )
-}
-
 // Recorrido del DEDO para que el gesto cuente como elección. Tiene que dejar
 // margen de sobra por encima del punto en el que el panel ya está entero
 // (~54px de dedo, ver SWIPE_REVEAL_DISTANCE): ese hueco es el tiempo que
@@ -196,10 +92,10 @@ function estadoDelPersonaje(enfado: number, favor: number) {
   return undefined
 }
 
-export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
-  const estado = estadoDelPersonaje(enfado, favorDebido)
-  const rotate = useTransform(x, [-100, 100], [-CARD_TILT, CARD_TILT])
-
+// Las dos salidas de una carta, ya resueltas: que dice cada lado y de que
+// color va. Lo necesitan la carta (para el teclado) y el banner de arriba
+// (para pintar los paneles), asi que se calcula en un solo sitio.
+export function opcionesDeCarta(card: Card) {
   const leftIsCorrupt = corruptionScore(card.left.effects) > corruptionScore(card.right.effects)
   // En una carta de muerte (las dos salidas acaban la partida) los dos
   // paneles dicen "Pues..." y van del mismo color, como en Reigns: ya no hay
@@ -207,10 +103,18 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
   // así que sigue habiendo dos finales, pero se eligen a ciegas.
   const esMuerte = Boolean(card.left.epilogueText && card.right.epilogueText)
   const mismaOpcion = esMuerte || card.left.text === card.right.text
-  const textoIzq = esMuerte ? 'Pues...' : card.left.text
-  const textoDer = esMuerte ? 'Pues...' : card.right.text
-  const leftColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CORRUPT : CLEAN
-  const rightColors = mismaOpcion ? NEUTRO : leftIsCorrupt ? CLEAN : CORRUPT
+  return {
+    textoIzq: esMuerte ? 'Pues...' : card.left.text,
+    textoDer: esMuerte ? 'Pues...' : card.right.text,
+    coloresIzq: mismaOpcion ? NEUTRO : leftIsCorrupt ? CORRUPT : CLEAN,
+    coloresDer: mismaOpcion ? NEUTRO : leftIsCorrupt ? CLEAN : CORRUPT,
+  }
+}
+
+export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
+  const estado = estadoDelPersonaje(enfado, favorDebido)
+  const rotate = useTransform(x, [-100, 100], [-CARD_TILT, CARD_TILT])
+  const { textoIzq, textoDer } = opcionesDeCarta(card)
 
   // TECLADO. La carta no tenia teclas ni foco, asi que sin puntero no habia
   // forma de jugar, ni con lector de pantalla tampoco.
@@ -306,17 +210,37 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
           vertical — y con ellas el panel de respuesta, que se veía cortado por
           la mitad. La carta ya se recorta a sí misma con su propio
           overflow+borderRadius, que es el borde visible. */}
-      <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
+      {/* La carta tiene EXACTAMENTE la proporcion del retrato (1020x1200), asi
+          que el retrato entra entero y a la vez llena la carta: ni margen por
+          abajo ni recorte por los lados.
+          Con la carta ocupando todo el hueco disponible pasaba una de las dos
+          cosas, segun la pantalla: o sobraba fondo (la figura flotaba) o, al
+          taparlo con `cover`, se comia los lados, y a quien tiene mucho pelo
+          le cortaba la cabeza. Lo que sobra de alto se queda de margen entre
+          el texto y la carta, que ademas le da aire. */}
+      <div
+        style={{
+          position: 'relative',
+          flex: 1,
+          minHeight: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <motion.div
           key={card.id}
           style={{
             x,
             rotate,
-            position: 'absolute',
-            inset: 0,
+            position: 'relative',
+            width: '100%',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            aspectRatio: '1020 / 1200',
             zIndex: 1,
             boxSizing: 'border-box',
-            background: characterColor(card.character, card.characterImage),
+            background: characterBackground(card.character, card.characterImage),
             borderRadius: 16,
             border: '2px solid rgba(255,255,255,0.22)',
             boxShadow: '0 8px 30px rgba(0,0,0,0.45)',
@@ -363,20 +287,20 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
               alt=""
               draggable={false}
               style={{
-                // Todos los retratos están re-encuadrados al mismo lienzo
-                // (PORTRAIT_RATIO, ver scripts/normalize-portraits.mjs). En vez
-                // de forzar la imagen a llenar un hueco de forma variable (que
-                // recortaba distinto en cada pantalla), el <img> se dimensiona
-                // a ESE ratio y se escala para caber entero dentro de la carta:
-                // el retrato se ve completo y con el mismo plano SIEMPRE. Lo
-                // que sobra de carta queda del color de fondo (que es el mismo
-                // que asoma por el fondo transparente del png).
+                // El retrato LLENA la carta. Antes se escalaba para caber
+                // entero, asi que sobraba fondo por arriba y por abajo y la
+                // figura flotaba en mitad de un rectangulo oscuro: parecia una
+                // pegatina puesta encima de la carta, no la carta.
+                //
+                // Con `cover` la imagen cubre todo el hueco y lo que sobra se
+                // recorta. Se ancla ARRIBA porque arriba esta la cara: lo que
+                // se pierde es torso, que no dice nada, y la figura sangra por
+                // el borde de abajo, que es lo que se pedia.
+                position: 'absolute',
+                inset: 0,
                 display: 'block',
-                width: 'auto',
-                height: 'auto',
-                maxWidth: '100%',
-                maxHeight: '100%',
-                aspectRatio: PORTRAIT_RATIO,
+                width: '100%',
+                height: '100%',
                 objectFit: 'cover',
                 objectPosition: 'center top',
               }}
@@ -417,8 +341,9 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
         {/* Paneles de respuesta: hermanos de la carta (ver comentario en
             ChoicePanel). Viajan con ella en X y quedan centrados, así que
             siempre caen dentro de la carta sin que nada los recorte. */}
-        <ChoicePanel text={textoIzq} side="left" colors={leftColors} x={x} />
-        <ChoicePanel text={textoDer} side="right" colors={rightColors} x={x} />
+        {/* Los paneles de respuesta ya no van aqui: se pintan arriba, sobre
+            el texto de la carta (ver SituationBanner). Abajo tapaban la
+            barbilla, y arriba, dentro de la carta, taparian la cara entera. */}
       </div>
 
       {/* El nombre va debajo de la carta SALVO cuando la carta no tiene

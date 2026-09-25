@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
 import { useGameStore } from './hooks/useGameStore'
-import { SwipeCard } from './components/SwipeCard'
+import { SwipeCard, opcionesDeCarta } from './components/SwipeCard'
 import { StatBars } from './components/StatBars'
 import { SituationBanner, type BannerKind } from './components/SituationBanner'
 import { cards, ELECTION_INTERVAL, ELECTION_MAX_TERMS } from './data/cards'
@@ -107,6 +107,14 @@ export default function App() {
   useEffect(() => {
     if (started) precargarRetratos(ILUSTRACIONES_FIN)
   }, [started])
+
+  // Los retratos empiezan a bajarse AL ABRIR EL JUEGO, no al pulsar empezar.
+  // Los segundos que el jugador pasa en el menu son ancho de banda regalado, y
+  // antes se desperdiciaban: la descarga arrancaba con la primera carta ya en
+  // pantalla y las primeras salian sin cara.
+  useEffect(() => {
+    precargarRetratos([], false)
+  }, [])
 
   // ¿Había una partida a medias en localStorage al cargar? (snapshot al montar;
   // el store ya la ha restaurado — "Continuar" solo tiene que enseñar el juego.)
@@ -331,6 +339,10 @@ export default function App() {
             <StartScreen
               onStart={() => {
                 restart()
+                // La cola de logros es de la partida que acaba de terminar: si
+                // no se vacia, siguen saltando pop-ups encima de la partida
+                // nueva, que no los ha ganado.
+                setColaLogros([])
                 musica.barajarPartida()
                 setCargando(true)
               }}
@@ -375,7 +387,14 @@ export default function App() {
                   overflow: 'hidden',
                 }}
               >
-                {!gameOver && <SituationBanner text={cartaMostrada.text} kind={bannerKind} />}
+                {!gameOver && (
+                  <SituationBanner
+                    text={cartaMostrada.text}
+                    kind={bannerKind}
+                    opciones={opcionesDeCarta(cartaMostrada)}
+                    x={x}
+                  />
+                )}
 
                 {/* Sin AnimatePresence a propósito: con ella, al cambiar de
                     key React mantenía montada la carta saliente un frame de
@@ -606,7 +625,7 @@ export default function App() {
                       }}
                     >
                       <button
-                        onClick={() => { sfx.boton(); restart() }}
+                        onClick={() => { sfx.boton(); setColaLogros([]); restart() }}
                         style={{
                           background: COLOR.oro,
                           border: 'none',

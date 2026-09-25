@@ -48,6 +48,10 @@ const ESCENAS = /^(comite|max_|min_|nocheelectoral)/
 // probarlo: por encima de ~0.55 el personaje se funde con su propio fondo y
 // deja de recortarse; por debajo de ~0.30 vuelve a parecer un agujero negro.
 const OSCURO = 0.42
+// Luminosidad final de TODAS las cartas, en tanto por uno. Igual para todos
+// para que ninguna carta pese mas que otra; lo que las distingue es el tono.
+// Por encima de ~0.26 el fondo empieza a competir con la cara.
+const LUZ_FONDO = 0.19
 const LUZ = 20 // solo para el caso raro de un retrato sin un pixel opaco abajo
 
 const files = readdirSync(CHARDIR)
@@ -61,7 +65,7 @@ await page.goto(DEV_URL, { waitUntil: 'domcontentloaded' })
 const mapa = {}
 for (const f of files) {
   mapa[f] = await page.evaluate(
-    async ({ f, LUZ, OSCURO }) => {
+    async ({ f, LUZ, OSCURO, LUZ_FONDO }) => {
       const img = new Image()
       img.src = '/characters/' + f
       await img.decode()
@@ -90,14 +94,54 @@ for (const f of files) {
         }
       }
       if (n === 0) return `hsl(220, 12%, ${LUZ}%)`
-      // Promedio, oscurecido hacia el negro. El fondo tiene que quedar DETRAS
-      // de la cara: si sale con el mismo brillo que la ropa, el personaje se
-      // funde con el fondo y deja de recortarse.
-      const k = OSCURO
-      const to2 = (v) => Math.round(Math.min(255, (v / n) * k)).toString(16).padStart(2, '0')
-      return '#' + to2(r) + to2(g) + to2(b)
+      // El promedio de la ropa se queda con el TONO bueno pero sin color:
+      // promediar mezcla, y mezclar tiende al gris. Con el oscurecido encima,
+      // las veintidos cartas salian entre #0b090b y #42444c, o sea negro con
+      // matices que no se ven. El juego entero parecia gris.
+      //
+      // Asi que se conserva el tono (de donde es el color) y se le devuelve
+      // la saturacion que el promedio le quito, con la luminosidad fijada
+      // para todos: cada personaje tiene su color y ninguno se come al
+      // retrato, que sigue siendo lo que se mira.
+      const R = r / n / 255
+      const G = g / n / 255
+      const B = b / n / 255
+      const mx = Math.max(R, G, B)
+      const mn = Math.min(R, G, B)
+      const l0 = (mx + mn) / 2
+      let h0 = 0
+      let s0 = 0
+      if (mx !== mn) {
+        const dd = mx - mn
+        s0 = l0 > 0.5 ? dd / (2 - mx - mn) : dd / (mx + mn)
+        if (mx === R) h0 = ((G - B) / dd + (G < B ? 6 : 0)) / 6
+        else if (mx === G) h0 = ((B - R) / dd + 2) / 6
+        else h0 = ((R - G) / dd + 4) / 6
+      }
+      // Suelo de saturacion para que la ropa gris o negra tampoco quede muda:
+      // ahi el tono apenas existe, pero el poco que hay se nota.
+      const S = Math.min(0.58, Math.max(0.34, s0 * 2.4))
+      const L = LUZ_FONDO
+      const hue2rgb = (pp, qq, t) => {
+        let tt = t
+        if (tt < 0) tt += 1
+        if (tt > 1) tt -= 1
+        if (tt < 1 / 6) return pp + (qq - pp) * 6 * tt
+        if (tt < 1 / 2) return qq
+        if (tt < 2 / 3) return pp + (qq - pp) * (2 / 3 - tt) * 6
+        return pp
+      }
+      const q = L < 0.5 ? L * (1 + S) : L + S - L * S
+      const pp = 2 * L - q
+      const to2 = (v) => Math.round(Math.min(255, Math.max(0, v * 255))).toString(16).padStart(2, '0')
+      return (
+        '#' +
+        to2(hue2rgb(pp, q, h0 + 1 / 3)) +
+        to2(hue2rgb(pp, q, h0)) +
+        to2(hue2rgb(pp, q, h0 - 1 / 3))
+      )
     },
-    { f, LUZ, OSCURO }
+    { f, LUZ, OSCURO, LUZ_FONDO }
   )
   console.log(f.padEnd(28), mapa[f])
 }

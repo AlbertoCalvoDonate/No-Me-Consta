@@ -255,6 +255,47 @@ await gamberrada('aporrear el boton de volumen', async (page) => {
   await page.waitForTimeout(700)
 })
 
+await gamberrada('el volumen no debe apilar musica', async (page) => {
+  // Cada fuente de audio que arranca y no para se queda sonando. Si tocar el
+  // volumen rearranca la musica sin parar la anterior, se apilan: el jugador
+  // lo oyo como "suenan muchas canciones a la vez".
+  await page.addInitScript(() => {
+    // Se guardan las fuentes, no un contador: al mutear se CIERRA el contexto
+    // y sus fuentes mueren sin disparar 'ended', asi que un contador se queda
+    // contando fantasmas. Solo cuentan las que siguen en un contexto vivo.
+    window.__fuentes = new Set()
+    const start = AudioBufferSourceNode.prototype.start
+    AudioBufferSourceNode.prototype.start = function (...a) {
+      window.__fuentes.add(this)
+      this.addEventListener('ended', () => window.__fuentes.delete(this))
+      return start.apply(this, a)
+    }
+    window.__vivas = () =>
+      [...window.__fuentes].filter((f) => f.context && f.context.state !== 'closed').length
+  })
+  await page.goto(DEV_URL, { waitUntil: 'networkidle' })
+  await entrar(page)
+  await arrastrar(page, 240)
+  await page.waitForTimeout(2500) // que la musica arranque de verdad
+  const boton = page.locator('button[aria-label^="Volumen"], button[aria-label^="Sonido"]').first()
+  if (!(await boton.count())) {
+    apunta('el volumen no debe apilar musica', 'no encuentro el boton de sonido')
+    return
+  }
+  for (let i = 0; i < 8; i++) {
+    await boton.click({ force: true })
+    await page.waitForTimeout(500)
+  }
+  // Se deja tiempo a que mueran las colas de los efectos y los fundidos.
+  await page.waitForTimeout(3500)
+  const vivas = await page.evaluate(() => window.__vivas())
+  if (vivas > 1) {
+    apunta('el volumen no debe apilar musica', `${vivas} fuentes de audio sonando a la vez`)
+  } else {
+    console.log(`  ok  ${vivas} fuente(s) de audio viva(s) tras ocho cambios de volumen`)
+  }
+})
+
 await gamberrada('abrir y cerrar paneles sin parar', async (page) => {
   await page.goto(DEV_URL, { waitUntil: 'networkidle' })
   await entrar(page)
