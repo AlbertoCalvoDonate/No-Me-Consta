@@ -85,12 +85,42 @@ for (const f of files) {
       // y bastante saturada, asi que se come el histograma y a TODOS los
       // personajes les salia el mismo marron (medido: 19 de 22).
       const desde = Math.floor(h * 0.90)
+      // Y dentro de esa franja se DESCARTA la piel. La franja de abajo suele
+      // ser ropa, pero no siempre: a quien va escotado le toca cuello y
+      // escote, y entonces vuelve a pasar lo de antes, que el retrato entero
+      // se tinte de marron carne. A La Fontanera le salia una carta marron
+      // calida, que es lo contrario de lo que es el personaje.
+      const esPiel = (i) => {
+        const R = d[i], G = d[i + 1], B = d[i + 2]
+        if (R <= G || R <= B) return false
+        const mn = Math.min(G, B)
+        const sat = (R - mn) / R
+        if (sat <= 0.18 || sat >= 0.85 || R / 255 <= 0.45) return false
+        const tono = ((G - B) / Math.max(R - mn, 1)) * 60
+        return tono >= 2 && tono <= 42
+      }
       let r = 0, g = 0, b = 0, n = 0
+      let opacos = 0
       for (let y = desde; y < h; y++) {
         for (let px = 0; px < w; px++) {
           const i = (y * w + px) * 4
           if (d[i + 3] < 200) continue
+          opacos++
+          if (esPiel(i)) continue
           r += d[i]; g += d[i + 1]; b += d[i + 2]; n++
+        }
+      }
+      // Si casi todo era piel no queda muestra de la que fiarse, asi que se
+      // vuelve a contar con todo: mejor un marron que un color inventado a
+      // partir de cuatro pixeles.
+      if (n < opacos * 0.15) {
+        r = 0; g = 0; b = 0; n = 0
+        for (let y = desde; y < h; y++) {
+          for (let px = 0; px < w; px++) {
+            const i = (y * w + px) * 4
+            if (d[i + 3] < 200) continue
+            r += d[i]; g += d[i + 1]; b += d[i + 2]; n++
+          }
         }
       }
       if (n === 0) return `hsl(220, 12%, ${LUZ}%)`
@@ -118,9 +148,38 @@ for (const f of files) {
         else if (mx === G) h0 = ((B - R) / dd + 2) / 6
         else h0 = ((R - G) / dd + 4) / 6
       }
-      // Suelo de saturacion para que la ropa gris o negra tampoco quede muda:
-      // ahi el tono apenas existe, pero el poco que hay se nota.
-      const S = Math.min(0.58, Math.max(0.34, s0 * 2.4))
+      // La ropa casi neutra (una camisa blanca, un traje gris) no tiene tono
+      // del que tirar: lo poco que queda es ruido de compresion, y subirle la
+      // saturacion no revela un color, lo INVENTA. Dos camisas blancas podian
+      // acabar en tonos opuestos. Asi que por debajo de este umbral se manda
+      // al azul pizarra de la casa, que es el color de las cartas sin cara.
+      // Para decidir si hay color de verdad NO vale la saturacion HSL: en un
+      // color casi blanco se dispara aunque no haya color. La camisa del
+      // Escudero promedia rgb(225,209,218) -dieciseis puntos de diferencia, o
+      // sea blanco- y la HSL la daba en 0,22, asi que colaba y acababa en un
+      // vino inventado.
+      //
+      // Tampoco vale el croma absoluto, que es lo siguiente que se prueba:
+      // castiga a los oscuros, y un azul marino tiene poco croma absoluto
+      // siendo clarisimamente azul. Con eso, trece de veintitres retratos
+      // acababan del mismo gris, que era volver al problema de partida.
+      //
+      // Lo que si vale es el croma RELATIVO al canal mas alto: blanco rosado
+      // 0,07, azul marino 0,45.
+      const NEUTRO = 0.18
+      const casiGris = mx > 0 ? (mx - mn) / mx < NEUTRO : true
+      if (casiGris) {
+        // Todos los neutros al azul pizarra de la casa, pero no al MISMO: el
+        // juego tiene nueve personajes de blanco, negro o gris, y nueve cartas
+        // identicas vuelven a ser el problema de partida. Cada uno cae en un
+        // punto distinto de la misma familia, sacado de su nombre de fichero,
+        // asi que es estable y se parecen entre ellos sin confundirse.
+        let hf = 0
+        for (let i = 0; i < f.length; i++) hf = f.charCodeAt(i) + ((hf << 5) - hf)
+        h0 = 0.55 + ((Math.abs(hf) % 1000) / 1000) * 0.17
+      }
+      // Suelo de saturacion para lo demas: con poco tono, ese poco se nota.
+      const S = casiGris ? 0.26 : Math.min(0.58, Math.max(0.34, s0 * 2.4))
       const L = LUZ_FONDO
       const hue2rgb = (pp, qq, t) => {
         let tt = t

@@ -14,12 +14,15 @@ import { COLOR_RETRATO } from '../data/coloresRetrato'
 // Con el color sacado de la propia ropa, el hueco deja de leerse como un
 // hueco y pasa a leerse como el fondo del retrato, sin tocar ni una carta a
 // mano: se anade el .webp, se vuelve a pasar el script y ya esta.
-// Los que no tienen cara Y no son una voz colectiva: los fontaneros y el
-// expediente. Van los tres del MISMO gris azulado, sin color propio, y eso es
-// parte de lo que son: tres personas distintas haciendo el mismo trabajo, y
-// ninguna con foto en ningun sitio. Dejarlos al hash del nombre le daba a La
-// Fontanera un verde de chicle, que ademas es el color con el que este juego
-// dice "esta eleccion es limpia".
+// Los que no tienen cara Y no son una voz colectiva: el comisario, el agente y
+// el expediente. Van del MISMO gris azulado, sin color propio, y eso es parte
+// de lo que son. Dejarlos al hash del nombre daba verdes de chicle, que ademas
+// es el color con el que este juego dice "esta eleccion es limpia".
+//
+// La Fontanera ya tiene retrato -con su franja negra sobre los ojos, que dice
+// lo mismo sin necesidad de fondo-, asi que su carta coge el color de su
+// propia ropa como las demas. Se queda aqui apuntada por si algun dia se le
+// quita la imagen.
 const SIN_CARA: Record<string, string> = {
   'La Fontanera': '#1b1e26',
   'El Comisario': '#1b1e26',

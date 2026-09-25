@@ -30,7 +30,7 @@ export const REPARTO: Personaje[] = [
   // MEDIOS — el relato, lo que se publica y lo que se calla
   { nombre: 'El Periodista', imagen: 'periodista.webp', dueno: 'medios', quien: 'Pregunta lo que nadie quiere que se pregunte.' },
   { nombre: 'El Jefe de Comunicación', imagen: 'jefecomunicacion.webp', dueno: 'medios', quien: 'Escribe lo que usted dice. Y lo que no dice.' },
-  { nombre: 'El Escudero', imagen: 'ministrolameculos.webp', dueno: 'medios', quien: 'Sale a defender lo indefendible cada mañana.' },
+  { nombre: 'El Escudero', imagen: 'escudero.webp', dueno: 'medios', quien: 'Sale a defender lo indefendible cada mañana.' },
   { nombre: 'El Juez', imagen: 'juez.webp', dueno: 'medios', quien: 'Instruye. Obstruirle sale caro, y tarde.' },
 
   // GOBIERNO — que la coalicion no se rompa
@@ -63,7 +63,7 @@ export const REPARTO: Personaje[] = [
   // huelen sangre: una barra en apuros o la caja demasiado llena. Son tres
   // personas distintas haciendo exactamente el mismo trabajo, que es como
   // funciona de verdad: cuando cae uno, ya hay otro.
-  { nombre: 'La Fontanera', quien: 'Fue periodista. Ahora hace gestiones que nadie le ha encargado por escrito.' },
+  { nombre: 'La Fontanera', imagen: 'fontanera.webp', quien: 'Fue periodista. Ahora hace gestiones que nadie le ha encargado por escrito.' },
   { nombre: 'El Comisario', quien: 'Cuarenta años en la casa y un armario que no cabe en el despacho.' },
   { nombre: 'El Agente', quien: 'Habla un español de manual, mejor que el suyo. Tiene rey, y no es el de usted.' },
 ]
