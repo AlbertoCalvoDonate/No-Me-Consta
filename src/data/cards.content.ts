@@ -533,7 +533,7 @@ export const contentCards: Card[] = [
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
-    text: 'La UCO ha levantado movimientos raros muy cerca de su círculo. Cuatrocientas páginas que todavía no son públicas. Todavía. Se lo digo para que no le pille fuera del país.',
+    text: 'La unidad que lleva estas cosas ha levantado movimientos raros muy cerca de su círculo. Cuatrocientas páginas que todavía no son públicas. Todavía. Se lo digo para que no le pille fuera del país.',
     left: { text: 'Colaborar del todo', effects: { medios: 2, gobierno: -2 }, moralidad: 2 },
     right: { text: 'Meter palos en las ruedas', effects: { gobierno: 1, medios: -3 }, moralidad: -2 },
   },
@@ -774,7 +774,7 @@ export const contentCards: Card[] = [
     phase: 1,
     character: 'El Hermano',
     characterImage: 'hermano.webp',
-    text: 'En mi currículum pone que tengo un máster. Y lo tengo, ¿eh? Lo que pasa es que el trabajo final no aparece, la universidad no encuentra las actas y el tutor se ha jubilado en Panamá.',
+    text: 'En mi currículum pone que tengo un máster. Y lo tengo, ¿eh? Lo que pasa es que el trabajo final no aparece, la universidad no encuentra las actas y el tutor se jubiló y se fue muy lejos.',
     left: { text: 'Corregir el currículum', effects: { calle: 1 }, moralidad: 1 },
     right: { text: 'Total, quién lo mira', effects: { calle: -1 }, moralidad: -1 },
   },
@@ -1040,7 +1040,7 @@ export const contentCards: Card[] = [
     phase: 3,
     character: 'El Juez',
     characterImage: 'juez.webp',
-    text: 'Su antiguo asesor se fue del país la víspera de declarar. Ahora tiene despacho en Bruselas, tertulia semanal y un documental. Aquí tiene una causa abierta y una silla vacía.',
+    text: 'Su antiguo asesor se fue del país la víspera de declarar. Ahora tiene despacho a mil kilómetros, tertulia semanal y un documental. Aquí tiene una causa abierta y una silla vacía.',
     left: { text: 'Colaborar con la extradición', effects: { medios: 1, gobierno: -1 }, moralidad: 1 },
     right: { text: 'No presionar demasiado', effects: { gobierno: 1, medios: -2 }, moralidad: -1 },
   },
@@ -4361,7 +4361,7 @@ export const contentCards: Card[] = [
     weight: 0,
     character: 'El Periodista',
     characterImage: 'periodista.webp',
-    text: 'La subvención que aprobaron para la fundación del Gurú tiene un problema: el proyecto no se hizo. Hay facturas de un congreso que nadie recuerda haber celebrado. Y una de un hotel de Baleares.',
+    text: 'La subvención que aprobaron para la fundación del Gurú tiene un problema: el proyecto no se hizo. Hay facturas de un congreso que nadie recuerda haber celebrado. Y una de un hotel de playa en temporada alta.',
     left: {
       text: 'Reclamar el dinero y denunciarlo',
       effects: { medios: 2, caja: 1, calle: 1 },
@@ -5341,8 +5341,10 @@ export const contentCards: Card[] = [
   // un espanol de manual, mas correcto que el de cualquier espanol, sin una
   // sola frase hecha, con algun galicismo (dossier) y formulas de cortesia
   // calcadas de otro idioma ("con su permiso", "mi pais sabe ser agradecido").
-  // Lo demas lo pone la geografia: el programa comprado fuera, la carta del
-  // Sahara y la valla.
+  // Lo demas lo pone la geografia, y sin nombrarla: un programa de escuchas
+  // comprado fuera, un territorio administrado y una valla que se puede abrir
+  // un viernes. En el mazo no hay nombres de paises ni de ciudades; lo real
+  // son las situaciones, no el atlas.
   {
     id: 'agente_oferta',
     phase: 2,
@@ -5373,7 +5375,7 @@ export const contentCards: Card[] = [
     weight: 0,
     character: 'El Agente',
     sinPistas: true,
-    text: 'Mañana ha llegado, señor presidente. El jueves va al Consejo un texto sobre el Sáhara. Una palabra: autonomía. Mi país sabe ser agradecido, y también sabe abrir la valla de Ceuta un viernes por la mañana.',
+    text: 'Mañana ha llegado, señor presidente. El jueves va al Consejo un texto sobre el territorio que administramos. Una palabra: autonomía. Mi país sabe ser agradecido, y sabe abrir la valla un viernes por la mañana.',
     left: {
       text: 'El texto sale como está',
       effects: { gobierno: -1 },

@@ -58,6 +58,28 @@ const RAROS = [
   [' ', 'espacio duro'],
 ]
 
+// NOMBRES PROPIOS REALES. El juego va de politica espanola de verdad, pero lo
+// real son las SITUACIONES, no el atlas ni el callejero: un personaje se
+// reconoce por lo que hace, no porque la carta diga de donde es. Nombrar un
+// pais o una ciudad ademas convierte una satira en una acusacion concreta
+// contra un sitio concreto, que es otra cosa.
+//
+// Llego a haber tres (Sahara, Ceuta y Bruselas) y salieron todos. Esto es
+// para que no vuelvan a entrar sin darse cuenta.
+const LUGARES = [
+  'Espana', 'Espanya', 'Madrid', 'Barcelona', 'Sevilla', 'Valencia', 'Bilbao',
+  'Zaragoza', 'Malaga', 'Ceuta', 'Melilla', 'Gibraltar', 'Sahara', 'Marruecos',
+  'Argelia', 'Portugal', 'Francia', 'Alemania', 'Italia', 'Rusia', 'Ucrania',
+  'China', 'Israel', 'Venezuela', 'Andorra', 'Suiza', 'Panama', 'Mexico',
+  'Argentina', 'Colombia', 'Cuba', 'Bruselas', 'Waterloo', 'Estrasburgo',
+  'Cataluna', 'Catalunya', 'Euskadi', 'Galicia', 'Andalucia', 'Extremadura',
+  'Murcia', 'Baleares', 'Canarias', 'Navarra', 'Moncloa', 'Ferraz', 'Genova',
+  'Donana', 'UCO',
+]
+// Se compara sin tildes para que 'Sahara' cace tambien 'Sahara' con tilde.
+const sinTildes = (x) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+const LUGARES_RE = new RegExp('\\b(' + LUGARES.join('|') + ')\\b', 'i')
+
 // Al jugador se le trata de USTED en todo el juego. Las dos excepciones son
 // de familia y estan puestas a proposito: el hermano y la mujer tutean, y eso
 // es justo lo que los caracteriza frente a los otros veinte personajes.
@@ -202,6 +224,13 @@ function validate(cards) {
         if (txt.includes(ch)) warnings.push(`${label}: ${nombre} en "${donde}". Reescribelo hablado.`)
       }
       if (/\s+[,.;:]/.test(txt)) warnings.push(`${label}: espacio antes de puntuación en "${donde}".`)
+      const lugar = sinTildes(txt).match(LUGARES_RE)
+      if (lugar) {
+        errors.push(
+          `${label}: nombre propio real ("${lugar[1]}") en "${donde}". ` +
+            'En el mazo no hay paises, ciudades ni organismos con nombre: lo real son las situaciones.'
+        )
+      }
     }
     if (card.text && !TUTEAN.has(card.character)) {
       const sinCitas = card.text.replace(/"[^"]*"/g, '')
