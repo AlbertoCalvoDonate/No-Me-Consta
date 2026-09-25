@@ -253,6 +253,38 @@ export const sfx = {
     ruido(0.16, { volumen: 1.4, filtro: 2600, tipoFiltro: 'lowpass', barridoA: 1000, reverb: 0.1 })
   },
 
+  // LA VOZ DEL PERSONAJE. Dos notas cortas al llegar su carta, como el habla
+  // de los bichos de Animal Crossing: no dice palabras, dice QUIEN.
+  //
+  // El registro no es decorativo, es el dato: sale del indicador que ese
+  // personaje encarna. Agudo es prensa, medio es coalicion, grave es dinero.
+  // Asi, antes de leer nada, el oido ya sabe que se juega, que es exactamente
+  // la habilidad que pide un Reigns: ves quien habla y sabes lo que te juegas.
+  // Dentro de su registro, cada personaje cae en una nota distinta de una
+  // escala pentatonica -sacada de su nombre, asi que siempre la misma- y la
+  // pentatonica no desafina contra ninguna de las cuatro musicas de partida.
+  //
+  // Va MUY bajo a proposito: suena en cada carta, y lo que suena en cada carta
+  // no puede pedir atencion.
+  voz(nombre: string, registro: 'medios' | 'gobierno' | 'calle' | 'caja' | 'ninguno') {
+    const BASE = { medios: 784, gobierno: 523, calle: 440, caja: 294, ninguno: 392 }
+    const PENTA = [0, 2, 4, 7, 9]
+    let h = 0
+    for (let i = 0; i < nombre.length; i++) h = nombre.charCodeAt(i) + ((h << 5) - h)
+    const f = BASE[registro] * Math.pow(2, PENTA[Math.abs(h) % PENTA.length] / 12)
+    // Compensacion de sonoridad: a igual amplitud, el oido oye menos los
+    // graves, asi que las voces de caja B (las mas graves) salian por debajo
+    // de las de medios. Medido con esta curva, las veinticinco voces caen
+    // entre -40,0 y -36,4 dB, salvo la del propio presidente, que sale a
+    // -45,1. Esa se queda asi: es la voz de uno mismo, y que sea la mas
+    // discreta del reparto no molesta a nadie.
+    const k = Math.pow(784 / f, 0.5)
+    nota(f, 0.07, { tipo: 'triangle', volumen: 0.24 * k, filtro: 2800, exacto: true, reverb: 0.1 })
+    nota(f * 1.5, 0.05, {
+      tipo: 'triangle', retraso: 0.055, volumen: 0.14 * k, filtro: 2800, exacto: true, reverb: 0.12,
+    })
+  },
+
   // Carta de fontanero: las unicas que no encienden los puntos. El sonido
   // dice lo mismo que la falta de puntos, y antes: dos notas graves a
   // distancia de tritono, secas y sin reverb, que es el intervalo que el oido

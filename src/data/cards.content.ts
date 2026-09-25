@@ -5395,4 +5395,112 @@ export const contentCards: Card[] = [
     },
   },
 
+  // ==========================================================================
+  // LA HERENCIA RECIBIDA
+  //
+  // La primera carta de toda partida que no sea la primera de todas. No salen
+  // por sorteo (weight 0): las fuerza el motor al empezar, eligiendo segun por
+  // donde se cayo el gobierno anterior (ver persistHerencia y estadoNuevo).
+  //
+  // Es lo que en Reigns es la dinastia: tu rey se muere y el reino sigue, asi
+  // que el siguiente hereda el mundo que dejaste. Aqui, ademas, el nombre se
+  // pone solo: no hay gobierno entrante que no hable de la herencia recibida
+  // en su primera semana.
+  //
+  // Las trae el dueno del indicador que tumbo al anterior, que es quien mejor
+  // sabe lo que paso. Las dos salidas son la misma decision en todas: cobrar
+  // el desastre ajeno en prensa y en calle a cambio de que los tuyos te vean
+  // pequeno, o callarte y empezar con credito dentro y sin nada fuera.
+  // ==========================================================================
+  {
+    id: 'herencia_medios',
+    phase: 1,
+    weight: 0,
+    character: 'El Jefe de Comunicación',
+    characterImage: 'jefecomunicacion.webp',
+    text: 'Le explico cómo está la casa. Al anterior lo sacaron las portadas, y esa redacción sigue ahí, con las mismas fuentes y el teléfono de media plantilla. Empezamos con ellos mirando.',
+    left: {
+      text: 'Primera rueda de prensa: la herencia recibida',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'No nombrarlo ni una vez',
+      effects: { gobierno: 1, calle: -1 },
+      moralidad: 1,
+    },
+  },
+  {
+    id: 'herencia_gobierno',
+    phase: 1,
+    weight: 0,
+    character: 'La Vicepresidenta',
+    characterImage: 'vicepresi.webp',
+    text: 'Antes de la foto conviene que sepa una cosa: al anterior no lo echó la calle, lo echaron los suyos. La mitad de los que hoy le aplauden estaban en aquella cena. Yo también estaba.',
+    left: {
+      text: 'Recordar en público quién lo tumbó',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Sentarlos a todos en la mesa y callar',
+      effects: { gobierno: 1, calle: -1 },
+      moralidad: 1,
+    },
+  },
+  {
+    id: 'herencia_calle',
+    phase: 1,
+    weight: 0,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.webp',
+    text: 'Le traigo el dato con el que llega. Al anterior se lo llevó la gente por delante, y la gente no ha cambiado de opinión en quince días: ha cambiado de presidente.',
+    left: {
+      text: 'Salir a decir que lo recibido era una ruina',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Empezar sin excusas y que se note luego',
+      effects: { gobierno: 1, calle: -1 },
+      moralidad: 1,
+    },
+  },
+  {
+    id: 'herencia_caja',
+    phase: 1,
+    weight: 0,
+    character: 'El Ministro Caído',
+    characterImage: 'ministrocorrupto.webp',
+    text: 'Bienvenido. Lo del anterior no se ha cerrado: hay cajas en un juzgado, dos peritos trabajando y un contable que habla mucho. Nada de eso es suyo, pero todo eso es ya su problema.',
+    left: {
+      text: 'Enseñar las cajas en rueda de prensa',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Dejar que el juzgado vaya a su ritmo',
+      effects: { gobierno: 1, calle: -1 },
+      moralidad: 1,
+    },
+  },
+  {
+    id: 'herencia_evento',
+    phase: 1,
+    weight: 0,
+    character: 'El Jefe de Comunicación',
+    characterImage: 'jefecomunicacion.webp',
+    text: 'Al anterior no lo tumbó ningún indicador: lo tumbó una tarde. Una moción, una portada y una grabación. Nadie sabe decir cuál de las tres fue la que contó, y eso es lo que asusta.',
+    left: {
+      text: 'Contar esa tarde entera, con nombres',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Pasar página el primer día',
+      effects: { gobierno: 1, calle: -1 },
+      moralidad: 1,
+    },
+  },
+
 ]

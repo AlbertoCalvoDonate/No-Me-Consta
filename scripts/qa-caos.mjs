@@ -390,6 +390,41 @@ await gamberrada('recargar en mitad de todo', async (page) => {
   else console.log(`  antes ${JSON.stringify(antes)}  despues ${JSON.stringify(despues)}`)
 })
 
+await gamberrada('la herencia pasa a la partida siguiente', async (page) => {
+  // Es un sistema invisible: si deja de funcionar, nadie lo nota jugando.
+  // Solo se ve encadenando partidas y mirando con que empieza la siguiente.
+  await page.goto(DEV_URL, { waitUntil: 'networkidle' })
+  const r = await page.evaluate(async () => {
+    const { useGameStore } = await import('/src/hooks/useGameStore.ts')
+    const s = useGameStore
+    const out = []
+    for (let i = 0; i < 25; i++) {
+      s.getState().restart()
+      let v = 0
+      while (!s.getState().gameOver && v++ < 400) {
+        s.getState().choose(Math.random() < 0.5 ? 'left' : 'right')
+      }
+      const causa = s.getState().deathStat ?? 'evento'
+      s.getState().restart()
+      const n = s.getState()
+      out.push({ causa, carta: n.currentCard.id, valor: causa === 'evento' ? null : n.stats[causa] })
+    }
+    return out
+  })
+  let mal = 0
+  for (const x of r) {
+    if (x.carta !== 'herencia_' + x.causa) {
+      mal++
+      apunta('la herencia pasa a la partida siguiente', `murio por ${x.causa} y la carta fue ${x.carta}`)
+    }
+    if (x.valor !== null && x.valor !== 4) {
+      mal++
+      apunta('la herencia pasa a la partida siguiente', `${x.causa} deberia empezar tocado y empieza en ${x.valor}`)
+    }
+  }
+  if (mal === 0) console.log(`  ok  25 partidas encadenadas, la herencia llega en todas`)
+})
+
 await gamberrada('partida larguisima', async (page) => {
   await page.goto(DEV_URL, { waitUntil: 'networkidle' })
   await entrar(page)

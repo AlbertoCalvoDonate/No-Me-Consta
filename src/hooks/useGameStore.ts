@@ -12,6 +12,7 @@ import {
 } from '../data/cards'
 import { DUENO_DE_PERSONAJE } from '../data/reparto'
 import { guardarPartida, borrarPartida, cargarPartida } from './persistPartida'
+import { guardarHerencia, cargarHerencia, olvidarHerencia } from './persistHerencia'
 
 function cardMinTurn(c: Card): number {
   return c.minTurn ?? PHASE_MIN_TURN[c.phase]
@@ -508,12 +509,34 @@ function pickIntro(): Card {
   return cards.find((c) => c.id === id) ?? cards.find((c) => c.id === 'presi_intro')!
 }
 
-// Estado de una partida recién empezada (carta de arranque al azar).
+// La carta de arranque cuando se hereda un pais: una por cada forma de caer
+// del anterior. Sale SIEMPRE en vez de la intro normal, porque es de lo que va
+// la primera semana de cualquier gobierno.
+const HERENCIA_IDS: Record<string, string> = {
+  medios: 'herencia_medios',
+  gobierno: 'herencia_gobierno',
+  calle: 'herencia_calle',
+  caja: 'herencia_caja',
+  evento: 'herencia_evento',
+}
+
+// Estado de una partida recién empezada (carta de arranque al azar, salvo que
+// haya herencia del gobierno anterior).
 type EstadoStore = Omit<GameStore, 'choose' | 'restart'>
 function estadoNuevo(): EstadoStore {
-  const intro = pickIntro()
+  const herencia = cargarHerencia()
+  const idHerencia = herencia ? HERENCIA_IDS[herencia.causa ?? 'evento'] : undefined
+  const cartaHerencia = idHerencia ? cards.find((c) => c.id === idHerencia) : undefined
+  const intro = cartaHerencia ?? pickIntro()
+  // El indicador que tumbo al anterior empieza tocado. Un punto, no mas: la
+  // idea es que se note de que pie cojea este pais, no empezar la partida
+  // perdida. Sin causa (se cayo por una situacion) no se toca nada.
+  const stats = initialStats()
+  if (herencia?.causa) {
+    stats[herencia.causa] = Math.max(1, stats[herencia.causa] - 1)
+  }
   return {
-    stats: initialStats(),
+    stats,
     extremeStreak: 0,
     moralidad: MORALIDAD_START,
     turn: 1,
@@ -658,6 +681,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
         deathStat: card.byEvent ? undefined : brokenStat(state.stats),
         lastEpilogue: choice.epilogueText,
       })
+      // Lo unico que sobrevive a la muerte: por donde se cayo y como de sucio
+      // lo dejo. La partida siguiente empieza con eso encima de la mesa (ver
+      // persistHerencia).
+      guardarHerencia({
+        causa: card.byEvent ? undefined : brokenStat(state.stats),
+        meses: state.turn,
+        sucio: newMoralidad <= 3,
+      })
       // Partida terminada: no hay nada que retomar.
       borrarPartida()
       return
@@ -706,8 +737,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   restart: () => {
     decayCooldown()
     borrarPartida()
-    set({
-      ...estadoNuevo(),
-    })
+    const nuevo = estadoNuevo()
+    // Se gasta AQUI y no dentro de estadoNuevo: esa funcion tambien se llama
+    // al cargar la pagina para montar el estado inicial, y consumirla ahi
+    // haria que la herencia se perdiera sin que nadie la llegara a jugar.
+    olvidarHerencia()
+    set({ ...nuevo })
   },
 }))

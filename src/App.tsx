@@ -5,6 +5,7 @@ import { SwipeCard } from './components/SwipeCard'
 import { StatBars } from './components/StatBars'
 import { SituationBanner, type BannerKind } from './components/SituationBanner'
 import { cards, ELECTION_INTERVAL, ELECTION_MAX_TERMS } from './data/cards'
+import { DUENO_DE_PERSONAJE } from './data/reparto'
 import { BottomBar } from './components/BottomBar'
 import { StartScreen } from './components/StartScreen'
 import { SoundButton } from './components/SoundButton'
@@ -279,6 +280,8 @@ export default function App() {
     // Las cartas de fontanero no encienden los puntos, y eso el jugador solo
     // lo nota si se fija. El sonido se lo dice antes de leer.
     else if (currentCard.sinPistas) sfx.fontanero()
+    // Y el resto de cartas llegan con la voz de quien habla (ver sfx.voz).
+    else sfx.voz(currentCard.character, DUENO_DE_PERSONAJE[currentCard.character] ?? 'ninguno')
   }, [currentCard, gameOver])
 
   // Aviso al entrar una barra en zona critica (el mismo umbral que las pinta
