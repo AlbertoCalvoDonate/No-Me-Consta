@@ -5335,22 +5335,27 @@ export const contentCards: Card[] = [
       removeFlags: ['carpeta_comisario'],
     },
   },
-  // EL AGENTE habla como extranjero sin que se le escriba el acento. Poner
-  // "eshe" o "bor fabor" lo convertiria en un chiste, y lo que da miedo de
-  // este personaje es justo que no lo es. Lo que se escribe es el registro:
-  // un espanol de manual, mas correcto que el de cualquier espanol, sin una
-  // sola frase hecha, con algun galicismo (dossier) y formulas de cortesia
-  // calcadas de otro idioma ("con su permiso", "mi pais sabe ser agradecido").
-  // Lo demas lo pone la geografia, y sin nombrarla: un programa de escuchas
-  // comprado fuera, un territorio administrado y una valla que se puede abrir
-  // un viernes. En el mazo no hay nombres de paises ni de ciudades; lo real
-  // son las situaciones, no el atlas.
+  // EL AGENTE tiene que ser inconfundiblemente de donde es SIN que el mazo
+  // nombre ningun sitio. Dos reglas a la vez, y ninguna se salta.
+  //
+  // El acento no se escribe. Poner "eshe" o "bor fabor" lo convertiria en un
+  // chiste, y lo que da miedo de este personaje es justo que no lo es. Lo que
+  // se escribe es el registro: un espanol de manual, mas correcto que el de
+  // cualquier espanol, sin una sola frase hecha.
+  //
+  // Y de donde es lo dicen cinco cosas, ninguna de ellas un nombre de sitio:
+  //   - se presenta con un nombre suyo, y ademas falso;
+  //   - "catorce kilometros", que aqui no hay que explicarselos a nadie;
+  //   - MI REY, que no es el de usted, y que lee los papeles el mismo;
+  //   - "si Dios quiere", que es una formula calcada de otro idioma;
+  //   - la valla, el territorio que administran y los telefonos pinchados.
+  // Junto es inconfundible. Suelto, cada pieza no nombra nada.
   {
     id: 'agente_oferta',
     phase: 2,
     character: 'El Agente',
     sinPistas: true,
-    text: 'Represento a un país amigo, muy interesado en su estabilidad. Tenemos los teléfonos de quienes le publican. El programa no es nuestro, lo compramos fuera, pero funciona muy bien. Hoy no le pedimos nada.',
+    text: 'Puede llamarme Karim, aunque no me llamo así. Represento a un país que está a catorce kilómetros del suyo y al que le conviene su estabilidad. Tenemos los teléfonos de quienes le publican. Hoy nada le pedimos.',
     left: { text: 'Esta conversación no ha existido', effects: { medios: -1 }, moralidad: 3 },
     right: {
       text: '¿Y mañana?',
@@ -5375,7 +5380,7 @@ export const contentCards: Card[] = [
     weight: 0,
     character: 'El Agente',
     sinPistas: true,
-    text: 'Mañana ha llegado, señor presidente. El jueves va al Consejo un texto sobre el territorio que administramos. Una palabra: autonomía. Mi país sabe ser agradecido, y sabe abrir la valla un viernes por la mañana.',
+    text: 'El jueves va al Consejo un texto sobre el territorio que administramos. Mi rey lo leerá, señor presidente, y buscará una palabra: autonomía. Mi país sabe ser agradecido, si Dios quiere. Y sabe abrir la valla un viernes.',
     left: {
       text: 'El texto sale como está',
       effects: { gobierno: -1 },

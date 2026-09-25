@@ -65,7 +65,7 @@ export const REPARTO: Personaje[] = [
   // funciona de verdad: cuando cae uno, ya hay otro.
   { nombre: 'La Fontanera', quien: 'Fue periodista. Ahora hace gestiones que nadie le ha encargado por escrito.' },
   { nombre: 'El Comisario', quien: 'Cuarenta años en la casa y un armario que no cabe en el despacho.' },
-  { nombre: 'El Agente', quien: 'Habla un español de manual, mejor que el suyo. Sabe con quién habla usted por teléfono.' },
+  { nombre: 'El Agente', quien: 'Habla un español de manual, mejor que el suyo. Tiene rey, y no es el de usted.' },
 ]
 
 // Cuantas cartas tiene cada personaje en el mazo. Se calcula del propio mazo,
