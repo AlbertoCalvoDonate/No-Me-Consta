@@ -4,7 +4,7 @@ import { useGameStore } from './hooks/useGameStore'
 import { SwipeCard } from './components/SwipeCard'
 import { StatBars } from './components/StatBars'
 import { SituationBanner, type BannerKind } from './components/SituationBanner'
-import { cards } from './data/cards'
+import { cards, ELECTION_INTERVAL, ELECTION_MAX_TERMS } from './data/cards'
 import { BottomBar } from './components/BottomBar'
 import { StartScreen } from './components/StartScreen'
 import { SoundButton } from './components/SoundButton'
@@ -238,7 +238,7 @@ export default function App() {
       yaComprobado.current = false
       return
     }
-    if (currentCard.isElection && turn > 100) sfx.triunfo()
+    if (currentCard.isElection && turn >= ELECTION_INTERVAL * ELECTION_MAX_TERMS) sfx.triunfo()
     else {
       sfx.trombon()
       haptics.muerte()
@@ -268,6 +268,9 @@ export default function App() {
     if (currentCard.isElection) sfx.eleccion()
     else if (currentCard.isRecap) sfx.balance()
     else if (currentCard.id === 'favor_ganado') sfx.favor()
+    // Las cartas de fontanero no encienden los puntos, y eso el jugador solo
+    // lo nota si se fija. El sonido se lo dice antes de leer.
+    else if (currentCard.sinPistas) sfx.fontanero()
   }, [currentCard, gameOver])
 
   // Aviso al entrar una barra en zona critica (el mismo umbral que las pinta

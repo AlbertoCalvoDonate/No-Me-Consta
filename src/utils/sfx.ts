@@ -226,13 +226,13 @@ export const sfx = {
   // pitido y no a boton: el chasquido del contacto y debajo un golpe con
   // cuerpo que baja de tono.
   boton() {
-    ruido(0.03, { volumen: 0.2, filtro: 3200, tipoFiltro: 'highpass' })
-    nota(300, 0.06, { tipo: 'square', volumen: 0.2, filtro: 1400, bend: -90 })
+    ruido(0.035, { volumen: 0.55, filtro: 3200, tipoFiltro: 'highpass' })
+    nota(300, 0.07, { tipo: 'square', volumen: 0.6, filtro: 1400, bend: -90 })
   },
 
   // Al empezar a arrastrar la carta: un toque seco, casi imperceptible.
   roce() {
-    nota(320, 0.05, { tipo: 'triangle', volumen: 0.22, filtro: 1800 })
+    nota(320, 0.06, { tipo: 'triangle', volumen: 0.34, filtro: 1800 })
   },
 
   // Elección turbia: la moneda de toda la vida, dos notas rápidas hacia
@@ -250,13 +250,22 @@ export const sfx = {
 
   // Elección neutra: papeles.
   papel() {
-    ruido(0.13, { volumen: 0.26, filtro: 2600, barridoA: 1500, reverb: 0.08 })
+    ruido(0.16, { volumen: 1.4, filtro: 2600, tipoFiltro: 'lowpass', barridoA: 1000, reverb: 0.1 })
+  },
+
+  // Carta de fontanero: las unicas que no encienden los puntos. El sonido
+  // dice lo mismo que la falta de puntos, y antes: dos notas graves a
+  // distancia de tritono, secas y sin reverb, que es el intervalo que el oido
+  // no sabe donde colocar. No resuelve, no sube, no baja. Se queda ahi.
+  fontanero() {
+    nota(98, 0.5, { tipo: 'triangle', volumen: 0.34, filtro: 700, unison: 4 })
+    nota(138.6, 0.62, { tipo: 'triangle', retraso: 0.09, volumen: 0.24, filtro: 600, unison: 4 })
   },
 
   // Una barra entra en zona crítica: dos pitidos de alarma barata.
   alarma() {
-    nota(440, 0.1, { tipo: 'sawtooth', volumen: 0.32, filtro: 2200, reverb: 0.1 })
-    nota(440, 0.1, { tipo: 'sawtooth', retraso: 0.15, volumen: 0.32, filtro: 2200, reverb: 0.1 })
+    nota(440, 0.12, { tipo: 'sawtooth', volumen: 1, filtro: 2400, reverb: 0.12 })
+    nota(440, 0.12, { tipo: 'sawtooth', retraso: 0.17, volumen: 1, filtro: 2400, reverb: 0.12 })
   },
 
   // Balance de fin de año: campanita de calendario, tres notas subiendo.
