@@ -5335,12 +5335,20 @@ export const contentCards: Card[] = [
       removeFlags: ['carpeta_comisario'],
     },
   },
+  // EL AGENTE habla como extranjero sin que se le escriba el acento. Poner
+  // "eshe" o "bor fabor" lo convertiria en un chiste, y lo que da miedo de
+  // este personaje es justo que no lo es. Lo que se escribe es el registro:
+  // un espanol de manual, mas correcto que el de cualquier espanol, sin una
+  // sola frase hecha, con algun galicismo (dossier) y formulas de cortesia
+  // calcadas de otro idioma ("con su permiso", "mi pais sabe ser agradecido").
+  // Lo demas lo pone la geografia: el programa comprado fuera, la carta del
+  // Sahara y la valla.
   {
     id: 'agente_oferta',
     phase: 2,
     character: 'El Agente',
     sinPistas: true,
-    text: 'Represento a un socio con el que ustedes firman acuerdos todos los años. Sabemos lo que le están publicando. Nosotros tenemos los teléfonos de quienes lo publican, y los de sus fuentes. Hoy no le pedimos nada.',
+    text: 'Represento a un país amigo, muy interesado en su estabilidad. Tenemos los teléfonos de quienes le publican. El programa no es nuestro, lo compramos fuera, pero funciona muy bien. Hoy no le pedimos nada.',
     left: { text: 'Esta conversación no ha existido', effects: { medios: -1 }, moralidad: 3 },
     right: {
       text: '¿Y mañana?',
@@ -5365,7 +5373,7 @@ export const contentCards: Card[] = [
     weight: 0,
     character: 'El Agente',
     sinPistas: true,
-    text: 'Mañana ha llegado. El jueves va al Consejo un texto sobre una frontera que a nuestro socio le interesa. Nos gustaría que saliera con una palabra cambiada. Una sola. Sus llamadas de aquel mes las tenemos nosotros.',
+    text: 'Mañana ha llegado, señor presidente. El jueves va al Consejo un texto sobre el Sáhara. Una palabra: autonomía. Mi país sabe ser agradecido, y también sabe abrir la valla de Ceuta un viernes por la mañana.',
     left: {
       text: 'El texto sale como está',
       effects: { gobierno: -1 },
@@ -5373,7 +5381,7 @@ export const contentCards: Card[] = [
       addFlags: ['carpeta_suelta'],
     },
     right: {
-      text: 'Que la cambien',
+      text: 'Que cambien esa palabra',
       effects: { calle: -2, gobierno: 1 },
       moralidad: -3,
       removeFlags: ['carpeta_agente'],
