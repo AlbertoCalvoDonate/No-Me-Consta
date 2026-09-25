@@ -279,9 +279,21 @@ export const sfx = {
     // -45,1. Esa se queda asi: es la voz de uno mismo, y que sea la mas
     // discreta del reparto no molesta a nadie.
     const k = Math.pow(784 / f, 0.5)
-    nota(f, 0.07, { tipo: 'triangle', volumen: 0.24 * k, filtro: 2800, exacto: true, reverb: 0.1 })
+    // ESPERA antes de hablar. La carta nueva se monta en el mismo instante en
+    // que suena la eleccion de la anterior (la moneda, la campana), y eso son
+    // treinta decibelios por encima de la voz: quedaba tapada del todo. Se
+    // metio, se publico y no se oia.
+    //
+    // Casi medio segundo despues, el golpe ya ha caido y solo queda su cola, y
+    // ademas es justo cuando la carta termina de entrar: el personaje habla
+    // cuando acaba de llegar, que es lo que se espera.
+    const ESPERA = 0.45
+    nota(f, 0.07, {
+      tipo: 'triangle', retraso: ESPERA, volumen: 0.3 * k, filtro: 2800, exacto: true, reverb: 0.1,
+    })
     nota(f * 1.5, 0.05, {
-      tipo: 'triangle', retraso: 0.055, volumen: 0.14 * k, filtro: 2800, exacto: true, reverb: 0.12,
+      tipo: 'triangle', retraso: ESPERA + 0.055, volumen: 0.18 * k, filtro: 2800,
+      exacto: true, reverb: 0.12,
     })
   },
 
