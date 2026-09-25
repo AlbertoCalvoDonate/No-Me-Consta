@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion'
 import type { Card, StatEffects } from '../types'
-import { characterBackground } from '../utils/color'
+import { characterColor, characterBackground } from '../utils/color'
 import { sfx } from '../utils/sfx'
 import { COLOR, pixel } from '../utils/estilo'
 
@@ -328,6 +328,46 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
           justifyContent: 'center',
         }}
       >
+        {/* EL MAZO. Dos cartas asomando por detras, quietas y sin contenido.
+            No hacen nada: estan para que se vea que debajo hay baraja y que
+            esto no es una pantalla, son cartas que se van dando. Es de lo
+            primero que se nota en Reigns y aqui no estaba.
+            Van del color de esta carta pero mas oscuras, asi que el mazo
+            cambia de tono con el personaje en vez de ser un gris pegado. */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        >
+          {[
+            { g: -4.5, y: 16, e: 0.94, o: 0.55 },
+            { g: 3, y: 8, e: 0.97, o: 0.75 },
+          ].map((c) => (
+            <div
+              key={c.g}
+              style={{
+                position: 'absolute',
+                width: '100%',
+                maxHeight: '100%',
+                aspectRatio: '1020 / 1200',
+                borderRadius: 16,
+                background: characterColor(card.character, card.characterImage),
+                border: '2px solid rgba(255,255,255,0.12)',
+                opacity: c.o,
+                filter: 'brightness(0.55)',
+                transform: `rotate(${c.g}deg) translateY(${c.y}px) scale(${c.e})`,
+              }}
+            />
+          ))}
+        </div>
+
         <motion.div
           key={card.id}
           style={{
