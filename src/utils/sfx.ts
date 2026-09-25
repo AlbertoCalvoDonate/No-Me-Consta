@@ -253,6 +253,27 @@ export const sfx = {
     ruido(0.16, { volumen: 1.4, filtro: 2600, tipoFiltro: 'lowpass', barridoA: 1000, reverb: 0.1 })
   },
 
+  // REPARTIR. Al empezar una partida caen las cartas: tres golpes secos de
+  // carton, cada uno un poco mas agudo y mas cerca del anterior, que es como
+  // suena una baraja al dejarse caer. Es ruido filtrado y nada mas: el carton
+  // no tiene tono, solo un golpe corto y ancho.
+  //
+  // El ultimo suena un pelo mas fuerte porque es la carta que se queda arriba,
+  // la que el jugador va a leer.
+  reparto() {
+    const golpes = [
+      { t: 0, v: 1.05, f: 1500 },
+      { t: 0.115, v: 1.15, f: 1800 },
+      { t: 0.2, v: 1.6, f: 2200 },
+    ]
+    for (const g of golpes) {
+      ruido(0.055, {
+        retraso: g.t, volumen: g.v, filtro: g.f, tipoFiltro: 'bandpass', barridoA: g.f * 0.45,
+        reverb: 0.12,
+      })
+    }
+  },
+
   // LA VOZ DEL PERSONAJE. Dos notas cortas al llegar su carta, como el habla
   // de los bichos de Animal Crossing: no dice palabras, dice QUIEN.
   //

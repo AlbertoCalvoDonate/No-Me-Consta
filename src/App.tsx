@@ -270,6 +270,15 @@ export default function App() {
     if (nuevos.length) setColaLogros(nuevos)
   }, [gameOver, currentCard, turn, moralidad, stats, history, flagsVistos])
 
+  // AL EMPEZAR se reparte: caen las cartas con su golpe de carton. Va atado a
+  // que la partida arranque de verdad (con la pantalla de carga ya fuera), no
+  // a que cambie la carta, porque la carta de arranque puede ser la misma dos
+  // veces seguidas y entonces no se enteraria.
+  useEffect(() => {
+    if (started && !cargando && !gameOver && turn === 1) sfx.reparto()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, cargando])
+
   // Cartas de hito: el balance de fin de ano, la noche electoral y la carta de
   // favor se anuncian con su propio sonido.
   useEffect(() => {
@@ -405,6 +414,7 @@ export default function App() {
                     card={cartaMostrada}
                     onChoose={elegir}
                     x={x}
+                    repartir={turn === 1}
                     enfado={anger[cartaMostrada.character] ?? 0}
                     favorDebido={favor[cartaMostrada.character] ?? 0}
                   />

@@ -170,6 +170,9 @@ interface Props {
   // Cuantas veces le ha desairado (o dado la razon) al personaje que habla.
   enfado: number
   favorDebido: number
+  // Primera carta de la partida: en vez de aparecer, el mazo se REPARTE. Caen
+  // las dos cartas de debajo y encima la que toca leer.
+  repartir?: boolean
 }
 
 // El juego llevaba la cuenta del enfado y el favor de cada personaje desde el
@@ -211,7 +214,7 @@ export function opcionesDeCarta(card: Card) {
   }
 }
 
-export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
+export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: Props) {
   const estado = estadoDelPersonaje(enfado, favorDebido)
   const rotate = useTransform(x, [-100, 100], [-CARD_TILT, CARD_TILT])
   const { textoIzq, textoDer, coloresIzq, coloresDer } = opcionesDeCarta(card)
@@ -349,9 +352,16 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
           {[
             { g: -4.5, y: 16, e: 0.94, o: 0.55 },
             { g: 3, y: 8, e: 0.97, o: 0.75 },
-          ].map((c) => (
-            <div
+          ].map((c, i) => (
+            <motion.div
               key={c.g}
+              initial={repartir ? { y: -460, opacity: 0, rotate: c.g * 2 } : false}
+              animate={{ y: c.y, opacity: c.o, rotate: c.g }}
+              transition={
+                repartir
+                  ? { type: 'spring', stiffness: 260, damping: 26, delay: i * 0.1 }
+                  : { duration: 0 }
+              }
               style={{
                 position: 'absolute',
                 width: '100%',
@@ -360,9 +370,8 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
                 borderRadius: 16,
                 background: characterColor(card.character, card.characterImage),
                 border: '2px solid rgba(255,255,255,0.12)',
-                opacity: c.o,
                 filter: 'brightness(0.55)',
-                transform: `rotate(${c.g}deg) translateY(${c.y}px) scale(${c.e})`,
+                scale: c.e,
               }}
             />
           ))}
@@ -411,9 +420,17 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
           dragTransition={{ bounceStiffness: 450, bounceDamping: 45 }}
           onDragStart={() => sfx.roce()}
           onDragEnd={handleDragEnd}
-          initial={{ scale: 0.88, opacity: 0, y: 60 }}
+          // Al empezar la partida la carta CAE sobre el mazo, detras de las dos
+          // de debajo, que llevan una decima de ventaja cada una. El resto de
+          // cartas siguen entrando como siempre, desde abajo y pequenas: eso
+          // es pasar pagina, no repartir.
+          initial={repartir ? { scale: 1, opacity: 0, y: -520 } : { scale: 0.88, opacity: 0, y: 60 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 24, mass: 0.8 }}
+          transition={
+            repartir
+              ? { type: 'spring', stiffness: 240, damping: 24, mass: 0.9, delay: 0.2 }
+              : { type: 'spring', stiffness: 320, damping: 24, mass: 0.8 }
+          }
         >
           {card.characterImage && (
             <img
