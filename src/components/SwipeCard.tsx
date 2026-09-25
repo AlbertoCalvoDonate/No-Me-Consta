@@ -5,6 +5,13 @@ import { characterBackground } from '../utils/color'
 import { sfx } from '../utils/sfx'
 import { COLOR, pixel } from '../utils/estilo'
 
+// Tamaño FIJO a propósito — no crece ni encoge con el largo del texto, para
+// que la carta de debajo se vea siempre, no solo un hueco pequeño. El texto
+// que no quepa se recorta (overflow hidden) en vez de agrandar la etiqueta.
+const PANEL_WIDTH = 216
+const PANEL_HEIGHT = 130
+const PANEL_HIDDEN = PANEL_WIDTH + 24
+
 // Inclinación máxima de la carta al arrastrar (grados).
 const CARD_TILT = 12
 // Cuanto se desplaza la carta al asomar una opcion sin arrastrar.
@@ -53,6 +60,99 @@ const NEUTRO = { bg: '#26262a', accent: '#8d8677' }
 //  - Queda CENTRADA en horizontal, no pegada a un lateral. Pegada al borde se
 //    salía de la carta al inclinarse esta, y encima ese borde es justo el que
 //    se va de pantalla al arrastrar, así que el panel se cortaba con él.
+function ChoicePanel({
+  text,
+  side,
+  colors,
+  x,
+}: {
+  text: string
+  side: 'left' | 'right'
+  colors: { bg: string; accent: string }
+  x: MotionValue<number>
+}) {
+  // El deslizamiento arranca en 0, no en una zona muerta: el panel empieza a
+  // asomar desde el primer píxel de arrastre y entra de forma gradual. Con
+  // zona muerta entraba tarde y de golpe, y no daba tiempo a leerlo. Para el
+  // rebote al soltar no hace falta colchón aquí: de eso se encarga `opacity`,
+  // que apaga el panel en cuanto el arrastre cruza al lado contrario.
+  const slideRaw = useTransform(
+    x,
+    side === 'left' ? [-SWIPE_REVEAL_DISTANCE, 0] : [0, SWIPE_REVEAL_DISTANCE],
+    side === 'left' ? [0, -PANEL_HIDDEN] : [PANEL_HIDDEN, 0]
+  )
+  // Solo el deslizamiento de entrada: el panel NO acompaña a la carta. Una vez
+  // dentro se queda QUIETO en pantalla aunque se siga arrastrando, y es la
+  // carta la que se va por debajo (como en el Reigns original). Antes le
+  // sumaba el desplazamiento de la carta y, pasada la distancia de revelado,
+  // el panel se iba con ella en vez de quedarse a la vista.
+  // Redondeado a píxel entero: sin esto, al llegar al valor máximo el
+  // navegador podía renderizar un subpíxel de más y se veía un salto de 1px.
+  const panelX = useTransform(slideRaw, (v) => Math.round(v))
+  // El panel de un lado NO existe (opacity 0) en cuanto el arrastre está en
+  // el lado contrario — incluso 1px. Así, pase lo que pase con el rebote al
+  // soltar (que puede cruzar el 0 hacia el otro signo), el panel que no se ha
+  // elegido nunca llega a verse. Cuando se empieza a arrastrar hacia este
+  // lado el panel ya está a 0.93 pero todavía fuera de pantalla (zona muerta),
+  // así que tampoco se ve "aparecer".
+  const opacity = useTransform(x, (v) => ((side === 'left' ? v < 0 : v > 0) ? 0.93 : 0))
+  return (
+    <motion.div
+      style={{
+        position: 'absolute',
+        // ARRIBA, que es donde va en Reigns y donde el jugador lo busca. Se
+        // probo abajo, sobre el torso, para no taparle la cara al personaje, y
+        // se probo como franja sobre el texto de la situacion, que no tapa
+        // nada: las dos se sintieron mal. El cuadrado que entra por el lado y
+        // se queda arriba es el gesto que se reconoce, y taparle media cara al
+        // personaje mientras decides es parte de eso: estas hablando por
+        // encima de el.
+        top: '5%',
+        left: '50%',
+        marginLeft: -PANEL_WIDTH / 2,
+        width: PANEL_WIDTH,
+        // Proporcional a la carta y con tope: en una carta baja, 130px fijos
+        // eran tres cuartas partes de la carta.
+        height: '34%',
+        minHeight: 88,
+        maxHeight: PANEL_HEIGHT,
+        x: panelX,
+        background: colors.bg,
+        opacity,
+        border: `2px solid ${colors.accent}`,
+        borderRadius: 12,
+        boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        padding: '8px 10px',
+        boxSizing: 'border-box',
+        zIndex: 4,
+        pointerEvents: 'none',
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          ...pixel,
+          // 400: es el único peso que existe de verdad para esta fuente (ver
+          // nota en index.css) — un 700 aquí forzaría un "bold" sintético
+          // que se ve borroso, sobre todo a este tamaño.
+          fontWeight: 400,
+          fontSize: 18,
+          lineHeight: 1.2,
+          color: '#fff',
+          textAlign: 'center',
+          overflowWrap: 'anywhere',
+        }}
+      >
+        {text}
+      </div>
+    </motion.div>
+  )
+}
+
 // Recorrido del DEDO para que el gesto cuente como elección. Tiene que dejar
 // margen de sobra por encima del punto en el que el panel ya está entero
 // (~54px de dedo, ver SWIPE_REVEAL_DISTANCE): ese hueco es el tiempo que
@@ -114,7 +214,7 @@ export function opcionesDeCarta(card: Card) {
 export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
   const estado = estadoDelPersonaje(enfado, favorDebido)
   const rotate = useTransform(x, [-100, 100], [-CARD_TILT, CARD_TILT])
-  const { textoIzq, textoDer } = opcionesDeCarta(card)
+  const { textoIzq, textoDer, coloresIzq, coloresDer } = opcionesDeCarta(card)
 
   // TECLADO. La carta no tenia teclas ni foco, asi que sin puntero no habia
   // forma de jugar, ni con lector de pantalla tampoco.
@@ -341,9 +441,8 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido }: Props) {
         {/* Paneles de respuesta: hermanos de la carta (ver comentario en
             ChoicePanel). Viajan con ella en X y quedan centrados, así que
             siempre caen dentro de la carta sin que nada los recorte. */}
-        {/* Los paneles de respuesta ya no van aqui: se pintan arriba, sobre
-            el texto de la carta (ver SituationBanner). Abajo tapaban la
-            barbilla, y arriba, dentro de la carta, taparian la cara entera. */}
+        <ChoicePanel text={textoIzq} side="left" colors={coloresIzq} x={x} />
+        <ChoicePanel text={textoDer} side="right" colors={coloresDer} x={x} />
       </div>
 
       {/* El nombre va debajo de la carta SALVO cuando la carta no tiene

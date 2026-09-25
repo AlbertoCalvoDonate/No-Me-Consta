@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
 import { useGameStore } from './hooks/useGameStore'
-import { SwipeCard, opcionesDeCarta } from './components/SwipeCard'
+import { SwipeCard } from './components/SwipeCard'
 import { StatBars } from './components/StatBars'
 import { SituationBanner, type BannerKind } from './components/SituationBanner'
 import { cards, ELECTION_INTERVAL, ELECTION_MAX_TERMS } from './data/cards'
@@ -387,14 +387,7 @@ export default function App() {
                   overflow: 'hidden',
                 }}
               >
-                {!gameOver && (
-                  <SituationBanner
-                    text={cartaMostrada.text}
-                    kind={bannerKind}
-                    opciones={opcionesDeCarta(cartaMostrada)}
-                    x={x}
-                  />
-                )}
+                {!gameOver && <SituationBanner text={cartaMostrada.text} kind={bannerKind} />}
 
                 {/* Sin AnimatePresence a propósito: con ella, al cambiar de
                     key React mantenía montada la carta saliente un frame de
