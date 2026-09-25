@@ -14,20 +14,40 @@ import { COLOR_RETRATO } from '../data/coloresRetrato'
 // Con el color sacado de la propia ropa, el hueco deja de leerse como un
 // hueco y pasa a leerse como el fondo del retrato, sin tocar ni una carta a
 // mano: se anade el .webp, se vuelve a pasar el script y ya esta.
+// Los que no tienen cara Y no son una voz colectiva: los fontaneros y el
+// expediente. Van los tres del MISMO gris azulado, sin color propio, y eso es
+// parte de lo que son: tres personas distintas haciendo el mismo trabajo, y
+// ninguna con foto en ningun sitio. Dejarlos al hash del nombre le daba a La
+// Fontanera un verde de chicle, que ademas es el color con el que este juego
+// dice "esta eleccion es limpia".
+const SIN_CARA: Record<string, string> = {
+  'La Fontanera': '#1b1e26',
+  'El Comisario': '#1b1e26',
+  'El Agente': '#1b1e26',
+  'El Expediente': '#191b21',
+}
+
 export function characterColor(character: string, characterImage?: string): string {
   const delRetrato = characterImage && COLOR_RETRATO[characterImage]
   if (delRetrato) return delRetrato
+
+  const aPelo = SIN_CARA[character]
+  if (aPelo) return aPelo
 
   // Sin retrato (las voces colectivas que cierran la partida: "La Redaccion",
   // "El Comite Ejecutivo", "La Calle"...) se sigue usando el hash del nombre:
   // ahi no hay ilustracion de la que sacar nada, y lo unico que importa es
   // que cada voz tenga un color propio y estable.
+  //
+  // Saturacion baja a proposito: con 38% el hash sacaba verdes y turquesas de
+  // chicle que no pegan con nada del juego, y ademas MIENTEN, porque en este
+  // juego el verde significa que una eleccion es limpia.
   let hash = 0
   for (let i = 0; i < character.length; i++) {
     hash = character.charCodeAt(i) + ((hash << 5) - hash)
   }
   const hue = Math.abs(hash) % 360
-  return `hsl(${hue}, 38%, 22%)`
+  return `hsl(${hue}, 22%, 17%)`
 }
 
 // El fondo de la carta como DEGRADADO, no como color plano. Ahora que el
