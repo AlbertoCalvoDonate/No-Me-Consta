@@ -8,7 +8,7 @@ import {
   ELECTION_INTERVAL,
   ELECTION_MAX_TERMS,
   RECAP_EVERY,
-  TURNOS_DE_GRACIA,
+  turnosDeGracia,
 } from '../data/cards'
 import { DUENO_DE_PERSONAJE } from '../data/reparto'
 import { guardarPartida, borrarPartida, cargarPartida } from './persistPartida'
@@ -73,12 +73,17 @@ function jitter(base: number): number {
 // cambiaba de verdad era cuánto duraba la partida, no el reto. Está en el
 // historial de git si alguna vez hace falta recuperarlo.
 //
-// DAMP_ZONE 3 (antes 2): sin desgaste el juego se pasó de frenada — hasta un
-// jugador que lo hacía todo bien ganaba el ~4%. Con 3, la amortiguación
-// empieza a notarse desde 8/2 (no solo en 9/1), y la mediana del jugador
-// competente sube de ~una legislatura a ~una y media. Medido: un jugador
-// competente pasa de ganar el 4% al ~15-20%, el que va al azar sigue por
-// debajo del 1%.
+// DAMP_ZONE 2: la amortiguacion se nota desde 9/1, no desde 8/2. Estuvo en 3
+// cuando el juego se pasaba de frenada y un jugador que lo hacia todo bien
+// ganaba el 4%; se bajo a 2 al arreglar el fallo de los puntos, que resulto
+// estar haciendo de amortiguador de tapadillo (uno de cada cinco efectos no
+// se aplicaba).
+//
+// Medido despues con scripts/simular.mjs, que juega con este mismo motor:
+// bajarlo a 1, es decir quitar la amortiguacion del todo, no cambia nada
+// (15,0% a 15,5% en el jugador optimo, que es ruido). Tiene sentido: un
+// jugador que juega bien no se acerca al borde, asi que el colchon del borde
+// no es lo que le salva. Queda en 2 porque ahi si ayuda al que va aprendiendo.
 const DAMP_ZONE = 2
 
 // Meses que tarda en estallar una bomba de relojería si la carta no dice
@@ -356,7 +361,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   // solo si sigues en el extremo al tercer turno cae el final. Sin esto, un
   // pico de mala suerte te mataba sin margen (y morir por TECHO, jugando
   // limpio, era el final más común). Antes era 1 turno de gracia (`< 2`).
-  if (state.extremeStreak < TURNOS_DE_GRACIA) {
+  if (state.extremeStreak < turnosDeGracia(state.turn)) {
     return pickRegularCard(state)
   }
 

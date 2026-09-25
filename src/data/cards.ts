@@ -304,6 +304,40 @@ const endingCards: Card[] = [
       s.medios <= 4,
   },
   {
+    id: 'final_evento_expediente',
+    phase: 3,
+    minTurn: 16,
+    character: 'El Expediente',
+    text: 'Le dijo que no a quien no se le dice que no. Lo que tenía guardado sale hoy a las ocho: las fechas, los encargos y su propia voz diciendo que de esto no se habla por teléfono.',
+    left: {
+      text: 'Salir a explicarlo',
+      effects: {},
+      epilogueText: 'Comparece, admite que hubo contactos y niega todo lo demás. La grabación dura once minutos y la ponen entera, dos veces. Fin del gobierno.',
+    },
+    right: {
+      text: 'No hacer declaraciones',
+      effects: {},
+      epilogueText: 'El silencio aguanta hasta el jueves. El jueves la dimisión se la piden los suyos, y no por escrito. Fin del gobierno.',
+    },
+    isEnding: true,
+    byEvent: true,
+    // Dejar una carpeta sin pagar no mata por si solo: mata si ademas no le
+    // queda prensa que le defienda cuando el fontanero decide publicar. Los
+    // ocho meses son el tiempo que tarda en ver que no va a cobrar, y son
+    // tambien el aviso: da margen de sobra para recomponer los medios.
+    //
+    // Y caduca a los dos anos. Sin ese tope era una sentencia colgando el
+    // resto de la partida, y medido con simular.mjs se comia el 19% de las
+    // partidas de un jugador bueno: una sola trama mataba mas que las
+    // elecciones. Con caducidad sigue dando miedo, pero se puede sobrevivir a
+    // ella aguantando el tipo, que es lo que pasa de verdad con un material
+    // que envejece.
+    condition: (s, _m, ctx) => {
+      const edad = ctx.flagAge('carpeta_suelta')
+      return edad >= 8 && edad <= 24 && s.medios <= 3
+    },
+  },
+  {
     id: 'final_evento_ruptura',
     phase: 2,
     minTurn: 10,
@@ -386,7 +420,12 @@ const electionCards: Card[] = [
     // Solo pierdes la noche electoral si llegas con algo PRÁCTICAMENTE muerto
     // (1 o menos). Antes era <= 2 y se comía demasiadas partidas por los
     // pelos: la mediana del jugador competente ni llegaba a una legislatura.
-    condition: (s) => s.medios <= 1 || s.gobierno <= 1 || s.calle <= 1 || s.caja <= 1,
+    // Llegar a la noche electoral con algo por debajo de 3 es perderla. Estuvo
+    // en <= 2 y se bajo a <= 1 porque se comia demasiadas partidas; pero con
+    // el resto del juego ya ajustado, <= 1 era practicamente imposible de
+    // cumplir y las elecciones habian dejado de ser un examen: se aprobaba por
+    // estar vivo. Es el hito de la partida y tiene que pedir algo.
+    condition: (s) => s.medios <= 2 || s.gobierno <= 2 || s.calle <= 2 || s.caja <= 2,
   },
   // --- TRIUNFO: llegas fuerte en todo ---
   {
@@ -580,4 +619,16 @@ export const STAT_MAX = 10
 // decirle al jugador cuantos le quedan, asi que vive aqui y no suelto en el
 // store: si cambia el numero, cambia el aviso.
 export const TURNOS_DE_GRACIA = 3
+
+// ...pero solo en la primera legislatura. En la segunda son dos meses y en la
+// tercera uno. El motivo es de juego y de tema a la vez: un gobierno recien
+// llegado tiene credito y margen, y uno que lleva ocho anos no. Sin esto, el
+// mes 140 daba exactamente el mismo colchon que el mes 4, y un jugador
+// competente podia vivir de la prorroga hasta el final.
+//
+// Lo que cuenta la barra ("2 MESES") sale de aqui tambien, asi que lo que se
+// promete en pantalla y lo que hace el motor no pueden separarse.
+export function turnosDeGracia(turn: number): number {
+  return Math.max(1, TURNOS_DE_GRACIA - Math.floor(turn / ELECTION_INTERVAL))
+}
 export const STAT_START = 5

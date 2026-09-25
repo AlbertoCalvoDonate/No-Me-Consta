@@ -106,6 +106,26 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
                   justifyContent: 'center',
                 }}
               >
+                {/* Los fontaneros no tienen retrato: no hay foto suya en
+                    ningun sitio, que es parte de lo que son. Sale el hueco
+                    con un interrogante en vez de una imagen rota. */}
+                {!p.imagen && (
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      ...pixel,
+                      fontSize: 26,
+                      color: 'rgba(255,255,255,0.32)',
+                    }}
+                  >
+                    ?
+                  </div>
+                )}
+                {p.imagen && (
                 <img
                   src={`/characters/${p.imagen}`}
                   alt=""
@@ -130,6 +150,7 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
                     filter: conocido ? 'none' : 'brightness(0) invert(0.28)',
                   }}
                 />
+                )}
               </div>
 
               <div style={{ minWidth: 0, flex: 1 }}>

@@ -58,8 +58,9 @@ const ILUSTRACION_ESPECIFICA: Record<string, string> = {
   elecciones_retirada_final: 'nocheelectoral.webp',
   elecciones_leyenda_final: 'nocheelectoral.webp',
 }
-// Los 22 retratos del reparto, que son los que espera la pantalla de carga.
-const RETRATOS = REPARTO.map((p) => p.imagen)
+// Los retratos del reparto, que son los que espera la pantalla de carga. Los
+// fontaneros no tienen, asi que no entran en la cuenta.
+const RETRATOS = REPARTO.map((p) => p.imagen).filter((i): i is string => Boolean(i))
 
 // Las ilustraciones que puede sacar la pantalla de fin, para precargarlas al
 // final de la cola (ver ilustracionFin justo debajo).
@@ -356,6 +357,7 @@ export default function App() {
                 card={!gameOver ? currentCard : undefined}
                 x={x}
                 extremeStreak={extremeStreak}
+                turn={turn}
                 acabada={gameOver}
                 anger={anger}
                 favor={favor}

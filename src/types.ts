@@ -126,6 +126,12 @@ export interface Card {
   // muertes por situación) Y el personaje que la firma te debe bastantes
   // favores. Es la última oportunidad, y no sale gratis.
   rescatePara?: StatKey | 'evento'
+  // Carta A CIEGAS: no enciende los puntos sobre los indicadores. El jugador
+  // sabe que algo se mueve, pero no que ni cuanto. Es de los fontaneros y de
+  // nadie mas: el resto del mazo cumple el trato de ensenar lo que promete
+  // (ver StatBars y jitter), y lo que da miedo de esta gente es justamente
+  // que con ellos ese trato no existe.
+  sinPistas?: boolean
   isEnding?: boolean    // Carta especial de final de partida
   // Final que NO se dispara por una barra en el extremo, sino por una
   // situación concreta (una trama que ha llegado demasiado lejos, media

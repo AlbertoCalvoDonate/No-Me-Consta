@@ -12,7 +12,10 @@ import { cards } from './cards'
 
 export interface Personaje {
   nombre: string
-  imagen: string
+  // Retrato en public/characters/. Los fontaneros no tienen: son gente sin
+  // cara publica, y en la carta salen rotulados con el nombre en grande (ver
+  // SwipeCard). Si algun dia hay arte, basta con ponerlo aqui.
+  imagen?: string
   // El indicador que encarna: sus cartas lo tocan casi siempre.
   // `undefined` = no encarna ninguno en concreto (voces de cierre, el propio
   // presidente, un aliado generico).
@@ -54,6 +57,15 @@ export const REPARTO: Personaje[] = [
   // Sin indicador propio
   { nombre: 'El Fiscal', imagen: 'fiscal.webp', quien: 'Le debe el puesto. Eso es exactamente el problema.' },
   { nombre: 'Mopongo', imagen: 'mopongo.webp', quien: 'Nadie la toma en serio. Ese es su superpoder.' },
+
+  // LOS FONTANEROS — no encarnan ningun indicador porque los tocan todos, y
+  // sus cartas no ensenan cuales (ver sinPistas). Aparecen solos, cuando
+  // huelen sangre: una barra en apuros o la caja demasiado llena. Son tres
+  // personas distintas haciendo exactamente el mismo trabajo, que es como
+  // funciona de verdad: cuando cae uno, ya hay otro.
+  { nombre: 'La Fontanera', quien: 'Fue periodista. Ahora hace gestiones que nadie le ha encargado por escrito.' },
+  { nombre: 'El Comisario', quien: 'Cuarenta años en la casa y un armario que no cabe en el despacho.' },
+  { nombre: 'El Agente', quien: 'No dice para quien trabaja. Sabe con quién habla usted por teléfono.' },
 ]
 
 // Cuantas cartas tiene cada personaje en el mazo. Se calcula del propio mazo,

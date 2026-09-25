@@ -4,7 +4,7 @@ import type { Card, Stats } from '../types'
 import { EffectPips } from './EffectPips'
 import { StatIcon } from './StatIcon'
 import { SWIPE_REVEAL_DISTANCE } from './SwipeCard'
-import { STAT_MAX, TURNOS_DE_GRACIA } from '../data/cards'
+import { STAT_MAX, turnosDeGracia } from '../data/cards'
 import { REPARTO } from '../data/reparto'
 import { COLOR, pixel } from '../utils/estilo'
 
@@ -102,6 +102,9 @@ interface Props {
   // Meses seguidos con algun indicador en el extremo. Sirve para decir cuantos
   // quedan antes de que caiga el gobierno (ver TURNOS_DE_GRACIA).
   extremeStreak: number
+  // El mes en que va la partida. Solo se usa para saber cuanta prorroga queda,
+  // que se acorta con cada legislatura (ver turnosDeGracia).
+  turn: number
   // Con la partida acabada las barras se quedan como registro del estado final,
   // pero sin cuenta atras: prometeria meses que ya no existen.
   acabada?: boolean
@@ -109,7 +112,7 @@ interface Props {
   favor: Record<string, number>
 }
 
-export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor }: Props) {
+export function StatBars({ stats, card, x, extremeStreak, turn, acabada, anger, favor }: Props) {
   // Mismos umbrales que usa la carta para revelar el texto de cada lado al
   // arrastrar, así los puntos de arriba aparecen exactamente a la vez.
   const fadeStart = SWIPE_REVEAL_DISTANCE / 4
@@ -159,7 +162,7 @@ export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor 
           // Reventado = ya esta en el extremo y corre la prorroga. Distinto de
           // critical, que es solo "a un paso".
           const reventado = !acabada && (stats[key] <= 0 || stats[key] >= STAT_MAX)
-          const quedan = TURNOS_DE_GRACIA - extremeStreak
+          const quedan = turnosDeGracia(turn) - extremeStreak
           const movido = Boolean(pulso && pulso.prev[key] !== stats[key])
           const subioIcono = Boolean(pulso && stats[key] > pulso.prev[key])
           // El punto promete que ese indicador se va a mover. Si ya esta
@@ -168,8 +171,11 @@ export function StatBars({ stats, card, x, extremeStreak, acabada, anger, favor 
           // arreglo esta en `jitter`, en useGameStore.)
           const puedeMoverse = (v: number) =>
             v > 0 ? stats[key] < STAT_MAX : v < 0 ? stats[key] > 0 : false
-          const efectoIzq = card?.left.effects[key] ?? 0
-          const efectoDer = card?.right.effects[key] ?? 0
+          // Las cartas de los fontaneros van a ciegas a proposito (ver
+          // sinPistas en types): ahi no se enciende nada aunque muevan cuatro
+          // barras. No es que mientan, es que no dicen.
+          const efectoIzq = card?.sinPistas ? 0 : (card?.left.effects[key] ?? 0)
+          const efectoDer = card?.sinPistas ? 0 : (card?.right.effects[key] ?? 0)
           const leftVal = puedeMoverse(efectoIzq) ? efectoIzq : 0
           const rightVal = puedeMoverse(efectoDer) ? efectoDer : 0
           return (

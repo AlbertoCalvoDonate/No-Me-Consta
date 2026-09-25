@@ -5226,4 +5226,158 @@ export const contentCards: Card[] = [
       ctx.flagAge('deuda_magistrado') >= 20,
   },
 
+  // ==========================================================================
+  // LOS FONTANEROS
+  //
+  // Tres personas distintas haciendo el mismo trabajo: la que fue periodista,
+  // el policia retirado con el armario lleno y el que no dice para quien
+  // trabaja. No encarnan ningun indicador porque los tocan todos, y sus
+  // cartas NO encienden los puntos (sinPistas): con ellos no se sabe que se
+  // esta pagando hasta despues. Es la unica grieta deliberada en el trato de
+  // que si sale el punto, la barra se mueve.
+  //
+  // Como funcionan los tres: aparecen solos cuando huelen sangre (una barra
+  // en apuros o la caja demasiado llena), resuelven el problema de hoy, y
+  // dejan una carpeta abierta. Meses despues vienen a cobrar. Pagar cuesta;
+  // no pagar deja 'carpeta_suelta', y eso tiene un final propio
+  // (final_evento_expediente, en cards.ts) si encima no le queda prensa que
+  // le defienda.
+  //
+  // Solo trabaja uno por partida: mientras haya una carpeta abierta, los
+  // otros dos no aparecen. Asi la trama tiene un solo hilo y no tres relojes
+  // sonando a la vez.
+  // ==========================================================================
+  {
+    id: 'fontanera_oferta',
+    phase: 2,
+    character: 'La Fontanera',
+    sinPistas: true,
+    text: 'Esto no es una reunión y usted y yo no nos conocemos. El instructor que lleva lo suyo tiene un cuñado con dos sociedades fuera. Bien contado, eso le quita la razón a cualquiera. Puedo encargarme de que se cuente.',
+    left: { text: 'No sé de qué me habla', effects: { medios: -1 }, moralidad: 2 },
+    right: {
+      text: 'Hágalo, y yo no he oído nada',
+      effects: { medios: 2, gobierno: 1, caja: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_fontanera'],
+      scheduleCardId: 'fontanera_cobro',
+      scheduleIn: 14,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 2.5
+          : 0,
+  },
+  {
+    id: 'fontanera_cobro',
+    phase: 3,
+    weight: 0,
+    character: 'La Fontanera',
+    sinPistas: true,
+    text: 'Lo del instructor salió bien. Yo trabajo por libre y las facturas me las pago yo: hay una empresa pública que firma contratos menores sin concurso, y con uno me vale. Grabo todo, por cierto. Esto también.',
+    left: {
+      text: 'Que se lo firmen',
+      effects: { caja: -2, medios: -1 },
+      moralidad: -2,
+      removeFlags: ['carpeta_fontanera'],
+    },
+    right: {
+      text: 'Usted y yo no hemos hablado nunca',
+      effects: { gobierno: -1 },
+      moralidad: 1,
+      addFlags: ['carpeta_suelta'],
+    },
+  },
+  {
+    id: 'comisario_oferta',
+    phase: 2,
+    character: 'El Comisario',
+    sinPistas: true,
+    text: 'Cuarenta años en la casa y un armario que no cabe en el despacho. Ahí dentro hay carpetas de casi todos los que le están dando guerra. Yo no vendo nada, presidente. Yo presto. Y lo prestado se devuelve.',
+    left: { text: 'Ese armario debería estar en un juzgado', effects: { medios: -1, gobierno: -1 }, moralidad: 3 },
+    right: {
+      text: 'Enséñeme la del juez',
+      effects: { medios: 1, gobierno: 2, calle: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_comisario'],
+      scheduleCardId: 'comisario_cobro',
+      scheduleIn: 16,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 2.5
+          : 0,
+  },
+  {
+    id: 'comisario_cobro',
+    phase: 3,
+    weight: 0,
+    character: 'El Comisario',
+    sinPistas: true,
+    text: 'Vengo a por lo mío, y no quiero dinero, que el dinero deja rastro. Tengo una causa abierta y solo hace falta que se duerma un año. Nadie tiene que archivarla: basta con que nadie la empuje. Mi armario no caduca.',
+    left: {
+      text: 'La causa sigue su curso',
+      effects: { medios: -1 },
+      moralidad: 2,
+      addFlags: ['carpeta_suelta'],
+    },
+    right: {
+      text: 'Hablaré con quien haya que hablar',
+      effects: { medios: -2, gobierno: 1 },
+      moralidad: -3,
+      removeFlags: ['carpeta_comisario'],
+    },
+  },
+  {
+    id: 'agente_oferta',
+    phase: 2,
+    character: 'El Agente',
+    sinPistas: true,
+    text: 'Represento a un socio con el que ustedes firman acuerdos todos los años. Sabemos lo que le están publicando. Nosotros tenemos los teléfonos de quienes lo publican, y los de sus fuentes. Hoy no le pedimos nada.',
+    left: { text: 'Esta conversación no ha existido', effects: { medios: -1 }, moralidad: 3 },
+    right: {
+      text: '¿Y mañana?',
+      effects: { medios: 2, calle: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_agente'],
+      scheduleCardId: 'agente_cobro',
+      scheduleIn: 18,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 2.5
+          : 0,
+  },
+  {
+    id: 'agente_cobro',
+    phase: 3,
+    weight: 0,
+    character: 'El Agente',
+    sinPistas: true,
+    text: 'Mañana ha llegado. El jueves va al Consejo un texto sobre una frontera que a nuestro socio le interesa. Nos gustaría que saliera con una palabra cambiada. Una sola. Sus llamadas de aquel mes las tenemos nosotros.',
+    left: {
+      text: 'El texto sale como está',
+      effects: { gobierno: -1 },
+      moralidad: 3,
+      addFlags: ['carpeta_suelta'],
+    },
+    right: {
+      text: 'Que la cambien',
+      effects: { calle: -2, gobierno: 1 },
+      moralidad: -3,
+      removeFlags: ['carpeta_agente'],
+    },
+  },
+
 ]

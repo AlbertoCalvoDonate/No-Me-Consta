@@ -51,7 +51,8 @@ export function precargarRetratos(extra: string[] = []) {
           (CARTAS_POR_PERSONAJE[b.nombre]?.length ?? 0) -
           (CARTAS_POR_PERSONAJE[a.nombre]?.length ?? 0)
       )
-      .map((p) => p.imagen),
+      .map((p) => p.imagen)
+      .filter((i): i is string => Boolean(i)),
     // Las ilustraciones de final van al final de la cola: hasta que la partida
     // no acaba no hacen falta, y para entonces ha habido minutos de sobra.
     ...extra,
