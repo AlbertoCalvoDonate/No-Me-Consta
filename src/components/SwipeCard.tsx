@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion'
+import { animate, motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion'
 import type { Card, StatEffects } from '../types'
 import { characterColor, characterBackground } from '../utils/color'
 import { sfx } from '../utils/sfx'
@@ -14,6 +14,19 @@ const PANEL_HIDDEN = PANEL_WIDTH + 24
 
 // Inclinación máxima de la carta al arrastrar (grados).
 const CARD_TILT = 12
+// Hasta donde sale volando la carta elegida. Tiene que pasarse del borde de
+// cualquier telefono, que si no se ve frenar a medio camino.
+const VUELO = 820
+// Cuanto tarda el vuelo, y cuando se canta la decision. Lo segundo va ANTES
+// de que acabe lo primero a proposito: la carta ya esta fuera de la pantalla
+// cuando se decide, asi que desaparece en el aire y no se nota.
+//
+// Los numeros salen de mirar los fotogramas. Con 260 y 190 quedaba un hueco
+// de siglo y medio en el que no habia ninguna carta en pantalla: la vieja ya
+// habia salido y la nueva no habia entrado. Con 200 y 125 la siguiente empieza
+// a subir cuando la anterior acaba de irse.
+const VUELO_MS = 200
+const DECIDIR_MS = 125
 // Cuanto se desplaza la carta al asomar una opcion sin arrastrar.
 const PEEK_DISTANCE = 58
 
@@ -95,7 +108,18 @@ function ChoicePanel({
   // elegido nunca llega a verse. Cuando se empieza a arrastrar hacia este
   // lado el panel ya está a 0.93 pero todavía fuera de pantalla (zona muerta),
   // así que tampoco se ve "aparecer".
-  const opacity = useTransform(x, (v) => ((side === 'left' ? v < 0 : v > 0) ? 0.93 : 0))
+  //
+  // Y al elegir se va CON la carta: desde los 420 pixeles se desvanece, que
+  // es mas lejos de donde llega ningun arrastre. Sin esto, el panel se queda
+  // escrito sobre el fondo los milisegundos que la carta tarda en salir
+  // volando, y encima reaparece un instante con el texto de la carta
+  // siguiente, porque la MotionValue todavia viene lanzada.
+  const opacity = useTransform(x, (v) => {
+    const mio = side === 'left' ? v < 0 : v > 0
+    if (!mio) return 0
+    const lejos = Math.abs(v) - 420
+    return lejos <= 0 ? 0.93 : Math.max(0, 0.93 * (1 - lejos / 200))
+  })
   return (
     <motion.div
       style={{
@@ -216,7 +240,13 @@ export function opcionesDeCarta(card: Card) {
 
 export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: Props) {
   const estado = estadoDelPersonaje(enfado, favorDebido)
-  const rotate = useTransform(x, [-100, 100], [-CARD_TILT, CARD_TILT])
+  // Inclinada mientras se arrastra, y dando vueltas cuando sale volando: el
+  // giro crece con la distancia en vez de toparse a los doce grados.
+  const rotate = useTransform(
+    x,
+    [-VUELO, -100, 100, VUELO],
+    [-CARD_TILT * 4, -CARD_TILT, CARD_TILT, CARD_TILT * 4]
+  )
   const { textoIzq, textoDer, coloresIzq, coloresDer } = opcionesDeCarta(card)
 
   // TECLADO. La carta no tenia teclas ni foco, asi que sin puntero no habia
@@ -230,12 +260,23 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: 
   // y se quito: se pisaba con el arrastre y el resultado era impredecible. En
   // tactil manda el gesto de deslizar, que es el del genero.
   const [asomado, setAsomado] = useState<'left' | 'right' | null>(null)
+  // Elegir es TIRAR la carta, como en Reigns: se va girando por el lado que
+  // se ha elegido y por debajo aparece la siguiente. Antes desaparecia en el
+  // sitio, sin despedirse, y la decision no se sentia como un gesto sino como
+  // un cambio de pantalla.
+  //
+  // `x.stop()` sigue siendo necesario: mata el rebote que framer-motion lanza
+  // al soltar, que si no se queda corriendo sobre la misma MotionValue que
+  // hereda la carta siguiente y le asoma un trozo del panel contrario.
   const elegir = useCallback(
     (lado: 'left' | 'right') => {
       x.stop()
-      x.set(0)
       setAsomado(null)
-      onChoose(lado)
+      animate(x, lado === 'left' ? -VUELO : VUELO, {
+        duration: VUELO_MS / 1000,
+        ease: [0.25, 0, 0.6, 1],
+      })
+      window.setTimeout(() => onChoose(lado), DECIDIR_MS)
     },
     [onChoose, x]
   )
@@ -282,15 +323,9 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: 
       // se pasa del 0 hacia el signo contrario y asoma un trozo del panel
       // de la otra opción en la carta nueva. `x.set(0)` deja la carta
       // siguiente en su sitio desde el primer frame.
-      setAsomado(null)
-      x.stop()
-      x.set(0)
-      onChoose('left')
+      elegir('left')
     } else if (decidedRight) {
-      setAsomado(null)
-      x.stop()
-      x.set(0)
-      onChoose('right')
+      elegir('right')
     }
   }
 

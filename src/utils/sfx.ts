@@ -135,6 +135,8 @@ interface OpcionesNota {
   reverb?: number
   /** Deja el tono exacto (para acordes y fanfarrias). */
   exacto?: boolean
+  /** Cuanto tarda en llegar a su volumen. Por defecto 12 ms, que es "ya". */
+  ataque?: number
 }
 
 function nota(freq: number, dur: number, o: OpcionesNota = {}) {
@@ -142,7 +144,7 @@ function nota(freq: number, dur: number, o: OpcionesNota = {}) {
   if (!c || !mezcla || !envio) return
   const {
     tipo = 'square', retraso = 0, volumen = 1, bend = 0,
-    unison = 0, filtro, barridoA, reverb = 0, exacto = false,
+    unison = 0, filtro, barridoA, reverb = 0, exacto = false, ataque = 0.012,
   } = o
   const t0 = c.currentTime + retraso
   const f = exacto ? freq : freq * pizcaDeAzar()
@@ -150,7 +152,7 @@ function nota(freq: number, dur: number, o: OpcionesNota = {}) {
   const g = c.createGain()
   // Ataque muy corto y caída exponencial: sin esto se oye un "clic" al cortar.
   g.gain.setValueAtTime(0.0001, t0)
-  g.gain.exponentialRampToValueAtTime(volumen, t0 + 0.012)
+  g.gain.exponentialRampToValueAtTime(volumen, t0 + Math.min(ataque, dur * 0.8))
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
 
   let salida: AudioNode = g
@@ -309,11 +311,11 @@ export const sfx = {
     // ademas es justo cuando la carta termina de entrar: el personaje habla
     // cuando acaba de llegar, que es lo que se espera.
     const ESPERA = 0.45
-    nota(f, 0.07, {
-      tipo: 'triangle', retraso: ESPERA, volumen: 0.3 * k, filtro: 2800, exacto: true, reverb: 0.1,
+    nota(f, 0.08, {
+      tipo: 'triangle', retraso: ESPERA, volumen: 0.52 * k, filtro: 2800, exacto: true, reverb: 0.1,
     })
-    nota(f * 1.5, 0.05, {
-      tipo: 'triangle', retraso: ESPERA + 0.055, volumen: 0.18 * k, filtro: 2800,
+    nota(f * 1.5, 0.06, {
+      tipo: 'triangle', retraso: ESPERA + 0.055, volumen: 0.32 * k, filtro: 2800,
       exacto: true, reverb: 0.12,
     })
   },
@@ -373,7 +375,46 @@ export const sfx = {
     ruido(0.35, { retraso: 0.2, volumen: 0.07, filtro: 7000, barridoA: 11000, reverb: 0.4 })
   },
 
-  // Fin del gobierno: el trombón triste de toda la vida. Cuatro notas que
+  // FIN DEL GOBIERNO. El cuerno grave: una nota sostenida enorme que entra
+  // despacio, se dobla hacia abajo y tarda en irse.
+  //
+  // Antes era el trombon de chiste de toda la vida, y el chiste esta bien
+  // hasta que lo oyes por decimoquinta vez: se rie de la derrota justo cuando
+  // el jugador acaba de perder cuarenta minutos de partida. Esto no se rie.
+  //
+  // Como esta hecho, que es todo capas graves:
+  //  - un subgrave a 41 Hz, que mas que oirse se nota;
+  //  - el cuerpo del cuerno a 82 Hz en sierra, con siete voces desafinadas
+  //    entre si: ese roce entre voces es lo que hace que suene a masa y no a
+  //    sintetizador;
+  //  - una tercera capa a 110 y 116 Hz que baten una contra otra, que es el
+  //    truco viejo para que algo suene mal sin sonar desafinado;
+  //  - y un golpe de ruido grave por debajo, con la reverb abierta.
+  // Todo con ataque lento: un sonido que ya esta sonando cuando empiezas a
+  // oirlo no impone. Y el segundo golpe llega cuando el primero aun no se ha
+  // ido, que es de donde sale la sensacion de que aquello no se acaba.
+  derrota() {
+    nota(41, 3.2, { tipo: 'sine', volumen: 1, ataque: 0.5, reverb: 0.35, exacto: true })
+    nota(82, 2.8, {
+      tipo: 'sawtooth', volumen: 0.85, ataque: 0.35, bend: -12, unison: 14,
+      filtro: 420, barridoA: 130, reverb: 0.45, exacto: true,
+    })
+    nota(110, 2.4, {
+      tipo: 'sawtooth', retraso: 0.12, volumen: 0.3, ataque: 0.4, unison: 9,
+      filtro: 700, barridoA: 200, reverb: 0.5, exacto: true,
+    })
+    nota(116, 2.4, {
+      tipo: 'sawtooth', retraso: 0.12, volumen: 0.3, ataque: 0.4, unison: 9,
+      filtro: 700, barridoA: 200, reverb: 0.5, exacto: true,
+    })
+    ruido(1.6, { volumen: 0.9, filtro: 320, tipoFiltro: 'lowpass', barridoA: 90, reverb: 0.6 })
+    // El segundo golpe, un tono mas abajo y sin prisa.
+    nota(55, 3.4, { tipo: 'sawtooth', retraso: 1.5, volumen: 0.8, ataque: 0.55,
+      bend: -8, unison: 12, filtro: 360, barridoA: 110, reverb: 0.5, exacto: true })
+    nota(27.5, 3.6, { tipo: 'sine', retraso: 1.5, volumen: 1, ataque: 0.7, reverb: 0.4, exacto: true })
+  },
+
+  // Fin del gobierno, version vieja: el trombón triste de toda la vida. Cuatro notas que
   // caen, cada una arrastrando el tono hacia abajo, con el filtro cerrándose
   // detrás — ese "wah" que se cierra es lo que lo hace trombón y no pitido.
   trombon() {

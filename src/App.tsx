@@ -249,7 +249,7 @@ export default function App() {
     }
     if (currentCard.isElection && turn >= ELECTION_INTERVAL * ELECTION_MAX_TERMS) sfx.triunfo()
     else {
-      sfx.trombon()
+      sfx.derrota()
       haptics.muerte()
     }
     if (yaComprobado.current) return
