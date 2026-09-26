@@ -68,6 +68,10 @@ const AIRE = 0.035
 // Tope de acercamiento. Ampliar un webp ya comprimido lo emborrona, y por
 // encima de esto se empieza a notar en la carta.
 const MAX_ZOOM = 1.35
+// Tope del modo --acercar, que es otra cosa: ahi no se reescribe la imagen,
+// solo se acerca al pintarla, y el limite lo pone el buen gusto. Por encima
+// de un 15% se empieza a notar que a unos se les ve el pecho y a otros no.
+const TOPE_ACERCAR = 1.15
 // Por debajo de esto no se reescribe: el retrato ya esta donde debe y volver
 // a comprimirlo solo le quitaria calidad.
 const QUIETO = { zoom: 0.02, px: 6 }
@@ -304,6 +308,18 @@ async function medirTodo(page, files) {
           }
         }
       }
+      // Extremos horizontales de la cabeza segun la silueta (pelo incluido),
+      // que es lo que se puede salir de la carta al acercar.
+      let cabezaX0 = w
+      let cabezaX1 = 0
+      for (let y = figTop; y <= hastaCabeza; y++) {
+        for (let x = 0; x < w; x++) {
+          if (d[(y * w + x) * 4 + 3] > 12) {
+            if (x < cabezaX0) cabezaX0 = x
+            if (x > cabezaX1) cabezaX1 = x
+          }
+        }
+      }
       const base = {
         f,
         w,
@@ -311,6 +327,9 @@ async function medirTodo(page, files) {
         figTop,
         figBot,
         anchoCara,
+        cabezaX0,
+        cabezaX1,
+        cabezaAncho: Math.max(1, cabezaX1 - cabezaX0 + 1),
         caraX: (cara.x0 + cara.x1) / 2,
         caraY0: cara.y0,
       }
@@ -345,6 +364,11 @@ async function medirTodo(page, files) {
 
 const args = process.argv.slice(2)
 const soloMedir = args.includes('--medir')
+// --acercar: NO toca ninguna imagen. Mide y escribe src/data/acercamiento.ts,
+// que la carta usa para acercar un poco los retratos que quedaron lejos.
+// Es la forma no destructiva de hacer lo mismo: sin reescribir el webp no hay
+// perdida de calidad, y deshacerlo es cambiar un numero.
+const soloAcercar = args.includes('--acercar')
 const verHoja = args.includes('--ver')
 const HOJA = (process.env.TEMP || '.') + '/encuadre-revision.png'
 const pedidos = args.filter((a) => !a.startsWith('--'))
@@ -396,6 +420,58 @@ for (const f of files) {
   const quieto =
     Math.abs(zoom - 1) < QUIETO.zoom && Math.abs(dx) < QUIETO.px && Math.abs(dy) < QUIETO.px
   plan.push({ f, zoom, zoomIdeal, dx, dy, quieto, ojos: m.ojos })
+}
+
+if (soloAcercar) {
+  // El objetivo NO es el retrato mas cercano sino la MEDIANA del reparto:
+  // llevar a todos al mas cercano obliga a zooms del 40% y ahi las cabezas
+  // salen enormes (paso, y hubo que revertir los veintidos). A la mediana, el
+  // que mas se mueve lo hace un 15%.
+  const anchos = medidas.filter((m) => !m.error).map((m) => m.anchoCara).sort((a, b) => a - b)
+  const objetivo = anchos[Math.floor(anchos.length / 2)]
+  const lineas = []
+  for (const m of medidas) {
+    if (m.error) continue
+    const ideal = objetivo / m.anchoCara
+    let z = Math.max(1, Math.min(TOPE_ACERCAR, ideal))
+    // GUARDA: al acercar, la figura se ensancha desde el centro de arriba. Si
+    // la cabeza ya llegaba cerca del borde, se le corta el pelo. Se mide
+    // cuanto margen lateral tiene la CABEZA (no los hombros, que pueden
+    // sangrar) y se recorta el acercamiento hasta que quepa.
+    const margen = Math.min(m.cabezaX0, m.w - m.cabezaX1)
+    const maxPorLados = m.cabezaAncho > 0 ? (m.w - 8) / m.cabezaAncho : 99
+    const centrado = 1 + (margen * 2) / Math.max(1, m.cabezaAncho)
+    z = Math.min(z, maxPorLados, centrado)
+    z = Math.max(1, Math.round(z * 1000) / 1000)
+    lineas.push({ f: m.f, z, ideal, margen })
+  }
+  lineas.sort((a, b) => b.z - a.z)
+  for (const l of lineas) {
+    console.log(
+      `${l.f.padEnd(28)} x${l.z.toFixed(3)}  (ideal ${l.ideal.toFixed(2)}, margen lateral ${l.margen}px)`
+    )
+  }
+  const cabecera = [
+    '// GENERADO POR scripts/encuadrar-cara.mjs --acercar. No editar a mano.',
+    '//',
+    '// Cuanto acerca la CARTA cada retrato al pintarlo. No se toca la imagen:',
+    '// el fichero sigue igual y esto es un transform de CSS, asi que no hay',
+    '// perdida de calidad y deshacerlo es poner 1.',
+    '//',
+    '// Sale de llevar el ancho de cara de cada uno a la MEDIANA del reparto,',
+    `// con dos topes: no mas de un ${Math.round((TOPE_ACERCAR - 1) * 100)}% y nunca tanto como`,
+    '// para que la cabeza se salga por los lados de la carta.',
+    'export const ACERCAMIENTO: Record<string, number> = {',
+  ]
+  const filas = lineas
+    .filter((l) => l.z > 1.001)
+    .map((l) => `  '${l.f}': ${l.z},`)
+  const cuerpo = [...cabecera, ...filas, '}', ''].join('\n')
+  writeFileSync(fileURLToPath(new URL('../src/data/acercamiento.ts', import.meta.url)), cuerpo)
+  console.log('')
+  console.log(`${lineas.filter((l) => l.z > 1.001).length} retratos se acercan -> src/data/acercamiento.ts`)
+  await browser.close()
+  process.exit(0)
 }
 
 plan.sort((a, b) => b.zoom - a.zoom)

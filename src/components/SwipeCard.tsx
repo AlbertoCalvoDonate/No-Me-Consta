@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { animate, motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion'
 import type { Card, StatEffects } from '../types'
 import { characterColor, characterBackground } from '../utils/color'
+import { ACERCAMIENTO } from '../data/acercamiento'
 import { sfx } from '../utils/sfx'
 import { COLOR, pixel } from '../utils/estilo'
 
@@ -495,6 +496,17 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: 
                 height: '100%',
                 objectFit: 'cover',
                 objectPosition: 'center top',
+                // Y a unos cuantos se les acerca un poco la camara, porque el
+                // dibujo los dejo mas lejos que al resto: la cara iba del 41%
+                // al 67% del lienzo segun el personaje. Se hace AQUI y no
+                // reescribiendo el .webp a proposito: asi no se recomprime
+                // nada, el fichero sigue siendo el que entrego el dibujante y
+                // deshacerlo es cambiar un numero (ver data/acercamiento).
+                //
+                // Desde arriba y no desde el centro, que es donde esta la
+                // cara: lo que se sale por abajo es torso, que no dice nada.
+                transform: `scale(${ACERCAMIENTO[card.characterImage ?? ''] ?? 1})`,
+                transformOrigin: 'center top',
               }}
             />
           )}
