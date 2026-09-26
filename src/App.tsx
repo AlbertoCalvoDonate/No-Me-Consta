@@ -26,7 +26,7 @@ import { COLOR, pixel } from './utils/estilo'
 import { precargarRetratos } from './utils/precarga'
 import { REPARTO } from './data/reparto'
 import { PantallaCarga } from './components/PantallaCarga'
-import { musica } from './utils/musica'
+import { ambiente } from './utils/ambiente'
 
 const STAT_LABEL: Record<StatKey, string> = {
   medios: 'Medios',
@@ -122,27 +122,22 @@ export default function App() {
   const [reanudable] = useState(hayPartidaEnCurso)
   const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, history, flagsVistos, anger, favor, extremeStreak, choose, restart } =
     useGameStore()
-  // MUSICA. Tres momentos con tres papeles: el titulo y el final se oyen, y en
-  // partida baja mucho para no pelearse con el texto de la carta (ver NIVEL en
-  // utils/musica). La primera pieza no puede sonar hasta que el jugador toque
-  // algo -los navegadores no dejan-, y aqui eso se cumple solo: la pantalla de
-  // inicio no suena hasta que se interactua con ella.
+  // EL FONDO. Ya no hay musica: hay despacho (ver utils/ambiente). Se engancha
+  // una vez al boton de volumen y a la pestana, que son las dos cosas que
+  // pueden matarlo por detras.
   useEffect(() => {
-    musica.reengancharAlVolumen()
+    ambiente.vigilar()
     return () => sfx.alCambiarElVolumen(null)
   }, [])
-  // En la pantalla de inicio NO hay musica. El navegador no deja sonar nada
-  // hasta que el jugador toca algo, asi que una pieza de titulo solo podia
-  // entrar a destiempo, despues de un clic que el jugador no dio para eso. La
-  // musica empieza cuando empieza la partida, que ahi el gesto ya esta dado y
-  // no se nota.
+  // Suena mientras se juega, y se calla en el menu y al acabar la partida: en
+  // la pantalla de fin lo que tiene que quedar sonando es el cuerno, no una
+  // oficina en la que ya no trabaja nadie.
   useEffect(() => {
-    if (!started) {
-      musica.callar()
+    if (!started || cargando || gameOver) {
+      ambiente.callar()
       return
     }
-    if (cargando) return
-    musica.poner(gameOver ? 'final' : 'partida')
+    ambiente.arrancar()
   }, [started, cargando, gameOver])
 
   // Posición de arrastre de la carta actual, compartida con StatBars para
@@ -283,7 +278,12 @@ export default function App() {
   // favor se anuncian con su propio sonido.
   useEffect(() => {
     if (gameOver) return
-    if (currentCard.isElection) sfx.eleccion()
+    if (currentCard.isElection) {
+      sfx.eleccion()
+      // Y la sede, salvo cuando la noche electoral es la de perder: ahi la
+      // gente que grita es la de enfrente, y ponerla sonaria a burla.
+      if (currentCard.id !== 'elecciones_derrota') sfx.gentio()
+    }
     else if (currentCard.isRecap) sfx.balance()
     else if (currentCard.id === 'favor_ganado') sfx.favor()
     // Las cartas de fontanero no encienden los puntos, y eso el jugador solo
@@ -355,7 +355,6 @@ export default function App() {
                 // no se vacia, siguen saltando pop-ups encima de la partida
                 // nueva, que no los ha ganado.
                 setColaLogros([])
-                musica.barajarPartida()
                 setCargando(true)
               }}
               onContinuar={reanudable ? () => setCargando(true) : undefined}

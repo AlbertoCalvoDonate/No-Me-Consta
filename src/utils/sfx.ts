@@ -38,6 +38,14 @@ let paso = leerPaso()
 // porque tiene su propia mezcla (el fondo de partida suena mas bajo que el del
 // titulo) y porque hay que poder fundirla sin tocar los efectos.
 let busMusica: GainNode | null = null
+// El fondo de despacho cuelga de aqui, y esto de busMusica. Hace falta un
+// nodo propio porque el bus de musica NO pasa por `master` (ver mas abajo el
+// porque), asi que no tiene la atenuacion de 0,16 que llevan los efectos: un
+// ruido sintetizado a escala completa entraba por ahi a -4,8 dB, o sea a
+// todo trapo. Este numero es esa atenuacion, medida en la salida real hasta
+// dejar la cama del fondo cerca de -50 dB.
+const AMBIENTE_GAIN = 0.018
+let busAmbiente: GainNode | null = null
 let avisarCambio: (() => void) | null = null
 
 function leerPaso(): number {
@@ -108,6 +116,10 @@ function getCtx(): AudioContext | null {
     busMusica = ctx.createGain()
     busMusica.gain.value = PASOS[paso]
     busMusica.connect(ctx.destination)
+
+    busAmbiente = ctx.createGain()
+    busAmbiente.gain.value = AMBIENTE_GAIN
+    busAmbiente.connect(busMusica)
   } catch {
     return null
   }
@@ -137,6 +149,10 @@ interface OpcionesNota {
   exacto?: boolean
   /** Cuanto tarda en llegar a su volumen. Por defecto 12 ms, que es "ya". */
   ataque?: number
+  /** Izquierda -1, centro 0, derecha 1. Lo usa el fondo de despacho. */
+  pan?: number
+  /** A donde sale. Por defecto la mezcla de efectos. */
+  destino?: AudioNode
 }
 
 function nota(freq: number, dur: number, o: OpcionesNota = {}) {
@@ -145,6 +161,7 @@ function nota(freq: number, dur: number, o: OpcionesNota = {}) {
   const {
     tipo = 'square', retraso = 0, volumen = 1, bend = 0,
     unison = 0, filtro, barridoA, reverb = 0, exacto = false, ataque = 0.012,
+    pan = 0, destino,
   } = o
   const t0 = c.currentTime + retraso
   const f = exacto ? freq : freq * pizcaDeAzar()
@@ -165,7 +182,7 @@ function nota(freq: number, dur: number, o: OpcionesNota = {}) {
     g.connect(lp)
     salida = lp
   }
-  salida.connect(mezcla)
+  conectar(c, salida, destino ?? mezcla, pan)
   if (reverb > 0) {
     const env = c.createGain()
     env.gain.value = reverb
@@ -187,9 +204,26 @@ function nota(freq: number, dur: number, o: OpcionesNota = {}) {
 }
 
 // Ruido con envolvente: sirve para papeles, murmullos y aplausos.
+// Enchufa un nodo a su salida, metiendo un panoramizador por medio si hace
+// falta. El fondo de despacho lo usa para repartir los ruidos por el estereo:
+// una oficina en la que todo suena en el centro no suena a oficina.
+function conectar(c: AudioContext, desde: AudioNode, hasta: AudioNode, pan: number) {
+  if (!pan || typeof c.createStereoPanner !== 'function') {
+    desde.connect(hasta)
+    return
+  }
+  const p = c.createStereoPanner()
+  p.pan.value = Math.max(-1, Math.min(1, pan))
+  desde.connect(p)
+  p.connect(hasta)
+}
+
 function ruido(
   dur: number,
-  { retraso = 0, volumen = 0.5, filtro = 1200, tipoFiltro = 'bandpass' as BiquadFilterType, barridoA = 0, reverb = 0 } = {}
+  {
+    retraso = 0, volumen = 0.5, filtro = 1200, tipoFiltro = 'bandpass' as BiquadFilterType,
+    barridoA = 0, reverb = 0, pan = 0, destino = undefined as AudioNode | undefined,
+  } = {}
 ) {
   const c = getCtx()
   if (!c || !mezcla || !envio) return
@@ -206,11 +240,16 @@ function ruido(
   if (barridoA) bp.frequency.exponentialRampToValueAtTime(Math.max(60, barridoA), t0 + dur)
   const g = c.createGain()
   g.gain.setValueAtTime(0.0001, t0)
-  g.gain.exponentialRampToValueAtTime(volumen, t0 + 0.02)
+  // El ataque no puede durar mas que el sonido. Con 20 ms fijos, cualquier
+  // ruido mas corto que eso programaba la caida ANTES del final de la subida
+  // y no sonaba nada: las teclas del fondo de despacho, de 12 ms, salian a
+  // -120 dB, o sea mudas. Una quinta parte de los sucesos del despacho no
+  // existia y en la mezcla no se notaba, porque lo que falta no suena.
+  g.gain.exponentialRampToValueAtTime(volumen, t0 + Math.min(0.02, dur * 0.4))
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
   src.connect(bp)
   bp.connect(g)
-  g.connect(mezcla)
+  conectar(c, g, destino ?? mezcla, pan)
   if (reverb > 0) {
     const env = c.createGain()
     env.gain.value = reverb
@@ -253,6 +292,38 @@ export const sfx = {
   // Elección neutra: papeles.
   papel() {
     ruido(0.16, { volumen: 1.4, filtro: 2600, tipoFiltro: 'lowpass', barridoA: 1000, reverb: 0.1 })
+  },
+
+  // Un sonido del FONDO de despacho (ver utils/ambiente). Sale por el bus de
+  // musica y no por la mezcla de efectos: asi el fondo se puede bajar, fundir
+  // y dormir entero sin tocar los sonidos del juego, que es lo que hace falta
+  // al esconder la pestana o al mutear.
+  enElAmbiente(
+    tipo: 'nota' | 'ruido',
+    o: {
+      freq?: number
+      dur: number
+      retraso?: number
+      volumen?: number
+      filtro?: number
+      tipoFiltro?: BiquadFilterType
+      barridoA?: number
+      pan?: number
+    }
+  ) {
+    const c = getCtx()
+    if (!c || !busAmbiente) return
+    if (tipo === 'nota') {
+      nota(o.freq ?? 440, o.dur, {
+        tipo: 'sine', retraso: o.retraso, volumen: o.volumen, filtro: o.filtro,
+        exacto: true, pan: o.pan, destino: busAmbiente,
+      })
+    } else {
+      ruido(o.dur, {
+        retraso: o.retraso, volumen: o.volumen, filtro: o.filtro,
+        tipoFiltro: o.tipoFiltro, barridoA: o.barridoA, pan: o.pan, destino: busAmbiente,
+      })
+    }
   },
 
   // REPARTIR. Al empezar una partida caen las cartas: tres golpes secos de
@@ -343,6 +414,40 @@ export const sfx = {
         tipo: 'triangle', retraso: i * 0.11, volumen: 0.38, unison: 5, exacto: true, reverb: 0.3,
       })
     )
+  },
+
+  // GENTIO. La gente de la sede cuando sale el escrutinio: sesenta palmas
+  // sueltas repartidas por el estereo, cada una con su tono y su momento, y
+  // debajo el rumor de una sala llena. Las palmas no van a compas a proposito:
+  // un aplauso sincronizado suena a maquina, y lo que hace que un aplauso
+  // suene a gente es justamente que nadie da la palmada a la vez.
+  //
+  // Arranca flojo y se viene arriba, como en una sede de verdad: primero los
+  // de delante, que ven la pantalla, y dos segundos despues el resto.
+  gentio(dur = 2.4) {
+    for (let i = 0; i < 60; i++) {
+      // Repartidas en el tiempo con sesgo al principio... pero no del todo:
+      // el cuadrado hace que se amontonen un poco mas tarde, que es cuando la
+      // sala entera se entera.
+      const t = Math.pow(Math.random(), 0.7) * dur
+      ruido(0.022, {
+        retraso: t,
+        volumen: 1.1 + Math.random() * 1.5,
+        filtro: 1300 + Math.random() * 2400,
+        tipoFiltro: 'bandpass',
+        reverb: 0.4,
+        pan: (Math.random() * 2 - 1) * 0.85,
+      })
+    }
+    // El rumor: la sala, las voces, el eco del local.
+    ruido(dur + 0.6, { volumen: 1.5, filtro: 850, barridoA: 600, reverb: 0.55 })
+    // Y dos gritos sueltos, que en toda sede hay alguien que grita.
+    for (const g of [0.35, 1.25]) {
+      ruido(0.28, {
+        retraso: g, volumen: 0.95, filtro: 950, tipoFiltro: 'bandpass', barridoA: 1500,
+        reverb: 0.5, pan: g > 1 ? 0.6 : -0.55,
+      })
+    }
   },
 
   // Noche electoral: fanfarria cutre de telediario, con su murmullo detrás.
@@ -470,6 +575,7 @@ export const sfx = {
         mezcla = null
         envio = null
         busMusica = null
+        busAmbiente = null
       }
     } else {
       if (master) master.gain.value = BASE_GAIN * factor
@@ -483,8 +589,8 @@ export const sfx = {
   // si el juego esta en mudo: ahi no hay contexto de audio siquiera.
   busDeMusica(): { ctx: AudioContext; destino: GainNode } | null {
     const c = getCtx()
-    if (!c || !busMusica) return null
-    return { ctx: c, destino: busMusica }
+    if (!c || !busAmbiente) return null
+    return { ctx: c, destino: busAmbiente }
   },
 
   // Se llama al tocar el boton de volumen. La musica lo necesita porque al
