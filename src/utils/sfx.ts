@@ -532,26 +532,6 @@ export const sfx = {
     nota(27.5, 3.6, { tipo: 'sine', retraso: 1.5, volumen: 1, ataque: 0.7, reverb: 0.4, exacto: true })
   },
 
-  // Fin del gobierno, version vieja: el trombón triste de toda la vida. Cuatro notas que
-  // caen, cada una arrastrando el tono hacia abajo, con el filtro cerrándose
-  // detrás — ese "wah" que se cierra es lo que lo hace trombón y no pitido.
-  trombon() {
-    const notas = [392, 349, 330, 262]
-    notas.forEach((f, i) => {
-      const ultima = i === notas.length - 1
-      nota(f, ultima ? 0.85 : 0.28, {
-        tipo: 'sawtooth',
-        retraso: i * 0.26,
-        volumen: 0.48,
-        bend: -28,
-        unison: 7,
-        filtro: 1400,
-        barridoA: ultima ? 260 : 600,
-        reverb: 0.3,
-      })
-    })
-  },
-
   // Sobrevivir las tres legislaturas: la fanfarria buena, con aplausos.
   triunfo() {
     const notas = [523, 659, 784, 1047, 1319]

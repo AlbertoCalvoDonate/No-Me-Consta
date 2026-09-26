@@ -1,3 +1,9 @@
+// OJO: EL JUEGO YA NO TIENE MUSICA. El vals se quito y en su lugar hay un
+// fondo de despacho sintetizado (ver src/utils/ambiente.ts), asi que ahora
+// mismo public/musica/ no existe y nada de lo que genere este script se usa.
+// Se conserva porque cortar bucles que empalmen sin salto costo lo suyo y no
+// tiene sentido tirarlo: si algun dia vuelve a haber musica, funciona.
+//
 // Convierte las pistas de ost-fuentes/ en los bucles que se publican en
 // public/musica/.
 //

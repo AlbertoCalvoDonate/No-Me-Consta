@@ -66,7 +66,7 @@ const medidas = await page.evaluate(async () => {
 
   const SONIDOS = [
     'boton', 'roce', 'papel', 'moneda', 'campana', 'favor',
-    'alarma', 'balance', 'logro', 'eleccion', 'fontanero', 'reparto', 'aSolas', 'gentio', 'trombon', 'derrota', 'triunfo',
+    'alarma', 'balance', 'logro', 'eleccion', 'fontanero', 'reparto', 'aSolas', 'gentio', 'derrota', 'triunfo',
   ]
   const VENTANA = 6000 // ms de escucha por sonido, de sobra para el mas largo
 

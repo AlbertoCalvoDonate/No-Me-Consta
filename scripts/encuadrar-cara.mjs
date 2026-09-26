@@ -1,3 +1,13 @@
+// OJO ANTES DE USARLO: NO hace falta para los retratos nuevos, y pasarselo
+// los estropea. Se escribio cuando la carta era mas alta que el retrato y
+// sobraba fondo; desde que la carta tiene EXACTAMENTE la proporcion del
+// retrato (ver SwipeCard), el retrato ya llena la carta el solo y este zoom
+// solo sirve para dejar las cabezas enormes. Paso una vez y hubo que revertir
+// los veintidos.
+//
+// La tuberia de un retrato nuevo es: recortar-fondo -> normalize-portraits ->
+// to-webp -> colores-retrato. Sin esto.
+//
 // Re-encuadra los retratos tomando como referencia la CARA y no la silueta.
 //
 // normalize-portraits escala cada retrato para que su figura entera llene el

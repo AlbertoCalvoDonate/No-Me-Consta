@@ -1976,6 +1976,56 @@ export const contentCards: Card[] = [
     right: { text: 'Seguir a lo suyo, que para eso manda', effects: { gobierno: -1, medios: -1 } },
   },
 
+
+  // --- "Estoy solo, no tengo a nadie" ---
+  //
+  // La frase del que cargo con todo y descubre que el partido que le pidio
+  // cargar ya no le coge el telefono. Dicha en voz baja no es una queja: es
+  // un recordatorio de que el que esta solo no le debe silencio a nadie.
+  //
+  // Por eso la carta no se resuelve aqui. Dejarle tirado no cuesta nada hoy;
+  // cuesta un ano despues, cuando declara.
+  {
+    id: 'ministro_solo',
+    phase: 3,
+    character: 'El Ministro Caído',
+    characterImage: 'ministrocorrupto.webp',
+    text: 'Le han quitado el coche, el despacho y hasta el grupo del partido. "Estoy solo, no tengo a nadie", dice mirando al suelo. Luego levanta la vista: "Y el que está solo se acuerda de todo."',
+    left: {
+      text: 'Buscarle un sitio y que no le falte de nada',
+      effects: { caja: -2, gobierno: 1 },
+      moralidad: -2,
+      addFlags: ['ministro_colocado'],
+    },
+    right: {
+      text: '"Cada uno responde de lo suyo"',
+      effects: { medios: 1, gobierno: -1 },
+      moralidad: 1,
+      addFlags: ['ministro_suelto'],
+      scheduleCardId: 'ministro_declara',
+      scheduleIn: 12,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'ministro_declara',
+    phase: 3,
+    weight: 0,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'Su ex ministro ha declarado cuatro horas y ha salido sonriendo. Dice que habló de todo lo que le preguntaron, y que le preguntaron mucho. Tenemos el auto desde hace veinte minutos.',
+    left: {
+      text: 'Comparecer antes de que salga publicado',
+      effects: { medios: 1, gobierno: -2 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Decir que no conocía a ese señor',
+      effects: { medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+  },
+
   // --- LA VICEPRESIDENTA (idealista, ambiciosa, a un paso de montar lo suyo) ---
   {
     id: 'vice_sentido_comun',
