@@ -1,4 +1,4 @@
-import { REPARTO, CARTAS_POR_PERSONAJE, ETIQUETA_INDICADOR } from '../data/reparto'
+import { REPARTO, VOCES, CARTAS_POR_PERSONAJE, ETIQUETA_INDICADOR } from '../data/reparto'
 import { StatIcon } from './StatIcon'
 import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
@@ -77,7 +77,7 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px 20px' }}>
-        {REPARTO.map((p) => {
+        {[...REPARTO, ...VOCES].map((p) => {
           const suyas = CARTAS_POR_PERSONAJE[p.nombre] ?? []
           const vistas = suyas.filter((id) => idsVistos.has(id)).length
           const conocido = vistas > 0

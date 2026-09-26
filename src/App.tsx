@@ -289,6 +289,8 @@ export default function App() {
     // Las cartas de fontanero no encienden los puntos, y eso el jugador solo
     // lo nota si se fija. El sonido se lo dice antes de leer.
     else if (currentCard.sinPistas) sfx.fontanero()
+    // El espejo no habla: ahi no hay nadie enfrente.
+    else if (currentCard.character === 'El Espejo') sfx.aSolas()
     // Y el resto de cartas llegan con la voz de quien habla (ver sfx.voz).
     else sfx.voz(currentCard.character, DUENO_DE_PERSONAJE[currentCard.character] ?? 'ninguno')
   }, [currentCard, gameOver])

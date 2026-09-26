@@ -79,6 +79,19 @@ export const REPARTO: Personaje[] = [
 // Que barra "posee" cada personaje, en busqueda directa por nombre. Lo usa el
 // motor para el clima del sorteo: cuando una barra esta en apuros, la gente de
 // esa barra aparece mas.
+// NO son reparto, pero el jugador las ve y merece saber que son. De momento
+// una: El Espejo, que firma las quince cartas que antes firmaba El Presidente
+// (ver el comentario de arriba). Va aparte y no dentro de REPARTO porque el
+// contador del panel dice "has conocido a X de Y" y eso cuenta PERSONAS: el
+// espejo no es alguien a quien conocer, es usted.
+export const VOCES: Personaje[] = [
+  {
+    nombre: 'El Espejo',
+    imagen: 'espejo.svg',
+    quien: 'Usted, a solas. Las cartas en las que no hay nadie enfrente.',
+  },
+]
+
 export const DUENO_DE_PERSONAJE: Record<string, StatKey | undefined> = Object.fromEntries(
   REPARTO.map((p) => [p.nombre, p.dueno])
 )

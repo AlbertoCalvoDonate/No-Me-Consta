@@ -1,0 +1,52 @@
+<svg viewBox="0 0 1020 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- EL ESPEJO. No es una persona: es la carta en la que no hay nadie
+       enfrente, asi que lo que se ve dentro es usted, y a proposito no se ve
+       bien. Mismo lienzo 1020x1200 que los retratos, fondo transparente para
+       que asome el color de la carta, y todo a facetas planas como el resto
+       del arte: nada de degradados ni curvas, solo triangulos. -->
+
+  <!-- EL MARCO. Arco de ocho lados en vez de curva, que es lo que lo hace
+       low poly. Bronce apagado, no oro: el oro es el color de acento del
+       juego y aqui robaria la atencion de lo unico que importa, que es lo
+       que hay dentro del cristal. -->
+  <polygon points="228,1200 228,418 300,246 432,146 588,146 720,246 792,418 792,1200" fill="#6b5734"/>
+  <!-- Facetas del marco: mismas piezas, tonos distintos, para que la luz
+       venga de arriba a la izquierda como en todos los retratos. -->
+  <polygon points="228,418 300,246 358,286 286,452" fill="#8a7040"/>
+  <polygon points="300,246 432,146 470,196 358,286" fill="#a08149"/>
+  <polygon points="432,146 588,146 588,196 470,196" fill="#b08d4f"/>
+  <polygon points="588,146 720,246 662,286 588,196" fill="#7d6539"/>
+  <polygon points="720,246 792,418 734,452 662,286" fill="#5c4a2c"/>
+  <polygon points="228,418 286,452 286,1200 228,1200" fill="#7b6339"/>
+  <polygon points="734,452 792,418 792,1200 734,1200" fill="#4f4026"/>
+  <!-- Dos brillos sueltos en el bronce, que un marco liso no refleja nada. -->
+  <polygon points="300,246 358,286 332,330 268,330" fill="#c9a856" opacity="0.55"/>
+  <polygon points="470,196 588,196 588,214 470,214" fill="#c9a856" opacity="0.35"/>
+
+  <!-- EL CRISTAL. Azules frios y oscuros, mas oscuro segun baja. -->
+  <polygon points="292,1200 292,452 356,300 452,216 568,216 664,300 728,452 728,1200" fill="#1b2230"/>
+  <polygon points="292,452 356,300 452,216 452,470 292,470" fill="#222b3c"/>
+  <polygon points="568,216 664,300 728,452 728,470 568,470" fill="#161c28"/>
+  <polygon points="292,470 728,470 728,820 292,820" fill="#1e2634"/>
+  <polygon points="292,820 728,820 728,1200 292,1200" fill="#171d29"/>
+
+  <!-- LO QUE SE REFLEJA: usted. Un busto apenas mas claro que el cristal, sin
+       un solo rasgo. Se reconoce la forma y nada mas, que es justo lo que se
+       ve en un espejo a las siete de la manana. -->
+  <polygon points="510,372 572,400 596,468 574,540 510,572 446,540 424,468 448,400" fill="#33405a"/>
+  <polygon points="510,372 572,400 596,468 510,468" fill="#3b4964"/>
+  <polygon points="478,560 542,560 548,606 472,606" fill="#2d3950"/>
+  <polygon points="292,1200 292,806 420,626 472,596 548,596 600,626 728,806 728,1200" fill="#2a3449"/>
+  <polygon points="292,1200 292,806 420,626 472,596 510,596 510,1200" fill="#303c54"/>
+  <!-- El cuello de la camisa, que es lo unico que se distingue de verdad. -->
+  <polygon points="472,596 510,700 548,596 586,620 510,760 434,620" fill="#4a5872"/>
+
+  <!-- EL REFLEJO DE LA VENTANA cruzando el cristal en diagonal. Es lo que
+       hace que se lea como CRISTAL y no como un agujero negro con forma de
+       espejo. -->
+  <polygon points="292,760 470,216 560,216 340,900 292,900" fill="#ffffff" opacity="0.05"/>
+  <polygon points="600,216 660,260 380,1010 300,1010" fill="#ffffff" opacity="0.028"/>
+
+  <!-- Y el filo interior del marco, para despegar el cristal del bronce. -->
+  <polygon points="292,452 356,300 452,216 568,216 664,300 728,452 728,470 706,470 706,462 652,318 560,240 460,240 368,318 314,462 314,470 292,470" fill="#2b2415" opacity="0.85"/>
+</svg>

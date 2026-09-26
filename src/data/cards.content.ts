@@ -48,6 +48,7 @@ export const contentCards: Card[] = [
     phase: 1,
     maxTurn: 1,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Primer día. La puerta del despacho se cierra a su espalda. Nadie más en la sala: solo usted, una mesa enorme y la sensación de que esto puede acabar muy bien o rematadamente mal.',
     left: {
       text: 'Por la gente. De verdad. Esta vez sí',
@@ -65,6 +66,7 @@ export const contentCards: Card[] = [
     phase: 1,
     maxTurn: 1,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Aún no ha soltado el abrigo y ya hay tres teléfonos sonando, dos ministros discutiendo en el pasillo y un sobre sin remitente encima de la mesa. "Esto es una oportunidad", se dice.',
     left: {
       text: 'Poner paz entre los ministros del pasillo',
@@ -82,6 +84,7 @@ export const contentCards: Card[] = [
     phase: 1,
     maxTurn: 1,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Se mira en el espejo del baño oficial y ensaya la cara de estadista. Le sale más bien la de alguien que todavía no se cree del todo dónde está. Habrá que apañarse con esa.',
     left: {
       text: 'Saludar a todo el personal, uno por uno',
@@ -99,6 +102,7 @@ export const contentCards: Card[] = [
     phase: 1,
     maxTurn: 1,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Su antecesor le ha dejado una nota en el cajón: "Suerte. La vas a necesitar." Debajo, un número de teléfono tachado y la palabra "NO" subrayada tres veces con bolígrafo.',
     left: {
       text: 'Guardar la nota y empezar de cero',
@@ -116,6 +120,7 @@ export const contentCards: Card[] = [
     phase: 1,
     maxTurn: 1,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'El jefe de seguridad le entrega una carpeta con el sello de "ALTO SECRETO" y le mira fijamente. "Léala hoy. Solo hoy. Y luego olvide que existió, por su bien."',
     left: {
       text: 'Leerla entera esta noche, sin saltarse nada',
@@ -133,6 +138,7 @@ export const contentCards: Card[] = [
     phase: 1,
     maxTurn: 1,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'El primer día ya trae 40 reuniones en la agenda. La número 1 es con un empresario que "apoyó mucho" la campaña. La número 40, la última, con gente de la calle.',
     left: {
       text: 'Dar la vuelta a la agenda y empezar por la 40',
@@ -150,6 +156,7 @@ export const contentCards: Card[] = [
     phase: 1,
     maxTurn: 1,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'La mitad de la plantilla es del presidente anterior. Le sonríen con demasiados dientes. Uno de ellos tiene el móvil en la mano, en horizontal, apuntando discretamente hacia usted.',
     left: {
       text: 'Mantenerlos a todos, por prudencia',
@@ -167,6 +174,7 @@ export const contentCards: Card[] = [
     phase: 1,
     maxTurn: 1,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Antes de nada, El Escudero le empuja hacia un balcón: "Salude, salude, que la foto del primer día es la que sale en los libros." Abajo hay cuatro personas, dos banderas y un periodista aburrido.',
     left: {
       text: 'Salir a saludar con entusiasmo sincero',
@@ -1916,6 +1924,7 @@ export const contentCards: Card[] = [
     id: 'presi_contentar_todos',
     phase: 2,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Empezó de verdad creyendo que podía tener contentos a todos a la vez. Hoy, por fin, entiende el juego: solo hay que elegir a quién decepciona esta semana.',
     left: { text: 'Que se enfaden los socios, no la calle', effects: { calle: 1, gobierno: -1 } },
     right: { text: 'Que se enfade la calle, los socios mandan', effects: { gobierno: 1, calle: -1 } },
@@ -1924,6 +1933,7 @@ export const contentCards: Card[] = [
     id: 'presi_seguir_adelante',
     phase: 3,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Le vuelven a pedir la dimisión. Se encierra cinco días "a reflexionar", desaparece de todo y del mundo, y reaparece con un vídeo casero y una frase: "Vamos a seguir adelante."',
     left: { text: 'Salir reforzado, o al menos fingirlo muy bien', effects: { calle: 1, medios: -1 } },
     right: { text: 'Volver como si no hubiera pasado nada', effects: { gobierno: 1, medios: -1 } },
@@ -1932,6 +1942,7 @@ export const contentCards: Card[] = [
     id: 'presi_superviviente',
     phase: 4,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Todos los editoriales le daban por muerto hace un año. Y hace dos. Y hace tres. Sigue ahí, sin tener muy claro cómo. "Esto es una oportunidad", se repite, ya sin mirar a nadie.',
     left: { text: 'Adelantar elecciones y jugárselo todo a una carta', effects: { calle: 1, gobierno: -1 } },
     right: { text: 'Agotar la legislatura hasta el último día', effects: { gobierno: 1, medios: -1 } },
@@ -1940,6 +1951,7 @@ export const contentCards: Card[] = [
     id: 'presi_no_es_retroceso',
     phase: 2,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Le toca explicar por qué hoy defiende justo lo contrario que hace un mes. Ensaya la frase delante del espejo: "No es un retroceso. Es un paso lateral. Un reajuste. Una evolución."',
     left: { text: 'Reconocer, con una sonrisa, que ha cambiado de idea', effects: { medios: 1, calle: 1, gobierno: -1 } },
     right: { text: 'Sostener con cara seria que siempre pensó esto', effects: { gobierno: 1, calle: -1 } },
@@ -1949,6 +1961,7 @@ export const contentCards: Card[] = [
     id: 'presi_oportunidad',
     phase: 1,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: '"Esto no es una crisis, es una oportunidad." Se lo dice a sí mismo delante del espejo del baño, en voz baja, a las siete de la mañana. Y, contra todo pronóstico, aún se lo cree.',
     left: { text: 'Salir al atril a contagiar ese optimismo absurdo', effects: { gobierno: 1, medios: -1 } },
     right: { text: 'Guardárselo y poner cara de circunstancias', effects: { medios: 1, gobierno: -1 } },
@@ -1957,6 +1970,7 @@ export const contentCards: Card[] = [
     id: 'presi_solo',
     phase: 2,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Lleva tres semanas sin que nadie del Gobierno le lleve la contraria, ni le felicite, ni le mire mucho rato. Solo asienten y toman notas. El despacho, de repente, hace mucho eco.',
     left: { text: 'Convocar al equipo y forzar una bronca sana', effects: { gobierno: 1 } },
     right: { text: 'Seguir a lo suyo, que para eso manda', effects: { gobierno: -1, medios: -1 } },
@@ -5183,6 +5197,7 @@ export const contentCards: Card[] = [
     phase: 3,
     weight: 4,
     character: 'El Espejo',
+    characterImage: 'espejo.svg',
     text: 'Despacho vacío, once de la noche. Coge un papel y apunta lo que debe y a quién. Es un solo nombre. Luego repasa lo que ha decidido este mes y se da cuenta de que no se le ocurrió a usted casi nada.',
     left: {
       text: 'Saldarlo entero mañana y quedar libre',

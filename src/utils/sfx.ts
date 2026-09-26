@@ -347,6 +347,19 @@ export const sfx = {
     }
   },
 
+  // A SOLAS. Lo que suena en las cartas del Espejo, que no son un personaje
+  // hablando sino usted pensando. Darles voz de personaje era decir "alguien
+  // le habla" cuando no hay nadie: una nota grave, lenta y con mucha reverb,
+  // que es como suena una habitacion cuando se queda vacia.
+  aSolas() {
+    nota(147, 1.5, {
+      tipo: 'sine', retraso: 0.42, volumen: 0.42, ataque: 0.35, reverb: 0.55, exacto: true,
+    })
+    nota(220, 1.1, {
+      tipo: 'sine', retraso: 0.55, volumen: 0.18, ataque: 0.4, reverb: 0.6, exacto: true,
+    })
+  },
+
   // LA VOZ DEL PERSONAJE. Dos notas cortas al llegar su carta, como el habla
   // de los bichos de Animal Crossing: no dice palabras, dice QUIEN.
   //
