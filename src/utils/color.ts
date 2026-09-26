@@ -24,6 +24,9 @@ import { COLOR_RETRATO } from '../data/coloresRetrato'
 // propia ropa como las demas. Se queda aqui apuntada por si algun dia se le
 // quita la imagen.
 const SIN_CARA: Record<string, string> = {
+  // El espejo del despacho a las siete de la manana: casi negro, sin color
+  // propio, porque lo unico que hay dentro es el jugador.
+  'El Espejo': '#15151a',
   'La Fontanera': '#1b1e26',
   'El Comisario': '#1b1e26',
   'El Agente': '#1b1e26',

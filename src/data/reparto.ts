@@ -24,9 +24,15 @@ export interface Personaje {
   quien: string
 }
 
+// El Presidente NO esta aqui, y es a proposito. Estuvo, con su retrato, y sus
+// cartas salian como si usted se sentara enfrente de si mismo a negociar. Lo
+// que son esas quince cartas es otra cosa: narracion en tercera persona sobre
+// usted, y dos de ellas transcurren literalmente delante de un espejo. Asi que
+// no se le busco un personaje nuevo que las heredara: se les quito el
+// personaje. Ahora las firma El Espejo, que no tiene cara porque la cara es la
+// suya, y no esta en el reparto porque el reparto es quien es quien y esto no
+// es un quien.
 export const REPARTO: Personaje[] = [
-  { nombre: 'El Presidente', imagen: 'presi.webp', quien: 'Usted. Las cartas en las que se mira al espejo.' },
-
   // MEDIOS — el relato, lo que se publica y lo que se calla
   { nombre: 'El Periodista', imagen: 'periodista.webp', dueno: 'medios', quien: 'Pregunta lo que nadie quiere que se pregunte.' },
   { nombre: 'El Jefe de Comunicación', imagen: 'jefecomunicacion.webp', dueno: 'medios', quien: 'Escribe lo que usted dice. Y lo que no dice.' },
