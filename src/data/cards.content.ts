@@ -544,7 +544,7 @@ export const contentCards: Card[] = [
     characterImage: 'hermano.webp',
     text: 'Para la reforma de la residencia oficial te conseguí a un contratista de confianza. Se ha disparado el presupuesto, pero mira qué mármol donde antes había baldosa.',
     left: { text: 'Parar la obra', effects: { caja: -1, calle: 1 }, moralidad: 1 },
-    right: { text: 'Rematar la faena', effects: { caja: -1, calle: -2 }, moralidad: -1 },
+    right: { text: 'Rematar la faena', effects: { caja: 1, calle: -2 }, moralidad: -1 },
   },
   {
     id: 'gob_avion_oficial',
@@ -554,6 +554,7 @@ export const contentCards: Card[] = [
     text: 'Al vuelo oficial de esta semana le he colado una escala "no programada" en un destino de playa muy conveniente. Total, ya que vamos.',
     left: { text: 'Cancelar la escala', effects: { calle: 2 }, moralidad: 1 },
     right: { text: '"A precio de mercado"', effects: { caja: -1, calle: -1 }, moralidad: -1 },
+    pleases: 'right',
   },
   {
     id: 'gob_pacto_socio',
@@ -570,7 +571,7 @@ export const contentCards: Card[] = [
     character: 'El Periodista',
     characterImage: 'periodista.webp',
     text: 'En el informativo de las nueve podemos darle a usted cuatro minutos y al líder de la oposición cuarenta segundos. Son decisiones editoriales. Todo el mundo las entiende y nadie las dice.',
-    left: { text: 'Cobertura equilibrada', effects: { calle: -1, medios: 2 }, moralidad: 1 },
+    left: { text: 'Cobertura equilibrada', effects: { calle: -1, medios: 2, gobierno: -1 }, moralidad: 1 },
     right: { text: 'Más minutos favorables', effects: { medios: 1, calle: -1 }, moralidad: -1 },
   },
   {
@@ -758,7 +759,7 @@ export const contentCards: Card[] = [
     characterImage: 'hermano.webp',
     text: 'Mamá quiere el coche oficial para ir al Corte Inglés el sábado. Que total, dice, el chófer está ahí parado cobrando. Y el escolta, si le sujeta las bolsas, mejor.',
     left: { text: 'Transporte privado', effects: { calle: 1 }, moralidad: 1 },
-    right: { text: 'Para eso está el chófer', effects: { caja: -1, calle: -1 }, moralidad: -1 },
+    right: { text: 'Para eso está el chófer', effects: { gobierno: 1, calle: -1 }, moralidad: -1 },
   },
   {
     id: 'gob_viaje_familiar',
@@ -775,7 +776,7 @@ export const contentCards: Card[] = [
     character: 'El Hermano',
     characterImage: 'hermano.webp',
     text: 'En mi currículum pone que tengo un máster. Y lo tengo, ¿eh? Lo que pasa es que el trabajo final no aparece, la universidad no encuentra las actas y el tutor se jubiló y se fue muy lejos.',
-    left: { text: 'Corregir el currículum', effects: { calle: 1 }, moralidad: 1 },
+    left: { text: 'Corregir el currículum', effects: { calle: 1, medios: -1 }, moralidad: 1 },
     right: { text: 'Total, quién lo mira', effects: { calle: -1 }, moralidad: -1 },
   },
   {
@@ -1171,7 +1172,7 @@ export const contentCards: Card[] = [
     characterImage: 'hermano.webp',
     text: 'Para la cena de gala de esta semana he encargado caviar y trufa. El presupuesto de representación se va a disparar, pero es que quedas fatal con sepia.',
     left: { text: 'Un menú más modesto', effects: { caja: 1 }, moralidad: 1 },
-    right: { text: 'Que no falte el caviar', effects: { caja: -1, calle: -1 }, moralidad: -1 },
+    right: { text: 'Que no falte el caviar', effects: { caja: -1, calle: -1, gobierno: 1 }, moralidad: -1 },
   },
   {
     id: 'gob_pin_solidario',
@@ -1189,7 +1190,7 @@ export const contentCards: Card[] = [
     characterImage: 'hermano.webp',
     text: 'Te hago un informe estratégico por veinte mil. Entre tú y yo: son diez folios, los escribo el domingo por la tarde y el índice lo saco de uno que ya hice en 2019.',
     left: { text: 'Precio de mercado', effects: { caja: 1 }, moralidad: 1 },
-    right: { text: 'Pagar los 20.000, sin más', effects: { caja: -1, calle: -1 }, moralidad: -1 },
+    right: { text: 'Pagar los 20.000, sin más', effects: { caja: -1, calle: -1, gobierno: 1 }, moralidad: -1 },
   },
   {
     id: 'gob_curso_formacion',
@@ -1298,8 +1299,8 @@ export const contentCards: Card[] = [
     character: 'El Periodista',
     characterImage: 'periodista.webp',
     text: 'Si le damos publicidad institucional generosa a nuestro grupo, la cobertura editorial será, digamos, más comprensiva.',
-    left: { text: 'Reparto objetivo', effects: { medios: 1 }, moralidad: 1 },
-    right: { text: 'Medios afines', effects: { medios: -1, caja: -1 }, moralidad: -1 },
+    left: { text: 'Reparto objetivo', effects: { medios: 1, gobierno: -1 }, moralidad: 1 },
+    right: { text: 'Medios afines', effects: { medios: -1, caja: -1, gobierno: 1 }, moralidad: -1 },
   },
   {
     id: 'gob_dimite_portavoz',
@@ -1547,8 +1548,8 @@ export const contentCards: Card[] = [
     character: 'El Escudero',
     characterImage: 'escudero.webp',
     text: 'El equipo de imagen le pide una sonrisa "de anuncio" para la foto oficial. Tan perfecta que da un poco de miedo.',
-    left: { text: 'Una sonrisa normal', effects: { calle: 1 } },
-    right: { text: 'La sonrisa de anuncio', effects: { medios: -1 } },
+    left: { text: 'Una sonrisa normal', effects: { calle: 1, medios: -1 } },
+    right: { text: 'La sonrisa de anuncio', effects: { medios: 1, calle: -1 } },
   },
   {
     id: 'meme_pedro_por_su_casa',
@@ -1759,7 +1760,7 @@ export const contentCards: Card[] = [
     character: 'El Periodista',
     characterImage: 'periodista.webp',
     text: 'Lo del suelo recalificado tiene una foto: usted y el promotor, en el mismo palco, el mismo día. ¿La publico o se me "traspapela"?',
-    left: { text: 'Que la publique', effects: { medios: 1, caja: -1 }, moralidad: 2 },
+    left: { text: 'Que la publique', effects: { medios: 1, caja: -1, gobierno: -1 }, moralidad: 2 },
     right: { text: 'Pedirle que la pierda', effects: { medios: -2, caja: -1 }, moralidad: -2 },
   },
   {
@@ -1972,8 +1973,8 @@ export const contentCards: Card[] = [
     character: 'El Espejo',
     characterImage: 'espejo.svg',
     text: 'Lleva tres semanas sin que nadie del Gobierno le lleve la contraria, ni le felicite, ni le mire mucho rato. Solo asienten y toman notas. El despacho, de repente, hace mucho eco.',
-    left: { text: 'Convocar al equipo y forzar una bronca sana', effects: { gobierno: 1 } },
-    right: { text: 'Seguir a lo suyo, que para eso manda', effects: { gobierno: -1, medios: -1 } },
+    left: { text: 'Convocar al equipo y forzar una bronca sana', effects: { gobierno: 1, medios: -1 } },
+    right: { text: 'Seguir a lo suyo, que para eso manda', effects: { gobierno: -1, calle: 1 } },
   },
 
 
@@ -2394,8 +2395,8 @@ export const contentCards: Card[] = [
     character: 'El Expresidente',
     characterImage: 'expresidentecompetente.webp',
     text: 'Lleva meses pidiendo una reunión y usted lleva meses sin cogerle el teléfono. Hoy suelta a un periodista, encantado: "Le veo... sin rumbo. Sin nadie que le diga la verdad. Como yo."',
-    left: { text: 'Llamarle y tragarse la charla de dos horas', effects: { medios: 1, gobierno: 1 } },
-    right: { text: 'Seguir sin cogerle el teléfono', effects: { medios: -1, calle: -1 } },
+    left: { text: 'Llamarle y tragarse la charla de dos horas', effects: { medios: 1, gobierno: 1, calle: -1 } },
+    right: { text: 'Seguir sin cogerle el teléfono', effects: { medios: -1, calle: 1 } },
   },
   {
     id: 'expresi_consejo_no_pedido',
@@ -2648,7 +2649,7 @@ export const contentCards: Card[] = [
     characterImage: 'presidentaregional.webp',
     text: '"Aquí no se toca nada", tuitea a las 7:40. A las 7:41 ya hay tres titulares. Se niega a aplicar una norma estatal y le reta, en directo, a llevarla a los tribunales.',
     left: { text: 'Llevarla a los tribunales', effects: { medios: -1, gobierno: 1, calle: -1 } },
-    right: { text: 'Dejarlo correr y no darle el gusto', effects: { calle: -1, medios: -1 } },
+    right: { text: 'Dejarlo correr y no darle el gusto', effects: { calle: -1, medios: 1 } },
   },
   {
     id: 'regional_tomadura_pelo',
@@ -2656,7 +2657,7 @@ export const contentCards: Card[] = [
     character: 'La Presidenta Regional',
     characterImage: 'presidentaregional.webp',
     text: 'Convierte cada medida del Gobierno en "una tomadura de pelo" y cada rueda de prensa en un monólogo con público. Los platós la adoran. Sus frases se le acaban pegando a usted.',
-    left: { text: 'Entrar al trapo y discutir con ella', effects: { medios: -2, calle: -1 } },
+    left: { text: 'Entrar al trapo y discutir con ella', effects: { medios: -2, calle: 1 } },
     right: { text: 'No darse por aludido nunca', effects: { medios: 1, calle: -1 } },
   },
   {
@@ -2674,7 +2675,7 @@ export const contentCards: Card[] = [
     character: 'La Presidenta Regional',
     characterImage: 'presidentaregional.webp',
     text: 'Sale que alguien muy cercano a ella facturó a la Administración regional en plena emergencia. Su respuesta: "Me atacáis por mi vida privada. Es una cacería." Y cambia de tema en la misma frase.',
-    left: { text: 'Pedirle que dé explicaciones', effects: { medios: 1, calle: 1 } },
+    left: { text: 'Pedirle que dé explicaciones', effects: { medios: 1, calle: 1, gobierno: -1 } },
     right: { text: 'No entrar, no vaya a rebotar contra usted', effects: { medios: -1 } },
   },
   {
@@ -2752,7 +2753,7 @@ export const contentCards: Card[] = [
     character: 'El Cruzado',
     characterImage: 'cruzado.webp',
     text: 'Suelta un bulo sobre unas ayudas y "los de siempre". Es falso y se desmonta en una tarde, pero para entonces ya lo ha visto medio país y lo ha reenviado su tío.',
-    left: { text: 'Desmentirlo con datos, aburridos pero ciertos', effects: { medios: 1, calle: -1 }, moralidad: 1 },
+    left: { text: 'Desmentirlo con datos, aburridos pero ciertos', effects: { medios: 1, calle: -1, gobierno: -1 }, moralidad: 1 },
     right: { text: 'Ni contestar y que se hunda solo', effects: { medios: -1, calle: -1 } },
   },
   {
@@ -3071,7 +3072,7 @@ export const contentCards: Card[] = [
     characterImage: 'hermano.webp',
     text: 'En la visita oficial le han dado el libro de honor para firmar y ha puesto la fecha del año pasado. El alcalde ha hecho como que no lo veía. La foto ya circula.',
     left: { text: 'Reírse y firmar otra vez debajo', effects: { calle: 1 } },
-    right: { text: 'Pedir que cambien la página', effects: { medios: -1 } },
+    right: { text: 'Pedir que cambien la página', effects: { medios: -1, gobierno: 1 } },
   },
   {
     id: 'meme_traduccion',
@@ -3079,7 +3080,7 @@ export const contentCards: Card[] = [
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
     text: 'El pinganillo de la cumbre ha fallado y usted ha asentido con mucha convicción durante cuatro minutos a algo que no entendía. Al parecer, ha comprometido fondos.',
-    left: { text: 'Reconocer el lío y renegociar', effects: { medios: 1, caja: -1 }, moralidad: 1 },
+    left: { text: 'Reconocer el lío y renegociar', effects: { medios: 1, caja: -1, gobierno: -1 }, moralidad: 1 },
     right: { text: 'Cumplir lo prometido sin saber qué era', effects: { caja: -2, medios: 1 } },
   },
   {

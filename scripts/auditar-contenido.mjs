@@ -168,6 +168,48 @@ const r = await page.evaluate(async (PARTIDAS) => {
     }
   }
 
+  // CARTAS QUE NO SON UNA DECISION. Si un lado es mejor o igual en las cuatro
+  // barras y ademas no cuesta conciencia, no hay nada que decidir: el jugador
+  // solo tiene que darse cuenta. Y darse cuenta no es jugar.
+  //
+  // Ojo con lo que NO cuenta como trampa: dos lados con los mismos efectos
+  // pero distinta moralidad SI son una decision, y de las buenas, porque la
+  // moralidad no se ve. Ahi se elige por lo que dice la carta, no por los
+  // numeros. Por eso solo se marca lo que domina en barras sin pagar nada por
+  // ello.
+  const sinDecision = []
+  for (const c of cards) {
+    if (c.isEnding) continue
+    const a = c.left?.effects ?? {}
+    const b = c.right?.effects ?? {}
+    const ma = c.left?.moralidad ?? 0
+    const mb = c.right?.moralidad ?? 0
+    const domina = (x, y, mx, my) =>
+      K.every((k) => (x[k] ?? 0) >= (y[k] ?? 0)) &&
+      K.some((k) => (x[k] ?? 0) > (y[k] ?? 0)) &&
+      mx >= my
+    // Un lado peor en numeros sigue siendo una decision si deja algo abierto:
+    // una trama, una bomba de relojeria, un final. Eso no se ve en los efectos
+    // pero se paga o se cobra despues.
+    //
+    // Y lo mismo con `pleases`: si la carta dice a quien le da la razon cada
+    // lado, negarse cuesta el enfado de ese personaje, y el enfado no es
+    // decorativo -sube el peso de sus cartas en el sorteo y abre las suyas de
+    // resentimiento-. Eso es un precio, aunque no se vea en las barras.
+    if (c.pleases) continue
+    const pesa = (lado) =>
+      Boolean(
+        lado?.addFlags?.length ||
+          lado?.removeFlags?.length ||
+          lado?.scheduleCardId ||
+          lado?.nextCardId ||
+          lado?.rebalance ||
+          lado?.epilogueText
+      )
+    if (domina(a, b, ma, mb) && !pesa(c.right)) sinDecision.push({ id: c.id, gana: 'izquierda' })
+    else if (domina(b, a, mb, ma) && !pesa(c.left)) sinDecision.push({ id: c.id, gana: 'derecha' })
+  }
+
   // Lo que el mazo DECLARA, para cruzarlo con lo que de verdad ha salido.
   const todasLasCartas = cards.map((c) => c.id)
   const todosLosFinales = cards.filter((c) => c.isEnding).map((c) => c.id)
@@ -227,6 +269,7 @@ const r = await page.evaluate(async (PARTIDAS) => {
       .filter(([, n]) => n <= 2)
       .map(([id, n]) => `${id}  ${n} de ${PARTIDAS}`),
     logrosRotos: [...rotos],
+    sinDecision,
   }
 }, PARTIDAS)
 
@@ -276,6 +319,12 @@ if (r.logrosRotos.length) {
 if (r.logrosRaros.length) {
   console.log(`  al filo (2 partidas o menos): ${r.logrosRaros.join(' | ')}`)
 }
+
+console.log('')
+console.log(`CARTAS QUE NO SON UNA DECISION: ${r.sinDecision.length}`)
+console.log('  (un lado gana en todas las barras y encima no cuesta conciencia)')
+for (const c of r.sinDecision) console.log(`  ${c.id}  -> siempre ${c.gana}`)
+if (r.sinDecision.length) mal++
 
 console.log('')
 console.log('CARTAS REPETIDAS EN LA MISMA PARTIDA')
