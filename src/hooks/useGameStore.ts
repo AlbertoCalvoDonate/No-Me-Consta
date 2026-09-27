@@ -152,9 +152,14 @@ function cardWeight(c: Card, state: GameState, ctx: CardContext): number {
 }
 
 // Cuántos favores hay que deberle a alguien para que aparezca a salvarte.
-// Medido: con 3 el rescate sale en el 7% de las partidas, que es lo justo
-// para que sorprenda sin volverse una red de seguridad. Con 5 no llegaba al
-// 1% (invisible) y con 2 se disparaba al 28%.
+//
+// Medido hoy sobre 600 partidas jugando al centro: el rescate aparece en el
+// 4,2%. Al morir, el favor medio con el unico que podia salvarle es 0,74, y
+// solo el 1,9% llega con los tres que hacen falta. Bajarlo a 2 lo dispararia
+// al 19% y dejaria de ser una sorpresa para ser una red de seguridad.
+//
+// (El comentario anterior decia 7%; era una medida vieja, de antes de que
+// cambiaran la dificultad y el tamaño del mazo.)
 const FAVOR_PARA_RESCATE = 3
 
 // Busca a alguien que te deba lo bastante Y que pinte algo en esta caída.
@@ -678,9 +683,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
           // infinito hasta tumbar la pestaña.
           flags: [...newFlags, 'ya_te_salvaron'],
           flagTurn: newFlagTurn,
-          flagsVistos: flagsVistos.includes('ya_te_salvaron')
-            ? flagsVistos
-            : [...flagsVistos, 'ya_te_salvaron'],
+          // Pero NO en flagsVistos, que es lo que leen los logros al terminar.
+          // Ahi 'ya_te_salvaron' tiene que significar "me salvaron de verdad",
+          // y lo enciende la propia carta de rescate en su lado de aceptar.
+          //
+          // Poniendolo aqui tambien, los dos logros del rescate estaban rotos
+          // a la vez y en direcciones opuestas: "Una mano lava la otra" se
+          // daba aunque hubieras rechazado, y "Yo solo" -rechaza un rescate y
+          // cae por tu cuenta- era IMPOSIBLE de conseguir, porque el flag que
+          // lo descarta se encendia solo con ver la carta.
+          flagsVistos,
           scheduled: newScheduled,
           anger: newAnger,
           favor: newFavor,

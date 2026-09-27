@@ -76,8 +76,26 @@ const r = await page.evaluate(async (PARTIDAS) => {
       if (mi === md) return Math.random() < 0.5 ? 'left' : 'right'
       return mi < md ? 'left' : 'right'
     },
+    // El ambicioso: no apunta al centro sino ARRIBA, a tenerlo todo en verde.
+    // Hace falta porque hay contenido que solo existe ahi -la noche electoral
+    // de mayoria absoluta pide los cuatro indicadores en 6 o mas- y las otras
+    // tres cabezas, que buscan el 5, no lo alcanzan jamas. Sin esta, el
+    // informe acusaba de muerto contenido que solo estaba fuera de su alcance.
+    ambicioso: (st, c) => {
+      const meta = 8
+      const puntos = (n) =>
+        (rev(n) ? 100 : 0) + K.reduce((a, k) => a + Math.abs(n[k] - meta), 0)
+      const i = tras(st.stats, c.left.effects)
+      const d = tras(st.stats, c.right.effects)
+      const pi = puntos(i)
+      const pd = puntos(d)
+      return pi === pd ? (Math.random() < 0.5 ? 'left' : 'right') : pi < pd ? 'left' : 'right'
+    },
   }
 
+  const { LOGROS } = await import('/src/data/logros.ts')
+  const conseguidos = new Map()
+  const rotos = new Set()
   const vistas = new Map()
   const finales = new Map()
   const flagsEncendidos = new Map()
@@ -111,6 +129,43 @@ const r = await page.evaluate(async (PARTIDAS) => {
     const fin = s.getState()
     finales.set(fin.currentCard.id, (finales.get(fin.currentCard.id) ?? 0) + 1)
     for (const f of fin.flagsVistos) flagsEncendidos.set(f, (flagsEncendidos.get(f) ?? 0) + 1)
+    // Los logros se evaluan con los MISMOS datos que pasa la partida de
+    // verdad (ver el registrarPartida de App), pero sin tocar lo guardado:
+    // solo se corre el `check` de cada uno.
+    const datos = {
+      meses: fin.turn - 1,
+      moralidad: fin.moralidad,
+      epitetoIndex: Math.round(fin.moralidad),
+      stats: fin.stats,
+      endingId: fin.currentCard.id,
+      esEleccion: Boolean(fin.currentCard.isElection),
+      porEvento: Boolean(fin.currentCard.byEvent),
+      deathStat: fin.deathStat,
+      gano:
+        Boolean(fin.currentCard.isElection) &&
+        !fin.currentCard.id.includes('derrota') &&
+        !fin.currentCard.id.includes('repeticion'),
+      aguantoLasTres: fin.currentCard.id.endsWith('_final'),
+      cartas: [...fin.history, fin.currentCard.id],
+      flags: fin.flagsVistos,
+      // Los acumulados de toda la vida se dan generosos a proposito: aqui se
+      // pregunta si el logro es ALCANZABLE jugando, no si se consigue en la
+      // primera partida. Un logro que pide cien partidas no es un logro roto.
+      partidasJugadas: 500,
+      finalesDistintos: 31,
+      mesesRecord: Math.max(144, fin.turn),
+      epitetosVistos: 11,
+      cartasColeccionadas: cards.length,
+    }
+    for (const l of LOGROS) {
+      let ok = false
+      try {
+        ok = Boolean(l.check(datos))
+      } catch {
+        rotos.add(l.id)
+      }
+      if (ok) conseguidos.set(l.id, (conseguidos.get(l.id) ?? 0) + 1)
+    }
   }
 
   // Lo que el mazo DECLARA, para cruzarlo con lo que de verdad ha salido.
@@ -166,6 +221,12 @@ const r = await page.evaluate(async (PARTIDAS) => {
     repetidasEnPartida,
     partidasConRepetida,
     ejemplosRepetidas: [...new Set(ejemplosRepetidas)],
+    logrosTotal: LOGROS.length,
+    logrosNadie: LOGROS.filter((l) => !conseguidos.has(l.id)).map((l) => `${l.id}  (${l.nombre})`),
+    logrosRaros: [...conseguidos.entries()]
+      .filter(([, n]) => n <= 2)
+      .map(([id, n]) => `${id}  ${n} de ${PARTIDAS}`),
+    logrosRotos: [...rotos],
   }
 }, PARTIDAS)
 
@@ -202,6 +263,18 @@ if (r.flagsSinAutor.length) {
 if (r.flagsNuncaEncendidos.length) {
   console.log(`  no se encendieron en ninguna partida (${r.flagsNuncaEncendidos.length}):`)
   for (const f of r.flagsNuncaEncendidos) console.log('    ' + f)
+}
+
+console.log('')
+console.log(`LOGROS QUE NO CONSIGUE NADIE: ${r.logrosNadie.length} de ${r.logrosTotal}`)
+for (const l of r.logrosNadie) console.log('  ' + l)
+if (r.logrosNadie.length) mal++
+if (r.logrosRotos.length) {
+  console.log(`  y ${r.logrosRotos.length} que REVIENTAN al comprobarse: ${r.logrosRotos.join(', ')}`)
+  mal++
+}
+if (r.logrosRaros.length) {
+  console.log(`  al filo (2 partidas o menos): ${r.logrosRaros.join(' | ')}`)
 }
 
 console.log('')
