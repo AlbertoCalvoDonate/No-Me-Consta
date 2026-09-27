@@ -206,6 +206,33 @@ export function StartScreen({
         </div>
       </div>
 
+      {/* AVISO DE SATIRA. Va aqui, en la portada y antes de jugar, y no
+          escondido en un menu: la diferencia entre una parodia y una
+          acusacion es la intencion, y la intencion hay que declararla donde
+          se lea. Auditado el mazo (scripts/auditar-riesgo.mjs): de 501 cartas
+          con texto, cinco nombran un delito y solo una lo afirma sin comillas
+          -y esa habla del gobierno del propio jugador-. Los personajes son
+          arquetipos y no hay un solo nombre real, ni de persona ni de sitio.
+          Lo que si se reconoce son los retratos, y por eso esto esta aqui. */}
+      <div
+        style={{
+          ...pixel,
+          marginTop: 10,
+          maxWidth: 420,
+          textAlign: 'center',
+          fontWeight: 500,
+          fontSize: 12,
+          lineHeight: 1.45,
+          color: '#4f4b45',
+          padding: '0 18px',
+          boxSizing: 'border-box',
+        }}
+      >
+        Sátira. Los personajes son arquetipos de ficción y las situaciones,
+        inventadas. Cualquier parecido con personas reales es deliberadamente
+        paródico y no describe hechos ciertos.
+      </div>
+
       <div
         onClick={tocarBuild}
         style={{
