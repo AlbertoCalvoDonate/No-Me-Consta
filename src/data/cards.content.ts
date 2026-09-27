@@ -2001,7 +2001,6 @@ export const contentCards: Card[] = [
       text: '"Cada uno responde de lo suyo"',
       effects: { medios: 1, gobierno: -1 },
       moralidad: 1,
-      addFlags: ['ministro_suelto'],
       scheduleCardId: 'ministro_declara',
       scheduleIn: 12,
     },
@@ -2024,6 +2023,31 @@ export const contentCards: Card[] = [
       effects: { medios: -2, calle: -1 },
       moralidad: -2,
     },
+  },
+
+
+  // El que coloco a su ministro caido se entera un ano despues de que colocar
+  // a alguien deja rastro en un BOE. Es el otro lado de "estoy solo, no tengo
+  // a nadie": ayudarle tampoco sale gratis, solo sale mas tarde.
+  {
+    id: 'ministro_colocado_sale',
+    phase: 3,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'Su ex ministro cobra de un organismo público desde marzo. Cuarenta y un mil euros y una plaza que se creó seis semanas antes de que él la pidiera. Tenemos el boletín, las fechas y su firma.',
+    left: {
+      text: 'Cesarlo hoy y devolver lo cobrado',
+      effects: { medios: 2, gobierno: -2, caja: -1 },
+      moralidad: 2,
+      removeFlags: ['ministro_colocado'],
+    },
+    right: {
+      text: '"Cumple todos los requisitos del puesto"',
+      effects: { medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+    condition: (_s, _m, ctx) => ctx.flagAge('ministro_colocado') >= 10,
+    weight: (_s, _m, ctx) => (ctx.flagAge('ministro_colocado') >= 10 ? 3 : 0),
   },
 
   // --- LA VICEPRESIDENTA (idealista, ambiciosa, a un paso de montar lo suyo) ---
@@ -3475,6 +3499,31 @@ export const contentCards: Card[] = [
     pleases: 'right',
   },
 
+
+  // Dos variantes mas de la carta de favor. La fuerza el motor cada vez que
+  // alguien cruza el umbral, asi que en una partida larga sale varias veces y
+  // con un solo texto se notaba muchisimo.
+  {
+    id: 'favor_ganado_b',
+    phase: 1,
+    maxTurn: 0,
+    weight: 0,
+    character: 'Un aliado',
+    text: 'Le manda un mensaje a las dos de la mañana, sin firmar, desde un número que no tenía guardado. "Apunte este teléfono. No lo use para tonterías."',
+    left: { text: 'Guardarlo sin contestar', effects: { gobierno: 1 } },
+    right: { text: 'Contestar "gracias" y borrarlo', effects: { medios: 1 }, moralidad: 1 },
+  },
+  {
+    id: 'favor_ganado_c',
+    phase: 1,
+    maxTurn: 0,
+    weight: 0,
+    character: 'Un aliado',
+    text: 'Coincide con usted en el ascensor y espera a que se cierren las puertas. "Yo me acuerdo de quién me trató bien cuando no pintaba nada. Cuente conmigo una vez. Una."',
+    left: { text: 'Estrecharle la mano', effects: { gobierno: 1 } },
+    right: { text: '"Ojalá no haga falta"', effects: { medios: 1 }, moralidad: 1 },
+  },
+
   // ============================================================================
   // BALANCE DE FIN DE ANO (isRecap) — una cada RECAP_EVERY turnos. No salen por
   // sorteo: las fuerza useGameStore al cumplirse el ano. Sirven para parar,
@@ -3536,6 +3585,60 @@ export const contentCards: Card[] = [
     text: 'Un año más en el cargo. Hemos preparado un especial con todo lo que prometió el primer día y lo que ha pasado de verdad. Sale mañana. ¿Nos concede la entrevista?',
     left: { text: 'Dar la entrevista y aguantar', effects: { medios: 2, gobierno: -1 }, moralidad: 2 },
     right: { text: 'Mandar una nota de prensa', effects: { medios: -2, gobierno: 1 }, moralidad: -1 },
+    pleases: 'left',
+  },
+
+
+  {
+    id: 'recap_navidad',
+    phase: 2,
+    isRecap: true,
+    character: 'El Hermano',
+    characterImage: 'hermano.webp',
+    text: 'Balance del año en la cena de Nochebuena. La tía pregunta si ya has arreglado lo de las pensiones. El primo pregunta si le puedes colocar. Mamá pregunta si comes bien. Ninguno pregunta por el país.',
+    left: { text: 'Contestar a los tres como presidente', effects: { calle: 1, gobierno: -1 }, moralidad: 1 },
+    right: { text: 'Callar y repetir de postre', effects: { calle: -1, medios: 1 } },
+  },
+  {
+    id: 'recap_calendario',
+    phase: 2,
+    isRecap: true,
+    character: 'El Jefe de Comunicación',
+    characterImage: 'jefecomunicacion.webp',
+    text: 'Balance del año en dos columnas: lo que prometimos en enero y lo que hicimos. La primera columna tiene catorce líneas. La segunda, cuatro. El resumen que publiquemos decide cuál de las dos se lee.',
+    left: { text: 'Publicar las dos columnas enteras', effects: { medios: 2, gobierno: -1 }, moralidad: 2 },
+    right: { text: 'Publicar solo lo cumplido, en grande', effects: { calle: 1, medios: -1 }, moralidad: -1 },
+  },
+  {
+    id: 'recap_socios',
+    phase: 2,
+    isRecap: true,
+    character: 'La Socia Incómoda',
+    characterImage: 'sociaincomoda.webp',
+    text: 'Balance del año, el nuestro: hemos aprobado once leyes y nos hemos peleado en público nueve veces. Los suyos dicen que somos un lastre. Los míos dicen que usted nos usa. Los dos tienen algo de razón.',
+    left: { text: 'Reconocer en público lo que han aportado', effects: { gobierno: 2, medios: -1 }, moralidad: 1 },
+    right: { text: 'Dejar que cada uno cuente su versión', effects: { medios: 1, gobierno: -1 } },
+    pleases: 'left',
+  },
+  {
+    id: 'recap_calle_ano',
+    phase: 3,
+    isRecap: true,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.webp',
+    text: 'Balance del año con la serie de doce meses delante. No se ha hundido usted: se ha ido desinflando, medio punto cada mes, tan despacio que no hubo un solo día en que la noticia fuera esa.',
+    left: { text: 'Cambiar el rumbo antes de que se note', effects: { calle: 1, gobierno: -1 }, moralidad: 1 },
+    right: { text: 'Aguantar, que medio punto no es nada', effects: { gobierno: 1, calle: -1 } },
+  },
+  {
+    id: 'recap_funcionaria',
+    phase: 3,
+    isRecap: true,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'Balance del año en la sala de prensa: se ha ido la que llevaba aquí desde hace veinte años. En su despedida ha dicho una frase que hemos apuntado todos. "He visto a seis, y todos entraron diciendo lo mismo."',
+    left: { text: 'Llamarla y preguntarle qué vio', effects: { medios: 1, calle: 1 }, moralidad: 2 },
+    right: { text: 'No darse por aludido', effects: { gobierno: 1, medios: -1 } },
     pleases: 'left',
   },
 

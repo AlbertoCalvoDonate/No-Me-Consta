@@ -412,17 +412,30 @@ await gamberrada('la herencia pasa a la partida siguiente', async (page) => {
     return out
   })
   let mal = 0
+  let conCarta = 0
   for (const x of r) {
-    if (!x.carta.startsWith('herencia_' + x.causa)) {
-      mal++
-      apunta('la herencia pasa a la partida siguiente', `murio por ${x.causa} y la carta fue ${x.carta}`)
-    }
+    // Lo que NO puede fallar nunca: el indicador que tumbo al anterior empieza
+    // tocado. Eso es la herencia.
     if (x.valor !== null && x.valor !== 4) {
       mal++
       apunta('la herencia pasa a la partida siguiente', `${x.causa} deberia empezar tocado y empieza en ${x.valor}`)
     }
+    // La CARTA sale dos de cada tres veces; el otro tercio abre con una de las
+    // ocho de arranque, que si no se quedaban enterradas para siempre. Asi que
+    // aqui no se exige que salga siempre, solo que salga a menudo.
+    if (x.carta.startsWith('herencia_' + x.causa)) conCarta++
+    else if (!x.carta.startsWith('presi_intro')) {
+      mal++
+      apunta('la herencia pasa a la partida siguiente', `abrio con ${x.carta}, que no es ni herencia ni arranque`)
+    }
   }
-  if (mal === 0) console.log(`  ok  25 partidas encadenadas, la herencia llega en todas`)
+  if (conCarta < r.length * 0.35) {
+    mal++
+    apunta('la herencia pasa a la partida siguiente', `la carta de herencia solo salio ${conCarta} de ${r.length} veces`)
+  }
+  if (mal === 0) {
+    console.log(`  ok  25 partidas encadenadas: el indicador llega tocado siempre, y la carta ${conCarta} veces`)
+  }
 })
 
 await gamberrada('partida larguisima', async (page) => {
