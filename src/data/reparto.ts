@@ -70,8 +70,8 @@ export const REPARTO: Personaje[] = [
   // personas distintas haciendo exactamente el mismo trabajo, que es como
   // funciona de verdad: cuando cae uno, ya hay otro.
   { nombre: 'La Fontanera', imagen: 'fontanera.webp', quien: 'Fue periodista. Ahora hace gestiones que nadie le ha encargado por escrito.' },
-  { nombre: 'El Comisario', quien: 'Cuarenta años en la casa y un armario que no cabe en el despacho.' },
-  { nombre: 'El Agente', quien: 'Habla un español de manual, mejor que el suyo. Tiene rey, y no es el de usted.' },
+  { nombre: 'El Comisario', imagen: 'comisario.webp', quien: 'Cuarenta años en la casa y un armario que no cabe en el despacho.' },
+  { nombre: 'El Agente', imagen: 'agente.webp', quien: 'Habla un español de manual, mejor que el suyo. Tiene rey, y no es el de usted.' },
 ]
 
 // Cuantas cartas tiene cada personaje en el mazo. Se calcula del propio mazo,

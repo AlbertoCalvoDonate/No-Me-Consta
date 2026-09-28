@@ -14,22 +14,26 @@ import { COLOR_RETRATO } from '../data/coloresRetrato'
 // Con el color sacado de la propia ropa, el hueco deja de leerse como un
 // hueco y pasa a leerse como el fondo del retrato, sin tocar ni una carta a
 // mano: se anade el .webp, se vuelve a pasar el script y ya esta.
-// Los que no tienen cara Y no son una voz colectiva: el comisario, el agente y
-// el expediente. Van del MISMO gris azulado, sin color propio, y eso es parte
+// El unico que no tiene cara y tampoco es una voz colectiva: el expediente.
+// Va de un gris azulado sin color propio, y eso es parte de lo que es.
+// Dejarlo al hash del nombre daba verdes de chicle, que ademas es el color
+// con el que este juego dice "esta eleccion es limpia". Van del MISMO gris azulado, sin color propio, y eso es parte
 // de lo que son. Dejarlos al hash del nombre daba verdes de chicle, que ademas
 // es el color con el que este juego dice "esta eleccion es limpia".
 //
-// La Fontanera ya tiene retrato -con su franja negra sobre los ojos, que dice
-// lo mismo sin necesidad de fondo-, asi que su carta coge el color de su
-// propia ropa como las demas. Se queda aqui apuntada por si algun dia se le
-// quita la imagen.
+// LOS TRES FONTANEROS YA TIENEN RETRATO, los tres con la misma franja negra
+// sobre los ojos: es lo que los hermana y dice lo que son sin necesidad de
+// un fondo aparte. Asi que sus cartas cogen el color de su propia ropa como
+// las demas y este mapa se ha quedado casi vacio.
+//
+// La Fontanera sigue apuntada abajo aunque ya no se lea: COLOR_RETRATO se
+// mira primero, asi que su linea solo volveria a servir el dia que alguien le
+// quitara la imagen. Los otros dos se han ido de la lista.
 const SIN_CARA: Record<string, string> = {
   // El espejo del despacho a las siete de la manana: casi negro, sin color
   // propio, porque lo unico que hay dentro es el jugador.
   'El Espejo': '#15151a',
   'La Fontanera': '#1b1e26',
-  'El Comisario': '#1b1e26',
-  'El Agente': '#1b1e26',
   'El Expediente': '#191b21',
 }
 

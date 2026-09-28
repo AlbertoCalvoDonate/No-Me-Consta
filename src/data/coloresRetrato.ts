@@ -5,6 +5,8 @@
 // con `node scripts/colores-retrato.mjs` cada vez que anadas o cambies un
 // retrato; lo que no este aqui cae al color por defecto y no rompe nada.
 export const COLOR_RETRATO: Record<string, string> = {
+  'agente.webp': '#4d141f',
+  'comisario.webp': '#1b2346',
   'cruzado.webp': '#4b4316',
   'encuestador.webp': '#211f42',
   'escudero.webp': '#261e42',
@@ -14,7 +16,7 @@ export const COLOR_RETRATO: Record<string, string> = {
   'fiscal.webp': '#242e3d',
   'fontanera.webp': '#24283d',
   'guru.webp': '#441d2a',
-  'hermano.webp': '#141f4d',
+  'hermano.webp': '#242c3d',
   'independentista.webp': '#2a243d',
   'jefecomunicacion.webp': '#141e4d',
   'juez.webp': '#27243d',

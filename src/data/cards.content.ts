@@ -6307,6 +6307,7 @@ export const contentCards: Card[] = [
     id: 'comisario_oferta',
     phase: 2,
     character: 'El Comisario',
+    characterImage: 'comisario.webp',
     sinPistas: true,
     text: 'Cuarenta años en la casa y un armario que no cabe en el despacho. Ahí dentro hay carpetas de casi todos los que le están dando guerra. Yo no vendo nada, presidente. Yo presto. Y lo prestado se devuelve.',
     left: { text: 'Ese armario debería estar en un juzgado', effects: { medios: -1, gobierno: -1 }, moralidad: 3 },
@@ -6332,6 +6333,7 @@ export const contentCards: Card[] = [
     phase: 3,
     weight: 0,
     character: 'El Comisario',
+    characterImage: 'comisario.webp',
     sinPistas: true,
     text: 'Vengo a por lo mío, y no quiero dinero, que el dinero deja rastro. Tengo una causa abierta y solo hace falta que se duerma un año. Nadie tiene que archivarla: basta con que nadie la empuje. Mi armario no caduca.',
     left: {
@@ -6366,6 +6368,7 @@ export const contentCards: Card[] = [
     id: 'agente_oferta',
     phase: 2,
     character: 'El Agente',
+    characterImage: 'agente.webp',
     sinPistas: true,
     text: 'Puede llamarme Karim, aunque no me llamo así. Represento a un país que está a catorce kilómetros del suyo y al que le conviene su estabilidad. Tenemos los teléfonos de quienes le publican. Hoy nada le pedimos.',
     left: { text: 'Esta conversación no ha existido', effects: { medios: -1 }, moralidad: 3 },
@@ -6391,6 +6394,7 @@ export const contentCards: Card[] = [
     phase: 3,
     weight: 0,
     character: 'El Agente',
+    characterImage: 'agente.webp',
     sinPistas: true,
     text: 'El jueves va al Consejo un texto sobre el territorio que administramos. Mi rey lo leerá, señor presidente, y buscará una palabra: autonomía. Mi país sabe ser agradecido, si Dios quiere. Y sabe abrir la valla un viernes.',
     left: {
