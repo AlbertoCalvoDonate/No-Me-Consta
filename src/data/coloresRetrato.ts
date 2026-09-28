@@ -7,7 +7,7 @@
 export const COLOR_RETRATO: Record<string, string> = {
   'cruzado.webp': '#4b4316',
   'encuestador.webp': '#211f42',
-  'escudero.webp': '#242b3d',
+  'escudero.webp': '#261e42',
   'exiliadopesado.webp': '#1c2345',
   'expresidentecompetente.webp': '#201c45',
   'feminista.webp': '#402041',
@@ -25,6 +25,6 @@ export const COLOR_RETRATO: Record<string, string> = {
   'periodista.webp': '#242e3d',
   'presidentaregional.webp': '#4d141a',
   'primeradama.webp': '#24263d',
-  'sociaincomoda.webp': '#4d141b',
+  'sociaincomoda.webp': '#3a144d',
   'vicepresi.webp': '#24263d',
 }

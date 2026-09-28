@@ -9,6 +9,7 @@
 // para que la cabeza se salga por los lados de la carta.
 export const ACERCAMIENTO: Record<string, number> = {
   'cruzado.webp': 1.15,
+  'escudero.webp': 1.15,
   'feminista.webp': 1.15,
   'guru.webp': 1.15,
   'ministrocorrupto.webp': 1.15,
@@ -16,7 +17,6 @@ export const ACERCAMIENTO: Record<string, number> = {
   'oposicionsuave.webp': 1.15,
   'presidentaregional.webp': 1.15,
   'sociaincomoda.webp': 1.15,
-  'jefecomunicacion.webp': 1.067,
-  'juez.webp': 1.023,
-  'hermano.webp': 1.01,
+  'jefecomunicacion.webp': 1.056,
+  'juez.webp': 1.012,
 }

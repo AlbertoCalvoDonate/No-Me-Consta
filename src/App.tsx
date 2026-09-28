@@ -651,7 +651,7 @@ export default function App() {
                           onClick={async () => {
                             sfx.boton()
                             const res = await compartirResultado(
-                              textoResultado(turn - 1, moralidad, causaCompartir)
+                              textoResultado(turn - 1, moralidad, causaCompartir, stats)
                             )
                             if (res !== 'compartido') {
                               setCompartido(res)
