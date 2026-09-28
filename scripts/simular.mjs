@@ -20,6 +20,16 @@
 //            contando ya el desgaste de las barras que tiene lejos del centro.
 // El jugador humano decente anda entre "prudente" y "bueno": ve los puntos,
 // pero no sabe si suben o bajan hasta que se aprende a cada personaje.
+//
+// LA BANDA EN LA QUE HAY QUE QUEDARSE, y conviene mirarla cada vez que se
+// toquen cartas: optimo entre el 14 y el 18 por ciento, bueno entre el 9 y el
+// 13. Por encima el juego se pasea; por debajo deja de invitar a otra partida.
+//
+// Se escribe aqui porque es facil salirse sin querer. En un solo dia de
+// trabajo -quitarle las comidas gratis a veinte cartas, meter doce nuevas y
+// tres secuelas que castigan lo que hiciste hace un ano- el optimo bajo del
+// 17,7% al 14,3% sin que ninguna de esas decisiones pareciera tocar el
+// equilibrio. Cada una costaba poco; todas juntas, tres puntos y medio.
 
 
 async function loadChromium() {

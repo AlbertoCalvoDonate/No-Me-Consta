@@ -2051,6 +2051,248 @@ export const contentCards: Card[] = [
     weight: (_s, _m, ctx) => (ctx.flagAge('ministro_colocado') >= 10 ? 3 : 0),
   },
 
+
+  // --- MAS CARTAS PARA LOS TRES MAS FLACOS DEL REPARTO ---
+  //
+  // Medido con el auditor: el Exiliado tenia doce cartas, la Ministra de
+  // Igualdad trece y el Fiscal catorce, cuando la mediana del reparto son
+  // dieciocho y el Ministro Caido tiene cincuenta y tres. Un personaje con
+  // pocas cartas se agota: sale, y la segunda vez que sale ya te sabes lo que
+  // va a decir.
+
+  {
+    id: 'exiliado_comision_lawfare',
+    phase: 3,
+    character: 'El Exiliado',
+    characterImage: 'exiliadopesado.webp',
+    text: 'Mis votos siguen ahí, pero esta vez traen condición: una comisión de investigación sobre cómo se han usado los juzgados contra nosotros. Usted no tiene que votarla. Solo tiene que no impedirla.',
+    left: {
+      text: 'Dejar que la comisión salga adelante',
+      effects: { gobierno: 2, medios: -2, calle: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Decir en público que ni hablar',
+      effects: { gobierno: -2, medios: 2 },
+      moralidad: 1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'exiliado_bilateral',
+    phase: 2,
+    character: 'El Exiliado',
+    characterImage: 'exiliadopesado.webp',
+    text: 'La llamada del jueves quiero que se llame reunión bilateral, con las dos banderas en la mesa y una foto. Para usted son quince minutos. Para los míos es el reconocimiento de treinta años.',
+    left: {
+      text: 'Poner las banderas y hacerse la foto',
+      effects: { gobierno: 2, calle: -2 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Una llamada es una llamada',
+      effects: { gobierno: -2, calle: 1, medios: 1 },
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'exiliado_vuelta',
+    phase: 4,
+    character: 'El Exiliado',
+    characterImage: 'exiliadopesado.webp',
+    text: 'He comprado el billete de vuelta. Aterrizo el martes, con cámaras. Lo que pase en la terminal depende de si alguien ha hecho una llamada antes del lunes. Y esa llamada la tiene que hacer usted.',
+    left: {
+      text: 'No hacer ninguna llamada',
+      effects: { medios: 2, gobierno: -3 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Hacer la llamada y no contárselo a nadie',
+      effects: { gobierno: 2, medios: -2, calle: -1 },
+      moralidad: -3,
+      addFlags: ['llamada_terminal'],
+    },
+    pleases: 'right',
+  },
+
+  {
+    id: 'igualdad_error_ley',
+    phase: 3,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Han salido las primeras rebajas de condena por un fallo en la redacción de mi ley. Los técnicos avisaron, y no les hicimos caso. Si la tocamos ahora, la derecha dirá que teníamos razón ellos.',
+    left: {
+      text: 'Corregirla esta semana, cueste lo que cueste',
+      effects: { medios: 2, calle: 1, gobierno: -2 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Defenderla entera y aguantar el chaparrón',
+      effects: { gobierno: 1, medios: -2, calle: -1 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'igualdad_anuncio_sin_avisar',
+    phase: 2,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'Mañana anuncio la medida en un acto con dos mil personas. No, no ha pasado por Consejo de Ministros. No, no lo sabe Hacienda. Sí, ya está el cartel impreso con el escudo del Gobierno.',
+    left: {
+      text: 'Pararlo y que lo anuncie el Gobierno entero',
+      effects: { gobierno: 2, calle: -1, medios: -1 },
+    },
+    right: {
+      text: 'Dejarla y ver qué sale',
+      effects: { calle: 2, gobierno: -2 },
+      moralidad: 1,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'igualdad_mitin',
+    phase: 4,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'En el mitin del sábado pienso decir que dentro de este Gobierno hay quien nos frena más que la oposición. Voy a decirlo sin nombres. Todo el mundo va a saber a quién me refiero.',
+    left: {
+      text: 'Pedirle que se calle esa frase',
+      effects: { gobierno: 2, medios: -1, calle: -1 },
+    },
+    right: {
+      text: 'Que la diga y ya veremos',
+      effects: { calle: 2, medios: 1, gobierno: -3 },
+    },
+    pleases: 'right',
+  },
+
+  {
+    id: 'fiscal_de_quien_depende',
+    phase: 2,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'Le van a preguntar en la entrevista de quién depende la Fiscalía. La respuesta correcta es larga y aburrida. Hay otra que dura tres palabras y va a salir en todos los informativos.',
+    left: {
+      text: 'Dar la respuesta larga y aburrida',
+      effects: { medios: 1, calle: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: '"Pues eso"',
+      effects: { calle: 2, medios: -2, gobierno: -1 },
+      moralidad: -2,
+      addFlags: ['pues_eso'],
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fiscal_expediente_amigo',
+    phase: 3,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'Me ha llegado un asunto que toca a alguien que estuvo en su candidatura. No le pido nada: le informo. Cuando esto salga, alguien recordará que yo estoy aquí porque usted me puso.',
+    left: {
+      text: 'Decirle que actúe como si no le conociera',
+      effects: { medios: 2, gobierno: -2 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Agradecerle el aviso y no decir nada más',
+      effects: { gobierno: 1, medios: -1 },
+      moralidad: -2,
+      addFlags: ['fiscal_avisado'],
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'fiscal_renovacion',
+    phase: 4,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'Se acaba mi mandato. Renovarme sería decirle al país que esto funciona; no renovarme, que hace falta otra cosa. Las dos frases son ciertas y las dos las van a usar contra usted.',
+    left: {
+      text: 'Renovarle y sostenerlo en público',
+      effects: { gobierno: 1, medios: -1, calle: -1 },
+    },
+    right: {
+      text: 'Poner a alguien que no le deba nada a nadie',
+      effects: { medios: 2, calle: 1, gobierno: -2 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+
+
+  // --- Lo que dejan detras las tres de arriba ---
+  //
+  // Un flag que nadie lee es una promesa que el juego no cumple: el jugador
+  // decide algo gordo, el juego lo apunta y no vuelve a pasar nada. Estas tres
+  // cierran las tres que abri.
+
+  {
+    id: 'pues_eso_vuelve',
+    phase: 3,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'Sus dos palabras de aquella entrevista llevan meses abriendo tertulias. Se las hemos puesto a cuatro juristas: tres dicen que fue una torpeza y el cuarto, que fue lo más sincero que ha dicho usted nunca.',
+    left: {
+      text: 'Reconocer que fue una torpeza',
+      effects: { medios: 2, calle: -1, gobierno: -1 },
+      moralidad: 2,
+      removeFlags: ['pues_eso'],
+    },
+    right: {
+      text: 'Repetirlas, esta vez despacio',
+      effects: { calle: 1, medios: -2 },
+      moralidad: -1,
+    },
+    condition: (_s, _m, ctx) => ctx.flagAge('pues_eso') >= 10,
+    weight: (_s, _m, ctx) => (ctx.flagAge('pues_eso') >= 10 ? 3 : 0),
+    pleases: 'left',
+  },
+  {
+    id: 'fiscal_avisado_sale',
+    phase: 3,
+    character: 'El Juez',
+    characterImage: 'juez.webp',
+    text: 'Aquel asunto que tocaba a uno de su candidatura se archivó en agosto, con dos folios y sin una sola diligencia. Le pregunto por el procedimiento, no por el fondo: ¿usted habló con alguien?',
+    left: {
+      text: 'Decir la verdad, sea la que sea',
+      effects: { medios: 1, gobierno: -2 },
+      moralidad: 3,
+      removeFlags: ['fiscal_avisado'],
+    },
+    right: {
+      text: '"No me consta"',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -3,
+    },
+    condition: (_s, _m, ctx) => ctx.flagAge('fiscal_avisado') >= 12,
+    weight: (_s, _m, ctx) => (ctx.flagAge('fiscal_avisado') >= 12 ? 3 : 0),
+    pleases: 'left',
+  },
+  {
+    id: 'llamada_terminal_sale',
+    phase: 4,
+    character: 'La Oposición',
+    characterImage: 'oposicionsuave.webp',
+    text: 'En la terminal, aquel martes, no había nadie esperándole. Hemos pedido por registro quién dio esa instrucción y quién la recibió. Nos han contestado que esa documentación no existe.',
+    left: {
+      text: 'Explicar en el Congreso lo que se hizo',
+      effects: { medios: 2, gobierno: -2, calle: -1 },
+      moralidad: 2,
+      removeFlags: ['llamada_terminal'],
+    },
+    right: {
+      text: 'Que lo pregunten por escrito, y ya veremos',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -2,
+    },
+    condition: (_s, _m, ctx) => ctx.flagAge('llamada_terminal') >= 8,
+    weight: (_s, _m, ctx) => (ctx.flagAge('llamada_terminal') >= 8 ? 3 : 0),
+  },
+
   // --- LA VICEPRESIDENTA (idealista, ambiciosa, a un paso de montar lo suyo) ---
   {
     id: 'vice_sentido_comun',
