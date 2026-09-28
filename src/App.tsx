@@ -41,10 +41,21 @@ const CAUSA_COMPARTIR: Record<string, string> = {
   final_evento_mocion: 'Me tumbaron con una moción de censura.',
   final_evento_ruptura: 'Se rompió la coalición y me quedé solo.',
   final_evento_registro: 'Vinieron a registrar a las seis de la mañana.',
+  final_evento_expediente: 'Publicaron lo que tenían guardado sobre mí.',
   elecciones_derrota: 'Perdí las elecciones.',
   elecciones_quemado_final: 'Doce años y me quemé: ni me presenté.',
   elecciones_retirada_final: 'Me retiré tras doce años en el cargo.',
   elecciones_leyenda_final: 'Me retiré invicto, tras doce años.',
+}
+
+// Lo mismo, pero para la PANTALLA de fin, que habla de usted. Las de arriba
+// son para el mensaje que se comparte y van en primera persona: son la voz
+// del jugador contandolo, no la del juego contandoselo.
+const CAUSA_PANTALLA: Record<string, string> = {
+  final_evento_mocion: 'Le tumbó una moción de censura',
+  final_evento_ruptura: 'Se rompió la coalición y se quedó solo',
+  final_evento_registro: 'Vinieron a registrar a las seis de la mañana',
+  final_evento_expediente: 'Publicaron lo que tenían guardado sobre usted',
 }
 
 // Ilustración de la pantalla de fin: una escena por indicador y dirección
@@ -535,6 +546,33 @@ export default function App() {
                           {STAT_LABEL[deathStat]}
                           {stats[deathStat] <= 0 ? ' por los suelos' : ' por las nubes'}
                         </span>
+                      </div>
+                    )}
+                    {/* Y lo mismo cuando NO le tumbo una barra sino una tarde:
+                        una mocion, un registro, un expediente. Esos finales se
+                        quedaban sin chapa y sin ilustracion -son cuatro de los
+                        treinta y uno y ninguno tiene dibujo todavia-, asi que
+                        la pantalla salia con un agujero en medio justo en el
+                        momento en que el jugador decide si juega otra o se va.
+                        Y lo que se perdia no era relleno: era la linea que le
+                        dice POR QUE ha caido, que es lo que se aprende. */}
+                    {!deathStat && CAUSA_PANTALLA[currentCard.id] && (
+                      <div
+                        style={{
+                          margin: modoCompacto ? '0 auto 8px' : '0 auto 14px',
+                          width: 'fit-content',
+                          maxWidth: '100%',
+                          padding: modoCompacto ? '5px 12px' : '8px 14px',
+                          borderRadius: 10,
+                          background: 'rgba(255,77,77,0.12)',
+                          border: '1px solid rgba(255,77,77,0.35)',
+                          ...pixel,
+                          fontWeight: 500,
+                          fontSize: modoCompacto ? 16 : 19,
+                          color: '#ff9b9b',
+                        }}
+                      >
+                        {CAUSA_PANTALLA[currentCard.id]}
                       </div>
                     )}
                     <p
