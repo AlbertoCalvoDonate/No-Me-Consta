@@ -58,7 +58,40 @@ Miden bien: aparecen en el 40% de las partidas, se les dice que sí en el 23%,
 se les deja a deber en el 12% y acaban publicando en el 4%. Eso no hay que
 tocarlo, solo darles material.
 
-## 3. Lo que sigue pendiente de arte (tuyo)
+## 3. BUG: una partida puede empezar igual que la anterior
+
+Le pasó a Alberto la noche del 28/09. Está confirmado leyendo el código, no es
+mala suerte suya: **la primera carta se elige sin ninguna memoria de la partida
+anterior.**
+
+Son dos caminos y los dos repiten:
+
+- `pickIntro()` saca una de las **ocho** cartas de arranque al azar, sin mirar
+  cuál salió la última vez. Repetir sale **1 de cada 8**.
+- Con herencia (dos de cada tres veces) se coge una de las **tres** variantes
+  de la causa por la que caíste. Si mueres dos veces seguidas por lo mismo
+  —y es corriente: solo `final_medios_baja` se lleva el 9% de las muertes—
+  repetir sale **1 de cada 3**.
+
+Juntando las dos ramas, con la misma causa de muerte sale **en torno al 16%**
+de las veces. Uno de cada seis arranques. Se nota enseguida, y es el peor sitio
+donde notarlo: la primera carta es la que decide si esta partida se siente
+nueva.
+
+**El arreglo:** recordar con qué carta se abrió la partida anterior y
+excluirla al elegir. El motor ya hace exactamente eso en otros dos sitios
+—los balances y las elecciones filtran por `state.history` antes de sortear—
+así que es el mismo patrón. Dónde guardarlo: junto a la herencia
+(`src/hooks/persistHerencia.ts`), que ya sobrevive a la muerte y ya se lee en
+`estadoNuevo()`, o en el enfriamiento entre partidas (`COOLDOWN_KEY` en
+`useGameStore.ts`).
+
+Cuidado con dos cosas: si se excluye la única variante disponible hay que
+tener un plan B (el patrón de los balances es `sinVer.length > 0 ? sinVer :
+todas`), y conviene comprobar después con `scripts/qa-caos.mjs`, que ya encadena
+veinticinco partidas seguidas y podría medir esto.
+
+## 4. Lo que sigue pendiente de arte (tuyo)
 
 - Ilustraciones de los **cuatro finales por evento**: moción, expediente,
   ruptura y registro. Son los únicos finales sin imagen.
