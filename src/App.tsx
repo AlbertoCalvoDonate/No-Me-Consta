@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
 import { useGameStore } from './hooks/useGameStore'
 import { SwipeCard } from './components/SwipeCard'
@@ -13,6 +13,7 @@ import { StatIcon } from './components/StatIcon'
 import type { StatKey } from './types'
 import { epitetoDe } from './data/epitetos'
 import { sfx } from './utils/sfx'
+import { mascaraBorde, useAltoVentana, useHayMasAbajo } from './utils/desbordado'
 import { haptics } from './utils/haptics'
 import { registrarPartida } from './hooks/useLogros'
 import type { Logro } from './data/logros'
@@ -103,31 +104,6 @@ const botonGameOverSec: CSSProperties = {
   fontSize: 16,
   color: COLOR.oro,
   cursor: 'pointer',
-}
-
-// El difuminado del borde de abajo del relato del final. Empieza a apagarse
-// pronto (78%) y no llega a cero: cortar del todo escondería una línea entera,
-// y lo que se quiere es que se adivine que hay más, no taparlo.
-const DEGRADADO_RELATO =
-  'linear-gradient(to bottom, #000 78%, rgba(0,0,0,0.55) 92%, rgba(0,0,0,0.12) 100%)'
-
-// Alto de la ventana, en vivo. Se usa para apretar la pantalla de final en
-// móviles bajitos: girar el teléfono o abrir la barra del navegador cambia el
-// hueco disponible, así que no vale medirlo una vez al arrancar.
-function useAltoVentana(): number {
-  const [alto, setAlto] = useState(() =>
-    typeof window === 'undefined' ? 800 : window.innerHeight
-  )
-  useEffect(() => {
-    const mirar = () => setAlto(window.innerHeight)
-    window.addEventListener('resize', mirar)
-    window.addEventListener('orientationchange', mirar)
-    return () => {
-      window.removeEventListener('resize', mirar)
-      window.removeEventListener('orientationchange', mirar)
-    }
-  }, [])
-  return alto
 }
 
 export default function App() {
@@ -243,32 +219,11 @@ export default function App() {
   // El relato del final se desplaza cuando no cabe. `hayMasRelato` dice si
   // queda algo por debajo del borde, para difuminarlo y que se vea que hay más.
   const relatoRef = useRef<HTMLDivElement>(null)
-  const [hayMasRelato, setHayMasRelato] = useState(false)
   const textoLen = deathReason?.length ?? 0
   const imagenDisponible = gameOver ? ilustracionFin(currentCard.id) : undefined
   const ilustracion = imagenDisponible && textoLen <= 190 ? imagenDisponible : undefined
   const modoCompacto = pantallaBaja || textoLen > (ilustracion ? 65 : 160)
-
-  useLayoutEffect(() => {
-    const el = relatoRef.current
-    if (!gameOver || !el) {
-      setHayMasRelato(false)
-      return
-    }
-    const mirar = () => setHayMasRelato(el.scrollHeight - el.clientHeight - el.scrollTop > 4)
-    mirar()
-    el.addEventListener('scroll', mirar, { passive: true })
-    // La ilustración del final llega tarde (viene de la red) y al entrar
-    // empuja al resto hacia abajo: sin esto el degradado se decidiría antes
-    // de que la pantalla esté completa.
-    const ro = new ResizeObserver(mirar)
-    ro.observe(el)
-    for (const hijo of el.children) ro.observe(hijo)
-    return () => {
-      el.removeEventListener('scroll', mirar)
-      ro.disconnect()
-    }
-  }, [gameOver, deathReason, ilustracion, altoVentana])
+  const hayMasRelato = useHayMasAbajo(relatoRef, gameOver, [deathReason, ilustracion, altoVentana])
 
   // La marca a batir. Solo hay algo que decir si ya habías jugado (récord > 0)
   // y no empataste. Cuando queda cerca se dice a cuánto, que pica más que el
@@ -532,8 +487,7 @@ export default function App() {
                         // el corte era una línea recta a media palabra -o a
                         // media chapa del indicador- y no parecía que hubiera
                         // más: parecía roto. Desaparece al llegar al final.
-                        WebkitMaskImage: hayMasRelato ? DEGRADADO_RELATO : undefined,
-                        maskImage: hayMasRelato ? DEGRADADO_RELATO : undefined,
+                        ...mascaraBorde(hayMasRelato),
                       }}
                     >
                     {/* Las piezas del desenlace entran una detras de otra en

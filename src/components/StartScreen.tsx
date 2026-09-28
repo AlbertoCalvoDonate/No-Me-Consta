@@ -5,6 +5,7 @@ import { epitetoDe } from '../data/epitetos'
 import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
 import { sfx } from '../utils/sfx'
+import { mascaraBorde, useAltoVentana, useHayMasAbajo } from '../utils/desbordado'
 
 const STATS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
@@ -60,6 +61,19 @@ export function StartScreen({
   const ultimoToque = useRef(0)
   const [reseteado, setReseteado] = useState(false)
 
+  // Esta pantalla se desplaza en móviles pequeños: hay que avisar de ello.
+  const cajaRef = useRef<HTMLDivElement>(null)
+  const hayMas = useHayMasAbajo(cajaRef, true, [confirmando, reseteado])
+
+  // Y ADEMÁS SE APRIETA. Medido: en un 320x568 el botón de empezar acababa
+  // 105px por debajo del borde, o sea que lo primero que ve alguien que abre
+  // el juego en un móvil pequeño es una pantalla sin botón. Se llegaba
+  // bajando, pero nadie debería tener que buscar el botón de jugar.
+  //
+  // Con la letra y los márgenes más justos cabe entero. El umbral son 600px
+  // de alto: por encima de eso ya cabía y no hay nada que apretar.
+  const compacto = useAltoVentana() < 600
+
   const tocarBuild = () => {
     const ahora = Date.now()
     toques.current = ahora - ultimoToque.current < VENTANA_MS ? toques.current + 1 : 1
@@ -78,6 +92,7 @@ export function StartScreen({
 
   return (
     <div
+      ref={cajaRef}
       style={{
         flex: 1,
         minHeight: 0,
@@ -87,6 +102,10 @@ export function StartScreen({
         alignItems: 'center',
         textAlign: 'center',
         color: '#f2f2f2',
+        // En un movil de 320px el boton de empezar queda 105px por debajo del
+        // borde: se llega, pero nada decia que hubiera que bajar. Ahora el
+        // borde se difumina mientras quede algo, y se apaga al llegar abajo.
+        ...mascaraBorde(hayMas),
       }}
     >
       {/* `margin: auto` centra el bloque cuando cabe; cuando no (móviles muy
@@ -97,8 +116,12 @@ export function StartScreen({
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          padding: '24px 26px',
-          gap: 16,
+          // El hueco de arriba en compacto no es simetria: el boton de
+          // volumen vive pegado a la esquina y, con la pantalla apretada,
+          // el titulo se le metia debajo. 38px es lo que mide ese boton
+          // mas su margen.
+          padding: compacto ? '38px 20px 12px' : '24px 26px',
+          gap: compacto ? 10 : 16,
         }}
       >
       <div>
@@ -107,14 +130,14 @@ export function StartScreen({
             ...pixel,
             margin: 0,
             fontWeight: 400,
-            fontSize: 46,
+            fontSize: compacto ? 34 : 46,
             color: COLOR.oro,
             lineHeight: 1.05,
           }}
         >
           No Me Consta
         </h1>
-        <p style={{ ...pixel, margin: '8px 0 0', fontWeight: 500, fontSize: 17, color: '#a89f8c' }}>
+        <p style={{ ...pixel, margin: compacto ? '6px 0 0' : '8px 0 0', fontWeight: 500, fontSize: compacto ? 15 : 17, color: '#a89f8c' }}>
           Gobierna el país y vive para contarlo.
         </p>
       </div>
@@ -124,7 +147,7 @@ export function StartScreen({
         style={{
           background: COLOR.panel,
           borderRadius: 14,
-          padding: '16px 18px',
+          padding: compacto ? '11px 14px' : '16px 18px',
           width: '100%',
           boxSizing: 'border-box',
         }}
@@ -137,28 +160,28 @@ export function StartScreen({
             letterSpacing: 0.8,
             color: COLOR.apagado,
             textTransform: 'uppercase',
-            marginBottom: 10,
+            marginBottom: compacto ? 6 : 10,
           }}
         >
           Cómo se gobierna
         </div>
 
-        <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: 17, lineHeight: 1.45, color: '#e8e2d4' }}>
+        <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: compacto ? 15 : 17, lineHeight: 1.4, color: '#e8e2d4' }}>
           Desliza cada carta a un lado o al otro para decidir.
           <br />
           Rara vez hay una opción buena. Esa es la gracia.
         </p>
 
-        <div style={{ display: 'flex', justifyContent: 'space-around', gap: 4, margin: '14px 0 10px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-around', gap: 4, margin: compacto ? '9px 0 7px' : '14px 0 10px' }}>
           {STATS.map(({ key, label }) => (
             <div key={key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-              <StatIcon statKey={key} value={5} critical={false} size={38} />
+              <StatIcon statKey={key} value={5} critical={false} size={compacto ? 30 : 38} />
               <span style={{ ...pixel, fontWeight: 500, fontSize: 12, color: '#a8a08c' }}>{label}</span>
             </div>
           ))}
         </div>
 
-        <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: 16, lineHeight: 1.4, color: '#b7b1a3' }}>
+        <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: compacto ? 14 : 16, lineHeight: 1.35, color: '#b7b1a3' }}>
           Si una llega a 0 o al máximo, cae el gobierno. El tuyo.
         </p>
 
@@ -167,7 +190,7 @@ export function StartScreen({
             solo que significaban. Decir que hay puntos y que NO dicen la
             direccion es lo que convierte el juego en un juego de aprenderse al
             reparto, que es de lo que va. */}
-        <p style={{ ...pixel, margin: '10px 0 0', fontWeight: 500, fontSize: 16, lineHeight: 1.4, color: '#b7b1a3' }}>
+        <p style={{ ...pixel, margin: compacto ? '7px 0 0' : '10px 0 0', fontWeight: 500, fontSize: compacto ? 14 : 16, lineHeight: 1.35, color: '#b7b1a3' }}>
           Al arrastrar se encienden puntos sobre lo que va a moverse. Dicen
           cuánto, no hacia dónde: eso se aprende mirando quién habla.
         </p>
