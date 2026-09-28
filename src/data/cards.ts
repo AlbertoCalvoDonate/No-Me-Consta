@@ -287,7 +287,7 @@ const endingCards: Card[] = [
     minTurn: 12,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
-    text: 'Su hermano sentado en el banquillo y usted sin un solo medio que le defienda. La oposición ha contado los votos tres veces y le salen. Esta moción no es para hacer ruido: es para ganarla.',
+    text: 'Su hermano sentado en el banquillo y usted casi sin un medio que le defienda. La oposición ha contado los votos tres veces y le salen. Esta moción no es para hacer ruido: es para ganarla.',
     left: { text: 'Ir al pleno a dar la cara', effects: {}, epilogueText: 'Aguanta dos horas de intervenciones sin pestañear. Pierde por siete votos. Al menos se fue de pie. Fin del gobierno.' },
     right: { text: 'Dimitir antes de la votación', effects: {}, epilogueText: 'Dimite la víspera para no salir en la foto de la derrota. Sale igualmente en todas. Fin del gobierno.' },
     isEnding: true,
@@ -366,14 +366,20 @@ const endingCards: Card[] = [
     minTurn: 14,
     character: 'El Juez',
     characterImage: 'juez.webp',
-    text: 'Caja llena, prensa encima y una causa abierta con su nombre. A las seis de la mañana hay coches en la puerta y un secretario judicial con una orden de registro.',
+    text: 'Dinero que no cuadra, prensa encima y una causa abierta con su nombre. A las seis de la mañana hay coches en la puerta y un secretario judicial con una orden de registro.',
     left: { text: 'Abrir la puerta y colaborar', effects: {}, epilogueText: 'Entrega los ordenadores él mismo. El vídeo de la caja saliendo del portal abre todos los informativos. Fin del gobierno.' },
     right: { text: 'Llamar al abogado y ganar horas', effects: {}, epilogueText: 'Los abogados retrasan el registro cuatro horas. Cuatro horas que salen en el auto, subrayadas. Fin del gobierno, y con agravante.' },
     isEnding: true,
     byEvent: true,
-    // Dos caminos al mismo sitio: la caja llena con la prensa encima y la
+    // Dos caminos al mismo sitio: la caja gorda con la prensa encima y la
     // moralidad por los suelos, o haberle dicho que no al juez una y otra vez
     // hasta hartarle. Lo segundo es nuevo: sus cartas ya acumulan enfado.
+    //
+    // OJO AL ESCRIBIR EL TEXTO DE ESTE FINAL: no salta con la barra llena.
+    // Salta a 8 y, con el juez harto, a 6. Decia "Caja llena" y un jugador se
+    // murio leyendo eso con la barra en seis de diez, que es exactamente el
+    // tipo de mentira que hace que un juego parezca roto. Si la carta afirma
+    // que una barra esta al maximo, la condicion tiene que pedir el maximo.
     condition: (s, m, ctx) =>
       (s.caja >= 8 && s.medios <= 3 && m <= 3) ||
       ((ctx.anger['El Juez'] ?? 0) >= 4 && s.caja >= 6),

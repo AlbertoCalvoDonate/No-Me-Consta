@@ -415,6 +415,53 @@ function revisarTextosSueltos(ruta, avisos, errores) {
   return n
 }
 
+// CUANDO LA CARTA DICE QUE UNA BARRA ESTA AL MAXIMO, LA CONDICION TIENE QUE
+// PEDIR EL MAXIMO.
+//
+// Esto sale de un fallo que conto un jugador: se murio leyendo "Caja llena"
+// con la barra de la caja en seis de diez. El final del registro judicial
+// salta a 8 y, con el juez harto, a 6, pero su texto afirmaba que la barra
+// estaba llena. El mecanismo estaba bien; mentia el texto. Y una carta que le
+// dice al jugador algo que contradice lo que tiene delante en la pantalla no
+// se lee como una licencia narrativa: se lee como un juego roto.
+//
+// Se mira solo en los finales, que son los que tienen condicion sobre las
+// barras, y solo con las afirmaciones mas descaradas. Prefiere callarse a dar
+// la lata: no busca sinonimos ni matices, busca las formas de decir "esta a
+// tope" y las de decir "esta a cero".
+const DICE_LLENA = /\b(llena|lleno|a rebosar|por las nubes|al m[aá]ximo|a tope)\b/i
+const DICE_VACIA = /\b(a cero|vac[ií][ao]|por los suelos|sin un solo)\b/i
+
+function revisarFinalesQueMienten(ruta, avisos) {
+  let src
+  try {
+    src = readFileSync(ruta, 'utf8')
+  } catch {
+    return
+  }
+  for (const bloque of src.split('\n  {')) {
+    if (!bloque.includes('isEnding: true')) continue
+    if (!bloque.includes('condition:')) continue
+    const id = /id: '([^']+)'/.exec(bloque)
+    const texto = /text: '((?:[^'\\]|\\.)*)'/.exec(bloque)
+    if (!id || !texto) continue
+    const cond = bloque.slice(bloque.indexOf('condition:'))
+    const t = texto[1]
+    if (DICE_LLENA.test(t) && !/>=\s*10\b/.test(cond)) {
+      avisos.push(
+        `"${id[1]}" (cards.ts): el texto dice que una barra está llena y la condición ` +
+          'no pide el máximo. O se cambia el texto o se cambia la condición.'
+      )
+    }
+    if (DICE_VACIA.test(t) && !/<=\s*0\b/.test(cond)) {
+      avisos.push(
+        `"${id[1]}" (cards.ts): el texto dice que una barra está a cero y la condición ` +
+          'no pide cero. O se cambia el texto o se cambia la condición.'
+      )
+    }
+  }
+}
+
 function main() {
   const source = readFileSync(CONTENT_FILE, 'utf8')
   let cards
@@ -432,6 +479,7 @@ function main() {
 
   const { errors, warnings } = validate(cards)
   const sueltos = revisarTextosSueltos(CARDS_FILE, warnings, errors)
+  revisarFinalesQueMienten(CARDS_FILE, warnings)
 
   console.log(`Cartas analizadas: ${cards.length} (+ ${sueltos} textos de cards.ts)`)
 
