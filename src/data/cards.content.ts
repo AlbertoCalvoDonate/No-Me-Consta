@@ -2293,6 +2293,148 @@ export const contentCards: Card[] = [
     weight: (_s, _m, ctx) => (ctx.flagAge('llamada_terminal') >= 8 ? 3 : 0),
   },
 
+
+  // --- Segunda tanda para los que seguian flacos ---
+  //
+  // Mopongo tenia diez cartas, la Ministra quince y la Primera Dama dieciseis.
+  // Mopongo es un caso aparte: su gracia es que nadie la toma en serio, asi
+  // que sus cartas tienen que ser cortas y no significar nada... hasta que una
+  // significa algo.
+
+  {
+    id: 'mopongo_cinco',
+    phase: 2,
+    character: 'Mopongo',
+    characterImage: 'mopongo.webp',
+    text: 'Aparece en la puerta del despacho con una carpeta. Dentro hay un solo folio, y en el folio hay una sola palabra escrita a mano: "Mopongo". Espera una respuesta con las cejas levantadas.',
+    left: { text: 'Firmarlo y devolvérselo', effects: { calle: 1, gobierno: -1 } },
+    right: { text: 'Preguntarle qué significa', effects: { medios: 1, calle: -1 } },
+  },
+  {
+    id: 'mopongo_seis',
+    phase: 3,
+    character: 'Mopongo',
+    characterImage: 'mopongo.webp',
+    text: 'Lleva tres semanas sentada en las reuniones del gabinete sin decir nada. Hoy ha levantado la mano y ha señalado un punto del orden del día. Resulta que era el único con un error de cuatro millones.',
+    left: {
+      text: 'Reconocer en voz alta que lo vio ella',
+      effects: { gobierno: 1, medios: 1, caja: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Corregirlo sin decir de dónde salió',
+      effects: { caja: 1, gobierno: -1 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'mopongo_siete',
+    phase: 4,
+    character: 'Mopongo',
+    characterImage: 'mopongo.webp',
+    text: 'Le han hecho una entrevista de cuarenta minutos. No ha dicho nada malo de nadie, no ha prometido nada y no ha contestado a ninguna pregunta. Es lo más visto de la semana.',
+    left: { text: 'Mandarla a todas las televisiones', effects: { calle: 2, gobierno: -2 } },
+    right: { text: 'Que vuelva a su despacho', effects: { gobierno: 1, calle: -1 } },
+    pleases: 'left',
+  },
+
+  {
+    id: 'ministra_decreto_sin_leer',
+    phase: 2,
+    character: 'La Ministra',
+    characterImage: 'ministraincompetente.webp',
+    text: 'El decreto que firmó el jueves tiene una disposición que nadie recuerda haber redactado. Beneficia a un sector concreto. Muy concreto. Se publica en el boletín mañana a las ocho.',
+    left: {
+      text: 'Pararlo aunque se note el frenazo',
+      effects: { medios: 1, gobierno: -2, calle: 1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Que salga y ya se corregirá luego',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'ministra_comparecencia_sola',
+    phase: 3,
+    character: 'La Ministra',
+    characterImage: 'ministraincompetente.webp',
+    text: 'Me toca comparecer por lo de su ministerio hermano. Yo no llevo ese asunto, no tengo los datos y no pienso inventármelos. Dígame usted qué digo, porque en dos horas estoy sentada allí.',
+    left: {
+      text: 'Que diga la verdad: que no es su asunto',
+      effects: { medios: 1, gobierno: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Pasarle un argumentario y que lo lea',
+      effects: { gobierno: 1, medios: -1, calle: -1 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+
+  {
+    id: 'dama_biografia',
+    phase: 3,
+    character: 'La Primera Dama',
+    characterImage: 'primeradama.webp',
+    text: '"Me han ofrecido escribir mis memorias. Mis. Memorias." Ya ha elegido portada. En el índice hay un capítulo que se llama "Lo que yo sabía", y son cuarenta páginas.',
+    left: {
+      text: 'Pedirle que lo deje para cuando salgamos',
+      effects: { medios: 1, gobierno: 1 },
+      moralidad: 1,
+    },
+    right: {
+      text: '"Escribe lo que quieras, cariño"',
+      effects: { calle: 1, medios: -2 },
+      moralidad: -1,
+      addFlags: ['memorias_en_marcha'],
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'dama_memorias_salen',
+    phase: 4,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'Tenemos el capítulo siete antes que la editorial. Se titula "Lo que yo sabía" y en la página doscientas doce aparece usted, una fecha y una frase entrecomillada que no le va a gustar.',
+    left: {
+      text: 'Confirmar que lo dijo',
+      effects: { medios: 2, gobierno: -2 },
+      moralidad: 3,
+      removeFlags: ['memorias_en_marcha'],
+    },
+    right: {
+      text: '"Mi mujer escribe novelas"',
+      effects: { gobierno: 1, medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+    condition: (_s, _m, ctx) => ctx.flagAge('memorias_en_marcha') >= 10,
+    weight: (_s, _m, ctx) => (ctx.flagAge('memorias_en_marcha') >= 10 ? 3 : 0),
+  },
+
+  {
+    id: 'cruzado_pacto_regional',
+    phase: 4,
+    character: 'El Cruzado',
+    characterImage: 'cruzado.webp',
+    text: 'En tres regiones gobernamos juntos y en la televisión nos insultamos. Le propongo que sigamos así: a usted le da votos en la ciudad y a mí me los da en el campo. Nos conviene a los dos.',
+    left: {
+      text: 'Decir en público que ese pacto existe',
+      effects: { medios: 2, calle: -2 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Seguir insultándose y seguir pactando',
+      effects: { calle: 1, gobierno: 1, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+
   // --- LA VICEPRESIDENTA (idealista, ambiciosa, a un paso de montar lo suyo) ---
   {
     id: 'vice_sentido_comun',
@@ -4479,7 +4621,7 @@ export const contentCards: Card[] = [
 
   // --- MOPONGO (gobierno) ---
   {
-    id: 'mopongo_cinco',
+    id: 'mopongo_ocho',
     pleases: 'left',
     phase: 2,
     character: 'Mopongo',
@@ -4489,7 +4631,7 @@ export const contentCards: Card[] = [
     right: { text: 'Pasar al siguiente punto', effects: { gobierno: -1 } },
   },
   {
-    id: 'mopongo_seis',
+    id: 'mopongo_cuatro_millones',
     phase: 3,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
@@ -4498,7 +4640,7 @@ export const contentCards: Card[] = [
     right: { text: 'Dar por bueno lo que sea', effects: { gobierno: 1, medios: -1 } },
   },
   {
-    id: 'mopongo_siete',
+    id: 'mopongo_entrevista',
     phase: 2,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
@@ -4507,7 +4649,7 @@ export const contentCards: Card[] = [
     right: { text: 'Pedir que lo firme otra vez', effects: { gobierno: -1, medios: 1 } },
   },
   {
-    id: 'mopongo_ocho',
+    id: 'mopongo_carpeta',
     phase: 4,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
