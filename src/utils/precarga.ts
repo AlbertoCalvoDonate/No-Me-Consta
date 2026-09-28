@@ -14,6 +14,9 @@ import { CARTAS_POR_PERSONAJE, REPARTO } from '../data/reparto'
 // que son los que van a salir antes. El Ministro Caído tiene 53 y Mopongo 10,
 // así que empezar por el primero acierta más veces.
 
+// La imagen de la carta de entrada. Ver la nota en la cola, más abajo.
+const PRIMERA_IMAGEN = 'espejo.svg'
+
 let arrancada = false
 
 // En una conexion mala la precarga hace MAS dano que bien: se come el ancho de
@@ -76,6 +79,17 @@ export function precargarRetratos(extra: string[] = [], respetarRed = true) {
   arrancada = true
 
   cola = [
+    // EL ESPEJO VA PRIMERO, y no por importancia: es que TODA partida empieza
+    // con él. Las cartas de entrada -las seis de presentación y las quince de
+    // herencia- son todas suyas, así que su dibujo es, sin excepción, la
+    // primera imagen que alguien ve de este juego.
+    //
+    // Con la cola ordenada por número de cartas le tocaba de los últimos (tiene
+    // pocas), y en una conexión mala llegaba detrás de dos megas de retratos.
+    // Medido a 200 kbps: la primera carta de la partida salía vacía, y como el
+    // color del espejo es casi negro a propósito, no parecía una carta
+    // cargando: parecía un agujero. Pesa 3,5 kB. Va delante.
+    PRIMERA_IMAGEN,
     ...[...REPARTO]
       .sort(
         (a, b) =>
@@ -87,7 +101,10 @@ export function precargarRetratos(extra: string[] = [], respetarRed = true) {
     // Las ilustraciones de final van al final de la cola: hasta que la partida
     // no acaba no hacen falta, y para entonces ha habido minutos de sobra.
     ...extra,
-  ]
+    // El espejo sale dos veces (va delante y además está en el reparto): se
+    // quita el repetido para no pedirlo dos veces ni descuadrar la cuenta de
+    // la pantalla de carga.
+  ].filter((img, n, todas) => todas.indexOf(img) === n)
 
   tirar()
 }

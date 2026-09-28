@@ -240,6 +240,16 @@ export function opcionesDeCarta(card: Card) {
 }
 
 export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: Props) {
+  // EL RETRATO APARECE, NO APARECE DE GOLPE. Cuando la imagen ya esta en
+  // cache -que es casi siempre, porque se precargan- se pinta al instante y
+  // aqui no pasa nada. Pero en una conexion mala el retrato llega con la
+  // carta ya en pantalla, y aparecer de golpe encima de un rectangulo de
+  // color se ve como un fallo. Entrando en doscientos milisegundos se ve como
+  // lo que es: una carta que se termina de dibujar.
+  const [caraLista, setCaraLista] = useState(false)
+  useEffect(() => {
+    setCaraLista(false)
+  }, [card.characterImage])
   const estado = estadoDelPersonaje(enfado, favorDebido)
   // Inclinada mientras se arrastra, y dando vueltas cuando sale volando: el
   // giro crece con la distancia en vez de toparse a los doce grados.
@@ -479,6 +489,12 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: 
               // vez que salia cada personaje.
               alt=""
               draggable={false}
+              // Si venia de cache, `complete` ya es true en el primer pintado
+              // y no hay transicion ninguna: se ve desde el primer frame.
+              ref={(el) => {
+                if (el && el.complete && el.naturalWidth > 0 && !caraLista) setCaraLista(true)
+              }}
+              onLoad={() => setCaraLista(true)}
               style={{
                 // El retrato LLENA la carta. Antes se escalaba para caber
                 // entero, asi que sobraba fondo por arriba y por abajo y la
@@ -507,6 +523,8 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: 
                 // cara: lo que se sale por abajo es torso, que no dice nada.
                 transform: `scale(${ACERCAMIENTO[card.characterImage ?? ''] ?? 1})`,
                 transformOrigin: 'center top',
+                opacity: caraLista ? 1 : 0,
+                transition: 'opacity 200ms ease-out',
               }}
             />
           )}
