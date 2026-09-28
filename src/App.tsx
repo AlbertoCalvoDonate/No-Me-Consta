@@ -216,12 +216,23 @@ export default function App() {
   // del borde, que es justo lo que el jugador quiere leer y compartir.
   const altoVentana = useAltoVentana()
   const pantallaBaja = altoVentana < 700
+  // Y un escalon mas para los moviles de verdad pequenos (320x568, iPhone SE
+  // de primera generacion). Ahi el epilogo ocupa mas lineas porque la pantalla
+  // es mas estrecha, y con el modo compacto normal se pasaban 98px: el epiteto
+  // seguia sin caber. Este segundo escalon aprieta la letra un punto mas.
+  const muyBaja = altoVentana < 600
   // El relato del final se desplaza cuando no cabe. `hayMasRelato` dice si
   // queda algo por debajo del borde, para difuminarlo y que se vea que hay más.
   const relatoRef = useRef<HTMLDivElement>(null)
   const textoLen = deathReason?.length ?? 0
   const imagenDisponible = gameOver ? ilustracionFin(currentCard.id) : undefined
-  const ilustracion = imagenDisponible && textoLen <= 190 ? imagenDisponible : undefined
+  // En 320x568 la ilustracion no entra: aprieta hasta el ultimo punto de
+  // letra y aun asi el epiteto se quedaba fuera. Es el mismo trato que ya
+  // hacia esta linea con los epilogos largos -la imagen se va y el texto se
+  // queda-, solo que decidido por el alto de la pantalla: lo que el jugador
+  // se lleva de la partida es como le van a llamar, no la foto.
+  const ilustracion =
+    imagenDisponible && textoLen <= 190 && !muyBaja ? imagenDisponible : undefined
   const modoCompacto = pantallaBaja || textoLen > (ilustracion ? 65 : 160)
   const hayMasRelato = useHayMasAbajo(relatoRef, gameOver, [deathReason, ilustracion, altoVentana])
 
@@ -506,10 +517,10 @@ export default function App() {
                           // hace que en un 360x640 quepa el epíteto, que es lo
                           // que el jugador se lleva. Sigue viéndose: es una
                           // franja, no una miniatura.
-                          height: pantallaBaja ? 54 : 82,
+                          height: muyBaja ? 44 : pantallaBaja ? 54 : 82,
                           borderRadius: 10,
                           overflow: 'hidden',
-                          marginBottom: pantallaBaja ? 7 : 10,
+                          marginBottom: muyBaja ? 6 : pantallaBaja ? 7 : 10,
                           border: '1px solid rgba(255,255,255,0.12)',
                         }}
                       >
@@ -527,7 +538,7 @@ export default function App() {
                         marginTop: 0,
                         ...pixel,
                         fontWeight: 400,
-                        fontSize: modoCompacto ? 23 : 27,
+                        fontSize: muyBaja ? 20 : modoCompacto ? 23 : 27,
                         lineHeight: 1.2,
                       }}
                     >
@@ -535,11 +546,11 @@ export default function App() {
                     </h2>
                     <p
                       style={{
-                        lineHeight: modoCompacto ? 1.28 : 1.45,
+                        lineHeight: muyBaja ? 1.22 : modoCompacto ? 1.28 : 1.45,
                         margin: modoCompacto ? '0 0 8px' : '0 0 16px',
                         ...pixel,
                         fontWeight: 500,
-                        fontSize: modoCompacto ? 16 : 19,
+                        fontSize: muyBaja ? 14 : modoCompacto ? 16 : 19,
                       }}
                     >
                       {deathReason}
@@ -605,7 +616,7 @@ export default function App() {
                     <p
                       style={{
                         color: '#888',
-                        fontSize: modoCompacto ? 14 : 16,
+                        fontSize: muyBaja ? 13 : modoCompacto ? 14 : 16,
                         lineHeight: 1.3,
                         margin: modoCompacto ? '0 0 8px' : '0 0 18px',
                         ...pixel,
@@ -643,7 +654,7 @@ export default function App() {
                     <div
                       style={{
                         margin: '0',
-                        paddingTop: modoCompacto ? 8 : 14,
+                        paddingTop: muyBaja ? 5 : modoCompacto ? 8 : 14,
                         borderTop: '1px solid rgba(224,184,77,0.22)',
                         width: '100%',
                       }}
@@ -663,7 +674,7 @@ export default function App() {
                         style={{
                           ...pixel,
                           fontWeight: 400,
-                          fontSize: modoCompacto ? 21 : 25,
+                          fontSize: muyBaja ? 19 : modoCompacto ? 21 : 25,
                           lineHeight: 1.2,
                           color: COLOR.oro,
                           margin: modoCompacto ? '2px 0 3px' : '4px 0 5px',

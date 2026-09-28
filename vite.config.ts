@@ -15,4 +15,21 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
     __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // DOS TROZOS EN VEZ DE UNO, y no por el peso total -que es el mismo-
+        // sino por lo que hay que volver a bajarse en cada despliegue.
+        //
+        // Aqui se publica a menudo, y casi siempre son cartas nuevas: texto.
+        // Con un solo fichero, cambiar una coma de una carta le cambia el
+        // nombre al paquete entero y el que vuelve al juego se baja otra vez
+        // React y framer-motion, que no han cambiado en meses. Separados, esa
+        // mitad se queda en su cache y solo viaja lo que de verdad es nuevo.
+        manualChunks(id) {
+          if (id.includes('node_modules')) return 'motor'
+        },
+      },
+    },
+  },
 })
