@@ -2435,6 +2435,470 @@ export const contentCards: Card[] = [
     pleases: 'right',
   },
 
+
+  // ==========================================================================
+  // LO QUE PASA FUERA DEL DESPACHO
+  //
+  // Riadas, incendios, sequia, apagones, tractores, listas de espera, una
+  // final con palco, un audio falso. Nada de esto lo provoca el jugador y todo
+  // le cae encima igual, que es la otra mitad de gobernar: la mitad que no
+  // sale en las cartas de pasillo.
+  //
+  // Se escriben aqui juntas porque comparten forma -llega algo de fuera, hay
+  // que reaccionar hoy- y no porque compartan personaje: van repartidas por
+  // el reparto entero, y varias a los que menos cartas tenian.
+  // ==========================================================================
+
+  // --- Cuando el problema es el tiempo ---
+
+  {
+    id: 'fuera_riada_visita',
+    phase: 2,
+    character: 'La Ministra',
+    characterImage: 'ministraincompetente.webp',
+    text: 'El agua se llevó tres pueblos anoche y me toca ir a mí. Si voy hoy, con el barro por la rodilla, me gritan. Si voy el viernes, cuando ya esté limpio, me gritan por no haber ido hoy.',
+    left: {
+      text: 'Que vaya hoy y aguante el grito',
+      effects: { calle: 1, medios: 1, gobierno: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Que vaya el viernes con las botas limpias',
+      effects: { gobierno: 1, calle: -2 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'fuera_emergencia_quien_manda',
+    phase: 3,
+    character: 'La Presidenta Regional',
+    characterImage: 'presidentaregional.webp',
+    text: 'La emergencia es mía hasta que deja de serlo. Si le pido ayuda, admito que no puedo. Si no se la pido y esto empeora, el muerto es mío. Dígame qué prefiere que diga en rueda de prensa.',
+    left: {
+      text: 'Mandar la ayuda antes de que la pida',
+      effects: { medios: 2, calle: 1, gobierno: -2 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Esperar a que la pida por escrito',
+      effects: { gobierno: 1, calle: -2, medios: -1 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_incendio_partida',
+    phase: 3,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'El verano pasado ardieron veinte mil hectáreas y prometieron una brigada permanente. He mirado el presupuesto de este año: la partida existe, tiene nombre y tiene cero euros.',
+    left: {
+      text: 'Reconocer que no se ha gastado un euro',
+      effects: { medios: 2, gobierno: -2 },
+      moralidad: 3,
+    },
+    right: {
+      text: '"Está pendiente de ejecución"',
+      effects: { gobierno: 1, medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_sequia_trasvase',
+    phase: 3,
+    character: 'El Cruzado',
+    characterImage: 'cruzado.webp',
+    text: 'Sin agua no hay comida, y el agua está arriba mientras aquí se seca. Traiga usted el trasvase y le aplaudo un año entero. No lo traiga, y le pongo tractores en todas las carreteras.',
+    left: {
+      text: 'Firmar el trasvase',
+      effects: { calle: 2, gobierno: -2, medios: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Decir que no y aguantar los tractores',
+      effects: { medios: 1, gobierno: 1, calle: -2 },
+      moralidad: 1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_ola_calor',
+    phase: 2,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.webp',
+    text: 'Cuarenta y dos grados seis días seguidos. La gente no habla de política: habla de si va a poder dormir. El que salga mañana diciendo algo útil sobre eso sube tres puntos.',
+    left: {
+      text: 'Salir con una medida pequeña y real',
+      effects: { calle: 2, caja: -1, gobierno: -1 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'No meterse en el asunto del calor',
+      effects: { gobierno: 1, calle: -1 },
+    },
+    pleases: 'left',
+  },
+
+  // --- El campo, que vota y además sabe cortar una carretera ---
+
+  {
+    id: 'fuera_tractores',
+    phase: 2,
+    character: 'El Escudero',
+    characterImage: 'escudero.webp',
+    text: 'Hay ciento veinte tractores a la entrada y otros tantos viniendo. Me toca salir a las nueve a decir algo. Dígame si salgo a escucharles o salgo a explicarles la normativa.',
+    left: {
+      text: 'Que salga a escucharles',
+      effects: { calle: 1, medios: 1, gobierno: -1 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'Que salga a explicarles la normativa',
+      effects: { gobierno: 1, calle: -2 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_lobo',
+    phase: 3,
+    character: 'La Presidenta Regional',
+    characterImage: 'presidentaregional.webp',
+    text: 'Aquí el lobo no es un debate, es un recuento: cuarenta ovejas en marzo. Ustedes lo protegen desde un despacho con moqueta. Levanten la protección o dejen de venir a pedir votos.',
+    left: {
+      text: 'Mantener la protección',
+      effects: { medios: 1, calle: -2 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'Cederle el control a la región',
+      effects: { calle: 2, medios: -2 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'fuera_precio_leche',
+    phase: 2,
+    character: 'El Hermano',
+    characterImage: 'hermano.webp',
+    text: 'Te lo cuento como me lo cuentan: al ganadero le pagan el litro por debajo de lo que le cuesta producirlo. Firma un precio mínimo y te llevas el campo entero. ¿Que se enfadan arriba? Pues que se enfaden.',
+    left: {
+      text: 'Firmar el precio mínimo',
+      effects: { calle: 2, caja: -1, medios: -1 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'Dejar que lo arregle el mercado',
+      effects: { gobierno: 1, calle: -2 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+
+  // --- La sanidad, que es de lo poco que todo el mundo mira de cerca ---
+
+  {
+    id: 'fuera_lista_espera',
+    phase: 2,
+    character: 'La Ministra',
+    characterImage: 'ministraincompetente.webp',
+    text: 'La lista de espera baja si sacamos del cómputo a los que aguardan una prueba previa. No es mentira: es otro criterio. El titular sería "bajan las listas" y nadie va a leer la nota al pie.',
+    left: {
+      text: 'Publicar el dato entero',
+      effects: { medios: 2, gobierno: -2 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Publicar el criterio nuevo',
+      effects: { gobierno: 1, calle: 1, medios: -2 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'fuera_urgencias_verano',
+    phase: 3,
+    character: 'El Periodista',
+    characterImage: 'periodista.webp',
+    text: 'En julio cerraron plantas enteras por vacaciones y las urgencias aguantaron con la mitad de gente. Tengo el cuadrante firmado. ¿Me sostiene usted que eso fue una decisión clínica?',
+    left: {
+      text: 'Reconocer que fue por dinero',
+      effects: { medios: 2, calle: 1, gobierno: -2 },
+      moralidad: 3,
+    },
+    right: {
+      text: '"Fue una reorganización estival"',
+      effects: { gobierno: 1, medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_vacuna_foto',
+    phase: 2,
+    character: 'El Jefe de Comunicación',
+    characterImage: 'jefecomunicacion.webp',
+    text: 'La campaña de vacunación arranca el lunes. Si se la pone usted delante de las cámaras, la cobertura sube siete puntos. También salen un mes de chistes con su brazo.',
+    left: {
+      text: 'Ponérsela en directo',
+      effects: { calle: 2, medios: 1, gobierno: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Que salga poniéndosela un médico conocido',
+      effects: { medios: 1, calle: -1 },
+    },
+    pleases: 'left',
+  },
+
+  // --- El deporte, que mueve más gente a la vez que ninguna otra cosa ---
+
+  {
+    id: 'fuera_final_palco',
+    phase: 2,
+    character: 'La Primera Dama',
+    characterImage: 'primeradama.webp',
+    text: 'Hay final el domingo y hay palco. Si vas, te pitan ochenta mil personas en directo y sale en medio mundo. Si no vas, dicen que te da miedo que te piten. Yo ya tengo el vestido.',
+    left: {
+      text: 'Ir al palco y aguantar el pitido',
+      effects: { calle: 1, medios: 1, gobierno: -1 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'Verlo en casa',
+      effects: { gobierno: 1, calle: -2 },
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_himno',
+    phase: 3,
+    character: 'El Cruzado',
+    characterImage: 'cruzado.webp',
+    text: 'Tres jugadores no cantaron el himno. Tres. Diga usted algo mañana o lo digo yo, y cuando lo diga yo va a ser mucho peor para todos, empezando por ellos.',
+    left: {
+      text: 'Que cada uno cante lo que quiera',
+      effects: { medios: 1, calle: -2 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Llamar al presidente de la federación',
+      effects: { calle: 1, medios: -2, gobierno: -1 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'fuera_club_deuda',
+    phase: 3,
+    character: 'El Ministro Caído',
+    characterImage: 'ministrocorrupto.webp',
+    text: 'El club de la ciudad está en concurso y debe cuatro años de impuestos. Perdonárselos es un escándalo de dos semanas. Que desaparezca es un funeral de treinta mil personas.',
+    left: {
+      text: 'Que pague como cualquiera',
+      effects: { medios: 2, calle: -2 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Aplazarle la deuda otros cuatro años',
+      effects: { calle: 2, caja: -1, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+
+  // --- La cultura, que no da votos pero quita muchos ---
+
+  {
+    id: 'fuera_cancion',
+    phase: 2,
+    character: 'El Jefe de Comunicación',
+    characterImage: 'jefecomunicacion.webp',
+    text: 'El cantante del verano le ha dedicado media canción. No es un halago. Lleva ocho millones de escuchas y la frase que peor nos deja se la sabe ya todo un instituto entero.',
+    left: {
+      text: 'Invitarle a una reunión y escucharle',
+      effects: { calle: 1, medios: 1, gobierno: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Que le respondan los nuestros en redes',
+      effects: { gobierno: 1, calle: -2, medios: -1 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_premio_incomodo',
+    phase: 3,
+    character: 'La Ministra de Igualdad',
+    characterImage: 'feminista.webp',
+    text: 'La película que arrasa este año va de un gobierno que tapa un caso. Me toca entregarle el premio y sonreír. Si no voy, el titular es que el Gobierno se ofende con el cine.',
+    left: {
+      text: 'Que vaya, lo entregue y aplauda de pie',
+      effects: { medios: 2, gobierno: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Mandar a alguien de segunda fila',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_donacion_museo',
+    phase: 3,
+    character: 'El Gurú',
+    characterImage: 'guru.webp',
+    text: 'Un coleccionista quiere donar su colección entera al Estado. Pide una sola cosa: que la sala lleve su nombre. Y que nadie mire de dónde salió el dinero con el que la compró.',
+    left: {
+      text: 'Aceptarla y mirar de dónde salió',
+      effects: { medios: 1, gobierno: -1, caja: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Aceptarla y poner la placa',
+      effects: { caja: 2, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+
+  // --- Cuando se para algo que nadie pensaba que podía pararse ---
+
+  {
+    id: 'fuera_apagon',
+    phase: 3,
+    character: 'La Ministra',
+    characterImage: 'ministraincompetente.webp',
+    text: 'Nos hemos quedado sin luz media tarde en medio país. Ya funciona. Todavía no sabemos por qué, y en dos horas tengo que explicar por qué delante de treinta cámaras.',
+    left: {
+      text: 'Que diga que aún no se sabe',
+      effects: { medios: 1, gobierno: -1, calle: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Darle una causa provisional que suene técnica',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'fuera_tren_parado',
+    phase: 2,
+    character: 'El Encuestador',
+    characterImage: 'encuestador.webp',
+    text: 'Tres horas parados dentro de un túnel, sin aire y sin información, con ochocientas personas y el móvil en la mano. Eso no es una avería: son ochocientos vídeos.',
+    left: {
+      text: 'Salir a pedir perdón esta misma noche',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Que lo explique la empresa',
+      effects: { gobierno: 1, calle: -2 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_obra_eterna',
+    phase: 3,
+    character: 'La Oposición',
+    characterImage: 'oposicionsuave.webp',
+    text: 'Esa obra lleva once años, tres prórrogas y dos gobiernos. La inauguran ustedes o la inauguramos nosotros, pero alguien va a cortar esa cinta antes de las elecciones.',
+    left: {
+      text: 'Abrirla a medias y cortar la cinta',
+      effects: { calle: 2, caja: -1, medios: -2 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Esperar a que esté terminada de verdad',
+      effects: { medios: 1, calle: -2, gobierno: -1 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+
+  // --- Y lo que ya se puede fabricar sin que se note ---
+
+  {
+    id: 'fuera_audio_falso',
+    phase: 3,
+    character: 'El Escudero',
+    characterImage: 'escudero.webp',
+    text: 'Circula un audio suyo diciendo algo que usted no ha dicho nunca. Es falso y lo sabemos. También sabemos que el desmentido lo va a oír diez veces menos gente que el original.',
+    left: {
+      text: 'Desmentirlo con nombre y apellidos',
+      effects: { medios: 1, calle: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'No darle oxígeno y callar',
+      effects: { gobierno: 1, medios: -1, calle: -1 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'fuera_discurso_maquina',
+    phase: 2,
+    character: 'El Jefe de Comunicación',
+    characterImage: 'jefecomunicacion.webp',
+    text: 'El discurso del martes lo ha escrito una máquina en once segundos y está mejor que el mío. No se nota nada. Lo único que no tiene es una sola cosa que usted piense de verdad.',
+    left: {
+      text: 'Reescribirlo usted esta noche',
+      effects: { medios: 1, calle: 1, gobierno: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Leerlo tal cual',
+      effects: { gobierno: 1, calle: -1 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'fuera_datos_sueltos',
+    phase: 3,
+    character: 'El Juez',
+    characterImage: 'juez.webp',
+    text: 'Un contratista suyo tenía los datos de dos millones de personas en un servidor sin contraseña. Llevan nueve meses ahí. Mi pregunta no es cómo pasó: es cuándo lo supieron ustedes.',
+    left: {
+      text: 'Avisar mañana a los dos millones',
+      effects: { medios: 2, calle: -1, gobierno: -2 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Cerrarlo sin avisar a nadie',
+      effects: { gobierno: 1, medios: -2, caja: -1 },
+      moralidad: -3,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'mopongo_aplicacion',
+    phase: 3,
+    character: 'Mopongo',
+    characterImage: 'mopongo.webp',
+    text: 'Levanta la mano y pregunta cuánta gente ha usado la aplicación que costó catorce millones. Nadie lo sabe. Ella sí: descargada nueve mil veces, abierta seiscientas.',
+    left: {
+      text: 'Pedir que se audite el contrato',
+      effects: { medios: 2, gobierno: -2, caja: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Anunciar la versión dos',
+      effects: { gobierno: 1, medios: -2, caja: -1 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+  },
+
   // --- LA VICEPRESIDENTA (idealista, ambiciosa, a un paso de montar lo suyo) ---
   {
     id: 'vice_sentido_comun',
@@ -5580,8 +6044,13 @@ export const contentCards: Card[] = [
   },
   {
     id: 'secuela_dato_cocinado',
+    // Medido con 600 partidas: la bandera se enciende en el 3,3% y solo en el
+    // 0,5% llega a los doce meses que pedia, asi que esta carta no salia
+    // NUNCA. El problema no era el peso -competia poco- sino la espera: doce
+    // meses son mas de media partida. Con ocho, el dato cocinado vuelve
+    // dentro de la misma legislatura, que ademas es cuando duele.
     phase: 2,
-    weight: 3,
+    weight: 5,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
     text: 'Los europeos han publicado los suyos esta mañana. No coinciden con los nuestros justo en la cifra que usted ha citado nueve veces. La diferencia son dos décimas. El titular son dos líneas y ya está escrito.',
@@ -5597,7 +6066,7 @@ export const contentCards: Card[] = [
       moralidad: -2,
     },
     pleases: 'left',
-    condition: (_s, _m, ctx) => ctx.flagAge('dato_cocinado') >= 12,
+    condition: (_s, _m, ctx) => ctx.flagAge('dato_cocinado') >= 8,
   },
   {
     id: 'secuela_sumario_filtrado',
@@ -5733,7 +6202,10 @@ export const contentCards: Card[] = [
   {
     id: 'acreedor_unico',
     phase: 3,
-    weight: 4,
+    // Veinte meses despues de un rescate que ya de por si es raro daba una
+    // carta que no salia nunca. Catorce sigue siendo "mucho despues" y cabe
+    // en una partida buena.
+    weight: 6,
     character: 'El Espejo',
     characterImage: 'espejo.svg',
     text: 'Despacho vacío, once de la noche. Coge un papel y apunta lo que debe y a quién. Es un solo nombre. Luego repasa lo que ha decidido este mes y se da cuenta de que no se le ocurrió a usted casi nada.',
@@ -5757,11 +6229,11 @@ export const contentCards: Card[] = [
     // Las cinco escritas una a una a propósito: así se ve de un vistazo qué
     // deudas cuentan y la auditoría del mazo las encuentra.
     condition: (_s, _m, ctx) =>
-      ctx.flagAge('debe_favor_comunicacion') >= 20 ||
-      ctx.flagAge('deuda_escudero') >= 20 ||
-      ctx.flagAge('deuda_socia') >= 20 ||
-      ctx.flagAge('deuda_ministro') >= 20 ||
-      ctx.flagAge('deuda_magistrado') >= 20,
+      ctx.flagAge('debe_favor_comunicacion') >= 14 ||
+      ctx.flagAge('deuda_escudero') >= 14 ||
+      ctx.flagAge('deuda_socia') >= 14 ||
+      ctx.flagAge('deuda_ministro') >= 14 ||
+      ctx.flagAge('deuda_magistrado') >= 14,
   },
 
   // ==========================================================================
