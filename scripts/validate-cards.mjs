@@ -17,6 +17,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const CONTENT_FILE = fileURLToPath(new URL('../src/data/cards.content.ts', import.meta.url))
+const CARDS_FILE = fileURLToPath(new URL('../src/data/cards.ts', import.meta.url))
 const RETRATOS_DIR = fileURLToPath(new URL('../public/characters', import.meta.url))
 const RETRATOS = new Set(readdirSync(RETRATOS_DIR))
 const VALID_STATS = ['medios', 'gobierno', 'calle', 'caja']
@@ -115,6 +116,16 @@ const MAYUSCULAS_PERMITIDAS = new Set([
   'Como', 'Que', 'Cuando', 'Donde', 'Quien', 'Txekila',
   // "Como Pedro por su casa" es una frase hecha de diccionario, no un senor.
   'Pedro',
+])
+
+// Y las que la regla de arriba no ve: las marcas escriben la mayuscula EN
+// MEDIO (WhatsApp, PowerPoint) y los organismos van en siglas (UE, ONG). La
+// primera version de esta red solo miraba Palabras-Asi y se dejo fuera justo
+// eso: dos marcas y un organismo seguian dentro despues de la limpieza.
+const SIGLAS_PERMITIDAS = new Set([
+  'ONG', 'GPS', 'VIP', 'ADN', 'IVA', 'IRPF', 'PIB', 'TV', 'SMS',
+  // Palabras normales que alguien grita en mayusculas dentro de una carta.
+  'NO', 'SI', 'ALTO', 'SECRETO', 'ES', 'YA', 'URGENTE', 'RESERVADO',
 ])
 
 // Al jugador se le trata de USTED en todo el juego. Las dos excepciones son
@@ -283,6 +294,19 @@ function validate(cards) {
           )
         }
       }
+      // Marcas y siglas, que la regla de arriba no ve por escribirse distinto.
+      for (const bruto of txt.split(/\s+/)) {
+        const w = bruto.replace(/^[¿¡"«(]+/, '').replace(/[.,;:!?"»)]+$/, '')
+        if (w.length < 2) continue
+        const camello = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü]*[a-záéíóúñü][A-ZÁÉÍÓÚÑÜ]/.test(w)
+        const siglas = /^[A-ZÁÉÍÓÚÑÜ]{2,}$/.test(w)
+        if (!camello && !siglas) continue
+        if (SIGLAS_PERMITIDAS.has(sinTildes(w))) continue
+        warnings.push(
+          `${label}: "${w}" parece una marca o unas siglas en "${donde}". ` +
+            'Si nombra algo real, fuera; si no, añádelo a SIGLAS_PERMITIDAS.'
+        )
+      }
     }
     if (card.text && !TUTEAN.has(card.character)) {
       const sinCitas = card.text.replace(/"[^"]*"/g, '')
@@ -314,6 +338,64 @@ function validate(cards) {
   return { errors, warnings }
 }
 
+// LAS CARTAS DEL OTRO ARCHIVO. `cards.ts` tiene tipos y lógica, así que no se
+// puede leer como un objeto plano y hasta ahora se quedaba entera fuera de la
+// revisión: 38 cartas sin mirar, y entre ellas TODOS los finales, que son el
+// texto que más se lee del juego y el que se comparte. Ahí seguían escondidas
+// dos marcas después de una limpieza de nombres propios.
+//
+// No hace falta ejecutarlo para lo que importa aquí: se sacan los textos con
+// una expresión regular y se les pasan las mismas reglas de nombres propios,
+// marcas y tipografía. Lo estructural (efectos, ids, encadenados) se queda
+// fuera a propósito, porque eso sí necesitaría evaluar el archivo.
+function revisarTextosSueltos(ruta, avisos, errores) {
+  let src
+  try {
+    src = readFileSync(ruta, 'utf8')
+  } catch {
+    return 0
+  }
+  const campos = /(?:text|epilogueText): '((?:[^'\\]|\\.)*)'/g
+  let m
+  let n = 0
+  while ((m = campos.exec(src))) {
+    n++
+    const antes = src.slice(0, m.index)
+    const ids = antes.match(/id: '([^']+)'/g)
+    const label = `"${ids ? ids[ids.length - 1].slice(5, -1) : '?'}" (cards.ts)`
+    const txt = m[1]
+    const lugar = sinTildes(txt).match(LUGARES_RE)
+    if (lugar) {
+      errores.push(
+        `${label}: nombre propio real ("${lugar[1]}"). ` +
+          'En el mazo no hay paises, ciudades ni organismos con nombre.'
+      )
+    }
+    for (const frase of txt.split(/(?<=[.!?:»"])\s+/)) {
+      const palabras = frase.trim().split(/\s+/)
+      for (let i = 1; i < palabras.length; i++) {
+        const w = palabras[i].replace(/^[¿¡"«(]+/, '').replace(/[.,;:!?"»)]+$/, '')
+        if (!/^[A-ZÁÉÍÓÚÑÜ][a-záéíóúñü]{2,}$/.test(w)) continue
+        if (MAYUSCULAS_PERMITIDAS.has(sinTildes(w))) continue
+        avisos.push(`${label}: "${w}" va en mayúscula a mitad de frase. ¿Nombre propio real?`)
+      }
+    }
+    for (const bruto of txt.split(/\s+/)) {
+      const w = bruto.replace(/^[¿¡"«(]+/, '').replace(/[.,;:!?"»)]+$/, '')
+      if (w.length < 2) continue
+      const camello = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü]*[a-záéíóúñü][A-ZÁÉÍÓÚÑÜ]/.test(w)
+      const siglas = /^[A-ZÁÉÍÓÚÑÜ]{2,}$/.test(w)
+      if (!camello && !siglas) continue
+      if (SIGLAS_PERMITIDAS.has(sinTildes(w))) continue
+      avisos.push(`${label}: "${w}" parece una marca o unas siglas.`)
+    }
+    for (const [ch, nombre] of RAROS) {
+      if (txt.includes(ch)) avisos.push(`${label}: ${nombre}. Reescríbelo hablado.`)
+    }
+  }
+  return n
+}
+
 function main() {
   const source = readFileSync(CONTENT_FILE, 'utf8')
   let cards
@@ -330,8 +412,9 @@ function main() {
   }
 
   const { errors, warnings } = validate(cards)
+  const sueltos = revisarTextosSueltos(CARDS_FILE, warnings, errors)
 
-  console.log(`Cartas analizadas: ${cards.length}`)
+  console.log(`Cartas analizadas: ${cards.length} (+ ${sueltos} textos de cards.ts)`)
 
   if (warnings.length > 0) {
     console.log(`\nAVISOS (${warnings.length}, no bloquean, pero échales un ojo):`)

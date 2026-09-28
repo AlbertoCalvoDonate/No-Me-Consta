@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
 import { useGameStore } from './hooks/useGameStore'
 import { SwipeCard } from './components/SwipeCard'
@@ -105,6 +105,31 @@ const botonGameOverSec: CSSProperties = {
   cursor: 'pointer',
 }
 
+// El difuminado del borde de abajo del relato del final. Empieza a apagarse
+// pronto (78%) y no llega a cero: cortar del todo escondería una línea entera,
+// y lo que se quiere es que se adivine que hay más, no taparlo.
+const DEGRADADO_RELATO =
+  'linear-gradient(to bottom, #000 78%, rgba(0,0,0,0.55) 92%, rgba(0,0,0,0.12) 100%)'
+
+// Alto de la ventana, en vivo. Se usa para apretar la pantalla de final en
+// móviles bajitos: girar el teléfono o abrir la barra del navegador cambia el
+// hueco disponible, así que no vale medirlo una vez al arrancar.
+function useAltoVentana(): number {
+  const [alto, setAlto] = useState(() =>
+    typeof window === 'undefined' ? 800 : window.innerHeight
+  )
+  useEffect(() => {
+    const mirar = () => setAlto(window.innerHeight)
+    window.addEventListener('resize', mirar)
+    window.addEventListener('orientationchange', mirar)
+    return () => {
+      window.removeEventListener('resize', mirar)
+      window.removeEventListener('orientationchange', mirar)
+    }
+  }, [])
+  return alto
+}
+
 export default function App() {
   // Pantalla de inicio: solo se ve una vez al cargar la web, no vuelve a
   // salir al reiniciar partida (restart lleva directo a jugar de nuevo).
@@ -206,10 +231,44 @@ export default function App() {
   // corta, el modo compacto salta antes (100 en vez de 160 caracteres) para
   // dejarle sitio. Medido igual que el resto, sigue sin hacer falta scroll
   // hasta 360x640.
+  //
+  // Y ADEMÁS SE MIRA LA ALTURA DE LA VENTANA, que es lo que faltaba. Decidir
+  // solo por la longitud del texto da por hecho un móvil de tamaño medio;
+  // medido después en los cuatro tamaños de siempre, en un Android de 360x640
+  // -que no es raro, es de los más comunes- había que hacer scroll en 14 de
+  // los 31 finales, y en uno de 320x568 en los 31. Con el epíteto por debajo
+  // del borde, que es justo lo que el jugador quiere leer y compartir.
+  const altoVentana = useAltoVentana()
+  const pantallaBaja = altoVentana < 700
+  // El relato del final se desplaza cuando no cabe. `hayMasRelato` dice si
+  // queda algo por debajo del borde, para difuminarlo y que se vea que hay más.
+  const relatoRef = useRef<HTMLDivElement>(null)
+  const [hayMasRelato, setHayMasRelato] = useState(false)
   const textoLen = deathReason?.length ?? 0
   const imagenDisponible = gameOver ? ilustracionFin(currentCard.id) : undefined
   const ilustracion = imagenDisponible && textoLen <= 190 ? imagenDisponible : undefined
-  const modoCompacto = textoLen > (ilustracion ? 65 : 160)
+  const modoCompacto = pantallaBaja || textoLen > (ilustracion ? 65 : 160)
+
+  useLayoutEffect(() => {
+    const el = relatoRef.current
+    if (!gameOver || !el) {
+      setHayMasRelato(false)
+      return
+    }
+    const mirar = () => setHayMasRelato(el.scrollHeight - el.clientHeight - el.scrollTop > 4)
+    mirar()
+    el.addEventListener('scroll', mirar, { passive: true })
+    // La ilustración del final llega tarde (viene de la red) y al entrar
+    // empuja al resto hacia abajo: sin esto el degradado se decidiría antes
+    // de que la pantalla esté completa.
+    const ro = new ResizeObserver(mirar)
+    ro.observe(el)
+    for (const hijo of el.children) ro.observe(hijo)
+    return () => {
+      el.removeEventListener('scroll', mirar)
+      ro.disconnect()
+    }
+  }, [gameOver, deathReason, ilustracion, altoVentana])
 
   // La marca a batir. Solo hay algo que decir si ya habías jugado (récord > 0)
   // y no empataste. Cuando queda cerca se dice a cuánto, que pica más que el
@@ -459,6 +518,7 @@ export default function App() {
                         epílogos del juego). El `margin:auto` centra el relato
                         cuando sobra sitio. */}
                     <div
+                      ref={relatoRef}
                       style={{
                         flex: 1,
                         minHeight: 0,
@@ -467,6 +527,13 @@ export default function App() {
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'safe center',
+                        // Y SI QUEDA ALGO POR DEBAJO, QUE SE NOTE. El borde
+                        // se difumina mientras haya más relato abajo. Sin esto
+                        // el corte era una línea recta a media palabra -o a
+                        // media chapa del indicador- y no parecía que hubiera
+                        // más: parecía roto. Desaparece al llegar al final.
+                        WebkitMaskImage: hayMasRelato ? DEGRADADO_RELATO : undefined,
+                        maskImage: hayMasRelato ? DEGRADADO_RELATO : undefined,
                       }}
                     >
                     {/* Las piezas del desenlace entran una detras de otra en
@@ -479,10 +546,16 @@ export default function App() {
                       <div
                         style={{
                           width: '100%',
-                          height: 82,
+                          // En un móvil bajito la ilustración es lo primero que
+                          // hay que apretar: son 84px de los 405 que mide el
+                          // desenlace más largo, y quitarle un tercio es lo que
+                          // hace que en un 360x640 quepa el epíteto, que es lo
+                          // que el jugador se lleva. Sigue viéndose: es una
+                          // franja, no una miniatura.
+                          height: pantallaBaja ? 54 : 82,
                           borderRadius: 10,
                           overflow: 'hidden',
-                          marginBottom: 10,
+                          marginBottom: pantallaBaja ? 7 : 10,
                           border: '1px solid rgba(255,255,255,0.12)',
                         }}
                       >

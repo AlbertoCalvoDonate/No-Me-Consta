@@ -1327,7 +1327,7 @@ export const contentCards: Card[] = [
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
     text: 'Hemos detectado que un ministerio propio está siendo vigilado por servicios de inteligencia extranjeros. La filtración viene de dentro.',
-    left: { text: 'Investigación con la UE', effects: { medios: 1, gobierno: -1 }, moralidad: 1 },
+    left: { text: 'Investigarlo con los socios', effects: { medios: 1, gobierno: -1 }, moralidad: 1 },
     right: { text: 'Gestión interna, sin ruido', effects: { gobierno: 1, medios: -2 }, moralidad: -1 },
   },
   {
