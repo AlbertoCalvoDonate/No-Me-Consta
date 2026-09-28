@@ -80,6 +80,12 @@ const LUGARES = [
   // que el dia que alguien los reescriba sin querer, salte aqui y no en X.
   'Carabanchel', 'Mostoles', 'Alicante', 'Jerez', 'Soria', 'Twitter',
   'Berlanga', 'Eurostat', 'Corte Ingles',
+  // Organismos con nombre propio. "La Agencia Tributaria" llego a ser un
+  // PERSONAJE del juego -el que firma el final de la caja B- y no saltaba,
+  // porque hasta ahora esta regla no miraba de quien es la voz de la carta.
+  // Ahora es "La Inspeccion", como El Interventor o El Expediente.
+  'Agencia Tributaria', 'Seguridad Social', 'Guardia Civil', 'Policia Nacional',
+  'Banco de Espana', 'Casa Real', 'OTAN', 'FMI', 'BCE', 'IBEX', 'AEAT', 'CNI',
 ]
 // Se compara sin tildes para que 'Sahara' cace tambien 'Sahara' con tilde.
 const sinTildes = (x) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -305,6 +311,19 @@ function validate(cards) {
         warnings.push(
           `${label}: "${w}" parece una marca o unas siglas en "${donde}". ` +
             'Si nombra algo real, fuera; si no, añádelo a SIGLAS_PERMITIDAS.'
+        )
+      }
+    }
+    // DE QUIEN ES LA VOZ. Un nombre propio real puede colarse tambien aqui, y
+    // durante meses hubo uno: el final de la caja B lo firmaba un organismo
+    // con su nombre oficial. Los demas personajes son arquetipos -El
+    // Interventor, La Redaccion, El Expediente- y este tiene que serlo igual.
+    if (typeof card.character === 'string') {
+      const quien = sinTildes(card.character).match(LUGARES_RE)
+      if (quien) {
+        errors.push(
+          `${label}: el personaje se llama "${card.character}", que nombra algo real ("${quien[1]}"). ` +
+            'En el mazo los personajes son arquetipos, no organismos con nombre.'
         )
       }
     }

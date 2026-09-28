@@ -139,7 +139,7 @@ const endingCards: Card[] = [
   {
     id: 'final_caja_baja',
     phase: 4,
-    character: 'La Agencia Tributaria',
+    character: 'La Inspección',
     text: 'Hacienda ha embargado las cuentas mientras dura la instrucción. La de la caja B, esa que llevaba años funcionando como un cajero automático particular. Ya ni para imprimir un cartel de campaña.',
     left: { text: 'Aceptar el embargo y colaborar', effects: {}, epilogueText: 'El partido queda bajo administración judicial, como una empresa cualquiera en concurso. Fin del gobierno.' },
     right: { text: 'Recurrir el embargo por todas las vías', effects: {}, epilogueText: 'Gana tiempo, pero pierde toda la campaña por el camino. Fin del gobierno, con las costas a su cargo.' },
