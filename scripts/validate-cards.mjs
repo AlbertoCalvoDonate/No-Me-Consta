@@ -75,10 +75,47 @@ const LUGARES = [
   'Cataluna', 'Catalunya', 'Euskadi', 'Galicia', 'Andalucia', 'Extremadura',
   'Murcia', 'Baleares', 'Canarias', 'Navarra', 'Moncloa', 'Ferraz', 'Genova',
   'Donana', 'UCO',
+  // Estos nueve se colaron y estuvieron meses dentro. Se quedan escritos para
+  // que el dia que alguien los reescriba sin querer, salte aqui y no en X.
+  'Carabanchel', 'Mostoles', 'Alicante', 'Jerez', 'Soria', 'Twitter',
+  'Berlanga', 'Eurostat', 'Corte Ingles',
 ]
 // Se compara sin tildes para que 'Sahara' cace tambien 'Sahara' con tilde.
 const sinTildes = (x) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 const LUGARES_RE = new RegExp('\\b(' + LUGARES.join('|') + ')\\b', 'i')
+
+// Y AHORA AL REVES, que es lo que de verdad funciona. La lista de arriba solo
+// caza lo que a alguien se le ocurrio escribir en ella; barriendo el mazo
+// aparecieron nueve nombres reales que no estaban previstos -una red social,
+// unos grandes almacenes, cuatro ciudades, un director de cine y una oficina
+// europea-, y ninguno salto. Asi que en vez de una lista negra que hay que
+// adivinar, aqui hay una lista blanca: toda palabra en mayuscula A MITAD DE
+// FRASE es sospechosa hasta que este permitida.
+//
+// Lo permitido son instituciones genericas (Gobierno, Congreso, Hacienda),
+// los nombres de los personajes del juego, las fiestas del calendario y las
+// pocas palabras que el castellano escribe en mayuscula. Todo lo demas lo
+// tiene que mirar una persona: casi siempre sera un nombre propio real.
+const MAYUSCULAS_PERMITIDAS = new Set([
+  // Instituciones y cargos, sin nombre propio: describen, no senalan.
+  'Gobierno', 'Estado', 'Congreso', 'Senado', 'Parlamento', 'Consejo', 'Ministros',
+  'Ministerio', 'Ministra', 'Ministro', 'Presidencia', 'Presidente', 'Presidenta',
+  'Vicepresidenta', 'Vicepresidente', 'Hacienda', 'Fiscalia', 'Fiscal', 'Justicia',
+  'Interior', 'Sanidad', 'Educacion', 'Igualdad', 'Defensa', 'Exteriores',
+  'Trabajo', 'Energia', 'Bienestar', 'Emocional', 'Administracion', 'Union',
+  'Constitucion', 'Tribunal', 'Supremo', 'Audiencia', 'Juzgado', 'Junta',
+  'Electoral', 'Diputacion', 'Ayuntamiento', 'Palacio', 'Moncloa',
+  // Personajes del reparto tal y como se les nombra dentro de las cartas.
+  'Escudero', 'Socia', 'Incomoda', 'Regional', 'Exiliado', 'Expresidente',
+  'Cruzado', 'Periodista', 'Encuestador', 'Juez', 'Hermano', 'Dama', 'Guru',
+  'Mopongo', 'Fontanera', 'Comisario', 'Agente', 'Espejo', 'Independentista',
+  'Galgo', 'Karim',
+  // Calendario y formulas.
+  'Navidad', 'Nochebuena', 'Nochevieja', 'Reyes', 'Semana', 'Santa', 'Dios',
+  'Como', 'Que', 'Cuando', 'Donde', 'Quien', 'Txekila',
+  // "Como Pedro por su casa" es una frase hecha de diccionario, no un senor.
+  'Pedro',
+])
 
 // Al jugador se le trata de USTED en todo el juego. Las dos excepciones son
 // de familia y estan puestas a proposito: el hermano y la mujer tutean, y eso
@@ -230,6 +267,21 @@ function validate(cards) {
           `${label}: nombre propio real ("${lugar[1]}") en "${donde}". ` +
             'En el mazo no hay paises, ciudades ni organismos con nombre: lo real son las situaciones.'
         )
+      }
+      // La red de verdad: mayusculas a mitad de frase que nadie ha permitido.
+      // Se corta por frases y se salta la primera palabra de cada una, que va
+      // en mayuscula por gramatica y no dice nada.
+      for (const frase of txt.split(/(?<=[.!?:»"])\s+/)) {
+        const palabras = frase.trim().split(/\s+/)
+        for (let i = 1; i < palabras.length; i++) {
+          const w = palabras[i].replace(/^[¿¡"«(]+/, '').replace(/[.,;:!?"»)]+$/, '')
+          if (!/^[A-ZÁÉÍÓÚÑÜ][a-záéíóúñü]{2,}$/.test(w)) continue
+          if (MAYUSCULAS_PERMITIDAS.has(sinTildes(w))) continue
+          warnings.push(
+            `${label}: "${w}" va en mayúscula a mitad de frase en "${donde}". ` +
+              'Si es un nombre propio real, fuera; si no lo es, añádelo a MAYUSCULAS_PERMITIDAS.'
+          )
+        }
       }
     }
     if (card.text && !TUTEAN.has(card.character)) {
