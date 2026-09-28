@@ -182,7 +182,8 @@ export function StartScreen({
         </div>
 
         <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: compacto ? 14 : 16, lineHeight: 1.35, color: '#b7b1a3' }}>
-          Si una llega a 0 o al máximo, cae el gobierno. El tuyo.
+          Si una llega a 0 o al máximo, cae el gobierno. El tuyo. Cuando un
+          icono se pone rojo es que esa ya puede tumbarte, sea por donde sea.
         </p>
 
         {/* LOS PUNTOS. Es la habilidad central del juego y no se explicaba en

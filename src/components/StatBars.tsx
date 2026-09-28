@@ -132,6 +132,16 @@ export function StatBars({
   const leftOpacity = useTransform(x, [-SWIPE_REVEAL_DISTANCE, -fadeStart, 0], [1, 0, 0])
   const rightOpacity = useTransform(x, [0, fadeStart, SWIPE_REVEAL_DISTANCE], [0, 0, 1])
 
+  // ¿Está el registro judicial encima de la mesa? Se calcula aquí, una sola
+  // vez, porque lo necesitan dos cosas: la barra de la caja para pintarse
+  // roja y el panel de abajo para explicar POR QUÉ está roja. Sin lo
+  // segundo, lo primero parecía un error: el tutorial dice que el peligro
+  // es llegar a 0 o al máximo, y esto pinta de rojo una barra a la mitad.
+  const peligroRegistro =
+    !acabada &&
+    turn >= REGISTRO_MIN_TURN &&
+    amenazaRegistro(stats, moralidad, anger['El Juez'] ?? 0)
+
   // Qué barra tiene abierta la explicación (null = ninguna). Se toca el icono.
   const [abierto, setAbierto] = useState<keyof Stats | null>(null)
   // Si la partida acaba con el panel abierto, se cierra solo: se quedaba
@@ -181,12 +191,7 @@ export function StatBars({
           // las muertes, y en 91 de ellas la caja estaba a 8, que es justo
           // donde el rojo normal todavia no llega: una muerte de cada
           // veintiocho caia sin un solo aviso en pantalla. Ahora avisa.
-          const registro =
-            key === 'caja' &&
-            !acabada &&
-            turn >= REGISTRO_MIN_TURN &&
-            amenazaRegistro(stats, moralidad, anger['El Juez'] ?? 0)
-          const critical = stats[key] <= 1 || stats[key] >= 9 || registro
+          const critical = stats[key] <= 1 || stats[key] >= 9 || (key === 'caja' && peligroRegistro)
           // Reventado = ya esta en el extremo y corre la prorroga. Distinto de
           // critical, que es solo "a un paso".
           const reventado = !acabada && (stats[key] <= 0 || stats[key] >= STAT_MAX)
@@ -330,6 +335,29 @@ export function StatBars({
             <div style={{ fontWeight: 500, fontSize: 15, lineHeight: 1.35, color: '#e8e2d4' }}>
               {INFO[abierto].que}
             </div>
+            {/* La única muerte del juego que no es "barra a 0 o al tope" se
+                explica aquí, y solo cuando toca: mientras no haya peligro no
+                hay nada que contar, y contándolo antes se destripa. Sin
+                números, como todo lo demás. */}
+            {abierto === 'caja' && peligroRegistro && (
+              <div
+                style={{
+                  marginTop: 8,
+                  padding: '7px 9px',
+                  borderRadius: 8,
+                  background: 'rgba(214,74,74,0.14)',
+                  border: '1px solid rgba(214,74,74,0.45)',
+                  fontWeight: 500,
+                  fontSize: 13,
+                  lineHeight: 1.35,
+                  color: '#f0b4b4',
+                }}
+              >
+                Hay una causa con su nombre. Para que vengan a registrar no hace
+                falta que esta barra se llene: basta con este dinero encima y un
+                juez que ya no le deba nada.
+              </div>
+            )}
             <div
               style={{
                 fontWeight: 500,
