@@ -161,6 +161,16 @@ export function StartScreen({
         <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: 16, lineHeight: 1.4, color: '#b7b1a3' }}>
           Si una llega a 0 o al máximo, cae el gobierno. El tuyo.
         </p>
+
+        {/* LOS PUNTOS. Es la habilidad central del juego y no se explicaba en
+            ninguna parte: el jugador los veia encenderse y tenia que deducir
+            solo que significaban. Decir que hay puntos y que NO dicen la
+            direccion es lo que convierte el juego en un juego de aprenderse al
+            reparto, que es de lo que va. */}
+        <p style={{ ...pixel, margin: '10px 0 0', fontWeight: 500, fontSize: 16, lineHeight: 1.4, color: '#b7b1a3' }}>
+          Al arrastrar se encienden puntos sobre lo que va a moverse. Dicen
+          cuánto, no hacia dónde: eso se aprende mirando quién habla.
+        </p>
       </div>
 
       {/* Marca personal: como en Reigns, cuánto aguantaste y qué has coleccionado
