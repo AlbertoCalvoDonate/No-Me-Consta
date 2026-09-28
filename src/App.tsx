@@ -425,6 +425,7 @@ export default function App() {
                 acabada={gameOver}
                 anger={anger}
                 favor={favor}
+                moralidad={moralidad}
               />
 
               <div

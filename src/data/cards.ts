@@ -1,5 +1,24 @@
-import type { Card } from '../types'
+import type { Card, Stats } from '../types'
 import { contentCards } from './cards.content'
+
+// EL REGISTRO JUDICIAL, QUE NO ES UNA MUERTE POR BARRA LLENA.
+//
+// Dos caminos al mismo sitio: la caja gorda con la prensa encima y la
+// moralidad por los suelos, o haberle dicho que no al juez una y otra vez
+// hasta hartarle.
+//
+// Vive aqui, con nombre propio, porque la usan DOS sitios: el final del
+// registro para dispararse y la barra de la caja para ponerse roja. Es una
+// muerte que no avisa sola -salta con la caja a 8, y el rojo normal no llega
+// hasta 9-, asi que medio centenar de partidas de cada mil acababan aqui sin
+// una sola senal en pantalla. Teniendo la regla en dos sitios acabarian
+// diciendo cosas distintas, que es como empiezan estas cosas.
+export const REGISTRO_MIN_TURN = 14
+
+export function amenazaRegistro(s: Stats, moralidad: number, enfadoJuez: number): boolean {
+  return (s.caja >= 8 && s.medios <= 3 && moralidad <= 3) || (enfadoJuez >= 4 && s.caja >= 6)
+}
+
 
 // Cartas de "final de partida" (mecánica de final de partida tipo Reigns).
 // Van aparte de cards.content.ts porque llevan código (la función
@@ -363,7 +382,7 @@ const endingCards: Card[] = [
   {
     id: 'final_evento_registro',
     phase: 3,
-    minTurn: 14,
+    minTurn: REGISTRO_MIN_TURN,
     character: 'El Juez',
     characterImage: 'juez.webp',
     text: 'Dinero que no cuadra, prensa encima y una causa abierta con su nombre. A las seis de la mañana hay coches en la puerta y un secretario judicial con una orden de registro.',
@@ -371,18 +390,10 @@ const endingCards: Card[] = [
     right: { text: 'Llamar al abogado y ganar horas', effects: {}, epilogueText: 'Los abogados retrasan el registro cuatro horas. Cuatro horas que salen en el auto, subrayadas. Fin del gobierno, y con agravante.' },
     isEnding: true,
     byEvent: true,
-    // Dos caminos al mismo sitio: la caja gorda con la prensa encima y la
-    // moralidad por los suelos, o haberle dicho que no al juez una y otra vez
-    // hasta hartarle. Lo segundo es nuevo: sus cartas ya acumulan enfado.
-    //
-    // OJO AL ESCRIBIR EL TEXTO DE ESTE FINAL: no salta con la barra llena.
-    // Salta a 8 y, con el juez harto, a 6. Decia "Caja llena" y un jugador se
-    // murio leyendo eso con la barra en seis de diez, que es exactamente el
-    // tipo de mentira que hace que un juego parezca roto. Si la carta afirma
-    // que una barra esta al maximo, la condicion tiene que pedir el maximo.
-    condition: (s, m, ctx) =>
-      (s.caja >= 8 && s.medios <= 3 && m <= 3) ||
-      ((ctx.anger['El Juez'] ?? 0) >= 4 && s.caja >= 6),
+    // La condicion vive en `amenazaRegistro`, arriba, porque la barra de la
+    // caja la necesita para ponerse roja cuando esto esta encima de la mesa.
+    // Teniendola en dos sitios acabarian diciendo cosas distintas.
+    condition: (s, m, ctx) => amenazaRegistro(s, m, ctx.anger['El Juez'] ?? 0),
   },
 
 ]

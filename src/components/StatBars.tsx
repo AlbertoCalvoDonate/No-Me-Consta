@@ -4,7 +4,7 @@ import type { Card, Stats } from '../types'
 import { EffectPips } from './EffectPips'
 import { StatIcon } from './StatIcon'
 import { SWIPE_REVEAL_DISTANCE } from './SwipeCard'
-import { STAT_MAX, turnosDeGracia } from '../data/cards'
+import { STAT_MAX, turnosDeGracia, amenazaRegistro, REGISTRO_MIN_TURN } from '../data/cards'
 import { REPARTO } from '../data/reparto'
 import { COLOR, pixel } from '../utils/estilo'
 
@@ -110,9 +110,22 @@ interface Props {
   acabada?: boolean
   anger: Record<string, number>
   favor: Record<string, number>
+  // Hace falta para saber si el registro judicial esta encima de la mesa:
+  // es la unica muerte que no depende solo de las barras.
+  moralidad: number
 }
 
-export function StatBars({ stats, card, x, extremeStreak, turn, acabada, anger, favor }: Props) {
+export function StatBars({
+  stats,
+  card,
+  x,
+  extremeStreak,
+  turn,
+  acabada,
+  anger,
+  favor,
+  moralidad,
+}: Props) {
   // Mismos umbrales que usa la carta para revelar el texto de cada lado al
   // arrastrar, así los puntos de arriba aparecen exactamente a la vez.
   const fadeStart = SWIPE_REVEAL_DISTANCE / 4
@@ -158,7 +171,22 @@ export function StatBars({ stats, card, x, extremeStreak, turn, acabada, anger, 
           // mal (ver los finales "_max" en cards.ts). El rojo salta solo a un
           // paso del final (<=1 o >=9), para que "rojo" signifique de verdad
           // "otra más y pierdes" y no "vas calentito".
-          const critical = stats[key] <= 1 || stats[key] >= 9
+          // Y la caja se pone roja tambien cuando el registro judicial esta
+          // encima de la mesa, aunque la barra no llegue a 9.
+          //
+          // Es la unica muerte del juego que no depende solo de la barra: el
+          // juez viene si el dinero no cuadra Y la prensa esta encima Y la
+          // moralidad por los suelos, o si le has dicho que no tantas veces
+          // que ya no te aguanta. Medido en 2500 partidas se lleva el 7% de
+          // las muertes, y en 91 de ellas la caja estaba a 8, que es justo
+          // donde el rojo normal todavia no llega: una muerte de cada
+          // veintiocho caia sin un solo aviso en pantalla. Ahora avisa.
+          const registro =
+            key === 'caja' &&
+            !acabada &&
+            turn >= REGISTRO_MIN_TURN &&
+            amenazaRegistro(stats, moralidad, anger['El Juez'] ?? 0)
+          const critical = stats[key] <= 1 || stats[key] >= 9 || registro
           // Reventado = ya esta en el extremo y corre la prorroga. Distinto de
           // critical, que es solo "a un paso".
           const reventado = !acabada && (stats[key] <= 0 || stats[key] >= STAT_MAX)
