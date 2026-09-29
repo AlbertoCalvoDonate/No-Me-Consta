@@ -116,7 +116,7 @@ const MAYUSCULAS_PERMITIDAS = new Set([
   'Escudero', 'Socia', 'Incomoda', 'Regional', 'Exiliado', 'Expresidente',
   'Cruzado', 'Periodista', 'Encuestador', 'Juez', 'Hermano', 'Dama', 'Guru',
   'Mopongo', 'Fontanera', 'Comisario', 'Agente', 'Espejo', 'Independentista',
-  'Galgo', 'Karim',
+  'Galgo', 'Karim', 'Caido',
   // Calendario y formulas.
   'Navidad', 'Nochebuena', 'Nochevieja', 'Reyes', 'Semana', 'Santa', 'Dios',
   'Como', 'Que', 'Cuando', 'Donde', 'Quien', 'Txekila',
