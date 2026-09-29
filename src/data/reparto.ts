@@ -37,7 +37,7 @@ export const REPARTO: Personaje[] = [
   { nombre: 'El Periodista', imagen: 'periodista.webp', dueno: 'medios', quien: 'Decide qué es noticia, a qué hora y con qué titular.' },
   { nombre: 'El Jefe de Comunicación', imagen: 'jefecomunicacion.webp', dueno: 'medios', quien: 'Escribe lo que usted dice. Y lo que no dice.' },
   { nombre: 'El Escudero', imagen: 'escudero.webp', dueno: 'medios', quien: 'Sale a defender lo indefendible cada mañana.' },
-  { nombre: 'El Juez', imagen: 'juez.webp', dueno: 'medios', quien: 'Instruye. Obstruirle sale caro, y tarde.' },
+  { nombre: 'El Juez', imagen: 'juez.webp', dueno: 'medios', quien: 'Preside la sala. Y sabe lo que se dijo de él cuando le pusieron ahí.' },
   { nombre: 'El Tertuliano', dueno: 'medios', quien: 'No investiga ni pregunta: tiene minutos, y con eso basta.' },
 
   // GOBIERNO — que la coalicion no se rompa
