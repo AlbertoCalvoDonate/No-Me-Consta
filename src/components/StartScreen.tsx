@@ -16,13 +16,15 @@ const STATS: { key: keyof Stats; label: string }[] = [
 
 const TOTAL_EPITETOS = 11
 
-// Reset oculto para pruebas: 10 toques seguidos en el número de build borran
-// TODO lo guardado de logros (conseguidos y los contadores acumulados). Los
-// toques tienen que ir rápidos: si pasan más de 800 ms sin tocar, se
-// reinicia la cuenta, así un toque suelto por error no suma.
+// Lo que se borra al pedir empezar de cero: los logros conseguidos y todos los
+// contadores acumulados (récord, epítetos vistos, cartas descubiertas).
+//
+// Antes esto vivía detrás de diez toques rápidos en el número de versión, y
+// eso fallaba por los dos lados: quien lo necesitaba no sabía que existía, y
+// quien no lo necesitaba podía encontrarlo aporreando la pantalla y borrarse
+// el progreso sin enterarse de qué había pasado. Ahora es un botón que se ve,
+// dice lo que hace y pregunta antes.
 const RESET_KEY = 'nomeconsta.logros'
-const TOQUES_RESET = 10
-const VENTANA_MS = 800
 
 // Fecha de build formateada una sola vez (no cambia durante la sesión).
 const buildDate = new Date(__BUILD_DATE__).toLocaleString('es-ES', {
@@ -59,8 +61,7 @@ export function StartScreen({
   // El tutorial ya no ocupa la pantalla: se abre si alguien lo pide.
   const [comoSeJuega, setComoSeJuega] = useState(false)
 
-  const toques = useRef(0)
-  const ultimoToque = useRef(0)
+  const [borrando, setBorrando] = useState(false)
   const [reseteado, setReseteado] = useState(false)
 
   // Esta pantalla se desplaza en móviles pequeños: hay que avisar de ello.
@@ -76,20 +77,15 @@ export function StartScreen({
   // de alto: por encima de eso ya cabía y no hay nada que apretar.
   const compacto = useAltoVentana() < 600
 
-  const tocarBuild = () => {
-    const ahora = Date.now()
-    toques.current = ahora - ultimoToque.current < VENTANA_MS ? toques.current + 1 : 1
-    ultimoToque.current = ahora
-    if (toques.current >= TOQUES_RESET) {
-      toques.current = 0
-      try {
-        localStorage.removeItem(RESET_KEY)
-      } catch {
-        /* modo incógnito: no había nada que borrar de todos modos */
-      }
-      setReseteado(true)
-      window.setTimeout(() => setReseteado(false), 2500)
+  const borrarTodo = () => {
+    try {
+      localStorage.removeItem(RESET_KEY)
+    } catch {
+      /* modo incógnito: no había nada que borrar de todos modos */
     }
+    setBorrando(false)
+    setReseteado(true)
+    window.setTimeout(() => setReseteado(false), 2500)
   }
 
   return (
@@ -217,8 +213,19 @@ export function StartScreen({
         paródico y no describe hechos ciertos.
       </div>
 
+      {/* Borrar el progreso. Discreto a propósito -no compite con "Empezar
+          legislatura"- pero visible y con su nombre. Solo tiene sentido
+          ofrecerlo si hay algo que borrar. */}
+      {partidas > 0 && (
+        <button
+          onClick={() => { sfx.boton(); setBorrando(true) }}
+          style={{ ...botonTerciario, marginTop: 2, color: '#6b5450' }}
+        >
+          Borrar mi progreso
+        </button>
+      )}
+
       <div
-        onClick={tocarBuild}
         style={{
           ...pixel,
           marginTop: 4,
@@ -226,11 +233,8 @@ export function StartScreen({
           fontWeight: 500,
           fontSize: 13,
           color: reseteado ? COLOR.oro : '#5a5650',
-          // Zona de toque cómoda para el reset oculto, sin cambiar el aspecto.
-          padding: '8px 0',
-          cursor: 'default',
+          padding: '4px 0',
           userSelect: 'none',
-          WebkitTapHighlightColor: 'transparent',
         }}
       >
         {reseteado ? 'Logros borrados' : `v${__APP_VERSION__} · ${buildDate}`}
@@ -315,6 +319,66 @@ export function StartScreen({
             >
               Entendido
             </button>
+          </div>
+        </div>
+      )}
+
+      {borrando && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 30,
+            background: 'rgba(0,0,0,0.65)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 24,
+          }}
+        >
+          <div
+            style={{
+              background: COLOR.panel,
+              borderRadius: 14,
+              padding: '22px 20px',
+              maxWidth: 300,
+              width: '100%',
+              boxSizing: 'border-box',
+              textAlign: 'center',
+              border: '1px solid rgba(255,77,77,0.35)',
+            }}
+          >
+            <p style={{ ...pixel, margin: '0 0 6px', fontWeight: 500, fontSize: 18, lineHeight: 1.4, color: COLOR.texto }}>
+              ¿Borrar todo tu progreso?
+            </p>
+            {/* Se dice QUÉ se pierde, con los números delante: "¿estás seguro?"
+                a secas no es una pregunta, es un trámite que se acepta sin
+                leer. */}
+            <p style={{ ...pixel, margin: '0 0 18px', fontWeight: 500, fontSize: 14, lineHeight: 1.4, color: COLOR.apagado }}>
+              Se van los {hechos} logros, el récord de {mesesRecord} {mesesRecord === 1 ? 'mes' : 'meses'} y las {cartasVistas} cartas
+              que llevas descubiertas. No se puede deshacer.
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button onClick={() => { sfx.boton(); setBorrando(false) }} style={botonSecundario}>
+                Cancelar
+              </button>
+              <button
+                onClick={() => { sfx.boton(); borrarTodo() }}
+                style={{
+                  ...pixel,
+                  background: COLOR.peligro,
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '7px 18px',
+                  fontWeight: 400,
+                  fontSize: 16,
+                  color: '#fff',
+                  cursor: 'pointer',
+                }}
+              >
+                Borrar
+              </button>
+            </div>
           </div>
         </div>
       )}
