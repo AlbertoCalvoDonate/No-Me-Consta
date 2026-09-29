@@ -3075,7 +3075,7 @@ export const contentCards: Card[] = [
     id: 'sind_campana',
     phase: 4,
     character: 'El Sindicalista',
-    text: 'Le ofrezco tranquilidad hasta las elecciones: ni una movilización, ni una declaración, nada. A cambio quiero por escrito lo que hablamos en enero. Por escrito, presidente, que nos conocemos.',
+    text: 'Le ofrezco tranquilidad hasta las elecciones: ni una movilización, ni una declaración, nada. A cambio quiero lo del convenio por escrito y firmado. Por escrito, presidente, que nos conocemos.',
     left: {
       text: 'Firmárselo y dormir tranquilo',
       effects: { calle: 2, gobierno: 1, caja: -2 },
