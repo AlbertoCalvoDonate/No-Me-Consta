@@ -3802,6 +3802,265 @@ export const contentCards: Card[] = [
     pleases: 'left',
   },
 
+
+  // --- MAS FONTANEROS: otras formas de ofrecerte lo mismo ---
+
+  {
+    id: 'fontanera_oferta_b',
+    phase: 2,
+    character: 'La Fontanera',
+    sinPistas: true,
+    characterImage: 'fontanera.webp',
+    text: 'La periodista que le lleva firmando portadas desde enero cobró en negro tres años en otro sitio. Lo sé porque yo estaba. No hace falta publicarlo: basta con que ella sepa que alguien lo sabe.',
+    left: { text: 'Prefiero que siga escribiendo lo que quiera', effects: { medios: -1 }, moralidad: 2 },
+    right: {
+      text: 'Que lo sepa',
+      effects: { medios: 2, calle: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_fontanera'],
+      scheduleCardId: 'fontanera_cobro',
+      scheduleIn: 14,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.85
+          : 0,
+  },
+  {
+    id: 'fontanera_oferta_c',
+    phase: 3,
+    character: 'La Fontanera',
+    sinPistas: true,
+    characterImage: 'fontanera.webp',
+    text: 'Su socio de gobierno tiene una reunión el jueves que no aparece en ninguna agenda. Puedo decirle con quién, dónde y a qué hora. Usted verá si prefiere enterarse el jueves o el viernes por la prensa.',
+    left: { text: 'Me entero el viernes como todos', effects: { gobierno: -1 }, moralidad: 2 },
+    right: {
+      text: 'Dígame con quién',
+      effects: { gobierno: 2, medios: -1 },
+      moralidad: -2,
+      addFlags: ['carpeta_fontanera'],
+      scheduleCardId: 'fontanera_cobro',
+      scheduleIn: 14,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.85
+          : 0,
+  },
+  {
+    id: 'comisario_oferta_b',
+    phase: 2,
+    character: 'El Comisario',
+    sinPistas: true,
+    characterImage: 'comisario.webp',
+    text: 'Del que le está haciendo la vida imposible en el Congreso tengo una denuncia de hace quince años que se archivó sola. Archivada sigue. Pero archivada no quiere decir desaparecida, presidente.',
+    left: { text: 'Que siga donde está', effects: { gobierno: -1 }, moralidad: 2 },
+    right: {
+      text: 'Sáquela del archivo',
+      effects: { gobierno: 2, medios: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_comisario'],
+      scheduleCardId: 'comisario_cobro',
+      scheduleIn: 14,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.85
+          : 0,
+  },
+  {
+    id: 'comisario_oferta_c',
+    phase: 3,
+    character: 'El Comisario',
+    sinPistas: true,
+    characterImage: 'comisario.webp',
+    text: 'Le han puesto un seguimiento. No se lo digo yo como favor, se lo digo como aviso: el que lo ha pedido no está en la oposición. Está desayunando con usted dos veces por semana.',
+    left: { text: 'No quiero saber quién es', effects: { medios: -1 }, moralidad: 2 },
+    right: {
+      text: 'Déme el nombre',
+      effects: { gobierno: 1, calle: 1, medios: -1 },
+      moralidad: -2,
+      addFlags: ['carpeta_comisario'],
+      scheduleCardId: 'comisario_cobro',
+      scheduleIn: 14,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.85
+          : 0,
+  },
+  {
+    id: 'agente_oferta_b',
+    phase: 2,
+    character: 'El Agente',
+    sinPistas: true,
+    characterImage: 'agente.webp',
+    text: 'Nosotros escuchamos mucho. No a usted, no se preocupe: a los que hablan de usted. Lo que se dice en cierto despacho de su propio Gobierno le sorprendería. Se lo cuento cuando quiera, y no le cuesta nada.',
+    left: { text: 'No me cuente nada', effects: { gobierno: -1 }, moralidad: 2 },
+    right: {
+      text: 'Cuéntemelo',
+      effects: { gobierno: 2, medios: -1 },
+      moralidad: -2,
+      addFlags: ['carpeta_agente'],
+      scheduleCardId: 'agente_cobro',
+      scheduleIn: 14,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.85
+          : 0,
+  },
+  {
+    id: 'agente_oferta_c',
+    phase: 3,
+    character: 'El Agente',
+    sinPistas: true,
+    characterImage: 'agente.webp',
+    text: 'Hay una manifestación preparándose para el sábado, y no la organiza quien usted cree. Nosotros sabemos quién la paga. Podemos hacer que no se pague. Nadie se entera de nada, tampoco usted.',
+    left: { text: 'Que se manifieste quien quiera', effects: { calle: -1 }, moralidad: 3 },
+    right: {
+      text: 'Que no se pague',
+      effects: { calle: 2, medios: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_agente'],
+      scheduleCardId: 'agente_cobro',
+      scheduleIn: 14,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.85
+          : 0,
+  },
+
+  // --- Lo que deja el trato antes de que llegue la factura ---
+  //
+  // El cobro tarda catorce meses y muchas partidas no llegan. Estas salen
+  // antes, cuando el trato ya esta hecho y todavia no se paga: sirven para que
+  // el jugador note que lo que acepto sigue ahi, funcionando solo.
+
+  {
+    id: 'fontanera_eco',
+    phase: 3,
+    character: 'La Fontanera',
+    sinPistas: true,
+    characterImage: 'fontanera.webp',
+    text: 'Salió bien y nadie ha preguntado nada. Le aviso de una cosa: ahora hay gente que sabe que usted acepta este tipo de ayuda. No se lo he contado yo. Se nota, igual que se notan estas cosas.',
+    left: { text: 'Cortar por lo sano ahora mismo', effects: { medios: 1, gobierno: -2 }, moralidad: 2 },
+    right: { text: 'Que se note', effects: { gobierno: 1, medios: -1 }, moralidad: -2 },
+    condition: (_s, _m, ctx) => ctx.flagAge('carpeta_fontanera') >= 5,
+    weight: (_s, _m, ctx) => (ctx.flagAge('carpeta_fontanera') >= 5 ? 3 : 0),
+  },
+  {
+    id: 'comisario_eco',
+    phase: 3,
+    character: 'El Comisario',
+    sinPistas: true,
+    characterImage: 'comisario.webp',
+    text: 'El armario tiene una carpeta más desde aquel día, y esa lleva su nombre. No la he abierto ni la voy a abrir. Solo quiero que sepa que existe, porque entre nosotros no hace falta mentir.',
+    left: { text: 'Pedirle que la destruya', effects: { medios: 1, gobierno: -2 }, moralidad: 1 },
+    right: { text: 'Dejar que exista', effects: { gobierno: 1, calle: -1 }, moralidad: -2 },
+    condition: (_s, _m, ctx) => ctx.flagAge('carpeta_comisario') >= 5,
+    weight: (_s, _m, ctx) => (ctx.flagAge('carpeta_comisario') >= 5 ? 3 : 0),
+  },
+  {
+    id: 'agente_eco',
+    phase: 3,
+    character: 'El Agente',
+    sinPistas: true,
+    characterImage: 'agente.webp',
+    text: 'Le traigo algo que no ha pedido: dos nombres de su partido que hablan con gente que no le conviene. No le pido nada a cambio. Se lo doy para que se acostumbre a que le demos cosas.',
+    left: { text: 'Devolvérselo sin mirarlo', effects: { medios: 1, gobierno: -1 }, moralidad: 3 },
+    right: { text: 'Quedárselo', effects: { gobierno: 2, medios: -1, calle: -1 }, moralidad: -3 },
+    condition: (_s, _m, ctx) => ctx.flagAge('carpeta_agente') >= 5,
+    weight: (_s, _m, ctx) => (ctx.flagAge('carpeta_agente') >= 5 ? 3 : 0),
+  },
+
+  // --- Y lo que se ve desde fuera ---
+  //
+  // Estas SI encienden los puntos: la grieta es de ellos, no del que las
+  // cuenta. Que el Periodista y el Juez tengan algo que decir sobre el asunto
+  // es lo que convierte el trato en una trama en vez de en un intercambio
+  // privado que no ve nadie.
+
+  {
+    id: 'fontanero_rumor',
+    phase: 3,
+    character: 'El Periodista',
+    text: 'Hay alguien haciendo gestiones a su favor que no está en ninguna nómina. Lo sé porque tres personas distintas me han contado lo mismo con las mismas palabras. ¿Quién le hace esos recados?',
+    left: {
+      text: 'Decir que nadie hace nada en su nombre',
+      effects: { medios: -2, gobierno: 1 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Reconocer que se le ofreció y no decir más',
+      effects: { medios: 2, gobierno: -2, calle: -1 },
+      moralidad: 2,
+    },
+    condition: (_s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente'),
+    weight: (_s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 2.5
+        : 0,
+    pleases: 'right',
+  },
+  {
+    id: 'fontanero_juez',
+    phase: 4,
+    character: 'El Juez',
+    text: 'Me llega un atestado con una diligencia que nadie firmó y una fecha que no cuadra. Alguien movió eso por fuera del procedimiento. No le pregunto quién: le pregunto si usted lo sabía.',
+    left: {
+      text: 'Decir la verdad, sea la que sea',
+      effects: { medios: 2, gobierno: -2 },
+      moralidad: 3,
+    },
+    right: {
+      text: '"No me consta"',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -3,
+    },
+    condition: (_s, _m, ctx) =>
+      ctx.flagAge('carpeta_fontanera') >= 8 ||
+      ctx.flagAge('carpeta_comisario') >= 8 ||
+      ctx.flagAge('carpeta_agente') >= 8,
+    weight: (_s, _m, ctx) =>
+      ctx.flagAge('carpeta_fontanera') >= 8 ||
+      ctx.flagAge('carpeta_comisario') >= 8 ||
+      ctx.flagAge('carpeta_agente') >= 8
+        ? 3
+        : 0,
+    pleases: 'left',
+  },
+
   // --- LA VICEPRESIDENTA (idealista, ambiciosa, a un paso de montar lo suyo) ---
   {
     id: 'vice_sentido_comun',
@@ -7182,7 +7441,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 2.5
+          ? 0.85
           : 0,
   },
   {
@@ -7228,7 +7487,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 2.5
+          ? 0.85
           : 0,
   },
   {
@@ -7289,7 +7548,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 2.5
+          ? 0.85
           : 0,
   },
   {
