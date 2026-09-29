@@ -65,7 +65,13 @@ const todas = cartas(fuente)
 const marcadas = []
 for (const c of todas) {
   const t = c.texto.toLowerCase()
-  const delitos = DELITO.filter((d) => t.includes(d))
+  // Como PRINCIPIO DE PALABRA, no como subcadena suelta. Con includes() a
+  // secas, la raiz "ama\u00f1" casaba dentro de "tama\u00f1o" y marcaba como
+  // acusacion toda carta que dijera "del mismo tama\u00f1o": tres falsos
+  // positivos de cuatro. Un auditor legal que grita de mas deja de leerse.
+  const delitos = DELITO.filter((d) =>
+    new RegExp('(^|[^a-z\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00fc])' + d.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(t)
+  )
   if (delitos.length === 0) continue
   // Se mira si la frase que contiene el delito viene entrecomillada o
   // matizada: es la diferencia entre afirmar y atribuir.
