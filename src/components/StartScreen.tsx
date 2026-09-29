@@ -56,6 +56,8 @@ export function StartScreen({
   // "Empezar de cero" con partida guardada borra esa partida sin avisar —
   // un toque de más y se pierde. Un paso de confirmación de por medio.
   const [confirmando, setConfirmando] = useState(false)
+  // El tutorial ya no ocupa la pantalla: se abre si alguien lo pide.
+  const [comoSeJuega, setComoSeJuega] = useState(false)
 
   const toques = useRef(0)
   const ultimoToque = useRef(0)
@@ -142,61 +144,6 @@ export function StartScreen({
         </p>
       </div>
 
-      {/* Tutorial: instrucciones claras, tono seco. */}
-      <div
-        style={{
-          background: COLOR.panel,
-          borderRadius: 14,
-          padding: compacto ? '11px 14px' : '16px 18px',
-          width: '100%',
-          boxSizing: 'border-box',
-        }}
-      >
-        <div
-          style={{
-            ...pixel,
-            fontWeight: 500,
-            fontSize: 13,
-            letterSpacing: 0.8,
-            color: COLOR.apagado,
-            textTransform: 'uppercase',
-            marginBottom: compacto ? 6 : 10,
-          }}
-        >
-          Cómo se gobierna
-        </div>
-
-        <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: compacto ? 15 : 17, lineHeight: 1.4, color: '#e8e2d4' }}>
-          Desliza cada carta a un lado o al otro para decidir.
-          <br />
-          Rara vez hay una opción buena. Esa es la gracia.
-        </p>
-
-        <div style={{ display: 'flex', justifyContent: 'space-around', gap: 4, margin: compacto ? '9px 0 7px' : '14px 0 10px' }}>
-          {STATS.map(({ key, label }) => (
-            <div key={key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-              <StatIcon statKey={key} value={5} critical={false} size={compacto ? 30 : 38} />
-              <span style={{ ...pixel, fontWeight: 500, fontSize: 12, color: '#a8a08c' }}>{label}</span>
-            </div>
-          ))}
-        </div>
-
-        <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: compacto ? 14 : 16, lineHeight: 1.35, color: '#b7b1a3' }}>
-          Si una llega a 0 o al máximo, cae el gobierno. El tuyo. Cuando un
-          icono se pone rojo es que esa ya puede tumbarte, sea por donde sea.
-        </p>
-
-        {/* LOS PUNTOS. Es la habilidad central del juego y no se explicaba en
-            ninguna parte: el jugador los veia encenderse y tenia que deducir
-            solo que significaban. Decir que hay puntos y que NO dicen la
-            direccion es lo que convierte el juego en un juego de aprenderse al
-            reparto, que es de lo que va. */}
-        <p style={{ ...pixel, margin: compacto ? '7px 0 0' : '10px 0 0', fontWeight: 500, fontSize: compacto ? 14 : 16, lineHeight: 1.35, color: '#b7b1a3' }}>
-          Al arrastrar se encienden puntos sobre lo que va a moverse. Dicen
-          cuánto, no hacia dónde: eso se aprende mirando quién habla.
-        </p>
-      </div>
-
       {/* Marca personal: como en Reigns, cuánto aguantaste y qué has coleccionado
           — no una puntuación, un historial. Solo si ya has jugado. */}
       {partidas > 0 && (
@@ -238,6 +185,9 @@ export function StartScreen({
             Logros
           </button>
         </div>
+        <button onClick={() => { sfx.boton(); setComoSeJuega(true) }} style={botonTerciario}>
+          ¿Cómo se gobierna?
+        </button>
       </div>
 
       {/* AVISO DE SATIRA. Va aqui, en la portada y antes de jugar, y no
@@ -289,6 +239,86 @@ export function StartScreen({
 
       {/* Confirmación antes de tirar la partida guardada: un toque de más en
           "Empezar de cero" no debería costar el mes 30 sin avisar. */}
+      {comoSeJuega && (
+        <div
+          onClick={() => setComoSeJuega(false)}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 30,
+            background: 'rgba(0,0,0,0.75)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+        >
+          {/* Se para el clic dentro para que tocar el texto no lo cierre. */}
+          <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: 340, width: '100%' }}>
+      {/* Tutorial: instrucciones claras, tono seco. */}
+            <div
+              style={{
+                background: COLOR.panel,
+                borderRadius: 14,
+                padding: compacto ? '11px 14px' : '16px 18px',
+                width: '100%',
+                boxSizing: 'border-box',
+              }}
+            >
+              <div
+                style={{
+                  ...pixel,
+                  fontWeight: 500,
+                  fontSize: 13,
+                  letterSpacing: 0.8,
+                  color: COLOR.apagado,
+                  textTransform: 'uppercase',
+                  marginBottom: compacto ? 6 : 10,
+                }}
+              >
+                Cómo se gobierna
+              </div>
+
+              <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: compacto ? 15 : 17, lineHeight: 1.4, color: '#e8e2d4' }}>
+                Desliza cada carta a un lado o al otro para decidir.
+                <br />
+                Rara vez hay una opción buena. Esa es la gracia.
+              </p>
+
+              <div style={{ display: 'flex', justifyContent: 'space-around', gap: 4, margin: compacto ? '9px 0 7px' : '14px 0 10px' }}>
+                {STATS.map(({ key, label }) => (
+                  <div key={key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                    <StatIcon statKey={key} value={5} critical={false} size={compacto ? 30 : 38} />
+                    <span style={{ ...pixel, fontWeight: 500, fontSize: 12, color: '#a8a08c' }}>{label}</span>
+                  </div>
+                ))}
+              </div>
+
+              <p style={{ ...pixel, margin: 0, fontWeight: 500, fontSize: compacto ? 14 : 16, lineHeight: 1.35, color: '#b7b1a3' }}>
+                Si una llega a 0 o al máximo, cae el gobierno. El tuyo. Cuando un
+                icono se pone rojo es que esa ya puede tumbarte, sea por donde sea.
+              </p>
+
+              {/* LOS PUNTOS. Es la habilidad central del juego y no se explicaba en
+                  ninguna parte: el jugador los veia encenderse y tenia que deducir
+                  solo que significaban. Decir que hay puntos y que NO dicen la
+                  direccion es lo que convierte el juego en un juego de aprenderse al
+                  reparto, que es de lo que va. */}
+              <p style={{ ...pixel, margin: compacto ? '7px 0 0' : '10px 0 0', fontWeight: 500, fontSize: compacto ? 14 : 16, lineHeight: 1.35, color: '#b7b1a3' }}>
+                Al arrastrar se encienden puntos sobre lo que va a moverse. Dicen
+                cuánto, no hacia dónde: eso se aprende mirando quién habla.
+              </p>
+            </div>
+            <button
+              onClick={() => { sfx.boton(); setComoSeJuega(false) }}
+              style={{ ...botonSecundario, marginTop: 12, width: '100%' }}
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
+      )}
+
       {confirmando && (
         <div
           style={{
@@ -374,4 +404,19 @@ const botonSecundario: CSSProperties = {
   fontSize: 16,
   color: COLOR.oro,
   cursor: 'pointer',
+}
+
+// Mas discreto que el secundario: no compite con "El reparto" y "Logros", que
+// son las dos que el jugador usa de verdad entre partidas.
+const botonTerciario: CSSProperties = {
+  background: 'none',
+  border: 'none',
+  ...pixel,
+  fontWeight: 500,
+  fontSize: 14,
+  color: '#7d7768',
+  cursor: 'pointer',
+  padding: '2px 8px',
+  textDecoration: 'underline',
+  textUnderlineOffset: 3,
 }

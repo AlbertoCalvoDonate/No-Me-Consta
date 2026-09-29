@@ -1,12 +1,44 @@
+import { useState } from 'react'
 import { LOGROS } from '../data/logros'
+import type { Logro } from '../data/logros'
 import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
 import { sfx } from '../utils/sfx'
 
-// Lista completa de logros. Los conseguidos van tachados y en dorado; los que
-// faltan, en gris. Los ocultos que aún no tienes no revelan la descripción.
+// LOS LOGROS, UN BLOQUE POR PAGINA.
+//
+// Antes eran los cuarenta y nueve de corrido en una lista, y esa lista medía
+// 2.000px: había que arrastrar en todos los tamaños, incluido el ordenador,
+// y para ver por dónde ibas en un bloque tenías que recorrerte los de encima.
+//
+// Ahora cada bloque es una página y se pasa con las flechas. Sale ganando algo
+// más que el scroll: los bloques son tramos distintos del juego -durar,
+// epítetos, por dónde caes, tramas, colección- y verlos separados dice de un
+// vistazo cuál llevas entero y cuál no has tocado. La descripción de cada uno
+// se abre al tocarlo, que es cuando interesa.
+const GRUPOS = LOGROS.reduce<string[]>((acc, l) => {
+  if (!acc.includes(l.grupo)) acc.push(l.grupo)
+  return acc
+}, [])
+
 export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
   const { conseguidos, total, hechos } = useLogrosEstado()
+  const [pagina, setPagina] = useState(0)
+  const [abierto, setAbierto] = useState<Logro | null>(null)
+
+  const grupo = GRUPOS[Math.min(pagina, GRUPOS.length - 1)]
+  const delGrupo = LOGROS.filter((l) => l.grupo === grupo)
+  const hechosGrupo = delGrupo.filter((l) => conseguidos.has(l.id)).length
+  // Los ocultos que aun no tienes se juntan en UNA casilla. Pintados uno a uno
+  // eran casillas identicas ("Logro oculto"): en "Por donde cae" salian nueve
+  // seguidas y el bloque entero parecia un error.
+  const visibles = delGrupo.filter((l) => !(l.oculto && !conseguidos.has(l.id)))
+  const ocultos = delGrupo.length - visibles.length
+
+  const ir = (d: number) => {
+    sfx.boton()
+    setPagina(Math.max(0, Math.min(GRUPOS.length - 1, pagina + d)))
+  }
 
   return (
     // El fondo va SOLIDO desde el primer fotograma. Antes el panel entero
@@ -28,7 +60,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
       <div
         style={{
           flexShrink: 0,
-          padding: '16px 16px 12px',
+          padding: '14px 16px 10px',
           borderBottom: '1px solid rgba(224,184,77,0.25)',
           display: 'flex',
           alignItems: 'center',
@@ -36,25 +68,8 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
         }}
       >
         <div>
-          <div
-            style={{
-              ...pixel,
-              fontWeight: 400,
-              fontSize: 22,
-              color: COLOR.oro,
-            }}
-          >
-            Logros
-          </div>
-          <div
-            style={{
-              ...pixel,
-              fontWeight: 500,
-              fontSize: 13,
-              color: COLOR.apagado,
-              marginTop: 2,
-            }}
-          >
+          <div style={{ ...pixel, fontWeight: 400, fontSize: 22, color: COLOR.oro }}>Logros</div>
+          <div style={{ ...pixel, fontWeight: 500, fontSize: 13, color: COLOR.apagado, marginTop: 2 }}>
             {hechos} de {total}
           </div>
         </div>
@@ -77,189 +92,236 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
         </button>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px 20px' }}>
-        {LOGROS.map((l, i) => {
+      <div
+        style={{
+          flexShrink: 0,
+          padding: '12px 14px 6px',
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div
+          style={{
+            ...pixel,
+            fontWeight: 500,
+            fontSize: 13,
+            letterSpacing: 1,
+            textTransform: 'uppercase',
+            color: COLOR.oro,
+          }}
+        >
+          {grupo}
+        </div>
+        <div style={{ ...pixel, fontWeight: 500, fontSize: 13, color: COLOR.apagado }}>
+          {hechosGrupo}/{delGrupo.length}
+        </div>
+      </div>
+
+      {/* Centrado a proposito: hay bloques de doce y bloques de dos, y un
+          bloque de dos pegado arriba con el resto de la pantalla vacia parece
+          que falta algo. Centrado parece lo que es. */}
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 7,
+          alignContent: 'center',
+          padding: '0 14px 10px',
+          boxSizing: 'border-box',
+        }}
+      >
+        {visibles.map((l) => {
           const hecho = conseguidos.has(l.id)
-          const tapado = l.oculto && !hecho
-          // Cabecera al empezar cada bloque, con cuantos llevas de el: 49
-          // logros de corrido no dejaban ver que hay tramos muy distintos
-          // (durar, epitetos, tramas, coleccion) ni por donde vas en cada uno.
-          const abre = i === 0 || LOGROS[i - 1].grupo !== l.grupo
-          const delGrupo = abre ? LOGROS.filter((x) => x.grupo === l.grupo) : []
-          const hechosGrupo = delGrupo.filter((x) => conseguidos.has(x.id)).length
-          // Los ocultos que aun no tienes se juntan en UNA linea al final de su
-          // bloque. Pintados uno a uno eran filas identicas ("Logro oculto /
-          // Sigue jugando para descubrirlo"): en "Por donde cae" salian nueve
-          // seguidas y la seccion entera parecia un error. Al conseguirlos van
-          // apareciendo con su nombre y el contador de pendientes baja.
-          const cierra = i === LOGROS.length - 1 || LOGROS[i + 1].grupo !== l.grupo
-          const pendientes = () =>
-            LOGROS.filter((x) => x.grupo === l.grupo && x.oculto && !conseguidos.has(x.id)).length
-          // Un oculto no pinta fila propia: solo arrastra la cabecera si abre el
-          // bloque y el resumen si lo cierra.
-          if (tapado) {
-            if (!abre && !cierra) return null
-            return (
-              <div key={l.id}>
-                {abre && (
-                  <Cabecera grupo={l.grupo} hechos={hechosGrupo} total={delGrupo.length} primero={i === 0} />
-                )}
-                {cierra && <FilaOcultos n={pendientes()} />}
-              </div>
-            )
-          }
           return (
-            <div key={l.id}>
-            {abre && (
-              <Cabecera grupo={l.grupo} hechos={hechosGrupo} total={delGrupo.length} primero={i === 0} />
-            )}
-            <div
+            <button
+              key={l.id}
+              onClick={() => { sfx.boton(); setAbierto(l) }}
               style={{
                 display: 'flex',
-                gap: 12,
-                alignItems: 'flex-start',
-                padding: '10px 6px',
-                borderBottom: '1px solid rgba(255,255,255,0.05)',
-                opacity: hecho ? 1 : 0.55,
+                alignItems: 'center',
+                gap: 8,
+                minWidth: 0,
+                padding: '8px 9px',
+                background: hecho ? 'rgba(224,184,77,0.08)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${hecho ? 'rgba(224,184,77,0.3)' : 'rgba(255,255,255,0.07)'}`,
+                borderRadius: 9,
+                cursor: 'pointer',
+                textAlign: 'left',
               }}
             >
-              <div
+              <span
                 style={{
-                  width: 26,
-                  height: 26,
+                  width: 22,
+                  height: 22,
                   flexShrink: 0,
-                  marginTop: 1,
                   borderRadius: '50%',
                   background: hecho ? COLOR.oro : 'rgba(255,255,255,0.1)',
                   color: '#1a1a1a',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 15,
+                  fontSize: 13,
                   fontWeight: 700,
                 }}
               >
                 {hecho ? '✓' : ''}
-              </div>
-              <div style={{ minWidth: 0 }}>
-                <div
-                  style={{
-                    ...pixel,
-                    fontWeight: 400,
-                    fontSize: 16,
-                    color: hecho ? COLOR.texto : '#b7b1a3',
-                    lineHeight: 1.25,
-                  }}
-                >
-                  {tapado ? 'Logro oculto' : l.nombre}
-                </div>
-                <div
-                  style={{
-                    ...pixel,
-                    fontWeight: 500,
-                    fontSize: 13,
-                    color: COLOR.apagado,
-                    lineHeight: 1.35,
-                    marginTop: 2,
-                  }}
-                >
-                  {tapado ? 'Sigue jugando para descubrirlo.' : l.desc}
-                </div>
-              </div>
-            </div>
-            {/* Los ocultos del bloque, en una sola linea al cerrarlo. */}
-            {cierra && <FilaOcultos n={pendientes()} />}
-            </div>
+              </span>
+              <span
+                style={{
+                  ...pixel,
+                  fontWeight: 500,
+                  fontSize: 12,
+                  lineHeight: 1.2,
+                  color: hecho ? COLOR.texto : '#6b6558',
+                  minWidth: 0,
+                  overflow: 'hidden',
+                  display: '-webkit-box',
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 2,
+                }}
+              >
+                {l.nombre}
+              </span>
+            </button>
           )
         })}
+        {ocultos > 0 && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 9px',
+              border: '1px dashed rgba(255,255,255,0.12)',
+              borderRadius: 9,
+              ...pixel,
+              fontWeight: 500,
+              fontSize: 12,
+              lineHeight: 1.2,
+              color: '#5c5750',
+            }}
+          >
+            {ocultos} {ocultos === 1 ? 'oculto' : 'ocultos'} por descubrir
+          </div>
+        )}
       </div>
-    </div>
-  )
-}
 
-// Cabecera de bloque con el progreso de ese bloque.
-function Cabecera({
-  grupo,
-  hechos,
-  total,
-  primero,
-}: {
-  grupo: string
-  hechos: number
-  total: number
-  primero: boolean
-}) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'baseline',
-        justifyContent: 'space-between',
-        gap: 8,
-        margin: primero ? '4px 6px 2px' : '20px 6px 2px',
-        paddingBottom: 4,
-        borderBottom: '1px solid rgba(224,184,77,0.22)',
-      }}
-    >
-      <span
-        style={{
-          ...pixel,
-          fontWeight: 500,
-          fontSize: 12,
-          letterSpacing: 1,
-          textTransform: 'uppercase',
-          color: COLOR.apagado,
-        }}
-      >
-        {grupo}
-      </span>
-      <span
-        style={{
-          ...pixel,
-          fontWeight: 500,
-          fontSize: 12,
-          color: hechos === total ? COLOR.oro : '#5f5a50',
-        }}
-      >
-        {hechos}/{total}
-      </span>
-    </div>
-  )
-}
-
-// Todos los ocultos pendientes de un bloque, en una linea.
-function FilaOcultos({ n }: { n: number }) {
-  if (n === 0) return null
-  return (
-    <div
-      style={{
-        display: 'flex',
-        gap: 12,
-        alignItems: 'center',
-        padding: '10px 6px',
-        opacity: 0.4,
-      }}
-    >
       <div
         style={{
-          width: 26,
-          height: 26,
           flexShrink: 0,
-          borderRadius: '50%',
-          border: '1px dashed rgba(255,255,255,0.25)',
-          boxSizing: 'border-box',
-        }}
-      />
-      <div
-        style={{
-          ...pixel,
-          fontWeight: 500,
-          fontSize: 14,
-          color: COLOR.apagado,
+          padding: '4px 14px 12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 14,
         }}
       >
-        {n === 1 ? '1 logro oculto por descubrir' : `${n} logros ocultos por descubrir`}
+        <button onClick={() => ir(-1)} disabled={pagina === 0} style={flecha(pagina === 0)}>
+          ‹
+        </button>
+        <div style={{ ...pixel, fontWeight: 500, fontSize: 13, color: COLOR.apagado }}>
+          {pagina + 1} / {GRUPOS.length}
+        </div>
+        <button
+          onClick={() => ir(1)}
+          disabled={pagina >= GRUPOS.length - 1}
+          style={flecha(pagina >= GRUPOS.length - 1)}
+        >
+          ›
+        </button>
       </div>
+
+      {abierto && (
+        <div
+          onClick={() => setAbierto(null)}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 50,
+            background: 'rgba(0,0,0,0.78)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: COLOR.panel,
+              border: `1px solid ${conseguidos.has(abierto.id) ? 'rgba(224,184,77,0.45)' : 'rgba(255,255,255,0.15)'}`,
+              borderRadius: 14,
+              padding: '16px 18px',
+              maxWidth: 320,
+              width: '100%',
+              boxSizing: 'border-box',
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                ...pixel,
+                fontWeight: 400,
+                fontSize: 19,
+                color: conseguidos.has(abierto.id) ? COLOR.oro : COLOR.texto,
+              }}
+            >
+              {abierto.nombre}
+            </div>
+            <div
+              style={{
+                ...pixel,
+                fontWeight: 500,
+                fontSize: 14,
+                lineHeight: 1.4,
+                color: COLOR.apagado,
+                margin: '8px 0 4px',
+              }}
+            >
+              {abierto.desc}
+            </div>
+            <div style={{ ...pixel, fontWeight: 500, fontSize: 12.5, color: '#6b6558' }}>
+              {conseguidos.has(abierto.id) ? 'Conseguido' : 'Todavía no'}
+            </div>
+            <button
+              onClick={() => { sfx.boton(); setAbierto(null) }}
+              style={{
+                ...pixel,
+                marginTop: 14,
+                width: '100%',
+                background: 'none',
+                border: `1px solid ${COLOR.oro}`,
+                borderRadius: 8,
+                padding: '7px 16px',
+                fontWeight: 400,
+                fontSize: 15,
+                color: COLOR.oro,
+                cursor: 'pointer',
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
+}
+
+function flecha(apagada: boolean) {
+  return {
+    ...pixel,
+    width: 42,
+    height: 32,
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 8,
+    color: apagada ? '#3d3a35' : COLOR.oro,
+    fontSize: 20,
+    lineHeight: 1,
+    cursor: apagada ? 'default' : 'pointer',
+  } as const
 }
