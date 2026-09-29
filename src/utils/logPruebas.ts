@@ -64,11 +64,30 @@ export function textoLog(opciones: {
   return [...cab, ...cuerpo].join('\n')
 }
 
-export async function copiarLog(texto: string): Promise<boolean> {
+// Se manda por el compartir del movil, que es lo que abre WhatsApp y Telegram
+// con el texto ya puesto. Es la diferencia entre que el tester te lo envie o
+// no: copiar al portapapeles obliga a abrir la app, buscar el chat y pegar, y
+// en ese camino se pierde la mitad de la gente.
+//
+// Si no hay compartir nativo -escritorio, sobre todo- cae al portapapeles, que
+// alli si es lo natural.
+export type ResultadoLog = 'enviado' | 'copiado' | 'error'
+
+export async function mandarLog(texto: string): Promise<ResultadoLog> {
+  if (typeof navigator !== 'undefined' && navigator.share) {
+    try {
+      await navigator.share({ text: texto })
+      return 'enviado'
+    } catch (e) {
+      // Cancelar el dialogo no es un fallo que haya que ensenar.
+      if (e instanceof DOMException && e.name === 'AbortError') return 'enviado'
+      // Cualquier otro problema: se intenta con el portapapeles.
+    }
+  }
   try {
     await navigator.clipboard.writeText(texto)
-    return true
+    return 'copiado'
   } catch {
-    return false
+    return 'error'
   }
 }

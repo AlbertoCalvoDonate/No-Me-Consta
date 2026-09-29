@@ -15,7 +15,7 @@ import type { StatKey } from './types'
 import { epitetoDe } from './data/epitetos'
 import { sfx } from './utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from './utils/desbordado'
-import { LOG_DE_PRUEBAS, copiarLog, textoLog } from './utils/logPruebas'
+import { LOG_DE_PRUEBAS, mandarLog, textoLog } from './utils/logPruebas'
 import { haptics } from './utils/haptics'
 import { registrarPartida } from './hooks/useLogros'
 import type { Logro } from './data/logros'
@@ -249,7 +249,7 @@ export default function App() {
   // El relato del final se desplaza cuando no cabe. `hayMasRelato` dice si
   // queda algo por debajo del borde, para difuminarlo y que se vea que hay más.
   // Log de pruebas (temporal, ver utils/logPruebas).
-  const [logCopiado, setLogCopiado] = useState<'idle' | 'ok' | 'error'>('idle')
+  const [logEnviado, setLogEnviado] = useState<'idle' | 'enviado' | 'copiado' | 'error'>('idle')
   const relatoRef = useRef<HTMLDivElement>(null)
   const textoLen = deathReason?.length ?? 0
   const imagenDisponible = gameOver ? ilustracionFin(currentCard.id) : undefined
@@ -815,7 +815,7 @@ export default function App() {
                         <button
                           onClick={async () => {
                             sfx.boton()
-                            const ok = await copiarLog(
+                            const res = await mandarLog(
                               textoLog({
                                 finalId: currentCard.id,
                                 meses: turn - 1,
@@ -824,8 +824,8 @@ export default function App() {
                                 version: __APP_VERSION__,
                               })
                             )
-                            setLogCopiado(ok ? 'ok' : 'error')
-                            window.setTimeout(() => setLogCopiado('idle'), 2500)
+                            setLogEnviado(res)
+                            window.setTimeout(() => setLogEnviado('idle'), 2500)
                           }}
                           style={{
                             marginTop: 14,
@@ -840,11 +840,13 @@ export default function App() {
                             cursor: 'pointer',
                           }}
                         >
-                          {logCopiado === 'ok'
-                            ? '¡Log copiado! Pégamelo'
-                            : logCopiado === 'error'
-                              ? 'No se pudo copiar'
-                              : 'PRUEBAS: copiar log'}
+                          {logEnviado === 'enviado'
+                            ? '¡Gracias!'
+                            : logEnviado === 'copiado'
+                              ? '¡Copiado! Pégamelo'
+                              : logEnviado === 'error'
+                                ? 'No se pudo'
+                                : 'PRUEBAS: mandarme la partida'}
                         </button>
                       )}
                     </div>
