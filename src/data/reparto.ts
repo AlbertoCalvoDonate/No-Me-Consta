@@ -34,7 +34,7 @@ export interface Personaje {
 // es un quien.
 export const REPARTO: Personaje[] = [
   // MEDIOS — el relato, lo que se publica y lo que se calla
-  { nombre: 'El Periodista', imagen: 'periodista.webp', dueno: 'medios', quien: 'Pregunta lo que nadie quiere que se pregunte.' },
+  { nombre: 'El Periodista', imagen: 'periodista.webp', dueno: 'medios', quien: 'Decide qué es noticia, a qué hora y con qué titular.' },
   { nombre: 'El Jefe de Comunicación', imagen: 'jefecomunicacion.webp', dueno: 'medios', quien: 'Escribe lo que usted dice. Y lo que no dice.' },
   { nombre: 'El Escudero', imagen: 'escudero.webp', dueno: 'medios', quien: 'Sale a defender lo indefendible cada mañana.' },
   { nombre: 'El Juez', imagen: 'juez.webp', dueno: 'medios', quien: 'Instruye. Obstruirle sale caro, y tarde.' },
@@ -46,7 +46,7 @@ export const REPARTO: Personaje[] = [
   { nombre: 'El Exiliado', imagen: 'exiliadopesado.webp', dueno: 'gobierno', quien: 'Negocia desde fuera y exige como si estuviera dentro.' },
   { nombre: 'El Independentista', imagen: 'independentista.webp', dueno: 'gobierno', quien: 'Su voto decide. Se lo lee todo antes de darlo.' },
   { nombre: 'El Expresidente', imagen: 'expresidentecompetente.webp', dueno: 'gobierno', quien: 'Ya estuvo ahí y no piensa dejar de contárselo.' },
-  { nombre: 'La Ministra', imagen: 'ministraincompetente.webp', dueno: 'gobierno', quien: 'Le toca aplicar lo que usted firma sin leer.' },
+  { nombre: 'La Ministra', imagen: 'ministraincompetente.webp', dueno: 'gobierno', quien: 'Un desastre con título. "Yo soy médica y madre", y ahí se acaba la discusión.' },
   { nombre: 'La Ministra de Igualdad', imagen: 'feminista.webp', dueno: 'gobierno', quien: 'Hace mucho ruido y no piensa bajar el volumen.' },
   { nombre: 'La Funcionaria', dueno: 'gobierno', quien: 'Cinco gobiernos en el mismo despacho. Avisa una vez y firma.' },
 
