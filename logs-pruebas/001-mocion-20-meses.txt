@@ -1,0 +1,26 @@
+NMC 0.1.0 · 29/9/2026, 20:13:09
+final: final_evento_mocion
+meses: 20 · moral: 3 · M1 G0 C5 B2
+cartas: 21
+--
+1 presi_intro_c I M5 G5 C6 B5 m6
+2 inicio I M5 G4 C7 B5 m6
+3 gob_viaje_familiar D M5 G4 C5 B3 m5
+4 gob_pin_solidario I M5 G4 C7 B3 m6
+5 gob_asesor_familiar D M5 G6 C5 B2 m5
+6 react_asesor_socia I M5 G5 C7 B2 m7
+7 trama_hermano_diligencias I M6 G4 C7 B2 m9
+8 gob_enchufe_publica I M6 G3 C8 B2 m10
+9 caido_cumpleanos D M4 G3 C8 B3 m8
+10 igualdad_ley_estrella D M5 G4 C7 B3 m8
+11 vecina_acera D M5 G5 C5 B3 m8
+12 recap_funcionaria I M6 G3 C6 B3 m10
+13 sede I M7 G3 C6 B1 m10
+14 trama_hermano_prensa I M8 G2 C6 B1 m10
+15 ministra_decreto_sin_leer D M5 G4 C6 B1 m8
+16 gob_subvencion_amigo D M2 G4 C6 B4 m6
+17 gob_libro_regalado I M3 G3 C6 B4 m7
+18 vacaciones_tecnicas D M5 G1 C7 B4 m8
+19 trama_hermano_juicio D M3 G2 C5 B4 m5
+20 trama_hermano_condena D M1 G0 C5 B2 m3
+21 final_evento_mocion I M1 G0 C5 B2 m3
