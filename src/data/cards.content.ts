@@ -6088,7 +6088,7 @@ export const contentCards: Card[] = [
     text: '"Le hemos dado de todo y usted no ha dado nada." Rompe la relación por carta, en tres idiomas, y publica el histórico entero de lo que le prometió.',
     left: { text: 'Volar a verle y prometerle algo', effects: { gobierno: 1, calle: -2, medios: -1 }, moralidad: -1 },
     right: { text: 'Gobernar sin sus votos', effects: { gobierno: -2, medios: 1 }, moralidad: 1 },
-    condition: (_s, _m, ctx) => (ctx.anger['El Exiliado'] ?? 0) >= 3,
+    condition: (_s, _m, ctx) => (ctx.anger['El Exiliado'] ?? 0) >= 2,
     weight: (_s, _m, ctx) => (ctx.anger['El Exiliado'] ?? 0) - 1,
   },
   {
@@ -7600,7 +7600,7 @@ export const contentCards: Card[] = [
     text: 'Ya no llama de noche. Ya no trae carpetas. Cuando se cruzan en un acto le saluda con la cabeza, mirando a otro lado, como se saluda a alguien con quien uno prefiere no salir en la misma foto.',
     left: { text: 'Buscarle y arreglarlo como sea', effects: { gobierno: 1, medios: -1, caja: -1 }, moralidad: -2 },
     right: { text: 'Dejar que se enfríe', effects: { medios: 1, gobierno: -1 }, moralidad: 1 },
-    condition: (_s, _m, ctx) => (ctx.anger['El Fiscal'] ?? 0) >= 3,
+    condition: (_s, _m, ctx) => (ctx.anger['El Fiscal'] ?? 0) >= 2,
     weight: (_s, _m, ctx) => (ctx.anger['El Fiscal'] ?? 0) - 1,
   },
   {
@@ -7654,7 +7654,7 @@ export const contentCards: Card[] = [
     text: 'Entra sin llamar, con el discurso ya escrito. "Salgo yo y digo que fui yo. Que lo decidí sin consultarle, que le mentí y que dimito." Se ajusta la corbata. "Llevo cuatro años tapándole. Déjeme hacerlo una última vez, pero en grande."',
     left: {
       text: 'Dejar que se inmole por usted',
-      effects: { medios: 4, gobierno: -1 },
+      effects: { medios: 3, gobierno: -1 },
       moralidad: -2,
       addFlags: ['ya_te_salvaron', 'debe_favor_comunicacion'],
       scheduleCardId: 'rescate_cobro_comunicacion',
@@ -7677,7 +7677,7 @@ export const contentCards: Card[] = [
     text: 'El comité ya tiene los votos para echarle. Él lleva dos noches llamando uno por uno, sin dormir, con una libreta. "Me faltan tres. Los tengo si les prometo cosas que usted tendrá que cumplir. ¿Se las prometo?"',
     left: {
       text: '"Promételes lo que haga falta"',
-      effects: { gobierno: 4, caja: -2 },
+      effects: { gobierno: 3, caja: -2 },
       moralidad: -2,
       addFlags: ['ya_te_salvaron', 'deuda_escudero'],
       scheduleCardId: 'rescate_cobro_escudero',
@@ -7700,7 +7700,7 @@ export const contentCards: Card[] = [
     text: 'La calle le ha dado la espalda y ella tiene la única gente que aún sale a la calle por algo. "Puedo llenarle la plaza el domingo. Mi gente irá porque se lo pida yo, no por usted. Y luego habrá que hablar de precios."',
     left: {
       text: 'Que llene la plaza el domingo',
-      effects: { calle: 4, gobierno: -1, medios: -1 },
+      effects: { calle: 3, gobierno: -1, medios: -1 },
       moralidad: -1,
       addFlags: ['ya_te_salvaron', 'deuda_socia'],
       scheduleCardId: 'rescate_cobro_socia',
@@ -7724,7 +7724,7 @@ export const contentCards: Card[] = [
     text: '"Presi, mírame." Deja un maletín encima de la mesa y no lo abre. "Aquí hay para tapar el agujero entero. Y si mañana preguntan de dónde salió, salió de mí. Yo por ti voy a la cárcel, ya te lo dije. Solo tienes que decir que sí."',
     left: {
       text: 'Aceptar el maletín',
-      effects: { caja: 4, medios: -2 },
+      effects: { caja: 3, medios: -2 },
       moralidad: -3,
       addFlags: ['ya_te_salvaron', 'deuda_ministro'],
       scheduleCardId: 'rescate_cobro_ministro',
@@ -8034,7 +8034,7 @@ export const contentCards: Card[] = [
       removeFlags: ['transfuga'],
     },
     pleases: 'left',
-    condition: (_s, _m, ctx) => ctx.flagAge('transfuga') >= 13,
+    condition: (_s, _m, ctx) => ctx.flagAge('transfuga') >= 8,
   },
   {
     id: 'secuela_catedra',
@@ -8102,7 +8102,7 @@ export const contentCards: Card[] = [
       removeFlags: ['sumario_filtrado'],
     },
     pleases: 'right',
-    condition: (_s, _m, ctx) => ctx.flagAge('sumario_filtrado') >= 15,
+    condition: (_s, _m, ctx) => ctx.flagAge('sumario_filtrado') >= 9,
   },
   {
     id: 'secuela_decreto_express',
@@ -8186,7 +8186,7 @@ export const contentCards: Card[] = [
       moralidad: -1,
     },
     pleases: 'right',
-    condition: (_s, _m, ctx) => ctx.flagAge('subvencion_guru') >= 15,
+    condition: (_s, _m, ctx) => ctx.flagAge('subvencion_guru') >= 9,
   },
   {
     id: 'secuela_favor_debido',

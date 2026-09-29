@@ -330,8 +330,23 @@ function clima(c: Card, state: GameState, ctx: CardContext): number {
   return m
 }
 
+// Cuanto vuelve alguien con quien ya tienes algo.
+//
+// Sin esto, una partida son ochenta cartas de un mazo de setecientas y a cada
+// personaje le tocan dos: imposible construir una relacion que pide tres o
+// cuatro encuentros. Con esto, la primera vez que le dices que no a alguien,
+// ese alguien empieza a volver, y es lo que hace que enfadarse con el Fiscal
+// signifique algo. El que esta harto de ti no desaparece: aparece mas.
+const EMPUJE_MAX = 3
+
+function empujeRelacion(c: Card, ctx: CardContext): number {
+  const rel = Math.max(ctx.anger[c.character] ?? 0, ctx.favor[c.character] ?? 0)
+  if (rel <= 0) return 1
+  return Math.min(EMPUJE_MAX, 1 + rel * 0.5)
+}
+
 function cooledWeight(c: Card, state: GameState, ctx: CardContext): number {
-  const w = cardWeight(c, state, ctx) * clima(c, state, ctx)
+  const w = cardWeight(c, state, ctx) * clima(c, state, ctx) * empujeRelacion(c, ctx)
   const cd = seenCooldown[c.id] ?? 0
   if (w === 0 || cd === 0) return w
   // La penalizacion nunca deja el peso por debajo del 15% del original.
