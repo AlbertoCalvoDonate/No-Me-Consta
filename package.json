@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "validate-cards": "node scripts/validate-cards.mjs",
     "auditar-coherencia": "node scripts/auditar-coherencia.mjs",
-    "qa-personalidad": "node scripts/qa-personalidad.mjs"
+    "qa-personalidad": "node scripts/qa-personalidad.mjs",
+    "qa-voz": "node scripts/qa-voz.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.2.10",

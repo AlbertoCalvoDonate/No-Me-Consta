@@ -134,11 +134,30 @@ const SIGLAS_PERMITIDAS = new Set([
   'NO', 'SI', 'ALTO', 'SECRETO', 'ES', 'YA', 'URGENTE', 'RESERVADO',
 ])
 
-// Al jugador se le trata de USTED en todo el juego. Las dos excepciones son
-// de familia y estan puestas a proposito: el hermano y la mujer tutean, y eso
-// es justo lo que los caracteriza frente a los otros veinte personajes.
-// Medido: El Hermano 36% de tuteo, La Primera Dama 25%, todos los demas 0%.
-const TUTEAN = new Set(['El Hermano', 'La Primera Dama'])
+// QUIEN TE HABLA DE TU Y QUIEN DE USTED. En castellano esto no es cortesia:
+// es una posicion, y dice de un vistazo quien esta dentro del circulo y quien
+// no. Por eso casi todo el reparto se queda de usted, y cada uno por un motivo
+// que ES el personaje:
+//
+//   La Funcionaria, para marcar que ella no es de nadie.
+//   El Empresario, porque su cortesia es exactamente su poder.
+//   El Juez y El Fiscal, por distancia institucional.
+//   El Cruzado, porque su usted es desprecio.
+//   La Vecina, porque no le conoce de nada.
+//   El Expresidente, porque su usted condescendiente -"en mis tiempos eso se
+//   daba por meritos"- es media broma del personaje.
+//
+// Tutean tres, y los tres se lo han ganado: los dos de la familia y El
+// Ministro Caido, que te llama "presi", cierra la puerta con el pie, se sirve
+// un whisky a las once de la manana y dice "yo por ti voy a la carcel". Ese
+// hombre no habla de usted.
+const TUTEAN = new Set(['El Hermano', 'La Primera Dama', 'El Ministro Caído'])
+
+// Y LA REGLA VA EN LAS DOS DIRECCIONES, que es lo que faltaba. Antes solo se
+// miraba que nadie tuteara sin permiso, y por el otro lado se colo lo
+// contrario: La Primera Dama, que es la mujer del presidente, le hablaba de
+// usted en tres cartas. Su mujer. De usted.
+const FORMAS_USTED = /\b(usted|ustedes|d[ií]game|m[ií]reme|esc[uú]cheme|f[ií]jese|h[aá]game|d[eé]jeme|le digo|le pido|le aviso|le traigo|le cuento|se lo digo|se lo cuento)\b/i
 // Formas de tu dirigidas al jugador. Solo se miran FUERA de las comillas: lo
 // que un personaje cita de otro puede tutear sin problema.
 const FORMAS_TU = /\b(te ha|te van|te lo|te la|te pido|te cuento|tienes|puedes|quieres|sabes|contigo|tuyo|tuya|preguntaste|firmaste|dijiste|hiciste)\b/i
@@ -324,6 +343,16 @@ function validate(cards) {
         errors.push(
           `${label}: el personaje se llama "${card.character}", que nombra algo real ("${quien[1]}"). ` +
             'En el mazo los personajes son arquetipos, no organismos con nombre.'
+        )
+      }
+    }
+    if (card.text && TUTEAN.has(card.character)) {
+      const sinCitas = card.text.replace(/"[^"]*"/g, '')
+      const m = sinCitas.match(FORMAS_USTED)
+      if (m) {
+        warnings.push(
+          `${label}: ${card.character} habla de usted ("${m[0]}") y a este personaje se le ` +
+            'trata de tú: está dentro del círculo.'
         )
       }
     }
