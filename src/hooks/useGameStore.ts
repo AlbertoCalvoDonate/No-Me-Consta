@@ -160,7 +160,15 @@ function cardWeight(c: Card, state: GameState, ctx: CardContext): number {
 //
 // (El comentario anterior decia 7%; era una medida vieja, de antes de que
 // cambiaran la dificultad y el tamaño del mazo.)
-const FAVOR_PARA_RESCATE = 3
+//
+// Y ahora son CUATRO, no tres. No porque el rescate estuviera mal calibrado,
+// sino porque cambio la economia que lo alimenta: al darle `pleases` a los
+// cuatro personajes que mas salen -que eran justo los que menos relacion
+// construian-, el favor empezo a acumularse mucho mas deprisa (el maximo
+// visto paso de 7 a 9). Con el umbral en 3, el jugador decente se pasaba del
+// 11,9% al 14%, fuera de banda por arriba: el rescate habia dejado de ser una
+// sorpresa. Subirlo a 4 devuelve la rareza sin tocar ni una carta.
+const FAVOR_PARA_RESCATE = 4
 
 // Busca a alguien que te deba lo bastante Y que pinte algo en esta caída.
 // Devuelve undefined casi siempre, que es lo suyo: el rescate es la
