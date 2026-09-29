@@ -767,17 +767,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
         favor: newFavor,
         gameOver: true,
         deathReason: choice.epilogueText,
-        // En una muerte por evento la causa es la situación, no una barra:
-        // señalar un indicador ahí despista (te caes por la moción y te dice
-        // "Medios por los suelos"). Solo se marca en las muertes por barra.
-        deathStat: card.byEvent ? undefined : brokenStat(state.stats),
+        // En una muerte por evento o en las urnas la causa es la situación, no
+        // una barra: señalar un indicador ahí despista (te caes por la moción
+        // y te dice "Medios por los suelos", o pierdes unas elecciones y te
+        // señala la barra que resulte que estuviera tocada). Solo se marca en
+        // las muertes por barra, que son las que de verdad reventaron por ahí.
+        deathStat: card.byEvent || card.isElection ? undefined : brokenStat(state.stats),
         lastEpilogue: choice.epilogueText,
       })
       // Lo unico que sobrevive a la muerte: por donde se cayo y como de sucio
       // lo dejo. La partida siguiente empieza con eso encima de la mesa (ver
       // persistHerencia).
       guardarHerencia({
-        causa: card.byEvent ? undefined : brokenStat(state.stats),
+        causa: card.byEvent || card.isElection ? undefined : brokenStat(state.stats),
         meses: state.turn,
         sucio: newMoralidad <= 3,
       })

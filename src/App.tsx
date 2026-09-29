@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
+import { useLogrosEstado } from './hooks/useLogros'
 import { useGameStore } from './hooks/useGameStore'
 import { SwipeCard } from './components/SwipeCard'
 import { StatBars } from './components/StatBars'
@@ -36,6 +37,19 @@ const STAT_LABEL: Record<StatKey, string> = {
   caja: 'Caja B',
 }
 
+// LAS TRES COSAS QUE HAY QUE SABER, dichas cuando sirven.
+//
+// Antes vivian en una pared de texto en la portada que ocupaba 411px de 808 y
+// obligaba a hacer scroll en cualquier movil bajito. Un juego que se explica
+// antes de empezar no se explica: se disculpa. Aqui sale una frase por mes,
+// encima de la carta a la que se refiere, y solo en la primera partida de
+// todas.
+const PISTAS_PRIMERA_PARTIDA: Record<number, string> = {
+  1: 'Arrastre la carta a un lado o al otro para decidir.',
+  2: 'Al arrastrar se encienden puntos: dicen cuánto se mueve cada indicador, no hacia dónde.',
+  3: 'Si un indicador llega a 0 o al máximo, cae el gobierno. En rojo es que ya puede tumbarle.',
+}
+
 // Cómo cayó el gobierno, en una línea, para el texto de compartir. Solo los
 // finales que NO son "una barra a 0" (esos ya dicen qué pilar reventó).
 const CAUSA_COMPARTIR: Record<string, string> = {
@@ -57,6 +71,14 @@ const CAUSA_PANTALLA: Record<string, string> = {
   final_evento_ruptura: 'Se rompió la coalición y se quedó solo',
   final_evento_registro: 'Vinieron a registrar a las seis de la mañana',
   final_evento_expediente: 'Publicaron lo que tenían guardado sobre usted',
+  // Y las urnas, que tampoco son una barra reventada. Sin estas, una derrota
+  // electoral con alguna barra tocada se rotulaba con esa barra -culpando a un
+  // indicador que no tenía por qué tener nada que ver- y una derrota con todo
+  // en su sitio no decía nada en absoluto.
+  elecciones_derrota: 'Perdió las elecciones',
+  elecciones_quemado_final: 'Doce años en el cargo, y ya no se presentó',
+  elecciones_retirada_final: 'Se retiró después de doce años',
+  elecciones_leyenda_final: 'Se retiró invicto, después de doce años',
 }
 
 // Ilustración de la pantalla de fin: una escena por indicador y dirección
@@ -214,6 +236,8 @@ export default function App() {
   // -que no es raro, es de los más comunes- había que hacer scroll en 14 de
   // los 31 finales, y en uno de 320x568 en los 31. Con el epíteto por debajo
   // del borde, que es justo lo que el jugador quiere leer y compartir.
+  // Solo en la primerisima partida se explican las reglas encima de la carta.
+  const { partidas: partidasJugadas } = useLogrosEstado()
   const altoVentana = useAltoVentana()
   const pantallaBaja = altoVentana < 700
   // Y un escalon mas para los moviles de verdad pequenos (320x568, iPhone SE
@@ -430,6 +454,7 @@ export default function App() {
 
               <div
                 style={{
+                  position: 'relative',
                   flex: 1,
                   minHeight: 0,
                   display: 'flex',
@@ -437,6 +462,36 @@ export default function App() {
                   overflow: 'hidden',
                 }}
               >
+                {/* Flota sobre la carta, sin ocupar sitio en el layout: asi no
+                    puede reabrir el scroll que se acaba de cerrar. Y no
+                    intercepta el dedo, que aqui el dedo esta arrastrando. */}
+                {!gameOver && partidasJugadas === 0 && PISTAS_PRIMERA_PARTIDA[turn] && (
+                  <div
+                    key={turn}
+                    style={{
+                      position: 'absolute',
+                      left: 12,
+                      right: 12,
+                      // Por encima del nombre del personaje, que va justo
+                      // debajo de la carta: a 10px la pista lo tapaba.
+                      bottom: 38,
+                      zIndex: 6,
+                      pointerEvents: 'none',
+                      textAlign: 'center',
+                      ...pixel,
+                      fontWeight: 500,
+                      fontSize: 13,
+                      lineHeight: 1.3,
+                      color: '#0e0e10',
+                      background: 'rgba(224,184,77,0.92)',
+                      borderRadius: 9,
+                      padding: '7px 10px',
+                      boxShadow: '0 6px 18px rgba(0,0,0,0.45)',
+                    }}
+                  >
+                    {PISTAS_PRIMERA_PARTIDA[turn]}
+                  </div>
+                )}
                 {!gameOver && <SituationBanner text={cartaMostrada.text} kind={bannerKind} />}
 
                 {/* Sin AnimatePresence a propósito: con ella, al cambiar de
