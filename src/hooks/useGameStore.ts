@@ -11,6 +11,7 @@ import {
   turnosDeGracia,
 } from '../data/cards'
 import { DUENO_DE_PERSONAJE } from '../data/reparto'
+import { apuntarPaso, limpiarLog } from '../utils/logPruebas'
 import { guardarPartida, borrarPartida, cargarPartida } from './persistPartida'
 import { guardarHerencia, cargarHerencia, olvidarHerencia } from './persistHerencia'
 
@@ -688,6 +689,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const afterEffects = applyEffects(state.stats, choice.effects)
     const newStats = choice.rebalance ? applyRebalance(afterEffects) : afterEffects
     const newMoralidad = applyMoralidad(state.moralidad, choice.moralidad)
+    // Log de pruebas (temporal, ver utils/logPruebas): apunta la decision.
+    apuntarPaso({
+      turno: state.turn,
+      carta: state.currentCard.id,
+      lado: side,
+      stats: newStats,
+      moralidad: newMoralidad,
+    })
 
     // Estado narrativo: la elección puede encender o apagar flags.
     const flagSet = new Set(state.flags)
@@ -858,6 +867,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   restart: () => {
+    limpiarLog()
     decayCooldown()
     borrarPartida()
     const nuevo = estadoNuevo()

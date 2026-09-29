@@ -15,6 +15,7 @@ import type { StatKey } from './types'
 import { epitetoDe } from './data/epitetos'
 import { sfx } from './utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from './utils/desbordado'
+import { LOG_DE_PRUEBAS, copiarLog, textoLog } from './utils/logPruebas'
 import { haptics } from './utils/haptics'
 import { registrarPartida } from './hooks/useLogros'
 import type { Logro } from './data/logros'
@@ -247,6 +248,8 @@ export default function App() {
   const muyBaja = altoVentana < 600
   // El relato del final se desplaza cuando no cabe. `hayMasRelato` dice si
   // queda algo por debajo del borde, para difuminarlo y que se vea que hay más.
+  // Log de pruebas (temporal, ver utils/logPruebas).
+  const [logCopiado, setLogCopiado] = useState<'idle' | 'ok' | 'error'>('idle')
   const relatoRef = useRef<HTMLDivElement>(null)
   const textoLen = deathReason?.length ?? 0
   const imagenDisponible = gameOver ? ilustracionFin(currentCard.id) : undefined
@@ -802,6 +805,48 @@ export default function App() {
                           Logros
                         </button>
                       </div>
+
+                      {/* PRUEBAS. ESTO NO ES PARTE DEL JUEGO Y SE VA A QUITAR.
+                          Va en rojo y separado del resto a propósito: tiene que
+                          cantar que no pertenece al diseño, para que nadie se
+                          acostumbre a verlo ahí. Para quitarlo: LOG_DE_PRUEBAS
+                          a false en utils/logPruebas. */}
+                      {LOG_DE_PRUEBAS && (
+                        <button
+                          onClick={async () => {
+                            sfx.boton()
+                            const ok = await copiarLog(
+                              textoLog({
+                                finalId: currentCard.id,
+                                meses: turn - 1,
+                                moralidad,
+                                stats,
+                                version: __APP_VERSION__,
+                              })
+                            )
+                            setLogCopiado(ok ? 'ok' : 'error')
+                            window.setTimeout(() => setLogCopiado('idle'), 2500)
+                          }}
+                          style={{
+                            marginTop: 14,
+                            background: '#b3261e',
+                            border: '2px dashed #ff7a70',
+                            borderRadius: 8,
+                            padding: '8px 18px',
+                            ...pixel,
+                            fontWeight: 500,
+                            fontSize: 15,
+                            color: '#fff',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {logCopiado === 'ok'
+                            ? '¡Log copiado! Pégamelo'
+                            : logCopiado === 'error'
+                              ? 'No se pudo copiar'
+                              : 'PRUEBAS: copiar log'}
+                        </button>
+                      )}
                     </div>
                   </motion.div>
                 )}
