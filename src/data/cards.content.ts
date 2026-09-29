@@ -2899,6 +2899,909 @@ export const contentCards: Card[] = [
     pleases: 'left',
   },
 
+
+  // ==========================================================================
+  // GENTE DE FUERA DEL DESPACHO
+  //
+  // Los veinticinco personajes que habia son todos de dentro: partido, prensa,
+  // juzgado, familia. Sindicatos, empresarios, tertulianos y vecinos se
+  // mencionaban en las cartas sin llegar a tener cara nunca, asi que el juego
+  // no tenia ni una sola voz de la calle de verdad.
+  //
+  // A cada uno lo define UNA cosa: de que depende que te apoye. Eso no se
+  // cuenta en su ficha, se juega con `pleases`, que es lo que hace que acumule
+  // enfado o favor y lo que el jugador tiene que aprender a leer.
+  // ==========================================================================
+
+  // --- EL SINDICALISTA (contigo mientras le pagues los caprichos) ---
+  //
+  // No es un ideologo: es un negociador. Te sostiene lo que haga falta si le
+  // llevas algo a casa, y el dia que no se lo lleves saca a la gente a la
+  // calle. Su `pleases` es casi siempre el lado que le da lo que pide, aunque
+  // ese lado sea el sucio: ahi esta la gracia.
+
+  {
+    id: 'sind_convenio',
+    phase: 1,
+    character: 'El Sindicalista',
+    text: 'El convenio lleva cuatro años congelado y yo tengo que salir a contarle algo a mi gente. Deme una subida, la que sea, aunque no llegue a nada: ya me encargo yo de venderla como un triunfo.',
+    left: {
+      text: 'Darle una subida pequeña y real',
+      effects: { calle: 2, caja: -1 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'Que salga a contar la verdad',
+      effects: { medios: 1, calle: -2 },
+      moralidad: 1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'sind_huelga',
+    phase: 2,
+    character: 'El Sindicalista',
+    text: 'Tengo la huelga general convocada para el día veinte. Todavía se puede desconvocar, y desconvocarla me cuesta a mí explicarles por qué. Usted sabrá lo que vale su veinte de este mes.',
+    left: {
+      text: 'Sentarse a negociar esta noche',
+      effects: { gobierno: 1, caja: -1 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'Que la haga y ya veremos cuánta gente va',
+      effects: { medios: 1, calle: -3 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'sind_consejo',
+    phase: 3,
+    character: 'El Sindicalista',
+    text: 'Hay una plaza libre en el consejo de una empresa pública. No la quiero para mí, la quiero para uno de los míos. Y con esa plaza ocupada, yo no convoco nada en dos años. Ni uno.',
+    left: {
+      text: 'Darle la plaza y comprar la paz',
+      effects: { gobierno: 2, medios: -1 },
+      moralidad: -3,
+    },
+    right: {
+      text: 'Decirle que esa plaza sale a concurso',
+      effects: { medios: 2, calle: -2, gobierno: -1 },
+      moralidad: 3,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'sind_liberados',
+    phase: 3,
+    character: 'El Sindicalista',
+    text: 'Han sacado la cifra de liberados sindicales y no es bonita, se lo concedo. Tocarla ahora es decirle a doscientas personas que se vuelven a su puesto, y esas doscientas personas me sostienen a mí.',
+    left: {
+      text: 'Recortar la cifra y aguantar el ruido',
+      effects: { medios: 2, calle: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Dejarlo como está y no hablar del tema',
+      effects: { calle: 1, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'sind_fabrica',
+    phase: 2,
+    character: 'El Sindicalista',
+    text: 'La fábrica cierra en marzo y son cuatrocientas familias. Con una ayuda pública aguanta hasta después de las elecciones. Después ya no la aguanta nadie, pero eso será después.',
+    left: {
+      text: 'Poner el dinero y ganar tiempo',
+      effects: { calle: 2, caja: -1, medios: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Decir en voz alta que no tiene arreglo',
+      effects: { medios: 2, calle: -2, gobierno: -1 },
+      moralidad: 3,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'sind_tarjeta',
+    phase: 3,
+    character: 'El Periodista',
+    text: 'Uno de los suyos, el que negocia con usted cada mes, tiene una tarjeta de gastos de la patronal. Comidas, hoteles y un viaje. Se lo pregunto a usted porque él no me coge el teléfono.',
+    left: {
+      text: 'Decir que con ese ya no se negocia',
+      effects: { medios: 2, calle: -1, gobierno: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: '"Eso lo tendrá que aclarar él"',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'sind_mesa',
+    phase: 2,
+    character: 'El Sindicalista',
+    text: 'Quiero una mesa de diálogo. No por la mesa: por la foto de la mesa. Usted en el centro, yo a su derecha y el de la patronal a su izquierda. Lo que se acuerde ya lo discutimos luego.',
+    left: {
+      text: 'Montar la mesa y hacerse la foto',
+      effects: { calle: 1, gobierno: 1, medios: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Reunirse sin cámaras y sin foto',
+      effects: { medios: 1, calle: -1 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'sind_transporte',
+    phase: 3,
+    character: 'El Sindicalista',
+    text: 'Los del transporte paran el puente. No lo he decidido yo, pero puedo pedirles que lo dejen. Pedírselo me va a costar algo, y ese algo se lo voy a pedir a usted, no a ellos.',
+    left: {
+      text: 'Pagar lo que pida y salvar el puente',
+      effects: { calle: 2, caja: -1 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Que paren y que la gente vea quién para',
+      effects: { medios: 1, calle: -2, gobierno: -1 },
+      moralidad: 1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'sind_logo',
+    phase: 2,
+    character: 'El Sindicalista',
+    text: 'La subida sale el jueves y la firmamos los dos. Le pido una cosa pequeña: que en el cartel mi logo vaya del mismo tamaño que el escudo. Para usted es tipografía. Para mí es todo.',
+    left: {
+      text: 'Poner los dos logos igual de grandes',
+      effects: { calle: 1, gobierno: 0, medios: -1 },
+    },
+    right: {
+      text: 'Que el escudo vaya solo, como siempre',
+      effects: { gobierno: 1, calle: -2 },
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'sind_campana',
+    phase: 4,
+    character: 'El Sindicalista',
+    text: 'Le ofrezco tranquilidad hasta las elecciones: ni una movilización, ni una declaración, nada. A cambio quiero por escrito lo que hablamos en enero. Por escrito, presidente, que nos conocemos.',
+    left: {
+      text: 'Firmárselo y dormir tranquilo',
+      effects: { calle: 2, gobierno: 1, caja: -2 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'De palabra o nada',
+      effects: { medios: 1, calle: -2 },
+      moralidad: 1,
+    },
+    pleases: 'left',
+  },
+
+  // --- LA VECINA (solo mira por lo suyo, y no lo disimula) ---
+  //
+  // La unica voz del juego que no es de dentro. No sabe como funciona nada y
+  // tampoco tiene por que saberlo: lo que sabe es lo que le ha pasado a ella.
+  // Su `pleases` es SIEMPRE el lado que le beneficia personalmente, tenga o no
+  // sentido, y ahi esta el retrato: no es tonta, es que nadie le ha dado
+  // ningun motivo para mirar mas lejos de su portal.
+
+  {
+    id: 'vecina_recibo',
+    phase: 1,
+    character: 'La Vecina',
+    text: 'Yo de política no sé, pero el recibo de la luz me ha subido once euros desde que están ustedes. Once. Y usted sale en la tele diciendo que ha bajado. Alguno de los dos miente y no soy yo.',
+    left: {
+      text: 'Explicarle la factura entera, con paciencia',
+      effects: { medios: 1, calle: 0 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Prometerle que el mes que viene baja',
+      effects: { calle: 2, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'vecina_carril',
+    phase: 2,
+    character: 'La Vecina',
+    text: 'Han puesto un carril para bicicletas en mi calle y me han quitado donde aparcaba. Yo no tengo bicicleta. Tengo un coche de dieciocho años y una rodilla mala. Quítenlo.',
+    left: {
+      text: 'Dejar el carril donde está',
+      effects: { medios: 1, calle: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Mandar que lo quiten de esa calle',
+      effects: { calle: 2, medios: -2, caja: -1 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'vecina_acera',
+    phase: 1,
+    character: 'La Vecina',
+    text: 'Me habla usted del pacto y de la coalición y de los socios. A mí la acera de mi calle lleva dos años levantada y mi madre se cayó en marzo. Yo le voy a votar por la acera, no por el pacto.',
+    left: {
+      text: 'Prometerle la acera y cumplirlo',
+      effects: { calle: 2, caja: 0, gobierno: -1 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'Explicarle que eso es del ayuntamiento',
+      effects: { gobierno: 1, calle: -2 },
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'vecina_audio',
+    phase: 3,
+    character: 'La Vecina',
+    text: 'Me ha llegado un audio de una señora que dice que van a quitar las pensiones. Lo ha reenviado mi cuñada, que trabaja en un banco, así que algo sabrá. ¿Es verdad o no es verdad?',
+    left: {
+      text: 'Desmentirlo despacio y con datos',
+      effects: { medios: 1, calle: 0 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Decirle lo que quiere oír y cambiar de tema',
+      effects: { calle: 1, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'vecina_piso',
+    phase: 2,
+    character: 'La Vecina',
+    text: 'Mi hijo tiene treinta y un años y sigue en su cuarto. Trabaja. No le llega. Y a mí me da igual de quién sea la culpa: ustedes están ahí para que a mi hijo le llegue.',
+    left: {
+      text: 'Anunciar un plan de vivienda de verdad',
+      effects: { calle: 2, caja: -1, gobierno: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Contarle lo que hizo el gobierno anterior',
+      effects: { gobierno: 1, calle: -2, medios: -1 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'vecina_ayuda',
+    phase: 3,
+    character: 'La Vecina',
+    text: 'La ayuda esa se la han dado al del cuarto, que tiene coche nuevo. A mí me la han denegado por un papel. Un papel. Y yo llevo cuarenta años cotizando. Explíquemelo usted.',
+    left: {
+      text: 'Revisar el caso y arreglarlo si toca',
+      effects: { calle: 1, gobierno: -1, caja: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Meterle prisa a alguien para que se la den ya',
+      effects: { calle: 2, medios: -1 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'vecina_ambulatorio',
+    phase: 2,
+    character: 'La Vecina',
+    text: 'El ambulatorio cierra a las tres. Yo salgo de trabajar a las tres. Usted dirá que faltan médicos; a mí lo que me falta es que me vean. De dónde salga el dinero es cosa suya, no mía.',
+    left: {
+      text: 'Abrir por la tarde aunque cueste',
+      effects: { calle: 2, caja: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Contarle por qué no se puede',
+      effects: { medios: 1, calle: -2 },
+      moralidad: 1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'vecina_semaforo',
+    phase: 3,
+    character: 'La Vecina',
+    text: 'Queremos un semáforo en el cruce. Los técnicos dicen que no hace falta porque no ha habido accidentes. Claro que no ha habido: porque no cruzamos, que nos da miedo. Pónganlo.',
+    left: {
+      text: 'Hacer caso al informe técnico',
+      effects: { gobierno: 1, calle: -1 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'Poner el semáforo y que se callen los técnicos',
+      effects: { calle: 2, gobierno: -2, caja: -1 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'vecina_camaras',
+    phase: 3,
+    character: 'La Vecina',
+    text: 'Le para en la calle con tres cámaras detrás y no se corta: le cuenta lo del ambulatorio, lo de la acera y lo de su hijo, en ese orden y en cuarenta segundos. La gente se para a escuchar.',
+    left: {
+      text: 'Pararse y escucharla entera',
+      effects: { calle: 2, medios: 1, gobierno: -2 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Darle la mano y seguir andando',
+      effects: { gobierno: 1, calle: -2, medios: -1 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'vecina_voto',
+    phase: 4,
+    character: 'La Vecina',
+    text: '"Yo he votado a todos, ¿sabe? A todos. Y todos me han contado lo mismo el primer año." Lo dice sin rencor, como quien cuenta el tiempo. "Al que me arregle lo mío, le voto dos veces."',
+    left: {
+      text: 'Prometerle solo lo que se pueda cumplir',
+      effects: { medios: 1, calle: 0 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Prometerle lo que quiera oír',
+      effects: { calle: 2, medios: -2 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+
+  // --- EL EMPRESARIO (en contra, salvo que le apoyen) ---
+  //
+  // Nunca amenaza levantando la voz: amenaza con cifras y con plazos. Su
+  // `pleases` es el lado que le arrima el hombro, y cuando no se lo arrimas
+  // no monta un escandalo, mueve dinero. Alimenta la caja B, que era la barra
+  // con menos gente propia del reparto.
+
+  {
+    id: 'empre_sede',
+    phase: 2,
+    character: 'El Empresario',
+    text: 'Si el impuesto sale como está escrito, la sede se va. No es una amenaza, es aritmética: me cuesta menos mudarme que quedarme. Y me llevo dos mil puestos que aquí no los repone nadie.',
+    left: {
+      text: 'Suavizar el impuesto y que se queden',
+      effects: { calle: 1, caja: 1, medios: -1 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Que el impuesto salga entero',
+      effects: { medios: 2, calle: -2, caja: -1 },
+      moralidad: 3,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'empre_suelo',
+    phase: 3,
+    character: 'El Empresario',
+    text: 'Traigo inversión, empleo y una foto con grúas. Solo necesito que ese suelo cambie de uso. Es un trámite, lo firma un técnico y no sale en ningún sitio. Salvo que alguien quiera que salga.',
+    left: {
+      text: 'Recalificar el suelo',
+      effects: { caja: 2, calle: 1, medios: -2 },
+      moralidad: -3,
+    },
+    right: {
+      text: 'Que busque otro suelo, ya calificado',
+      effects: { medios: 2, caja: -1, gobierno: -1 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'empre_puerta',
+    phase: 3,
+    character: 'El Periodista',
+    text: 'Han fichado a quien firmó su contrato más grande. Sueldo, coche y una tarjeta. Legal es, porque dejó el cargo hace dos años y un día. ¿Le parece a usted que está bien?',
+    left: {
+      text: 'Decir que está mal aunque sea legal',
+      effects: { medios: 2, caja: -1, gobierno: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: '"Cada uno trabaja donde quiere"',
+      effects: { caja: 1, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'empre_subvencion',
+    phase: 2,
+    character: 'El Empresario',
+    text: 'La subvención está aprobada, solo falta cuándo se paga. Si se paga en marzo, yo anuncio la ampliación antes de las elecciones. Si se paga en julio, la anuncio después. Usted verá.',
+    left: {
+      text: 'Adelantar el pago a marzo',
+      effects: { calle: 1, gobierno: 1, medios: -1 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Que se pague cuando toque',
+      effects: { medios: 1, calle: -1, caja: -1 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'empre_campana',
+    phase: 3,
+    character: 'El Jefe de Comunicación',
+    text: 'La patronal ha puesto dinero en una campaña contra la ley. Anuncios, tertulias, un informe con gráficos. No dicen su nombre en ningún momento, y por eso funciona tan bien.',
+    left: {
+      text: 'Señalar quién paga esa campaña',
+      effects: { medios: 2, caja: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Contestar con otra campaña pagada',
+      effects: { calle: 1, caja: -2, medios: -1 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'empre_concurso',
+    phase: 3,
+    character: 'El Empresario',
+    text: 'Salgo al concurso igual que todos, faltaría más. Solo digo que si el pliego pide quince años de experiencia en este país concreto, el concurso lo gano yo antes de abrirse. Y ustedes ahorran tiempo.',
+    left: {
+      text: 'Dejar el pliego abierto de verdad',
+      effects: { medios: 2, caja: 0, gobierno: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Escribir el pliego a su medida',
+      effects: { caja: 2, medios: -2 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'empre_cotizaciones',
+    phase: 2,
+    character: 'El Empresario',
+    text: 'Bájeme la cuota por cada contrato nuevo y le lleno una provincia de empleo en un año. Sale usted en la foto, salgo yo en la foto y el agujero lo paga la caja, que para eso está.',
+    left: {
+      text: 'Aceptar el trato y contar el empleo',
+      effects: { calle: 2, caja: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Decirle que el empleo no se compra',
+      effects: { medios: 1, calle: -2 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'empre_ere',
+    phase: 4,
+    character: 'El Empresario',
+    text: 'Tengo un expediente listo para presentar. Puedo presentarlo en enero, que es cuando toca, o en plena campaña, que es cuando duele. La diferencia entre las dos fechas la pone usted.',
+    left: {
+      text: 'Negociar para que lo retrase',
+      effects: { calle: 1, caja: -2, medios: -1 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Decirle que presente lo que quiera',
+      effects: { medios: 2, calle: -1, gobierno: -1 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'empre_foro',
+    phase: 2,
+    character: 'El Empresario',
+    text: 'Le invito a inaugurar el foro. Doscientos empresarios, prensa económica y aplausos garantizados si dice usted dos frases concretas. Se las mando el viernes por si quiere leerlas antes.',
+    left: {
+      text: 'Ir y decir lo que usted piensa',
+      effects: { medios: 1, caja: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Ir y leer las dos frases',
+      effects: { caja: 2, calle: -2, medios: -1 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'empre_ministro',
+    phase: 3,
+    character: 'El Empresario',
+    text: 'Su ministra ha hablado tres veces de mi sector este mes y las tres han sido un disgusto en bolsa. No le pido que la cese. Le pido que le pida que hable de otra cosa.',
+    left: {
+      text: 'Decirle que la ministra habla de lo que quiera',
+      effects: { medios: 1, gobierno: 1, caja: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Pedirle a la ministra que baje el tono',
+      effects: { caja: 2, gobierno: -2 },
+      moralidad: -2,
+    },
+    pleases: 'right',
+  },
+
+
+  // --- LA FUNCIONARIA (contigo a muerte, siempre) ---
+  //
+  // OJO: NINGUNA DE SUS CARTAS LLEVA `pleases`, Y ES A PROPOSITO.
+  //
+  // Todos los demas llevan la cuenta. Le dices que no y se enfadan; le dices
+  // que si y te deben una. Ella no. Ella cumple, avisa una vez y firma lo que
+  // le mandes, y al mes siguiente vuelve igual de dispuesta. Es la unica
+  // persona del juego que no te pasa factura.
+  //
+  // Mecanicamente eso significa que no acumula ni enfado ni favor: no aparece
+  // nunca "harta", no vuelve antes por estar cabreada y no puede salir a
+  // rescatarte, porque nunca llegas a deberle nada. Esa es exactamente la
+  // broma, y es la mas triste del mazo: la unica que no te falla es la unica
+  // a la que el juego no te obliga a tener contenta.
+
+  {
+    id: 'funci_informe',
+    phase: 1,
+    character: 'La Funcionaria',
+    text: 'El informe técnico dice que esto no se puede hacer así. Se lo he puesto por escrito, que es mi trabajo. Si usted lo firma igual, lo tramito mañana a primera hora, que también es mi trabajo.',
+    left: {
+      text: 'Rehacerlo como dice el informe',
+      effects: { medios: 1, gobierno: -1, calle: 0 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Firmarlo igual y que lo tramite',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -2,
+    },
+  },
+  {
+    id: 'funci_cinco_gobiernos',
+    phase: 2,
+    character: 'La Funcionaria',
+    text: 'Llevo cinco gobiernos en este despacho. Esto que me trae hoy lo he visto tres veces: dos salió mal y una salió regular. No le digo que no lo haga. Le digo lo que pasó las tres veces.',
+    left: {
+      text: 'Preguntarle qué haría ella',
+      effects: { gobierno: 1, medios: 1, calle: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Agradecerle el dato y seguir adelante',
+      effects: { calle: 1, gobierno: -2 },
+      moralidad: -1,
+    },
+  },
+  {
+    id: 'funci_fallo_decreto',
+    phase: 2,
+    character: 'La Funcionaria',
+    text: 'En la disposición cuarta hay un error de redacción. Pequeño. Va a costar dinero dentro de dos años y para entonces yo ya no estaré. Se lo digo ahora porque ahora se arregla en una tarde.',
+    left: {
+      text: 'Parar la publicación y corregirlo',
+      effects: { medios: 1, caja: 1, gobierno: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Publicarlo y corregirlo más adelante',
+      effects: { gobierno: 1, caja: -2 },
+      moralidad: -2,
+    },
+  },
+  {
+    id: 'funci_expediente',
+    phase: 3,
+    character: 'La Funcionaria',
+    text: 'Me han pedido de arriba que adelante un expediente. Por delante hay cuarenta que llevan más tiempo. Yo lo adelanto si usted me lo dice, pero se lo cuento antes de hacerlo, no después.',
+    left: {
+      text: 'Que siga el orden, cueste lo que cueste',
+      effects: { medios: 2, gobierno: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Que lo adelante y no se hable más',
+      effects: { gobierno: 2, medios: -2 },
+      moralidad: -3,
+    },
+  },
+  {
+    id: 'funci_sin_escrito',
+    phase: 3,
+    character: 'La Funcionaria',
+    text: 'Me han dicho que esta instrucción no la ponga por escrito. Yo trabajo con escritos: si no hay papel, no hay instrucción, y entonces esto no lo he hablado con nadie. ¿Lo hablamos o no lo hablamos?',
+    left: {
+      text: 'Dárselo por escrito y firmarlo usted',
+      effects: { medios: 1, gobierno: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Dejarlo en que no se ha hablado',
+      effects: { gobierno: 1, medios: -1, calle: -1 },
+      moralidad: -2,
+    },
+  },
+  {
+    id: 'funci_jubilacion',
+    phase: 4,
+    character: 'La Funcionaria',
+    text: 'Me jubilo en marzo. Llevo dos años pidiendo que pongan a alguien conmigo para enseñarle esto, porque esto no está escrito en ninguna parte: está en mi cabeza. Nadie ha contestado.',
+    left: {
+      text: 'Sacar la plaza ya y que la forme ella',
+      effects: { gobierno: 2, caja: 0, calle: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Ya se verá cuando se vaya',
+      effects: { caja: 1, gobierno: -2 },
+      moralidad: -2,
+    },
+  },
+  {
+    id: 'funci_confianza',
+    phase: 3,
+    character: 'La Funcionaria',
+    text: 'Me ofrecen un puesto de confianza, con despacho mejor y el triple de sueldo. Lo he rechazado. Prefiero mi plaza, que no me la quita usted ni el que venga después. Se lo cuento para que lo sepa.',
+    left: {
+      text: 'Reconocérselo en público',
+      effects: { medios: 2, gobierno: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Insistir en que acepte el puesto',
+      effects: { gobierno: 1, medios: -1, calle: -1 },
+      moralidad: -1,
+    },
+  },
+  {
+    id: 'funci_culpa',
+    phase: 3,
+    character: 'El Jefe de Comunicación',
+    text: 'Alguien tiene que cargar con el retraso y no puede ser un cargo político. La versión fácil es que se atascó en un departamento técnico. Nadie va a preguntar en qué departamento.',
+    left: {
+      text: 'Asumirlo el Gobierno y punto',
+      effects: { medios: 2, gobierno: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Dejar caer que fue cosa de los técnicos',
+      effects: { gobierno: 1, medios: -2 },
+      moralidad: -3,
+    },
+  },
+  {
+    id: 'funci_finde',
+    phase: 2,
+    character: 'La Funcionaria',
+    text: 'El anuncio es el lunes, así que el informe lo tengo que sacar este fin de semana. No le pido nada, se lo digo por si algún día alguien cuenta cómo se hacen estas cosas. Ya está. Sigo.',
+    left: {
+      text: 'Pagarle las horas y decirlo en voz alta',
+      effects: { medios: 1, gobierno: 1, caja: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Darle las gracias y volver al despacho',
+      effects: { gobierno: 1, calle: -1 },
+      moralidad: -1,
+    },
+  },
+  {
+    id: 'funci_le_cuesta',
+    phase: 4,
+    character: 'La Funcionaria',
+    text: 'Esto que me pide lo firmo yo, no usted. Y si un día alguien pregunta, la firma que va a leer es la mía. Se lo digo sin reproche: solo quiero que sepa de quién es el nombre que va debajo.',
+    left: {
+      text: 'Firmarlo usted mismo',
+      effects: { medios: 1, gobierno: -2 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Que lo firme ella, que para eso está',
+      effects: { gobierno: 2, medios: -1, calle: 0 },
+      moralidad: -3,
+    },
+  },
+
+  // --- EL TERTULIANO (opina, y lo que opina mueve la calle) ---
+  //
+  // No investiga, no pregunta y no tiene fuente: tiene minutos. Da igual lo
+  // que sepa, porque lo que diga esta noche lo repetiran mañana en cuatro mil
+  // bares. Sus cartas mueven `calle` mas que `medios`, que es justo lo que lo
+  // distingue del Periodista: aquel te saca una historia, este te cambia el
+  // clima. Su `pleases` es el lado que le da lo que de verdad quiere, que
+  // nunca es la verdad: son minutos, acceso o un cargo.
+
+  {
+    id: 'tert_esta_noche',
+    phase: 1,
+    character: 'El Tertuliano',
+    text: 'Esta noche hablo de usted, eso está decidido. Lo que no está decidido es en qué tono. Si me coge el teléfono antes de las nueve, hablamos; si no, improviso, y cuando improviso me pongo tremendo.',
+    left: {
+      text: 'Cogerle el teléfono a las nueve menos cuarto',
+      effects: { calle: 1, medios: 1, gobierno: -1 },
+      moralidad: -1,
+    },
+    right: {
+      text: 'Que improvise lo que quiera',
+      effects: { gobierno: 1, calle: -2 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'tert_exclusiva',
+    phase: 2,
+    character: 'El Tertuliano',
+    text: 'Deme algo. Una fecha, un nombre, algo que pueda soltar el martes como si lo supiera de siempre. A cambio, durante un mes, cuando salga su asunto yo miro para otro lado. Un mes entero.',
+    left: {
+      text: 'Darle algo pequeño y comprar el mes',
+      effects: { calle: 2, medios: -1 },
+      moralidad: -3,
+    },
+    right: {
+      text: 'No darle nada',
+      effects: { medios: 1, calle: -2 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'tert_dato_inventado',
+    phase: 3,
+    character: 'El Tertuliano',
+    text: 'Dijo una cifra el jueves, se la inventó entera y ya la repiten hasta los suyos. Desmentirla es darle otra noche de tertulia. No desmentirla es que dentro de un mes sea verdad.',
+    left: {
+      text: 'Desmentirla con el dato bueno',
+      effects: { medios: 2, calle: -1 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Dejar que se gaste sola',
+      effects: { gobierno: 1, calle: -2, medios: -1 },
+      moralidad: -1,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'tert_cargo',
+    phase: 3,
+    character: 'El Tertuliano',
+    text: 'Yo he sido muy crítico con usted, lo reconozco. También le digo que llevo veinte años hablando de cultura y que ese patronato está sin presidente. Las dos cosas no tienen nada que ver.',
+    left: {
+      text: 'Darle el patronato y ganarse un altavoz',
+      effects: { medios: 2, calle: -1 },
+      moralidad: -3,
+    },
+    right: {
+      text: 'Decirle que ese puesto no se regala',
+      effects: { calle: 1, medios: -2 },
+      moralidad: 3,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'tert_cambio_bando',
+    phase: 3,
+    character: 'El Tertuliano',
+    text: 'Anoche defendió lo contrario de lo que defendía en marzo, sin despeinarse y sin que nadie se lo afeara. Hoy pide entrar en el acto del viernes, en primera fila, con acreditación.',
+    left: {
+      text: 'Dejarle entrar y no recordarle marzo',
+      effects: { calle: 1, medios: 0 },
+      moralidad: -2,
+    },
+    right: {
+      text: 'Recordarle marzo en público',
+      effects: { medios: 2, calle: -2, gobierno: -1 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'tert_publicidad',
+    phase: 2,
+    character: 'El Jefe de Comunicación',
+    text: 'El programa donde más le pegan pide campaña institucional. Es el que más gente ve a la hora de comer. Pagarles suena fatal escrito y funciona muy bien medido.',
+    left: {
+      text: 'No pagar ni un euro a ese programa',
+      effects: { medios: 1, calle: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'Contratar la campaña donde más se ve',
+      effects: { calle: 2, caja: -2, medios: -2 },
+      moralidad: -3,
+    },
+    pleases: 'right',
+  },
+  {
+    id: 'tert_plato',
+    phase: 2,
+    character: 'El Tertuliano',
+    text: 'Mándeme a alguien del Gobierno el jueves. Le voy a dar caña, se lo aviso, pero la silla vacía da mucho peor que la silla llena. Y la silla vacía la voy a enseñar en pantalla toda la noche.',
+    left: {
+      text: 'Mandar a alguien a que aguante',
+      effects: { calle: 1, medios: 1, gobierno: -1 },
+      moralidad: 1,
+    },
+    right: {
+      text: 'Que enseñe la silla vacía',
+      effects: { gobierno: 1, calle: -2 },
+      moralidad: -1,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'tert_barbaridad',
+    phase: 3,
+    character: 'El Periodista',
+    text: 'Dijo en directo una barbaridad sobre la gente que llega en patera. Ahora todos le preguntan a usted si la condena. Condenarla es hacerle más grande; no condenarla es que parezca que le vale.',
+    left: {
+      text: 'Condenarlo con nombre y apellidos',
+      effects: { medios: 2, calle: -1 },
+      moralidad: 3,
+    },
+    right: {
+      text: 'No entrar en ese barro',
+      effects: { gobierno: 1, medios: -2, calle: -1 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'tert_encuesta',
+    phase: 2,
+    character: 'El Encuestador',
+    text: 'La encuesta que abre hoy los informativos la hizo un tertuliano preguntando en su cuenta a sus seguidores. Ocho mil votos, ningún rigor y un titular perfecto. La mía, con mil llamadas, va en la página nueve.',
+    left: {
+      text: 'Salir a explicar cómo se hace una encuesta',
+      effects: { medios: 1, calle: 0 },
+      moralidad: 2,
+    },
+    right: {
+      text: 'Usar la que mejor salga de las dos',
+      effects: { calle: 1, medios: -2 },
+      moralidad: -2,
+    },
+    pleases: 'left',
+  },
+  {
+    id: 'tert_retirada',
+    phase: 4,
+    character: 'El Tertuliano',
+    text: 'Me estoy planteando dejarlo. Estoy cansado, y además me han ofrecido escribir un libro. Ahora bien, si alguien me diera un motivo para quedarme, yo me quedaría. Y ya sabe usted cómo hablo de los amigos.',
+    left: {
+      text: 'Darle ese motivo',
+      effects: { medios: 1, calle: 1, caja: -1 },
+      moralidad: -3,
+    },
+    right: {
+      text: 'Desearle suerte con el libro',
+      effects: { medios: 1, calle: -2 },
+      moralidad: 2,
+    },
+    pleases: 'left',
+  },
+
   // --- LA VICEPRESIDENTA (idealista, ambiciosa, a un paso de montar lo suyo) ---
   {
     id: 'vice_sentido_comun',

@@ -35,6 +35,16 @@ const SIN_CARA: Record<string, string> = {
   'El Espejo': '#15151a',
   'La Fontanera': '#1b1e26',
   'El Expediente': '#191b21',
+  // LOS CINCO DE FUERA, hasta que tengan retrato. Sin esto les tocaria el
+  // hash del nombre, que saca verdes y turquesas de chicle -y en este juego
+  // el verde significa que una eleccion es limpia, asi que ademas miente.
+  // Cada uno va del tono de su barra, apagado: cuando llegue el dibujo,
+  // estas cinco lineas se borran y el color sale de su ropa como en el resto.
+  'El Sindicalista': '#2b2418',
+  'La Vecina': '#241f1a',
+  'El Empresario': '#1d1f2a',
+  'La Funcionaria': '#1a2028',
+  'El Tertuliano': '#2a1c1c',
 }
 
 export function characterColor(character: string, characterImage?: string): string {
