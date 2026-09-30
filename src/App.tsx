@@ -473,8 +473,11 @@ export default function App() {
                     key={turn}
                     style={{
                       position: 'absolute',
-                      left: 12,
-                      right: 12,
+                      // Pegada a los bordes de la carta: cada píxel de ancho
+                      // que se gana aquí es una línea menos de texto, y a este
+                      // cuerpo de letra las líneas se notan.
+                      left: 8,
+                      right: 8,
                       // Por encima del nombre del personaje, que va justo
                       // debajo de la carta: a 10px la pista lo tapaba.
                       bottom: 38,
@@ -483,12 +486,16 @@ export default function App() {
                       textAlign: 'center',
                       ...pixel,
                       fontWeight: 500,
-                      fontSize: 13,
-                      lineHeight: 1.3,
+                      // A 13 era la letra más pequeña del juego: lo único que
+                      // explica cómo se juega estaba escrito más pequeño que
+                      // cualquier otra cosa en pantalla. Ahora va al cuerpo de
+                      // un texto que se lee, no al de una nota al pie.
+                      fontSize: 16,
+                      lineHeight: 1.35,
                       color: '#0e0e10',
-                      background: 'rgba(224,184,77,0.92)',
+                      background: 'rgba(224,184,77,0.94)',
                       borderRadius: 9,
-                      padding: '7px 10px',
+                      padding: '9px 12px',
                       boxShadow: '0 6px 18px rgba(0,0,0,0.45)',
                     }}
                   >
