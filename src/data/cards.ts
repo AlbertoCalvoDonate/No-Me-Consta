@@ -514,7 +514,7 @@ const electionCards: Card[] = [
     isElection: true,
     character: 'Noche electoral',
     characterImage: 'nocheelectoral.svg',
-    text: 'Cuatro años. El partido del Gurú ha sacado escaños, todos de su bolsillo. La izquierda va partida en dos y la suma no da. La culpa, dicen los suyos, es de usted por no haberlo comprado a tiempo.',
+    text: 'Cuatro años. El partido de su gurú ha sacado escaños, todos de su bolsillo. La izquierda va partida en dos y la suma no da. La culpa, dicen los suyos, es de usted por no haberlo comprado a tiempo.',
     left: {
       text: 'Ofrecerle entrar al Gobierno ahora',
       effects: { gobierno: 1, caja: -2, medios: -1 },

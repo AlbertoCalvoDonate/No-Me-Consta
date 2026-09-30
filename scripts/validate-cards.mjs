@@ -162,6 +162,37 @@ const FORMAS_USTED = /\b(usted|ustedes|d[ií]game|m[ií]reme|esc[uú]cheme|f[ií
 // que un personaje cita de otro puede tutear sin problema.
 const FORMAS_TU = /\b(te ha|te van|te lo|te la|te pido|te cuento|tienes|puedes|quieres|sabes|contigo|tuyo|tuya|preguntaste|firmaste|dijiste|hiciste)\b/i
 
+// EL ROTULO DE LA FICHA NO ES EL NOMBRE DE NADIE.
+//
+// Bajo cada carta va el nombre del personaje, y ese nombre es una etiqueta que
+// puso el juego para que sepas quien habla. Unas coinciden con castellano
+// normal -"el juez", "la ministra", "mi hermano", "su portavoz"- y esas se
+// pueden decir en voz alta sin que chirrie. Otras no existen fuera de la
+// ficha: nadie llama a nadie "el caido", ni "el escudero", ni "la socia
+// incomoda". Cuando un personaje las usa para nombrar a otro, el juego deja de
+// sonar a gente hablando y suena a una partida leyendo su propia interfaz.
+//
+// Lo conto un jugador con esta carta: "Le he dicho cuatro cosas al caido ese".
+// El hermano no tiene forma de saber que a ese hombre el juego le llama asi.
+//
+// Se bloquea, no se avisa: no hay ningun caso legitimo. Si algun dia lo hay,
+// se escribe aqui con su motivo, como en las listas de arriba.
+// OJO CON \b: en JavaScript solo conoce [A-Za-z0-9_], así que una vocal con
+// tilde no cuenta como letra y detrás de ella NO hay frontera de palabra. Un
+// `Gur[uú]s?\b` se tragaba "al Gurú y" sin decir nada, y se vio porque al
+// probar la regla con los cinco rótulos a propósito saltaron cuatro de cinco.
+// Se cierra con un "y aquí no viene letra" explícito, que sí sabe de tildes.
+const FIN = '(?![a-záéíóúñüA-ZÁÉÍÓÚÑÜ])'
+const ARTICULO = '(?:^|[^a-záéíóúñü])(?:[EeAaDd]l|del|Del)\\s+'
+const ROTULOS_DE_FICHA = [
+  [new RegExp('Ministr[oa]\\s+Ca[ií]d[oa]' + FIN), 'no es su nombre: "su exministro", "el ministro que dimitió"'],
+  [new RegExp('ca[ií]do\\s+ese' + FIN, 'i'), 'no es su nombre: "el exministro ese"'],
+  [new RegExp(ARTICULO + 'Escuderos?' + FIN), 'no es su oficio: "su portavoz", "el que sale a defenderle"'],
+  [new RegExp(ARTICULO + 'Cruzados?' + FIN), 'no es su nombre: descríbalo ("el que lo convierte todo en una cruzada")'],
+  [new RegExp('Socia\\s+Inc[oó]moda' + FIN), '"incómoda" es el juicio de la ficha: "su socia", "la socia de la coalición"'],
+  [new RegExp(ARTICULO + 'Gur[uú]s?' + FIN), 'en minúscula es castellano normal: "su gurú", "al gurú"'],
+]
+
 function validate(cards) {
   const errors = []
   const warnings = []
@@ -304,6 +335,14 @@ function validate(cards) {
             'En el mazo no hay paises, ciudades ni organismos con nombre: lo real son las situaciones.'
         )
       }
+      for (const [re, arreglo] of ROTULOS_DE_FICHA) {
+        const rotulo = txt.match(re)
+        if (!rotulo) continue
+        errors.push(
+          `${label}: llama a un personaje por el rotulo de su ficha ("${rotulo[0].trim()}") en "${donde}". ` +
+            `Eso es como leer la interfaz en voz alta: ${arreglo}.`
+        )
+      }
       // La red de verdad: mayusculas a mitad de frase que nadie ha permitido.
       // Se corta por frases y se salta la primera palabra de cada una, que va
       // en mayuscula por gramatica y no dice nada.
@@ -417,6 +456,13 @@ function revisarTextosSueltos(ruta, avisos, errores) {
       errores.push(
         `${label}: nombre propio real ("${lugar[1]}"). ` +
           'En el mazo no hay paises, ciudades ni organismos con nombre.'
+      )
+    }
+    for (const [re, arreglo] of ROTULOS_DE_FICHA) {
+      const rotulo = txt.match(re)
+      if (!rotulo) continue
+      errores.push(
+        `${label}: llama a un personaje por el rotulo de su ficha ("${rotulo[0].trim()}"). ${arreglo}.`
       )
     }
     for (const frase of txt.split(/(?<=[.!?:»"])\s+/)) {
