@@ -9,3 +9,12 @@ tsconfig.tsbuildinfo
 # bucles ya cortados y comprimidos de public/musica, generados con
 # scripts/musica.mjs. Los originales se quedan fuera del repo.
 ost-fuentes
+
+# Los retratos tal y como los entrega el dibujante, antes de pasarles la
+# tuberia (recortar-fondo -> normalize-portraits -> to-webp). Lo que se
+# publica son los .webp de public/characters. Mismo trato que ost-fuentes:
+# se quedan en disco, fuera del repo.
+#
+# Existe porque los originales de la primera tanda de retratos se perdieron:
+# se borraba el .png despues de convertirlo y no quedaba de donde volver.
+arte-fuentes
