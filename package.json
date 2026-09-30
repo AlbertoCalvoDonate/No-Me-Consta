@@ -10,7 +10,8 @@
     "validate-cards": "node scripts/validate-cards.mjs",
     "auditar-coherencia": "node scripts/auditar-coherencia.mjs",
     "qa-personalidad": "node scripts/qa-personalidad.mjs",
-    "qa-voz": "node scripts/qa-voz.mjs"
+    "qa-voz": "node scripts/qa-voz.mjs",
+    "qa-ortografia": "node scripts/qa-ortografia.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.2.10",
@@ -22,6 +23,8 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "dictionary-es": "^4.0.0",
+    "nspell": "^2.1.5",
     "typescript": "^5.5.3",
     "vite": "^6.0.0"
   }
