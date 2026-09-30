@@ -3,7 +3,7 @@ import { useTransform, type MotionValue } from 'framer-motion'
 import type { Card, Stats } from '../types'
 import { EffectPips } from './EffectPips'
 import { StatIcon } from './StatIcon'
-import { SWIPE_REVEAL_DISTANCE } from './SwipeCard'
+import { SWIPE_REVEAL_DISTANCE, ZONA_MUERTA } from './SwipeCard'
 import { STAT_MAX, turnosDeGracia, amenazaRegistro, REGISTRO_MIN_TURN } from '../data/cards'
 import { REPARTO } from '../data/reparto'
 import { COLOR, pixel } from '../utils/estilo'
@@ -128,9 +128,12 @@ export function StatBars({
 }: Props) {
   // Mismos umbrales que usa la carta para revelar el texto de cada lado al
   // arrastrar, así los puntos de arriba aparecen exactamente a la vez.
-  const fadeStart = SWIPE_REVEAL_DISTANCE / 4
-  const leftOpacity = useTransform(x, [-SWIPE_REVEAL_DISTANCE, -fadeStart, 0], [1, 0, 0])
-  const rightOpacity = useTransform(x, [0, fadeStart, SWIPE_REVEAL_DISTANCE], [0, 0, 1])
+  // La zona muerta es la MISMA que la del panel, no una fraccion parecida:
+  // antes era SWIPE_REVEAL_DISTANCE/4 y coincidia de casualidad. Los puntos y
+  // el panel tienen que encenderse a la vez o el jugador ve dos cosas
+  // distintas diciendole cuando empieza a contar el gesto.
+  const leftOpacity = useTransform(x, [-SWIPE_REVEAL_DISTANCE, -ZONA_MUERTA, 0], [1, 0, 0])
+  const rightOpacity = useTransform(x, [0, ZONA_MUERTA, SWIPE_REVEAL_DISTANCE], [0, 0, 1])
 
   // ¿Está el registro judicial encima de la mesa? Se calcula aquí, una sola
   // vez, porque lo necesitan dos cosas: la barra de la caja para pintarse

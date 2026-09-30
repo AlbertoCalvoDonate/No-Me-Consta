@@ -28,20 +28,49 @@ const VUELO = 820
 // a subir cuando la anterior acaba de irse.
 const VUELO_MS = 200
 const DECIDIR_MS = 125
-// Cuanto se desplaza la carta al asomar una opcion sin arrastrar.
-const PEEK_DISTANCE = 58
+// EL RECORRIDO DEL GESTO, DE PRINCIPIO A FIN.
+//
+// OJO con las unidades, que son dos. `x` es el desplazamiento YA amortiguado
+// por dragElastic, y SWIPE_THRESHOLD se compara contra el recorrido real del
+// DEDO. La conversión es dedo ≈ x / DRAG_ELASTIC. Todo lo que se mide sobre
+// `x` se deriva aquí del umbral del dedo para que tocar uno mueva los demás:
+// cuando eran números sueltos se descuadraban solos.
+const DRAG_ELASTIC = 0.7
+
+// Recorrido del DEDO para que el gesto cuente como elección. Un "flick" rápido
+// cuenta aunque no llegue — así se parece más a un gesto real y hay menos
+// posibilidades de que el ratón se salga de la ventana a medio arrastre.
+const SWIPE_THRESHOLD = 92
+const FLICK_VELOCITY = 500
+
+// El PUNTO DE NO RETORNO en unidades de `x`: soltar antes devuelve la carta a
+// su sitio y no cuenta, soltar después decide. Existía desde siempre, pero no
+// se veía por ninguna parte, así que nadie sabía dónde estaba ni que hubiera
+// marcha atrás. Ahora el panel de la respuesta lo dice: va a media luz hasta
+// aquí y se enciende del todo al cruzarlo.
+const COMPROMISO = SWIPE_THRESHOLD * DRAG_ELASTIC
+
+// ZONA MUERTA: los primeros píxeles no revelan nada, solo mueven la carta. Es
+// el hueco donde se aprende que se puede empujar y soltar sin consecuencias —
+// antes el panel empezaba a entrar desde el primer píxel y el gesto parecía
+// comprometido desde el principio. Es el mismo arranque que ya tenían los
+// puntos de efecto de las barras, que esperaban y el panel no.
+export const ZONA_MUERTA = 12
 
 // Distancia de arrastre a la que un lado se considera "totalmente revelado".
 // Se exporta porque StatBars usa el mismo valor para los puntos de efecto —
 // deben moverse en sincronía.
 //
-// OJO con las unidades: esto se mide sobre `x`, que es el desplazamiento YA
-// amortiguado por dragElastic (0.7), mientras que SWIPE_THRESHOLD se compara
-// contra el recorrido real del DEDO. Es decir: dedo ≈ x / 0.7. Con 60 aquí,
-// el panel no se completaba hasta 86px de dedo, pero la elección ya estaba
-// decidida a los 70px — el panel no llegaba a leerse entero nunca. Medido:
-// con 38 se completa a ~54px de dedo, bastante antes del umbral.
-export const SWIPE_REVEAL_DISTANCE = 38
+// Tiene que completarse bastante antes del compromiso: ese hueco es el tiempo
+// que hay para leer la opción y decidir echarse atrás. Medido con estos
+// números: entra a los 17px de dedo, está entera a los 66 y no cuenta hasta
+// los 92, o sea 26px de dedo para leerla sin haber decidido nada.
+export const SWIPE_REVEAL_DISTANCE = 46
+
+// Cuanto se desplaza la carta al asomar una opcion sin arrastrar (teclado).
+// Entre el revelado y el compromiso a propósito: la flecha ENSEÑA la opción,
+// con su borde a media luz, y hay que repetirla para elegirla.
+const PEEK_DISTANCE = 56
 
 // Cuánto de "corrupta" es una decisión, a partir de sus propios efectos:
 // caja/partido son ganancias de trastienda, medios/votantes son legitimidad
@@ -56,10 +85,13 @@ export function corruptionScore(effects: StatEffects) {
   return caja + partido - medios - votantes
 }
 
-const CLEAN = { bg: '#12331f', accent: '#4dff88' }
-const CORRUPT = { bg: '#3a1414', accent: COLOR.peligro }
+// Cada paleta lleva su acento en dos intensidades: `tenue` mientras la
+// decisión todavía se puede deshacer y `accent` cuando ya cuenta. Van escritas
+// a mano en vez de calcularse porque son dos valores, no una escala.
+const CLEAN = { bg: '#12331f', accent: '#4dff88', tenue: 'rgba(77,255,136,0.3)' }
+const CORRUPT = { bg: '#3a1414', accent: COLOR.peligro, tenue: 'rgba(255,77,77,0.3)' }
 // Para cuando no hay nada que elegir de verdad.
-const NEUTRO = { bg: '#26262a', accent: '#8d8677' }
+const NEUTRO = { bg: '#26262a', accent: '#8d8677', tenue: 'rgba(141,134,119,0.3)' }
 
 // Etiqueta de tamaño fijo (ni crece ni encoge con el texto) que entra
 // deslizándose desde el lateral en sincronía directa con el arrastre — no
@@ -82,18 +114,48 @@ function ChoicePanel({
 }: {
   text: string
   side: 'left' | 'right'
-  colors: { bg: string; accent: string }
+  colors: { bg: string; accent: string; tenue: string }
   x: MotionValue<number>
 }) {
-  // El deslizamiento arranca en 0, no en una zona muerta: el panel empieza a
-  // asomar desde el primer píxel de arrastre y entra de forma gradual. Con
-  // zona muerta entraba tarde y de golpe, y no daba tiempo a leerlo. Para el
-  // rebote al soltar no hace falta colchón aquí: de eso se encarga `opacity`,
-  // que apaga el panel en cuanto el arrastre cruza al lado contrario.
+  // El deslizamiento no arranca en 0: los primeros ZONA_MUERTA píxeles solo
+  // mueven la carta y el panel sigue fuera. Ese hueco es lo que enseña que
+  // empujar no es elegir.
+  //
+  // Hubo una versión sin zona muerta, y el motivo entonces era bueno: con
+  // zona muerta el panel entraba "tarde y de golpe". Pero eso pasaba porque se
+  // le quitaba recorrido a la entrada sin dárselo por otro lado. Ahora el
+  // revelado completo se ha alejado lo mismo que se ha metido de zona muerta,
+  // así que la entrada dura MÁS que antes (34px de `x` frente a 38 repartidos
+  // peor), y encima empieza cuando ya has movido la carta a propósito.
+  //
+  // Para el rebote al soltar no hace falta colchón aquí: de eso se encarga
+  // `opacity`, que apaga el panel en cuanto el arrastre cruza al lado
+  // contrario.
   const slideRaw = useTransform(
     x,
-    side === 'left' ? [-SWIPE_REVEAL_DISTANCE, 0] : [0, SWIPE_REVEAL_DISTANCE],
+    side === 'left'
+      ? [-SWIPE_REVEAL_DISTANCE, -ZONA_MUERTA]
+      : [ZONA_MUERTA, SWIPE_REVEAL_DISTANCE],
     side === 'left' ? [0, -PANEL_HIDDEN] : [PANEL_HIDDEN, 0]
+  )
+  // EL PUNTO DE NO RETORNO, DICHO CON EL BORDE. Mientras la decisión se puede
+  // deshacer el borde va a media luz; en los últimos diez píxeles antes del
+  // compromiso se enciende del todo y el panel crece un pelo. Así el jugador
+  // ve DÓNDE está la línea sin que nadie se la explique, y todo lo de antes
+  // de esa línea se lee como lo que es: reversible.
+  //
+  // El texto y el fondo no se tocan: si el panel entra en penumbra, lo único
+  // que hace (dejarte leer la opción antes de decidir) deja de funcionar.
+  const RAMPA = 10
+  const borderColor = useTransform(
+    x,
+    side === 'left' ? [-COMPROMISO, -(COMPROMISO - RAMPA)] : [COMPROMISO - RAMPA, COMPROMISO],
+    side === 'left' ? [colors.accent, colors.tenue] : [colors.tenue, colors.accent]
+  )
+  const scale = useTransform(
+    x,
+    side === 'left' ? [-COMPROMISO, -(COMPROMISO - RAMPA)] : [COMPROMISO - RAMPA, COMPROMISO],
+    side === 'left' ? [1.04, 1] : [1, 1.04]
   )
   // Solo el deslizamiento de entrada: el panel NO acompaña a la carta. Una vez
   // dentro se queda QUIETO en pantalla aunque se siga arrastrando, y es la
@@ -142,9 +204,12 @@ function ChoicePanel({
         minHeight: 88,
         maxHeight: PANEL_HEIGHT,
         x: panelX,
+        scale,
         background: colors.bg,
         opacity,
-        border: `2px solid ${colors.accent}`,
+        borderStyle: 'solid',
+        borderWidth: 2,
+        borderColor,
         borderRadius: 12,
         boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
         display: 'flex',
@@ -177,16 +242,6 @@ function ChoicePanel({
     </motion.div>
   )
 }
-
-// Recorrido del DEDO para que el gesto cuente como elección. Tiene que dejar
-// margen de sobra por encima del punto en el que el panel ya está entero
-// (~54px de dedo, ver SWIPE_REVEAL_DISTANCE): ese hueco es el tiempo que
-// tienes para leer la opción antes de que la carta se vaya.
-const SWIPE_THRESHOLD = 82
-// Un "flick" rápido cuenta como elección aunque no llegue a esa distancia —
-// así se parece más a un gesto real y hay menos posibilidades de que el
-// ratón se salga de la ventana antes de completar el arrastre.
-const FLICK_VELOCITY = 500
 
 interface Props {
   card: Card
@@ -461,7 +516,7 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: 
           }
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.7}
+          dragElastic={DRAG_ELASTIC}
           dragSnapToOrigin
           dragTransition={{ bounceStiffness: 450, bounceDamping: 45 }}
           onDragStart={() => sfx.roce()}
