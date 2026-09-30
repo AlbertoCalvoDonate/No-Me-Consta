@@ -3,6 +3,7 @@ import { LOGROS } from '../data/logros'
 import type { Logro } from '../data/logros'
 import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
+import { useAltoVentana } from '../utils/desbordado'
 import { sfx } from '../utils/sfx'
 
 // LOS LOGROS, UN BLOQUE POR PAGINA.
@@ -25,6 +26,21 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
   const { conseguidos, total, hechos } = useLogrosEstado()
   const [pagina, setPagina] = useState(0)
   const [abierto, setAbierto] = useState<Logro | null>(null)
+
+  // LAS CASILLAS CRECEN CON LA PANTALLA. El bloque mas grande son doce logros
+  // en seis filas, y eso cabe apretado en un movil de 568px de alto. En uno de
+  // 844 sobraban cuatrocientos pixeles: las mismas doce casillas pequenas
+  // flotando en mitad de un hueco enorme, con la letra mas pequena del juego.
+  //
+  // Asi que hay dos tallas. La apretada es la que hace que quepan doce sin
+  // scroll en el movil mas bajo que se soporta; la holgada usa el sitio que
+  // hay. El corte esta en 700px porque por debajo de ahi la talla holgada
+  // desborda el bloque de doce.
+  const alto = useAltoVentana()
+  const holgado = alto >= 700
+  const T = holgado
+    ? { nombre: 17, alturaLinea: 1.3, relleno: '13px 11px', hueco: 10, circulo: 22, tick: 14, separacion: 10 }
+    : { nombre: 15, alturaLinea: 1.25, relleno: '9px 8px', hueco: 6, circulo: 19, tick: 12, separacion: 8 }
 
   const grupo = GRUPOS[Math.min(pagina, GRUPOS.length - 1)]
   const delGrupo = LOGROS.filter((l) => l.grupo === grupo)
@@ -69,7 +85,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
       >
         <div>
           <div style={{ ...pixel, fontWeight: 400, fontSize: 22, color: COLOR.oro }}>Logros</div>
-          <div style={{ ...pixel, fontWeight: 500, fontSize: 13, color: COLOR.apagado, marginTop: 2 }}>
+          <div style={{ ...pixel, fontWeight: 500, fontSize: 15, color: COLOR.apagado, marginTop: 2 }}>
             {hechos} de {total}
           </div>
         </div>
@@ -105,7 +121,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
           style={{
             ...pixel,
             fontWeight: 500,
-            fontSize: 13,
+            fontSize: 15,
             letterSpacing: 1,
             textTransform: 'uppercase',
             color: COLOR.oro,
@@ -113,7 +129,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
         >
           {grupo}
         </div>
-        <div style={{ ...pixel, fontWeight: 500, fontSize: 13, color: COLOR.apagado }}>
+        <div style={{ ...pixel, fontWeight: 500, fontSize: 15, color: COLOR.apagado }}>
           {hechosGrupo}/{delGrupo.length}
         </div>
       </div>
@@ -127,7 +143,12 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
           minHeight: 0,
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 7,
+          // En la talla holgada las filas tienen un alto minimo. Sin el, doce
+          // nombres cortos se quedaban en casillas de cincuenta pixeles y el
+          // bloque entero era una islita en mitad de la pantalla. Con `auto`
+          // de maximo, la fila que necesita cuatro lineas sigue creciendo.
+          gridAutoRows: holgado ? 'minmax(62px, auto)' : undefined,
+          gap: T.separacion,
           alignContent: 'center',
           padding: '0 14px 10px',
           boxSizing: 'border-box',
@@ -142,9 +163,13 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8,
+                // Apretado en la talla pequena a proposito: en una pantalla de
+                // 320 la casilla mide 114px y cada pixel que no se lleve el
+                // circulo o el margen se lo lleva el nombre, que es lo unico
+                // que hay que leer.
+                gap: T.hueco,
                 minWidth: 0,
-                padding: '8px 9px',
+                padding: T.relleno,
                 background: hecho ? 'rgba(224,184,77,0.08)' : 'rgba(255,255,255,0.04)',
                 border: `1px solid ${hecho ? 'rgba(224,184,77,0.3)' : 'rgba(255,255,255,0.07)'}`,
                 borderRadius: 9,
@@ -154,8 +179,8 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
             >
               <span
                 style={{
-                  width: 22,
-                  height: 22,
+                  width: T.circulo,
+                  height: T.circulo,
                   flexShrink: 0,
                   borderRadius: '50%',
                   background: hecho ? COLOR.oro : 'rgba(255,255,255,0.1)',
@@ -163,7 +188,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 13,
+                  fontSize: T.tick,
                   fontWeight: 700,
                 }}
               >
@@ -173,14 +198,19 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                 style={{
                   ...pixel,
                   fontWeight: 500,
-                  fontSize: 12,
-                  lineHeight: 1.2,
+                  fontSize: T.nombre,
+                  lineHeight: T.alturaLinea,
                   color: hecho ? COLOR.texto : '#6b6558',
                   minWidth: 0,
                   overflow: 'hidden',
                   display: '-webkit-box',
                   WebkitBoxOrient: 'vertical',
-                  WebkitLineClamp: 2,
+                  // Cuatro lineas: en una pantalla de 320 los nombres mas
+                  // largos ("Todos los santos y todos los pecados") no caben
+                  // en menos, y salian cortados. La fila que los contiene crece
+                  // sola y las demas se quedan como estan, que para eso la
+                  // rejilla mide cada fila por su contenido.
+                  WebkitLineClamp: 4,
                 }}
               >
                 {l.nombre}
@@ -193,14 +223,14 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 8,
-              padding: '8px 9px',
+              gap: T.hueco,
+              padding: T.relleno,
               border: '1px dashed rgba(255,255,255,0.12)',
               borderRadius: 9,
               ...pixel,
               fontWeight: 500,
-              fontSize: 12,
-              lineHeight: 1.2,
+              fontSize: T.nombre,
+              lineHeight: T.alturaLinea,
               color: '#5c5750',
             }}
           >
@@ -222,7 +252,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
         <button onClick={() => ir(-1)} disabled={pagina === 0} style={flecha(pagina === 0)}>
           ‹
         </button>
-        <div style={{ ...pixel, fontWeight: 500, fontSize: 13, color: COLOR.apagado }}>
+        <div style={{ ...pixel, fontWeight: 500, fontSize: 14, color: COLOR.apagado }}>
           {pagina + 1} / {GRUPOS.length}
         </div>
         <button
@@ -283,7 +313,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
             >
               {abierto.desc}
             </div>
-            <div style={{ ...pixel, fontWeight: 500, fontSize: 12.5, color: '#6b6558' }}>
+            <div style={{ ...pixel, fontWeight: 500, fontSize: 13.5, color: '#6b6558' }}>
               {conseguidos.has(abierto.id) ? 'Conseguido' : 'Todavía no'}
             </div>
             <button
