@@ -65,6 +65,39 @@ export function useSePuedeInstalar(): boolean {
   return hay && !vaComoApp()
 }
 
+// ¿Es un iPhone o un iPad? Importa porque ALLI NO HAY BOTON POSIBLE: Safari no
+// implementa `beforeinstallprompt` y no hay forma de pedir la instalacion por
+// codigo. Se instala a mano desde Compartir, y punto.
+//
+// Y en iOS esto vale para TODOS los navegadores, no solo para Safari: Apple
+// obliga a que Chrome, Firefox y los demas usen su motor por debajo, asi que
+// son Safari con otra cara y se comportan igual.
+//
+// La deteccion mira el iPad moderno aparte porque desde iPadOS 13 se hace
+// pasar por un Mac de escritorio en el user agent, y lo unico que le delata es
+// que tiene pantalla tactil.
+function esIOS(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent
+  if (/iPhone|iPod/.test(ua)) return true
+  const iPadMentiroso = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1
+  return /iPad/.test(ua) || iPadMentiroso
+}
+
+// Como se instala esto AQUI, en este movil concreto:
+//   'boton' - el navegador deja pedirlo y hay boton (Chrome y compañia).
+//   'mano'  - se puede, pero hay que explicarlo (iOS).
+//   'no'    - o ya esta instalado, o este navegador no lo ofrece todavia
+//             (Firefox en Android tiene lo suyo en su menu) o es un ordenador.
+export type ComoInstalar = 'boton' | 'mano' | 'no'
+
+export function useComoInstalar(): ComoInstalar {
+  const conBoton = useSePuedeInstalar()
+  if (conBoton) return 'boton'
+  if (esIOS() && !vaComoApp()) return 'mano'
+  return 'no'
+}
+
 // Devuelve si lo instalo. El evento solo se puede usar UNA vez: si lo rechaza,
 // el navegador no vuelve a ofrecerlo en esta visita, asi que se tira y el
 // boton desaparece. Insistir en la misma sesion es de aplicacion pesada.

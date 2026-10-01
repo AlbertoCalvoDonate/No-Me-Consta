@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import type { Stats } from '../types'
 import { StatIcon } from './StatIcon'
 import { epitetoDe } from '../data/epitetos'
@@ -8,7 +8,8 @@ import { sfx } from '../utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from '../utils/desbordado'
 import { borrarTodoElProgreso } from '../hooks/borrarGuardado'
 import { useAtrasCierra } from '../utils/botonAtras'
-import { pedirInstalar, useSePuedeInstalar } from '../utils/instalar'
+import { pedirInstalar, useComoInstalar } from '../utils/instalar'
+import { apuntarQueSeLeDijo, yaSeLeDijo } from '../hooks/avisoInstalar'
 
 const STATS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
@@ -69,9 +70,25 @@ export function StartScreen({
   useAtrasCierra(comoSeJuega, () => setComoSeJuega(false))
   useAtrasCierra(borrando, () => setBorrando(false))
   useAtrasCierra(confirmando, () => setConfirmando(false))
-  // Solo sale si el navegador dice que se puede instalar y no esta instalado
-  // ya (ver utils/instalar). Si no se puede, no se pinta nada.
-  const sePuedeInstalar = useSePuedeInstalar()
+  // Como se instala en ESTE movil: con boton, a mano (iOS) o de ninguna manera
+  // (ya instalado, o un navegador que no lo ofrece). Ver utils/instalar.
+  const comoInstalar = useComoInstalar()
+
+  // EL AVISO DE QUE SE PUEDE INSTALAR, UNA SOLA VEZ.
+  //
+  // Sale solo si de verdad se puede: con un "instalalo" delante y ningun sitio
+  // donde tocar, el aviso seria una burla. Y se apunta como visto al cerrarlo
+  // -de cualquiera de las dos formas- para que no vuelva (ver avisoInstalar).
+  const [avisando, setAvisando] = useState(false)
+  useEffect(() => {
+    if (comoInstalar === 'no' || yaSeLeDijo()) return
+    setAvisando(true)
+  }, [comoInstalar])
+  const cerrarAviso = () => {
+    apuntarQueSeLeDijo()
+    setAvisando(false)
+  }
+  useAtrasCierra(avisando, cerrarAviso)
   const [reseteado, setReseteado] = useState(false)
 
   // Esta pantalla se desplaza en móviles pequeños: hay que avisar de ello.
@@ -194,7 +211,7 @@ export function StartScreen({
             puntos del navegador y mucha gente no ha abierto ese menú nunca.
             Aquí se pide en un botón que se ve. Desaparece solo en cuanto el
             juego ya está instalado. */}
-        {sePuedeInstalar && (
+        {comoInstalar === 'boton' && (
           <button
             onClick={() => { sfx.boton(); void pedirInstalar() }}
             style={{ ...botonTerciario, color: COLOR.oro }}
@@ -258,6 +275,93 @@ export function StartScreen({
         {reseteado ? 'Logros borrados' : `v${__APP_VERSION__} · ${buildDate}`}
       </div>
       </div>
+
+      {/* EL AVISO DE INSTALAR, la primera vez y nunca más.
+          En Android se instala con un toque aquí mismo. En iPhone no hay botón
+          posible -Safari no deja pedirlo por código-, así que ahí el aviso
+          enseña los dos pasos a mano en vez de un botón que no existiría. */}
+      {avisando && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 35,
+            background: 'rgba(0,0,0,0.72)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 24,
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              background: COLOR.panel,
+              border: `1px solid rgba(224,184,77,0.4)`,
+              borderRadius: 14,
+              padding: '20px 18px 18px',
+              maxWidth: 310,
+              width: '100%',
+              boxSizing: 'border-box',
+              textAlign: 'center',
+            }}
+          >
+            {/* La X. Un aviso del que no se puede salir sin hacer lo que pide
+                no es un aviso, es un peaje. */}
+            <button
+              onClick={() => { sfx.boton(); cerrarAviso() }}
+              aria-label="Cerrar"
+              style={{
+                position: 'absolute',
+                top: 6,
+                right: 6,
+                width: 34,
+                height: 34,
+                border: 'none',
+                background: 'none',
+                color: COLOR.apagado,
+                fontSize: 18,
+                lineHeight: 1,
+                cursor: 'pointer',
+              }}
+            >
+              ✕
+            </button>
+
+            <img
+              src="/iconos/icono-192.png"
+              alt=""
+              width={56}
+              height={56}
+              style={{ borderRadius: 12, display: 'block', margin: '0 auto 10px' }}
+            />
+            <p style={{ ...pixel, margin: '0 0 6px', fontWeight: 400, fontSize: 19, lineHeight: 1.3, color: COLOR.oro }}>
+              Esto se puede instalar
+            </p>
+            <p style={{ ...pixel, margin: '0 0 16px', fontWeight: 500, fontSize: 14, lineHeight: 1.45, color: COLOR.apagado }}>
+              {comoInstalar === 'boton'
+                ? 'Se queda con su icono en la pantalla de inicio y se abre a pantalla completa, sin barra del navegador. Ocupa lo que una foto.'
+                : 'En iPhone se hace a mano: toca Compartir (el cuadrado con la flecha hacia arriba) y luego "Añadir a pantalla de inicio".'}
+            </p>
+            {comoInstalar === 'boton' ? (
+              <button
+                onClick={async () => {
+                  sfx.boton()
+                  await pedirInstalar()
+                  cerrarAviso()
+                }}
+                style={{ ...botonPrimario, width: '100%', fontSize: 18, padding: '10px 18px' }}
+              >
+                Instalar
+              </button>
+            ) : (
+              <button onClick={() => { sfx.boton(); cerrarAviso() }} style={{ ...botonSecundario, width: '100%' }}>
+                Entendido
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Confirmación antes de tirar la partida guardada: un toque de más en
           "Empezar de cero" no debería costar el mes 30 sin avisar. */}
