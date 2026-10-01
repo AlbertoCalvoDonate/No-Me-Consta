@@ -290,7 +290,7 @@ export function StartScreen({
           onClick={() => { sfx.boton(); setEsPruebas(false) }}
           style={{ ...botonTerciario, marginTop: 2, color: COLOR.oro }}
         >
-          Mis partidas no cuentan · tocar para que cuenten
+          Partida de prueba - DEV · activado
         </button>
       )}
       {partidas > 0 && !esPruebas && (
@@ -298,7 +298,7 @@ export function StartScreen({
           onClick={() => { sfx.boton(); setEsPruebas(true) }}
           style={{ ...botonTerciario, marginTop: 2, color: '#5a5650' }}
         >
-          Estas partidas son pruebas mías
+          Partida de prueba - DEV
         </button>
       )}
 
