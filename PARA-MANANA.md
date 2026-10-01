@@ -68,39 +68,37 @@ cinco decisiones colgando de una partida inexistente. Ahora va con un
 de verdad después de resolver el conflicto. Comprobado con nueve envíos
 simultáneos de la misma partida — una fila, sin huérfanas.
 
-## 3. Los fondos de carta: resuelto, y cambian bastante (02/10)
+## 3. Los fondos de carta: más diversidad, mismo look oscuro (02/10)
 
 Venía de "14 de 24 son azules" y de un segundo intento que dejó mucho morado.
-Medido con los 27 retratos ya: **quince cartas caían dentro de 52 grados**
+Medido con los 27 retratos: **quince cartas caían dentro de 52 grados**
 (207-259, que es donde el azul marino se vuelve violeta) y había **157 grados
 seguidos sin usar** — ni un verde, ni un turquesa, ni un cian.
 
 La causa de fondo es que el tono casi no lleva información: los políticos
 visten todos de azul marino, así que quince retratos distintos devuelven el
-mismo número. Ser fiel a un dato que es idéntico para todos es exactamente lo
-que producía quince cartas iguales.
+mismo número. Ser fiel a un dato idéntico para todos es exactamente lo que
+producía quince cartas iguales.
 
-Dos cambios en `scripts/colores-retrato.mjs`:
+**El cambio** (`scripts/colores-retrato.mjs`, `REPARTO = 0.8`): las 27 se
+colocan en una escalera de intervalos iguales (360/27 = 13,3°, que es justo la
+separación mínima que ya se pedía) y se mezcla con el tono real. **Del arte se
+conserva el ORDEN**: la carta más azul de verdad sigue siendo la más azul del
+juego. El arranque de la escalera no se pone a ojo — se prueban los 360 giros y
+se elige el que menos mueve el conjunto.
 
-- **Reparto por el círculo** (`REPARTO = 0.8`). Las 27 se colocan en una
-  escalera de intervalos iguales (360/27 = 13,3°, que es justo la separación
-  mínima que ya se pedía) y se mezcla con el tono real. **Del arte se conserva
-  el ORDEN**: la carta más azul de verdad sigue siendo la más azul del juego.
-  El arranque de la escalera no se pone a ojo — se prueban los 360 giros y se
-  elige el que menos mueve el conjunto.
-- **Paleta pastel**, pedida. Luminosidad de 0,77 a 0,90, donde antes iba de
-  0,145 a 0,285. Aquí había escrito que el techo era 0,30 "porque por encima el
-  fondo le disputa la atención a la cara": era cierto para cartas oscuras, no
-  para pastel, donde el retrato es lo oscuro y gana por contraste.
+Medido en CIELAB, que es donde "parecido" significa algo:
 
-Dos cosas que arrastraba y rompían con pastel, ya arregladas:
+| | cartas | parejas confundibles (ΔE<10) | peor pareja | mediana |
+|---|---|---|---|---|
+| antes (abanico) | 24 | **27** | ΔE 3,2 | ΔE 24 |
+| ahora (reparto) | 27 | **6** | ΔE 6,3 | ΔE 38 |
 
-- El degradado de la carta multiplicaba por 1,35 arriba, y un `#f1ecd0` por
-  1,35 se sale de rango y vuelve **blanco puro**. Ahora mezcla hacia blanco y
-  hacia negro, que no se sale nunca.
-- El cartel **"NUEVA"** era dorado sobre carta casi negra. Contra pastel se
-  quedaba entre **1,03:1 y 1,64:1** de contraste, o sea invisible. Invertido
-  (letra dorada sobre fondo oscuro) se mantiene por encima de 9,9:1 en las 27.
+**Se probó pastel y se descartó** (no es el juego). Si alguna vez se vuelve a
+intentar, hay dos cosas que se rompen y no se ven venir, las dos apuntadas en
+el propio script: el degradado de `utils/color.ts` multiplica, y con colores
+claros se sale de rango y devuelve blanco puro; y el cartel "NUEVA" es dorado,
+que contra pastel se queda en 1,03:1 de contraste.
 
 ## 4. Homogeneizar el estilo del arte: cerrado, no se puede con filtros
 

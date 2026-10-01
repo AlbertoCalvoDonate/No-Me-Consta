@@ -242,29 +242,24 @@ const SEPARACION = 13 // grados minimos entre dos cartas vecinas en tono
 // que se conserva.
 const REPARTO = 0.8
 
-// PASTEL, NO CASI NEGRO. Pedido el 02/10/2026.
+// SEIS escalones alternos de profundidad y saturacion, segun la posicion en el
+// circulo: dos cartas de tono parecido caen en escalones distintos y dejan de
+// confundirse. Con cuatro escalones entre 0,155 y 0,235 quedaban treinta y dos
+// parejas que el ojo no separa — a esa oscuridad los colores se comprimen y un
+// azul a 243 grados y otro a 251 son la misma carta. Medido en CIELAB, que es
+// donde "parecido" significa algo.
 //
-// Hasta ese dia las cartas iban de 0,145 a 0,285 de luminosidad -o sea,
-// practicamente negras- y aqui habia escrito que el techo era 0,30 "porque por
-// encima el fondo empieza a disputarle la atencion a la cara". Ese numero era
-// cierto PARA CARTAS OSCURAS, donde el fondo compite subiendo de brillo. Con
-// una paleta pastel el reparto es otro: el fondo es claro y uniforme y el
-// retrato es oscuro y detallado, asi que la cara gana por contraste en vez de
-// perderlo por brillo.
+// El techo sigue por debajo del 0,30 en que el fondo empieza a disputarle la
+// atencion a la cara, que es el limite que importa.
 //
-// De paso arregla lo que mas costaba. A 0,15 de luminosidad los colores se
-// comprimen: un azul a 243 grados y otro a 251 son literalmente la misma
-// carta, y de ahi venian las treinta y dos parejas confundibles que hubo que
-// perseguir con seis escalones de profundidad. En pastel el mismo salto de
-// tono se ve a la primera, porque hay sitio donde verlo.
-//
-// Siguen siendo SEIS escalones alternos para que dos cartas seguidas en el
-// circulo no salgan ademas con la misma claridad.
-const PROFUNDIDAD = [0.88, 0.8, 0.85, 0.77, 0.9, 0.82]
-// Saturacion de pastel: suficiente para que el tono se lea, lo bastante baja
-// para que no sea un color de chicle. Por encima de ~0,6 deja de ser pastel y
-// pasa a ser fluor.
-const SATURACION = [0.5, 0.32, 0.42, 0.56, 0.36, 0.46]
+// SE PROBO PASTEL el 02/10/2026 (luminosidad 0,77-0,90) y se descarto: separa
+// las cartas de maravilla, pero no es el juego. Si alguna vez se vuelve a
+// intentar, ojo con dos cosas que se rompen y no se ven venir: el degradado de
+// utils/color.ts multiplica y con colores claros se sale de rango a blanco
+// puro, y el cartel "NUEVA" es dorado y contra pastel se queda en 1,03:1 de
+// contraste.
+const PROFUNDIDAD = [0.285, 0.145, 0.235, 0.175, 0.26, 0.16]
+const SATURACION = [0.3, 0.72, 0.42, 0.62, 0.36, 0.56]
 
 const orden = files
   .map((f) => ({ f, ...mapa[f], original: mapa[f].h }))

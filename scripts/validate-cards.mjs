@@ -20,6 +20,26 @@ const CONTENT_FILE = fileURLToPath(new URL('../src/data/cards.content.ts', impor
 const CARDS_FILE = fileURLToPath(new URL('../src/data/cards.ts', import.meta.url))
 const RETRATOS_DIR = fileURLToPath(new URL('../public/characters', import.meta.url))
 const RETRATOS = new Set(readdirSync(RETRATOS_DIR))
+
+// QUIEN TIENE RETRATO, SEGUN EL REPARTO. Se lee de src/data/reparto.ts, que es
+// donde esta escrito una sola vez quien es quien.
+//
+// Hace falta porque `characterImage` va EN CADA CARTA, no en el personaje, y
+// eso tiene una trampa que ya mordio: el 02/10/2026 entraron los retratos de
+// El Tertuliano, La Funcionaria y El Sindicalista, se apuntaron en el reparto
+// -con lo que salian bien en el panel "El reparto"- y sus 53 cartas seguian
+// saliendo rotuladas con el nombre en grande, porque ninguna llevaba el
+// fichero. No fallaba nada: simplemente no se veia la cara.
+//
+// Y de paso aparecieron otras diez cartas con el mismo problema de antes: son
+// del encargo del 28/09, con ids de un tema (`sind_`, `empre_`, `tert_`) pero
+// habladas por un personaje que si tenia retrato, y se escribieron sin el.
+const REPARTO_FILE = fileURLToPath(new URL('../src/data/reparto.ts', import.meta.url))
+const RETRATO_DE = new Map(
+  [...readFileSync(REPARTO_FILE, 'utf8').matchAll(/\{ nombre: '([^']+)', imagen: '([^']+)'/g)].map(
+    (m) => [m[1], m[2]]
+  )
+)
 const VALID_STATS = ['medios', 'gobierno', 'calle', 'caja']
 const VALID_PHASES = [1, 2, 3, 4]
 const EFFECT_MIN = -3
@@ -236,6 +256,19 @@ function validate(cards) {
           `${label}: el retrato "${card.characterImage}" no está en public/characters/.`,
         )
       }
+    }
+
+    // Si quien habla tiene retrato, la carta tiene que llevarlo. Ver arriba.
+    const suyo = card.character && RETRATO_DE.get(card.character)
+    if (suyo && card.characterImage === undefined) {
+      errors.push(
+        `${label}: ${card.character} tiene retrato ("${suyo}") pero esta carta no lo lleva, ` +
+          `así que sale rotulada con el nombre en grande. Añade characterImage: '${suyo}'.`,
+      )
+    } else if (suyo && card.characterImage !== suyo) {
+      errors.push(
+        `${label}: ${card.character} usa "${card.characterImage}" pero en el reparto es "${suyo}".`,
+      )
     }
 
     if (!card.text || typeof card.text !== 'string') {
