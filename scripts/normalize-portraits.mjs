@@ -125,6 +125,19 @@ for (const f of files) {
       // -eso es el trabajo de este script-, sino que una imagen MAS PEQUEÑA
       // que el destino se estire para llenarlo: ahi no hay detalle que ganar.
       // Asi que el tope sale del tamaño del fichero de origen.
+      // LO QUE YA VIENE A MEDIDA NO SE TOCA. Si el PNG llega exactamente al
+      // lienzo destino es que el dibujante ya lo encuadro, y re-encuadrarlo es
+      // deshacer su trabajo.
+      //
+      // Esto no es teoria: con los veinticuatro retratos nuevos paso. Este
+      // script escala cada figura para que su SILUETA llene el 96% del alto, y
+      // el dibujante habia igualado las CARAS. Al igualar caras las siluetas
+      // quedan distintas -hay quien lleva mas pelo-, asi que normalizar
+      // siluetas des-iguala las caras: medido, de x0,967 al que tenia 1,8% de
+      // aire a x1,059 al que tenia 10,3%. Nueve puntos de diferencia metidos
+      // por el propio script que existe para quitarlos.
+      if (nw === TW && nh === TH) return { yaEstaba: true }
+
       // Si el fichero de origen es MAS PEQUEÑO que el lienzo destino, no se
       // estira: ahi no hay detalle que ganar, solo peso y desenfoque (el caso
       // del arte viejo a 1020 con el destino en 1224). Si viene igual o mayor,
@@ -147,6 +160,10 @@ for (const f of files) {
     { f, TW, TH, HEADROOM, CONTENT_H }
   )
 
+  if (typeof res === 'object' && res.yaEstaba) {
+    console.log('ya venia a medida, no se toca:', f)
+    continue
+  }
   writeFileSync(CHARDIR + f, Buffer.from(res.split(',')[1], 'base64'))
   console.log('re-encuadrado:', f)
 }

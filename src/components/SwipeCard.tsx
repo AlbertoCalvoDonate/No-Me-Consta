@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { animate, motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion'
 import type { Card, StatEffects } from '../types'
 import { characterColor, characterBackground } from '../utils/color'
-import { ACERCAMIENTO } from '../data/acercamiento'
 import { sfx } from '../utils/sfx'
 import { COLOR, pixel } from '../utils/estilo'
 
@@ -590,17 +589,20 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir, nu
                 height: '100%',
                 objectFit: 'cover',
                 objectPosition: 'center top',
-                // Y a unos cuantos se les acerca un poco la camara, porque el
-                // dibujo los dejo mas lejos que al resto: la cara iba del 41%
-                // al 67% del lienzo segun el personaje. Se hace AQUI y no
-                // reescribiendo el .webp a proposito: asi no se recomprime
-                // nada, el fichero sigue siendo el que entrego el dibujante y
-                // deshacerlo es cambiar un numero (ver data/acercamiento).
+                // Anclado ARRIBA y no al centro, que es donde esta la cara: lo
+                // que se sale por abajo es torso, que no dice nada.
+                // SIN ZOOM POR PERSONAJE, Y ES A PROPOSITO. Hubo una tabla
+                // (data/acercamiento) que acercaba la camara a once de los
+                // veinticuatro, hasta un 15%, para compensar que el arte viejo
+                // los dibujo a distinta distancia. Con el arte nuevo, que viene
+                // con las caras ya igualadas a mano, esa tabla hacia justo lo
+                // contrario: metia un 15% de diferencia entre unos y otros.
+                // Medido antes de quitarla: del retrato mas grande al mas
+                // pequeno habia un 26%.
                 //
-                // Desde arriba y no desde el centro, que es donde esta la
-                // cara: lo que se sale por abajo es torso, que no dice nada.
-                transform: `scale(${ACERCAMIENTO[card.characterImage ?? ''] ?? 1})`,
-                transformOrigin: 'center top',
+                // Si algun dia vuelve a entrar arte desigual, la solucion es
+                // igualarlo en el dibujo, no compensarlo aqui: un zoom de CSS
+                // recorta por los lados y no se ve en Photoshop.
                 opacity: caraLista ? 1 : 0,
                 transition: 'opacity 200ms ease-out',
               }}
