@@ -293,7 +293,13 @@ export function StartScreen({
           Partida de prueba - DEV · activado
         </button>
       )}
-      {partidas > 0 && !esPruebas && (
+      {/* SIN `partidas > 0`, Y ES LA GRACIA. Estaba condicionado a haber jugado
+          alguna, y eso lo dejaba inutil justo cuando hace falta: en un movil
+          recien instalado no se puede encender ANTES de la primera partida, asi
+          que esa primera -la unica que no se puede repetir- contaba como real.
+          Un interruptor que dice "no cuentes esto" tiene que estar antes de
+          que haya algo que no contar. */}
+      {!esPruebas && (
         <button
           onClick={() => { sfx.boton(); setEsPruebas(true) }}
           style={{ ...botonTerciario, marginTop: 2, color: '#5a5650' }}
