@@ -793,7 +793,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_viaje_familiar',
-    phase: 1,
+    phase: 2,
     character: 'El Hermano',
     pleases: 'right',
     characterImage: 'hermano.webp',
@@ -803,7 +803,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_curriculum',
-    phase: 1,
+    phase: 2,
     character: 'El Hermano',
     pleases: 'right',
     characterImage: 'hermano.webp',
@@ -823,7 +823,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_beca_hija',
-    phase: 1,
+    phase: 2,
     character: 'El Hermano',
     pleases: 'right',
     characterImage: 'hermano.webp',
@@ -843,7 +843,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_asesor_duplicado',
-    phase: 1,
+    phase: 2,
     character: 'El Hermano',
     pleases: 'right',
     characterImage: 'hermano.webp',
@@ -1183,7 +1183,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_tarjeta_regalo',
-    phase: 1,
+    phase: 2,
     character: 'El Hermano',
     pleases: 'right',
     characterImage: 'hermano.webp',
@@ -1202,7 +1202,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_viaje_erasmus',
-    phase: 1,
+    phase: 2,
     character: 'El Hermano',
     pleases: 'right',
     characterImage: 'hermano.webp',
@@ -5921,7 +5921,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_libro_firmas',
-    phase: 1,
+    phase: 2,
     character: 'El Hermano',
     characterImage: 'hermano.webp',
     text: 'Oye, lo del libro de honor. Puse la fecha del año pasado, sí. El alcalde hizo como que no lo veía, que es un señor. Y la foto ya está circulando, así que tú dirás qué hacemos.',

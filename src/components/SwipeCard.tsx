@@ -11,7 +11,17 @@ import { COLOR, pixel } from '../utils/estilo'
 // que no quepa se recorta (overflow hidden) en vez de agrandar la etiqueta.
 const PANEL_WIDTH = 216
 const PANEL_HEIGHT = 130
-const PANEL_HIDDEN = PANEL_WIDTH + 24
+// Dónde se aparca el panel cuando no se está arrastrando: FUERA DE LA PANTALLA
+// de verdad, no "casi". Va centrado (left 50%, marginLeft -108), así que para
+// sacarlo del marco necesita medio marco más medio panel: el marco mide como
+// mucho 400 (--app-width en index.css), o sea 200 + 108, y 12 de propina.
+//
+// Antes eran 240 y no bastaba: aparcado asomaban 63px por el borde. Daba igual
+// mientras el panel empezaba a moverse desde el primer pixel de arrastre,
+// porque nunca se le veia quieto. Al meterle zona muerta quedo parado y a la
+// vista durante los primeros pixeles, y eso es el salto que se veia al
+// empezar: 63px de panel apareciendo de golpe y sin moverse.
+const PANEL_HIDDEN = 320
 
 // Inclinación máxima de la carta al arrastrar (grados).
 const CARD_TILT = 12
@@ -55,7 +65,12 @@ const COMPROMISO = SWIPE_THRESHOLD * DRAG_ELASTIC
 // antes el panel empezaba a entrar desde el primer píxel y el gesto parecía
 // comprometido desde el principio. Es el mismo arranque que ya tenían los
 // puntos de efecto de las barras, que esperaban y el panel no.
-export const ZONA_MUERTA = 12
+//
+// Y la zona muerta la respetan LAS DOS cosas que hace el panel: el sitio y la
+// opacidad. Se metio solo en el sitio y la opacidad seguia encendiendose al
+// primer pixel, asi que el panel se hacia visible aparcado y quieto, y luego
+// arrancaba. Eso es el salto.
+export const ZONA_MUERTA = 10
 
 // Distancia de arrastre a la que un lado se considera "totalmente revelado".
 // Se exporta porque StatBars usa el mismo valor para los puntos de efecto —
@@ -64,8 +79,8 @@ export const ZONA_MUERTA = 12
 // Tiene que completarse bastante antes del compromiso: ese hueco es el tiempo
 // que hay para leer la opción y decidir echarse atrás. Medido con estos
 // números: entra a los 17px de dedo, está entera a los 66 y no cuenta hasta
-// los 92, o sea 26px de dedo para leerla sin haber decidido nada.
-export const SWIPE_REVEAL_DISTANCE = 46
+// los 92, o sea 21px de dedo para leerla sin haber decidido nada.
+export const SWIPE_REVEAL_DISTANCE = 50
 
 // Cuanto se desplaza la carta al asomar una opcion sin arrastrar (teclado).
 // Entre el revelado y el compromiso a propósito: la flecha ENSEÑA la opción,
@@ -180,8 +195,14 @@ function ChoicePanel({
   const opacity = useTransform(x, (v) => {
     const mio = side === 'left' ? v < 0 : v > 0
     if (!mio) return 0
-    const lejos = Math.abs(v) - 420
-    return lejos <= 0 ? 0.93 : Math.max(0, 0.93 * (1 - lejos / 200))
+    const d = Math.abs(v)
+    // Apagado del todo mientras dura la zona muerta, y encendiendose a la vez
+    // que empieza a deslizarse. Si la opacidad no respeta la zona muerta, el
+    // panel se enciende aparcado y quieto: eso era el salto del principio.
+    const entrando = Math.min(1, Math.max(0, (d - ZONA_MUERTA) / 8))
+    const base = 0.93 * entrando
+    const lejos = d - 420
+    return lejos <= 0 ? base : Math.max(0, base * (1 - lejos / 200))
   })
   return (
     <motion.div

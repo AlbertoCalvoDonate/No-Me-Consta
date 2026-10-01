@@ -15,6 +15,11 @@ import { apuntarPaso, limpiarLog } from '../utils/logPruebas'
 import { guardarPartida, borrarPartida, cargarPartida } from './persistPartida'
 import { guardarHerencia, cargarHerencia, olvidarHerencia } from './persistHerencia'
 
+// El mazo indexado por id. El historial guarda ids, y mirar quien hablaba en
+// cada uno con un `cards.find` por carta candidata y por turno es recorrerse
+// setecientas cartas miles de veces en cada sorteo.
+const porId = new Map(cards.map((c) => [c.id, c]))
+
 function cardMinTurn(c: Card): number {
   return c.minTurn ?? PHASE_MIN_TURN[c.phase]
 }
@@ -307,11 +312,23 @@ function clima(c: Card, state: GameState, ctx: CardContext): number {
 
   // 1. A quien has cabreado, vuelve. No en la carta siguiente (eso lo impide
   //    `otherChar` en el sorteo), pero si mucho antes de lo que tocaria.
-  const enfado = ctx.anger[c.character] ?? 0
-  if (enfado >= 3) m *= 3.4
-  else if (enfado >= 2) m *= 2.2
-  // Y quien te debe favores tambien se deja ver, mas discreto.
-  if ((ctx.favor[c.character] ?? 0) >= 3) m *= 1.4
+  //
+  //    UN SOLO MULTIPLICADOR PARA ESTO, Y AQUI. Hubo una temporada con dos:
+  //    este y un `empujeRelacion` aparte, que miraba exactamente lo mismo
+  //    -el maximo de enfado y favor- y se multiplicaba con este. Con enfado 3
+  //    salia 3,4 x 2,5 = x8,5, y con 6, x10. El segundo se escribio para que
+  //    las relaciones fueran alcanzables sin mirar que esto ya estaba, y el
+  //    resultado fue que el personaje con el que tenias algo se comia la
+  //    partida. Lo canto un jugador: "el hermano parece que sale demasiado".
+  //
+  //    Asi que la escalera va entera aqui, con el escalon suave de 1 que era
+  //    lo unico que faltaba de verdad, y con tope. Los valores de 2 y 3 son
+  //    los de siempre, que estaban medidos y en banda.
+  const rel = Math.max(ctx.anger[c.character] ?? 0, ctx.favor[c.character] ?? 0)
+  if (rel >= 4) m *= 4
+  else if (rel >= 3) m *= 3.4
+  else if (rel >= 2) m *= 2.2
+  else if (rel >= 1) m *= 1.4
 
   // 2. La crisis trae a SU GENTE. Cuando una barra esta en apuros aparecen los
   //    personajes de esa barra: si se hunde Medios vienen el Periodista, el
@@ -331,23 +348,34 @@ function clima(c: Card, state: GameState, ctx: CardContext): number {
   return m
 }
 
-// Cuanto vuelve alguien con quien ya tienes algo.
+// NI DOS CARTAS DEL MISMO EN CUATRO MESES, SI SE PUEDE EVITAR.
 //
-// Sin esto, una partida son ochenta cartas de un mazo de setecientas y a cada
-// personaje le tocan dos: imposible construir una relacion que pide tres o
-// cuatro encuentros. Con esto, la primera vez que le dices que no a alguien,
-// ese alguien empieza a volver, y es lo que hace que enfadarse con el Fiscal
-// signifique algo. El que esta harto de ti no desaparece: aparece mas.
-const EMPUJE_MAX = 3
+// El sorteo ya impedia repetir personaje en la carta siguiente, pero nada mas:
+// con una carta de por medio podia volver, y volvia. El motivo no es el
+// sorteo, es el reparto del mazo — el hermano tiene trece de las cincuenta
+// cartas que pueden salir en los ocho primeros meses, asi que le tocaba una de
+// cada cuatro. Medido antes de tocar nada: del mes 3 al 8 era el 23-30% de
+// todo lo que salia.
+//
+// Esto no le quita cartas a nadie ni cierra puertas: solo las reparte. Si en
+// las ultimas cuatro ha salido una suya, su peso baja; si han salido dos,
+// baja mas. Nunca a cero, porque entonces una cadena de tres cartas suyas
+// -que es media trama del hermano- no podria contarse.
+const MEMORIA = 4
 
-function empujeRelacion(c: Card, ctx: CardContext): number {
-  const rel = Math.max(ctx.anger[c.character] ?? 0, ctx.favor[c.character] ?? 0)
-  if (rel <= 0) return 1
-  return Math.min(EMPUJE_MAX, 1 + rel * 0.5)
+function repartirCaras(c: Card, state: GameState): number {
+  let recientes = 0
+  const desde = Math.max(0, state.history.length - MEMORIA)
+  for (let i = desde; i < state.history.length; i++) {
+    const id = state.history[i]
+    if (porId.get(id)?.character === c.character) recientes++
+  }
+  if (recientes === 0) return 1
+  return recientes === 1 ? 0.45 : 0.2
 }
 
 function cooledWeight(c: Card, state: GameState, ctx: CardContext): number {
-  const w = cardWeight(c, state, ctx) * clima(c, state, ctx) * empujeRelacion(c, ctx)
+  const w = cardWeight(c, state, ctx) * clima(c, state, ctx) * repartirCaras(c, state)
   const cd = seenCooldown[c.id] ?? 0
   if (w === 0 || cd === 0) return w
   // La penalizacion nunca deja el peso por debajo del 15% del original.
