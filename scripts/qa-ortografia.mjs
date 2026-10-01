@@ -138,6 +138,7 @@ const PERMITIDAS = new Set(
     'pódcast', 'podcast', 'tuit', 'tuits', 'tuitero', 'tuitera', 'retuit',
     'wifi', 'hashtag', 'streaming', 'streamer', 'stories',
     'app', 'apps', 'online', 'gigas', 'sms', 'podcasts', 'bots', 'cripto',
+    'iphone', 'ipad', 'android',
     'merchandising', 'community', 'manager', 'trending', 'topic', 'jet', 'spa',
     'vip', 'url',
     // Habla coloquial
