@@ -43,9 +43,24 @@ const chromium = await loadChromium()
 const CHARDIR = fileURLToPath(new URL('../public/characters/', import.meta.url))
 const DEV_URL = process.env.DEV_URL || 'http://localhost:5173/'
 
-// Lienzo destino: retrato 0.85 (parecido al hueco de la carta en móvil).
-const TW = 1020
-const TH = 1200
+// LIENZO DESTINO. La proporcion es 17:20 (0,85) y no se negocia: la carta se
+// dibuja con exactamente `aspectRatio: 1020/1200` (ver SwipeCard), asi que
+// cualquier otra deja franjas o recorta.
+//
+// EL TAMAÑO SUBE DE 1020 A 1224, y el motivo es que 1020 contradecia al propio
+// comprobador. La carta ocupa 384 pixeles CSS de ancho (el marco mide 400 y se
+// le quitan 16 de margen), asi que en un movil de densidad 3 son 1152 pixeles
+// REALES. A 1020 el navegador agrandaba y se emborronaba, y por eso los
+// veinticuatro retratos salian con un "MAL ancho 1020" en comprobar-retrato:
+// la tuberia los dejaba por debajo de lo que ella misma exige.
+//
+// 1224x1440 son 17:20 exactos y pasan de 1152. No se sube mas (1632 cubriria
+// densidad 4) porque la pantalla de carga espera a los veinticuatro retratos:
+// medido sobre lo que pesan hoy, 1224 lleva el total de 1,9 a 2,8 MB -de 5 a 7
+// segundos en 3G- y 1632 lo llevaria a 4,9 MB y trece segundos. No compensa
+// por una nitidez que solo se ve en los moviles mas caros.
+const TW = 1224
+const TH = 1440
 const HEADROOM = 0.05 // aire sobre la cabeza, en tanto por uno de la altura
 const CONTENT_H = 0.96 // el contenido ocupa este % de la altura del lienzo
 
@@ -95,7 +110,11 @@ for (const f of files) {
       const bw = maxX - minX + 1
       const bh = maxY - minY + 1
 
-      const scale = (CONTENT_H * TH) / bh
+      // NUNCA AGRANDAR. Con el destino a 1224, volver a pasar esto sobre un
+      // retrato viejo de 1020 lo estiraria sin ganar un solo detalle: mismo
+      // dibujo, mas peso y mas borroso. Si la figura no da para llenar el
+      // lienzo, se queda como esta y se centra igual.
+      const scale = Math.min((CONTENT_H * TH) / bh, 1)
       const c2 = document.createElement('canvas')
       c2.width = TW
       c2.height = TH

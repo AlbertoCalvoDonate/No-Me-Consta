@@ -15,9 +15,15 @@
 //  EXACTAMENTE esa proporcion (ver SwipeCard), asi que un retrato con otra o
 //  deja franjas o se recorta.
 //
-//  LADO MAYOR >= 1152 px de ancho. Medido en el juego: la carta llega a ocupar
-//  1152x1355 pixeles reales en un movil de los buenos (412 css de ancho por
-//  3 de densidad). Por debajo de eso el navegador agranda y se emborrona.
+//  ANCHO >= 1152 px. Medido en el juego: la carta ocupa 384 pixeles CSS de
+//  ancho (el marco mide 400 y se le quitan 16 de margen), asi que en un movil
+//  de densidad 3 son 1152 REALES. Por debajo, el navegador agranda y se
+//  emborrona.
+//
+//  El arte nuevo se entrega a 1224x1440, que son 17:20 exactos y pasan de
+//  1152. Los veinticuatro retratos viejos estan a 1020 y por eso fallan esta
+//  regla: NO se arreglan reescalandolos -no hay detalle que recuperar, solo
+//  peso-, se arreglan el dia que se vuelvan a dibujar.
 //
 //  AIRE ARRIBA 5%. La cabeza empieza ahi en los veintidos retratos actuales.
 //  Es lo que hace que todos se vean al mismo plano.
