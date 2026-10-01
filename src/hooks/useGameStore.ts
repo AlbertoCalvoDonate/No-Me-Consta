@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Card, CardContext, GameState, Stats, StatEffects, StatKey } from '../types'
+import type { Card, CardChoice, CardContext, GameState, Stats, StatEffects, StatKey } from '../types'
 import { PHASE_MIN_TURN } from '../types'
 import {
   cards,
@@ -132,6 +132,32 @@ function applyRebalance(stats: Stats): Stats {
     if (Math.abs(d) >= REBALANCE_DISTANCE) next[key] = clamp(next[key] - Math.sign(d))
   }
   return next
+}
+
+// LO QUE LOS PUNTOS TIENEN QUE ENCENDER, que no siempre es lo que la carta
+// declara.
+//
+// Las vacaciones de agosto son la unica carta del juego con `rebalance`, y su
+// lado izquierdo declara `effects: {}`. O sea: arrastrabas hacia alla, no se
+// encendia ni un punto -el juego prometiendo que no pasa nada- y luego se
+// movian las cuatro barras a la vez. Lo conto un jugador: "lo de vacaciones no
+// se entiende". Claro que no: es la unica carta que hace eso y encima lo hacia
+// a escondidas.
+//
+// Se calcula AQUI y no en las barras, pasando por `applyRebalance`, para que no
+// haya dos versiones de la misma regla. Si alguien cambia el comodin, los
+// puntos cambian con el.
+export function efectoQueSeVe(choice: CardChoice, stats: Stats): StatEffects {
+  if (!choice.rebalance) return choice.effects
+  const antes = { ...stats }
+  for (const k of STAT_KEYS) antes[k] = clamp(antes[k] + (choice.effects[k] ?? 0))
+  const despues = applyRebalance(antes)
+  const fuera: StatEffects = {}
+  for (const k of STAT_KEYS) {
+    const d = despues[k] - stats[k]
+    if (d !== 0) fuera[k] = d
+  }
+  return fuera
 }
 
 // Contexto que ven `condition` y `weight` de cada carta.

@@ -4,6 +4,7 @@ import type { Card, Stats } from '../types'
 import { EffectPips } from './EffectPips'
 import { StatIcon } from './StatIcon'
 import { SWIPE_REVEAL_DISTANCE, ZONA_MUERTA } from './SwipeCard'
+import { efectoQueSeVe } from '../hooks/useGameStore'
 import { STAT_MAX, turnosDeGracia, amenazaRegistro, REGISTRO_MIN_TURN } from '../data/cards'
 import { REPARTO } from '../data/reparto'
 import { COLOR, pixel } from '../utils/estilo'
@@ -210,8 +211,12 @@ export function StatBars({
           // Las cartas de los fontaneros van a ciegas a proposito (ver
           // sinPistas en types): ahi no se enciende nada aunque muevan cuatro
           // barras. No es que mientan, es que no dicen.
-          const efectoIzq = card?.sinPistas ? 0 : (card?.left.effects[key] ?? 0)
-          const efectoDer = card?.sinPistas ? 0 : (card?.right.effects[key] ?? 0)
+          // `efectoQueSeVe` y no `.effects` a secas: el comodin de las
+          // vacaciones de agosto no declara efectos y sin embargo mueve las
+          // cuatro barras, asi que leyendo solo lo declarado los puntos
+          // mentian por omision justo en la carta mas rara del mazo.
+          const efectoIzq = !card || card.sinPistas ? 0 : (efectoQueSeVe(card.left, stats)[key] ?? 0)
+          const efectoDer = !card || card.sinPistas ? 0 : (efectoQueSeVe(card.right, stats)[key] ?? 0)
           const leftVal = puedeMoverse(efectoIzq) ? efectoIzq : 0
           const rightVal = puedeMoverse(efectoDer) ? efectoDer : 0
           return (

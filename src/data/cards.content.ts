@@ -344,7 +344,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'encuesta',
-    phase: 2,
+    phase: 1,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
     text: 'Los números van mal. Y no mal de "ya remontaremos": mal de "vaya usted mirando pisos". A estas alturas solo mueve la aguja un anuncio gordo, de los que abren telediario.',
@@ -526,7 +526,7 @@ export const contentCards: Card[] = [
   {
     id: 'gob_dato_ine',
     pleases: 'left',
-    phase: 2,
+    phase: 1,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
     text: 'Los datos de paro de este mes son malos. Podríamos "ajustar" la metodología de cálculo justo ahora.',
@@ -584,7 +584,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_medio_publico',
-    phase: 2,
+    phase: 1,
     character: 'El Periodista',
     pleases: 'right',
     characterImage: 'periodista.webp',
@@ -1360,7 +1360,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'gob_pacto_medios',
-    phase: 2,
+    phase: 1,
     character: 'El Periodista',
     pleases: 'right',
     characterImage: 'periodista.webp',
@@ -2165,7 +2165,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'exiliado_bilateral',
-    phase: 2,
+    phase: 1,
     character: 'El Exiliado',
     characterImage: 'exiliadopesado.webp',
     text: 'La llamada del jueves quiero que se llame reunión bilateral, con las dos banderas en la mesa y una foto. Para usted son quince minutos. Para los míos es el reconocimiento de treinta años.',
@@ -2220,7 +2220,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'igualdad_anuncio_sin_avisar',
-    phase: 2,
+    phase: 1,
     character: 'La Ministra de Igualdad',
     characterImage: 'feminista.webp',
     text: 'Mañana anuncio la medida en un acto con dos mil personas. No, no ha pasado por Consejo de Ministros. No, no lo sabe Hacienda. Sí, ya está el cartel impreso con el escudo del Gobierno.',
@@ -2254,7 +2254,7 @@ export const contentCards: Card[] = [
 
   {
     id: 'fiscal_de_quien_depende',
-    phase: 2,
+    phase: 1,
     character: 'El Fiscal',
     characterImage: 'fiscal.webp',
     text: 'Le van a preguntar en la entrevista de quién depende la Fiscalía. La respuesta correcta es larga y aburrida. Hay otra que dura tres palabras y va a salir en todos los informativos.',
@@ -2388,7 +2388,7 @@ export const contentCards: Card[] = [
 
   {
     id: 'mopongo_cinco',
-    phase: 2,
+    phase: 1,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
     text: 'Aparece en la puerta del despacho con una carpeta. Dentro hay un solo folio, y en el folio hay una sola palabra escrita a mano: "Mopongo". Espera una respuesta con las cejas levantadas.',
@@ -2426,7 +2426,7 @@ export const contentCards: Card[] = [
 
   {
     id: 'ministra_decreto_sin_leer',
-    phase: 2,
+    phase: 1,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.webp',
     text: 'Firmé el decreto del jueves sin leérmelo entero, se lo reconozco. Tengo dos hijos, presidente, y unas jornadas que no se las deseo a nadie. Beneficia a un sector muy concreto y sale mañana a las ocho.',
@@ -2611,7 +2611,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'fuera_ola_calor',
-    phase: 2,
+    phase: 1,
     character: 'El Encuestador',
     characterImage: 'encuestador.webp',
     text: 'Cuarenta y dos grados seis días seguidos, y se lo digo con los datos delante: la gente no habla de política, habla de si va a poder dormir. El que mañana diga algo útil sobre eso sube tres puntos.',
@@ -3079,7 +3079,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'sind_fabrica',
-    phase: 2,
+    phase: 1,
     character: 'El Sindicalista',
     text: 'Cuatrocientas familias, presidente. Con una ayuda pública esa fábrica llega a después de las elecciones. Después ya no llega, y lo sabemos los dos, pero yo tengo que mirar a esas cuatrocientas a la cara.',
     left: {
@@ -3113,7 +3113,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'sind_mesa',
-    phase: 2,
+    phase: 1,
     character: 'El Sindicalista',
     text: 'Convoque la mesa. Ya sé que lo que se firme allí lo íbamos a firmar igual, pero la mesa importa más que lo que se firma en ella: mientras haya mesa, ninguno de los míos está en la calle.',
     left: {
@@ -3368,7 +3368,7 @@ export const contentCards: Card[] = [
 
   {
     id: 'empre_sede',
-    phase: 2,
+    phase: 1,
     character: 'El Empresario',
     text: 'Si el impuesto sale como está escrito, la sede se traslada. No es una amenaza ni una opinión: es una resta. Y con la sede se van dos mil empleos que aquí no repone nadie. Yo no quiero eso. Usted tampoco.',
     left: {
@@ -3473,7 +3473,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'empre_cotizaciones',
-    phase: 2,
+    phase: 1,
     character: 'El Empresario',
     text: 'Rebájeme la cuota por contrato nuevo y le lleno una provincia de empleo en un año. No es un favor a mi empresa: es la única forma de que esos contratos existan. El coste lo asume la caja, que para eso está.',
     left: {
@@ -3574,7 +3574,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'funci_cinco_gobiernos',
-    phase: 2,
+    phase: 1,
     character: 'La Funcionaria',
     text: 'Llevo cinco gobiernos en este despacho. Esto que me trae hoy lo he visto tres veces: dos salió mal y una salió regular. No le digo que no lo haga. Le digo lo que pasó las tres veces.',
     left: {
@@ -3749,7 +3749,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'tert_exclusiva',
-    phase: 2,
+    phase: 1,
     character: 'El Tertuliano',
     text: 'Yo no pido favores, pido información, que es mi oficio. Deme una fecha, un nombre, algo que pueda contar el martes. Y cuando salga lo suyo, yo tendré muy presente quién me trató como a un profesional.',
     left: {
@@ -4345,7 +4345,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'tert_grafico',
-    phase: 2,
+    phase: 1,
     character: 'El Tertuliano',
     text: 'He sacado un gráfico en pantalla que empieza el eje en el sesenta por ciento. Así la caída parece un acantilado. Es el mismo dato que el suyo. Solo que el mío se ve.',
     left: { text: 'Sacar el gráfico bien hecho', effects: { medios: 2, calle: -1 }, moralidad: 2 },
@@ -4447,7 +4447,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'empre_inauguracion',
-    phase: 2,
+    phase: 1,
     character: 'El Empresario',
     text: 'Inauguramos planta el jueves. Usted corta la cinta y nosotros ponemos la planta. Lo que no aparecerá en la foto es que la mitad de esos contratos son de seis meses, pero eso tampoco lo pregunta nadie.',
     left: { text: 'Ir y preguntar por esos contratos', effects: { medios: 1, caja: -2 }, moralidad: 3 },
@@ -4557,7 +4557,7 @@ export const contentCards: Card[] = [
 
   {
     id: 'funci_ley_imposible',
-    phase: 2,
+    phase: 1,
     character: 'La Funcionaria',
     text: 'La ley que anunció el martes necesita catorce desarrollos reglamentarios y aquí somos seis. Puedo tenerlos en dos años o puedo tenerlos mal en tres meses. Dígame cuál de las dos.',
     left: { text: 'Dos años y hacerlo bien', effects: { medios: 1, calle: -2 }, moralidad: 3 },
@@ -5017,7 +5017,7 @@ export const contentCards: Card[] = [
   {
     id: 'igualdad_ley_estrella',
     pleases: 'left',
-    phase: 2,
+    phase: 1,
     character: 'La Ministra de Igualdad',
     characterImage: 'feminista.webp',
     text: 'Trae su ley estrella: doscientas páginas, un preámbulo precioso y un articulado que en el ministerio no ha leído entero nadie. "Es histórica." Los técnicos piden dos meses. Ella, dos días.',
@@ -5231,7 +5231,7 @@ export const contentCards: Card[] = [
   {
     id: 'exiliado_manifiesto',
     pleases: 'right',
-    phase: 2,
+    phase: 1,
     character: 'El Exiliado',
     characterImage: 'exiliadopesado.webp',
     text: 'He publicado un manifiesto de nueve folios. Nueve. Justo esta semana que nadie hablaba del tema, fíjese qué oportuno. Y lo he subido con música, porque si no, no lo ve nadie.',
@@ -5280,7 +5280,7 @@ export const contentCards: Card[] = [
   // --- EL INDEPENDENTISTA (provocador, vive para el titular y el zasca) ---
   {
     id: 'indepe_zasca',
-    phase: 2,
+    phase: 1,
     character: 'El Independentista',
     characterImage: 'independentista.webp',
     text: 'En el pleno le clava un zasca de quince segundos, medido palabra por palabra para el corte de vídeo: "Esto es una vergüenza democrática. Pero seguimos aquí. Y usted nos necesita más que nosotros a usted."',
@@ -5290,7 +5290,7 @@ export const contentCards: Card[] = [
   {
     id: 'indepe_traspaso',
     pleases: 'right',
-    phase: 2,
+    phase: 1,
     character: 'El Independentista',
     characterImage: 'independentista.webp',
     text: 'Pone precio a su apoyo: el traspaso de una competencia entera, "y sin flecos". A cambio, sus votos para el decreto de esta semana. Y solo para el de esta semana.',
@@ -5320,7 +5320,7 @@ export const contentCards: Card[] = [
   {
     id: 'indepe_inversion',
     pleases: 'left',
-    phase: 2,
+    phase: 1,
     character: 'El Independentista',
     characterImage: 'independentista.webp',
     text: 'Presenta usted un plan de inversión y él lo resume en un tuit: "Todo para la capital. El resto del país, que se apañe." 12.000 compartidos en una hora, y subiendo.',
@@ -5342,7 +5342,7 @@ export const contentCards: Card[] = [
   {
     id: 'ministra_expertos',
     pleases: 'right',
-    phase: 2,
+    phase: 1,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.webp',
     text: '"Yo soy médica, yo sé de lo que hablo", zanja, y saca adelante una reforma exprés sin contar con nadie: ni con las regiones, ni con los colegios profesionales, ni con su propio ministerio.',
@@ -5455,7 +5455,7 @@ export const contentCards: Card[] = [
   {
     id: 'oposicion_no_es_serio',
     pleases: 'left',
-    phase: 2,
+    phase: 1,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
     text: 'Habla despacio, con cara de no ser como los demás: "Esto no es serio. El país necesita estabilidad. Nosotros sí tenemos un proyecto." Y le ofrece un gran pacto de Estado.',
@@ -5565,7 +5565,7 @@ export const contentCards: Card[] = [
   {
     id: 'cruzado_fronteras',
     pleases: 'left',
-    phase: 2,
+    phase: 1,
     character: 'El Cruzado',
     characterImage: 'cruzado.webp',
     text: 'La frontera o es frontera o es una raya pintada. Quiero el decreto esta semana. Si no llega, le tumbo los presupuestos, y no lo digo enfadado: lo digo como se dice una fecha.',
@@ -5575,7 +5575,7 @@ export const contentCards: Card[] = [
   {
     id: 'cruzado_guerra_cultural',
     pleases: 'left',
-    phase: 2,
+    phase: 1,
     character: 'El Cruzado',
     characterImage: 'cruzado.webp',
     text: 'Una serie pagada con dinero de todos, un libro de texto que miente y un festival que se ríe de la gente decente. Los tres en el mismo día, presidente. Y eso lo pagan ustedes. Bueno: lo pagamos nosotros.',
@@ -5668,7 +5668,7 @@ export const contentCards: Card[] = [
   {
     id: 'dama_empresaria',
     pleases: 'left',
-    phase: 2,
+    phase: 1,
     character: 'La Primera Dama',
     characterImage: 'primeradama.webp',
     text: '"Ahora soy empresaria. Tengo reuniones en el Palacio, sí, pero son cosa mía, no tuya." Le enseña unas tarjetas de visita recién impresas, con el escudo casi igual que el oficial.',
@@ -5678,7 +5678,7 @@ export const contentCards: Card[] = [
   {
     id: 'dama_libro',
     pleases: 'left',
-    phase: 2,
+    phase: 1,
     character: 'La Primera Dama',
     characterImage: 'primeradama.webp',
     text: '"He escrito un libro. Sale en primavera. Los ministerios van a comprar unos cuantos ejemplares, ¿verdad que sí? Para las bibliotecas. Muchos." Ya tiene hecha la foto de la portada.',
@@ -5721,7 +5721,7 @@ export const contentCards: Card[] = [
   {
     id: 'guru_conferencia',
     pleases: 'right',
-    phase: 2,
+    phase: 1,
     character: 'El Gurú',
     characterImage: 'guru.webp',
     text: '"Voy a dar una conferencia sobre la desigualdad. Cobro 80.000 euros. El dinero no me interesa, pero rechazarlo sería una falta de respeto a los organizadores."',
@@ -5731,7 +5731,7 @@ export const contentCards: Card[] = [
   {
     id: 'guru_reloj',
     pleases: 'right',
-    phase: 2,
+    phase: 1,
     character: 'El Gurú',
     characterImage: 'guru.webp',
     text: '"Me han regalado un reloj de 40.000 euros. Es un gesto simbólico de hermandad entre pueblos. Lo voy a llevar puesto en el acto contra el lujo del jueves."',
@@ -5912,7 +5912,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_mote',
-    phase: 2,
+    phase: 1,
     character: 'El Periodista',
     characterImage: 'periodista.webp',
     text: 'La prensa le ha puesto un mote. Es malísimo, no tiene gracia y no se lo va a quitar en la vida. Sus propios ministros ya lo usan sin darse cuenta.',
@@ -5966,7 +5966,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'meme_ascensor',
-    phase: 2,
+    phase: 1,
     character: 'La Oposición',
     characterImage: 'oposicionsuave.webp',
     text: 'Se han quedado los dos solos en el ascensor. Catorce plantas. Él mira al frente. Usted mira al frente. El ascensor va lentísimo. Alguien tiene que decir algo.',
@@ -6671,9 +6671,9 @@ export const contentCards: Card[] = [
     phase: 1,
     character: 'El Jefe de Comunicación',
     characterImage: 'jefecomunicacion.webp',
-    text: 'Agosto. No hay Parlamento, no hay comisiones y hasta los periodistas están en la playa. Tres semanas sin aparecer y el país se olvida de todo: de lo malo y de lo bueno. Usted dirá.',
+    text: 'Agosto. No hay Parlamento, no hay comisiones y hasta los periodistas están en la playa. Si desaparece tres semanas, todo se le acerca a la media: lo que tiene disparado baja y lo que tiene por los suelos sube.',
     left: {
-      text: 'Vacaciones técnicas hasta septiembre',
+      text: 'Desaparecer y que se calme todo',
       effects: {},
       rebalance: true,
     },
@@ -6832,7 +6832,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'ministra_viral',
-    phase: 2,
+    phase: 1,
     character: 'La Ministra',
     characterImage: 'ministraincompetente.webp',
     text: 'Me he hecho viral confundiendo dos cifras en directo. Un millón de reproducciones y los comentarios muy creativos. Yo soy médica, presidente, no soy estadística. Alguien tendría que habérmelas repasado.',
@@ -7106,7 +7106,7 @@ export const contentCards: Card[] = [
   {
     id: 'mopongo_ocho',
     pleases: 'left',
-    phase: 2,
+    phase: 1,
     character: 'Mopongo',
     characterImage: 'mopongo.webp',
     text: 'Consejo de ministros. Turno de intervenciones. Le toca. Se levanta, dice "Mopongo", se sienta y se sirve agua. Nadie pregunta nada.',
@@ -7498,7 +7498,7 @@ export const contentCards: Card[] = [
   },
   {
     id: 'fiscal_cena',
-    phase: 2,
+    phase: 1,
     character: 'El Fiscal',
     characterImage: 'fiscal.webp',
     text: '"Una cena entre amigos, sin agenda ni nada." El problema es que él instruye tres causas que le tocan a usted de cerca, y las cenas entre amigos también se fotografían.',
