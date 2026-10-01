@@ -366,17 +366,41 @@ const endingCards: Card[] = [
     right: { text: 'Resistir hasta que le echen', effects: {}, epilogueText: 'Aguanta tres semanas gobernando sin mayoría, sin socios y sin presupuesto. Luego ya no. Fin del gobierno.' },
     isEnding: true,
     byEvent: true,
-    // Socios de verdad con el enfado muy alto: no es un enfado puntual, es que
-    // te has quedado solo. Cuenta SOLO a quien te sostiene el Gobierno — que
-    // el juez o el periodista estén hartos de ti no rompe ninguna coalición,
-    // y desde que ellos también acumulan enfado había que acotarlo.
+    // Dos socios hartos a la vez. Cuenta SOLO a quien te sostiene el Gobierno
+    // — que el juez o el periodista estén hartos de ti no rompe ninguna
+    // coalición, y desde que ellos también acumulan enfado había que acotarlo.
+    //
+    // PEDIA DOS SOCIOS A 5, O CUATRO A 3, Y ESO NO PASA NUNCA. Medido con el
+    // motor sobre 1500 partidas: el enfado más alto que alcanza un socio es 4,
+    // y la mediana del pico por partida es 1. O sea que este final estaba
+    // escrito, con sus dos epílogos, y era inalcanzable: cero veces en 3600
+    // partidas. El número salió de cuando el enfado subía de otra manera y se
+    // quedó ahí cuando dejó de hacerlo.
+    //
+    // Uno furioso y otro harto. Se probaron varios umbrales contra el motor,
+    // mirando en qué porcentaje de partidas se llega a cumplirlos:
+    //
+    //   dos a 5 o cuatro a 3 (lo que había)   0,0%   imposible
+    //   tres a 3                              0,6%
+    //   dos a 4                               0,8%
+    //   uno a 4 y otro a 3                    2,9%   <- este
+    //   dos a 3                               5,2%
+    //
+    // Con "dos a 3" la banda se iba: el óptimo caía del 17% al 12%, porque una
+    // muerte nueva golpea justo a quien dura mucho, que es el único que llega a
+    // enfadar a dos socios. Con "uno a 4 y otro a 3" sigue siendo alcanzable y
+    // la banda aguanta.
+    //
+    // Y los dos números se ven en pantalla: 3 es "Harto de usted" bajo el
+    // nombre del personaje y 4 va camino de "No le perdona una". O sea que esto
+    // se ve venir, que es lo que separa un final de un accidente.
     condition: (_s, _m, ctx) => {
       const socios = [
         'La Vicepresidenta', 'La Socia Incómoda', 'El Exiliado', 'El Independentista',
         'La Ministra', 'La Ministra de Igualdad', 'El Escudero',
       ]
       const enfados = socios.map((n) => ctx.anger[n] ?? 0)
-      return enfados.filter((a) => a >= 5).length >= 2 || enfados.filter((a) => a >= 3).length >= 4
+      return enfados.some((a) => a >= 4) && enfados.filter((a) => a >= 3).length >= 2
     },
   },
   {

@@ -53,6 +53,13 @@ const K4: StatKey[] = ['medios', 'gobierno', 'calle', 'caja']
 // queda conseguido con uno de menos.
 const PERSONAJES_TOTALES = REPARTO.length
 
+// Cuantos finales ACABAN una partida. Sale del mazo y no de un numero a mano,
+// que es lo que hizo que el logro de "verlos todos" se quedara en 20 mientras
+// el juego crecia hasta 31. `isEnding` es la marca de los que terminan; las
+// noches electorales de los meses 48 y 96 llevan `isElection` y no cuentan,
+// porque se juegan y la partida sigue.
+const FINALES_TOTALES = cards.filter((c) => c.isEnding).length
+
 export const LOGROS: Logro[] = [
   // --- SUPERVIVENCIA (incremental) ---
   { id: 'sobrevive_12', grupo: 'Cuánto aguantas', nombre: 'Un año en el cargo', desc: 'Aguanta 12 meses.', check: (r) => r.meses >= 12 },
@@ -95,9 +102,21 @@ export const LOGROS: Logro[] = [
   { id: 'cae_mes_1', grupo: 'Por dónde cae', nombre: 'Un suspiro', desc: 'Cae antes de cumplir medio año.', check: (r) => r.meses <= 6 && !r.gano },
 
   // --- FINALES: coleccionista ---
+  // LA ESCALERA LLEGA HASTA ARRIBA. Eran tres escalones que acababan en 20 y
+  // el de 20 se llamaba "Lo has visto todo": hay TREINTA Y UNO, asi que ese
+  // nombre era mentira con dos tercios vistos. Ahora son seis y el ultimo pide
+  // los treinta y uno de verdad.
+  //
+  // Treinta y uno y no treinta y ocho: los otros siete son noches electorales
+  // de los meses 48 y 96, que se juegan y no acaban la partida. El contador
+  // solo mira la ULTIMA carta, asi que esos nunca contarian y pedirlos seria
+  // pedir lo imposible.
   { id: 'finales_5', grupo: 'Coleccionar finales', nombre: 'Se acaba de mil maneras', desc: 'Ve 5 finales distintos.', check: (r) => r.finalesDistintos >= 5 },
   { id: 'finales_12', grupo: 'Coleccionar finales', nombre: 'Museo de derrotas', desc: 'Ve 12 finales distintos.', check: (r) => r.finalesDistintos >= 12 },
-  { id: 'finales_20', grupo: 'Coleccionar finales', nombre: 'Lo has visto todo', desc: 'Ve 20 finales distintos.', check: (r) => r.finalesDistintos >= 20 },
+  { id: 'finales_20', grupo: 'Coleccionar finales', nombre: 'Coleccionista de ruinas', desc: 'Ve 20 finales distintos.', check: (r) => r.finalesDistintos >= 20 },
+  { id: 'finales_25', grupo: 'Coleccionar finales', nombre: 'Ya cuesta caer de forma nueva', desc: 'Ve 25 finales distintos.', check: (r) => r.finalesDistintos >= 25 },
+  { id: 'finales_29', grupo: 'Coleccionar finales', nombre: 'Quedan dos', desc: `Ve 29 de los ${FINALES_TOTALES} finales.`, check: (r) => r.finalesDistintos >= 29 },
+  { id: 'finales_todos', grupo: 'Coleccionar finales', nombre: 'Lo has visto todo', desc: `Ve los ${FINALES_TOTALES} finales del juego.`, oculto: true, check: (r) => r.finalesDistintos >= FINALES_TOTALES },
 
   // --- ELECCIONES ---
   { id: 'gana_elecciones', grupo: 'Elecciones', nombre: 'Cuatro años más', desc: 'Gana unas elecciones y sigue gobernando.', check: (r) => r.gano },
