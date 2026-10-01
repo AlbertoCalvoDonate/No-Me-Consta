@@ -11,6 +11,7 @@ import { useAtrasCierra } from '../utils/botonAtras'
 import { dondeEstaInstalar, pedirInstalar, useComoInstalar } from '../utils/instalar'
 import { apuntarQueSeLeDijo, yaSeLeDijo } from '../hooks/avisoInstalar'
 import { apuntarAviso, useMandarPartidas, yaSeAviso } from '../utils/enviarPartida'
+import { usePruebas } from '../utils/soyPruebas'
 
 const STATS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
@@ -97,6 +98,7 @@ export function StartScreen({
   // se cierre, porque dos carteles a la vez se cierran los dos sin leer.
   const [contandoLog, setContandoLog] = useState(false)
   const [mandaPartidas, setMandaPartidas] = useMandarPartidas()
+  const [esPruebas, setEsPruebas] = usePruebas()
   useEffect(() => {
     if (avisando || yaSeAviso()) return
     setContandoLog(true)
@@ -277,6 +279,29 @@ export function StartScreen({
       {/* Borrar el progreso. Discreto a propósito -no compite con "Empezar
           legislatura"- pero visible y con su nombre. Solo tiene sentido
           ofrecerlo si hay algo que borrar. */}
+      {/* "ESTO SON PRUEBAS MIAS". Lo tiene que decir el movil porque el
+          servidor no puede saberlo: no viaja ningun identificador. Y no
+          identifica a nadie — dice que la PARTIDA es una prueba, no de quien
+          es (ver utils/soyPruebas).
+          Encendido se queda encendido: quien prueba, prueba muchas veces, y
+          tener que acordarse en cada partida es garantia de olvidarse. */}
+      {esPruebas && (
+        <button
+          onClick={() => { sfx.boton(); setEsPruebas(false) }}
+          style={{ ...botonTerciario, marginTop: 2, color: COLOR.oro }}
+        >
+          Mis partidas no cuentan · tocar para que cuenten
+        </button>
+      )}
+      {partidas > 0 && !esPruebas && (
+        <button
+          onClick={() => { sfx.boton(); setEsPruebas(true) }}
+          style={{ ...botonTerciario, marginTop: 2, color: '#5a5650' }}
+        >
+          Estas partidas son pruebas mías
+        </button>
+      )}
+
       {partidas > 0 && (
         <button
           onClick={() => { sfx.boton(); setBorrando(true) }}

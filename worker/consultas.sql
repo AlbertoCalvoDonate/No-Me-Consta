@@ -116,3 +116,31 @@ WHERE p.meses <= 8 AND d.turno = p.meses
 GROUP BY d.carta
 ORDER BY veces DESC
 LIMIT 15;
+
+-- ===========================================================================
+-- 9. ¿LA GENTE MEJORA? Esta es la que uno cree que necesita un identificador
+-- por movil, y no: con el numero de partida basta. No sigue a nadie en
+-- concreto, pero contesta la pregunta, que era sobre la curva y no sobre una
+-- persona.
+SELECT
+  CASE
+    WHEN partida_n = 1 THEN '1a partida'
+    WHEN partida_n <= 3 THEN '2a-3a'
+    WHEN partida_n <= 10 THEN '4a-10a'
+    ELSE 'de la 11a en adelante'
+  END AS cuando,
+  COUNT(*) AS partidas,
+  ROUND(AVG(meses), 1) AS media_meses,
+  MAX(meses) AS mejor
+FROM partidas
+WHERE quien IS NULL
+GROUP BY cuando
+ORDER BY MIN(partida_n);
+
+-- ===========================================================================
+-- 10. Y LA PRIMERA PARTIDA DE TODAS, que es la que decide si alguien vuelve.
+SELECT final, COUNT(*) AS veces, ROUND(AVG(meses), 1) AS duraban
+FROM partidas
+WHERE quien IS NULL AND partida_n = 1
+GROUP BY final
+ORDER BY veces DESC;

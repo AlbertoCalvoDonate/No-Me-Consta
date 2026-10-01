@@ -15,7 +15,7 @@ import type { StatKey } from './types'
 import { epitetoDe } from './data/epitetos'
 import { sfx } from './utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from './utils/desbordado'
-import { LOG_DE_PRUEBAS, mandarLog, pasosDeLaPartida, textoLog } from './utils/logPruebas'
+import { pasosDeLaPartida } from './utils/pasosPartida'
 import { enviarPartida, estaApagado } from './utils/enviarPartida'
 import { Encuesta } from './components/Encuesta'
 import { yaSePregunto } from './utils/perfil'
@@ -297,8 +297,6 @@ export default function App() {
   const muyBaja = altoVentana < 600
   // El relato del final se desplaza cuando no cabe. `hayMasRelato` dice si
   // queda algo por debajo del borde, para difuminarlo y que se vea que hay más.
-  // Log de pruebas (temporal, ver utils/logPruebas).
-  const [logEnviado, setLogEnviado] = useState<'idle' | 'enviado' | 'copiado' | 'error'>('idle')
   const relatoRef = useRef<HTMLDivElement>(null)
   const textoLen = deathReason?.length ?? 0
   const imagenDisponible = gameOver ? ilustracionFin(currentCard.id) : undefined
@@ -361,7 +359,7 @@ export default function App() {
     }
     if (yaComprobado.current) return
     yaComprobado.current = true
-    const { nuevos, recordPrevio } = registrarPartida({
+    const { nuevos, recordPrevio, numeroDePartida } = registrarPartida({
       meses: turn - 1,
       moralidad,
       endingId: currentCard.id,
@@ -390,6 +388,7 @@ export default function App() {
       moralidad,
       stats,
       version: __APP_VERSION__,
+      numeroDePartida,
     }
     if (!yaSePregunto() && !estaApagado()) {
       pendiente.current = { pasos: pasosDeLaPartida(), partida }
@@ -888,49 +887,6 @@ export default function App() {
                         </button>
                       </div>
 
-                      {/* PRUEBAS. ESTO NO ES PARTE DEL JUEGO Y SE VA A QUITAR.
-                          Va en rojo y separado del resto a propósito: tiene que
-                          cantar que no pertenece al diseño, para que nadie se
-                          acostumbre a verlo ahí. Para quitarlo: LOG_DE_PRUEBAS
-                          a false en utils/logPruebas. */}
-                      {LOG_DE_PRUEBAS && (
-                        <button
-                          onClick={async () => {
-                            sfx.boton()
-                            const res = await mandarLog(
-                              textoLog({
-                                finalId: currentCard.id,
-                                meses: turn - 1,
-                                moralidad,
-                                stats,
-                                version: __APP_VERSION__,
-                              })
-                            )
-                            setLogEnviado(res)
-                            window.setTimeout(() => setLogEnviado('idle'), 2500)
-                          }}
-                          style={{
-                            marginTop: 14,
-                            background: '#b3261e',
-                            border: '2px dashed #ff7a70',
-                            borderRadius: 8,
-                            padding: '8px 18px',
-                            ...pixel,
-                            fontWeight: 500,
-                            fontSize: 15,
-                            color: '#fff',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          {logEnviado === 'enviado'
-                            ? '¡Gracias!'
-                            : logEnviado === 'copiado'
-                              ? '¡Copiado! Pégamelo'
-                              : logEnviado === 'error'
-                                ? 'No se pudo'
-                                : 'PRUEBAS: mandarme la partida'}
-                        </button>
-                      )}
                     </div>
                   </motion.div>
                 )}

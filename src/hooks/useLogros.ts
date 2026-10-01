@@ -86,6 +86,10 @@ export interface ResumenPartida {
   // el guardado después, el récord ya incluiría la partida que acaba de
   // terminar y la comparación diría siempre cero.
   recordPrevio: number
+  // La CUENTA de partidas de este movil, ya contando esta. Se usa para mandarla
+  // con la partida: es un numero, no un identificador, y es lo que permite
+  // preguntar "¿la gente mejora?" sin saber quien es nadie (ver enviarPartida).
+  numeroDePartida: number
 }
 
 // Se llama una vez al terminar la partida. Actualiza los totales, comprueba
@@ -120,6 +124,7 @@ export function registrarPartida(d: DatosPartida): ResumenPartida {
   const gano =
     d.esEleccion && !/derrota|repeticion|quemado|retirada/.test(d.endingId)
 
+  const numeroDePartida = g.partidas
   const r: ResultadoPartida = {
     meses: d.meses,
     moralidad: d.moralidad,
@@ -158,7 +163,7 @@ export function registrarPartida(d: DatosPartida): ResumenPartida {
   }
 
   guardar(g)
-  return { nuevos, recordPrevio }
+  return { nuevos, recordPrevio, numeroDePartida }
 }
 
 // Ids que existen HOY. Un guardado viejo puede tener ids que ya no estan (si

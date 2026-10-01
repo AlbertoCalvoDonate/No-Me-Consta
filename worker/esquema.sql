@@ -73,3 +73,13 @@ ALTER TABLE partidas ADD COLUMN reigns TEXT;
 --
 -- NULL = alguien de fuera, que es el caso normal.
 ALTER TABLE partidas ADD COLUMN quien TEXT;
+
+-- LA CUANTA PARTIDA ES ESTA EN ESE MOVIL.
+--
+-- Un numero, no un identificador: dos personas distintas en su quinta partida
+-- mandan las dos un 5, y siguen siendo indistinguibles. Con esto se contesta
+-- "¿la gente mejora segun juega?" -comparar las primeras partidas contra las
+-- decimas, en el monton- que es para lo que uno se plantea poner un id por
+-- movil. La pregunta de verdad no era sobre una persona concreta: era sobre la
+-- curva. Y la curva no necesita saber de quien es cada punto.
+ALTER TABLE partidas ADD COLUMN partida_n INTEGER;

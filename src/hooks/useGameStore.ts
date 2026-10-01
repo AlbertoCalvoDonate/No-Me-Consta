@@ -11,7 +11,7 @@ import {
   turnosDeGracia,
 } from '../data/cards'
 import { DUENO_DE_PERSONAJE } from '../data/reparto'
-import { apuntarPaso, limpiarLog } from '../utils/logPruebas'
+import { apuntarPaso, limpiarLog } from '../utils/pasosPartida'
 import { guardarPartida, borrarPartida, cargarPartida } from './persistPartida'
 import { guardarHerencia, cargarHerencia, olvidarHerencia } from './persistHerencia'
 
@@ -752,7 +752,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const afterEffects = applyEffects(state.stats, choice.effects)
     const newStats = choice.rebalance ? applyRebalance(afterEffects) : afterEffects
     const newMoralidad = applyMoralidad(state.moralidad, choice.moralidad)
-    // Log de pruebas (temporal, ver utils/logPruebas): apunta la decision.
+    // Se apunta la decision (ver utils/pasosPartida): de ahi sale lo que se
+    // manda al terminar.
     apuntarPaso({
       turno: state.turn,
       carta: state.currentCard.id,

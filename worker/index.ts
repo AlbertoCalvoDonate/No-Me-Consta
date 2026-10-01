@@ -54,6 +54,14 @@ interface Partida {
   // rechazar la partida entera, que seria perder el dato bueno por el malo.
   juega: string | null
   reigns: string | null
+  // 'pruebas' cuando el propio movil dice que esa partida es una prueba y no
+  // cuenta para medir. Es lo UNICO que puede valer: el campo no es texto
+  // libre, asi que nadie puede meter por aqui lo que quiera.
+  quien: string | null
+  // La cuanta partida es esta en ese movil. Un numero, no un identificador:
+  // dos personas distintas en su quinta partida mandan el mismo 5. Sirve para
+  // la pregunta "¿la gente mejora?" sin saber quien es nadie.
+  partidaN: number
   decisiones: Decision[]
 }
 
@@ -95,6 +103,8 @@ function leerPartida(x: unknown): Partida | null {
   if (!Array.isArray(o.decisiones) || o.decisiones.length > MAX_DECISIONES) return null
   const juega = deLista(o.juega, JUEGA)
   const reigns = deLista(o.reigns, REIGNS)
+  const quien = o.pruebas === true ? 'pruebas' : null
+  const partidaN = entero(o.partidaN, 1, 100000) ?? 1
 
   const decisiones: Decision[] = []
   for (const d of o.decisiones) {
@@ -113,7 +123,7 @@ function leerPartida(x: unknown): Partida | null {
     }
     decisiones.push({ turno, carta, lado, medios: m, gobierno: g, calle: c, caja: b, moralidad: mo })
   }
-  return { version, final, meses, moralidad, medios, gobierno, calle, caja, juega, reigns, decisiones }
+  return { version, final, meses, moralidad, medios, gobierno, calle, caja, juega, reigns, quien, partidaN, decisiones }
 }
 
 async function guardar(env: Env, p: Partida): Promise<Response> {
@@ -126,10 +136,10 @@ async function guardar(env: Env, p: Partida): Promise<Response> {
   const sentencias = [
     env.nomeconsta_partidas
       .prepare(
-        'INSERT INTO partidas (id, cuando, version, final, meses, moralidad, medios, gobierno, calle, caja, juega, reigns)' +
-          ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'
+        'INSERT INTO partidas (id, cuando, version, final, meses, moralidad, medios, gobierno, calle, caja, juega, reigns, quien, partida_n)' +
+          ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
       )
-      .bind(id, cuando, p.version, p.final, p.meses, p.moralidad, p.medios, p.gobierno, p.calle, p.caja, p.juega, p.reigns),
+      .bind(id, cuando, p.version, p.final, p.meses, p.moralidad, p.medios, p.gobierno, p.calle, p.caja, p.juega, p.reigns, p.quien, p.partidaN),
   ]
   for (const d of p.decisiones) {
     sentencias.push(

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { Stats } from '../types'
-import type { PasoPartida } from './logPruebas'
+import type { PasoPartida } from './pasosPartida'
 import { leerPerfil } from './perfil'
+import { sonPruebas } from './soyPruebas'
 
 // MANDAR LA PARTIDA TERMINADA, PARA PODER MIRAR SI EL JUEGO ESTA BIEN.
 //
@@ -14,6 +15,7 @@ import { leerPerfil } from './perfil'
 //   - que carta salio, en que mes, y a que lado se decidio
 //   - las cuatro barras y la moralidad despues de cada decision
 //   - como acabo y cuanto duro
+//   - la cuanta partida es esta en este movil (un numero, no un identificador)
 //   - y, si contesto la encuesta de la primera partida, sus dos respuestas:
 //     si juega a videojuegos y si conocia Reigns. Van las RESPUESTAS, no un
 //     identificador (el porque esta explicado en utils/perfil).
@@ -81,6 +83,14 @@ export function useMandarPartidas(): [boolean, (v: boolean) => void] {
 
 interface Final {
   finalId: string
+  // La CUANTA partida es esta en este movil. No es un identificador: es un
+  // numero, y dos personas distintas en su quinta partida mandan el mismo 5.
+  //
+  // Con esto se contesta "¿la gente mejora?" -comparar las primeras partidas
+  // contra las decimas, en el monton- que es lo que se queria saber poniendo
+  // un id por movil. Sin el id no se puede seguir a UNA persona, pero la
+  // pregunta de verdad no era sobre una persona: era sobre la curva.
+  numeroDePartida: number
   meses: number
   moralidad: number
   stats: Stats
@@ -95,6 +105,7 @@ export async function enviarPartida(pasos: PasoPartida[], f: Final): Promise<boo
 
   const cuerpo = {
     version: f.version,
+    partidaN: Math.max(1, Math.round(f.numeroDePartida)),
     final: f.finalId,
     meses: Math.max(0, Math.round(f.meses)),
     moralidad: Math.round(f.moralidad),
@@ -106,6 +117,11 @@ export async function enviarPartida(pasos: PasoPartida[], f: Final): Promise<boo
     // asi se distingue "no juega" de "no lo sabemos", que no es lo mismo.
     juega: leerPerfil().juega ?? null,
     reigns: leerPerfil().reigns ?? null,
+    // "Esto es una prueba mia, no cuenta". Lo dice el movil porque el servidor
+    // no puede saberlo: no viaja ningun identificador (ver utils/soyPruebas).
+    // No identifica a nadie: es una etiqueta sobre la partida, no sobre quien
+    // la juega. Apagado, no se manda nada.
+    pruebas: sonPruebas() ? true : undefined,
     decisiones: pasos.slice(0, MAX_DECISIONES).map((p) => ({
       turno: p.turno,
       carta: p.carta,
