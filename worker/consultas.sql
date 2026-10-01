@@ -15,6 +15,17 @@
 -- meses" es cierto; "el 40% de la GENTE no pasa de diez meses" no se puede
 -- saber con esto, porque una sola persona empeñada puede ser veinte partidas.
 
+-- Y OTRA: las partidas del que ha hecho el juego estan marcadas con `quien`.
+-- No valen para medir, porque uno ya sabe que hace cada personaje y por donde
+-- se muere. Casi todas las consultas de aqui llevan `WHERE quien IS NULL` por
+-- eso. Para verlas incluidas, quitar esa linea.
+
+-- ===========================================================================
+-- 0. ¿CUANTAS HAY, Y DE QUIEN?
+SELECT COALESCE(quien, 'gente de fuera') AS de_quien, COUNT(*) AS partidas
+FROM partidas
+GROUP BY quien;
+
 -- ===========================================================================
 -- 1. LO BASICO: ¿cuanto dura la gente?
 -- La mediana importa mas que la media: cuatro partidas de dos minutos y una de
@@ -26,13 +37,15 @@ SELECT
   MAX(meses) AS mejor,
   SUM(CASE WHEN meses < 10 THEN 1 ELSE 0 END) AS menos_de_10_meses,
   SUM(CASE WHEN meses >= 48 THEN 1 ELSE 0 END) AS legislatura_entera
-FROM partidas;
+FROM partidas
+WHERE quien IS NULL;
 
 -- ===========================================================================
 -- 2. POR DONDE CAE LA GENTE. Si un final se come la mitad, ese final es el
 -- juego entero y los demas son decorado.
 SELECT final, COUNT(*) AS veces, ROUND(AVG(meses), 1) AS duraban
 FROM partidas
+WHERE quien IS NULL
 GROUP BY final
 ORDER BY veces DESC;
 
@@ -45,6 +58,7 @@ SELECT
   COUNT(*) AS partidas,
   ROUND(AVG(meses), 1) AS media_meses
 FROM partidas
+WHERE quien IS NULL
 GROUP BY juega, reigns
 ORDER BY partidas DESC;
 
@@ -88,6 +102,7 @@ LIMIT 20;
 -- dentro.
 SELECT meses, COUNT(*) AS partidas
 FROM partidas
+WHERE quien IS NULL
 GROUP BY meses
 ORDER BY meses;
 

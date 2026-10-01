@@ -58,3 +58,18 @@ CREATE INDEX IF NOT EXISTS idx_decisiones_carta ON decisiones (carta);
 -- NULL = no contesto, que no es lo mismo que "no juega".
 ALTER TABLE partidas ADD COLUMN juega TEXT;
 ALTER TABLE partidas ADD COLUMN reigns TEXT;
+
+-- QUIEN JUGO, PUESTO A MANO Y DESPUES.
+--
+-- Esto NO lo manda el juego: lo rellena quien tiene acceso a la base, sobre
+-- filas que ya estan guardadas. Por eso no toca nada de lo de arriba ni de lo
+-- que se le dice al jugador: el juego sigue sin mandar ningun identificador.
+--
+-- Existe por una razon concreta: las partidas del que ha hecho el juego no
+-- valen para medir nada. Uno ya sabe que hace cada personaje, por donde se
+-- muere y que carta conviene. Si se mezclan con las de los testers, la media
+-- miente hacia arriba. Marcarlas permite sacarlas de la cuenta (ver
+-- consultas.sql) sin tener que borrarlas, que tambien sirven para otras cosas.
+--
+-- NULL = alguien de fuera, que es el caso normal.
+ALTER TABLE partidas ADD COLUMN quien TEXT;
