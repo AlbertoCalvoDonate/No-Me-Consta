@@ -84,18 +84,49 @@ function esIOS(): boolean {
   return /iPad/.test(ua) || iPadMentiroso
 }
 
-// Como se instala esto AQUI, en este movil concreto:
-//   'boton' - el navegador deja pedirlo y hay boton (Chrome y compañia).
-//   'mano'  - se puede, pero hay que explicarlo (iOS).
-//   'no'    - o ya esta instalado, o este navegador no lo ofrece todavia
-//             (Firefox en Android tiene lo suyo en su menu) o es un ordenador.
+// Firefox en Android SI instala aplicaciones web, y bien: queda con su icono
+// y abre sin barra. Lo que no hace es dejar que la pagina lo pida -no
+// implementa `beforeinstallprompt`-, asi que se hace desde su menu.
+//
+// Ojo con el Firefox de iPhone: su user agent dice "FxiOS" y no "Firefox", y
+// ademas por debajo es Safari, asi que cae en el caso de iOS, que es donde
+// tiene que caer.
+function esFirefoxAndroid(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent
+  return /Firefox/.test(ua) && /Android/.test(ua)
+}
+
+// Como se instala esto AQUI, en este navegador concreto:
+//   'boton' - el navegador deja pedirlo: un toque y ya (Chrome, Edge, Samsung,
+//             Opera... todo lo que lleva motor de Chrome en Android).
+//   'mano'  - se puede, pero hay que explicar donde esta: iOS (Compartir) y
+//             Firefox en Android (su menu). Son los dos navegadores que
+//             instalan bien y no dejan pedirlo por codigo.
+//   'no'    - ya esta instalado, o es un ordenador, o un navegador que no lo
+//             ofrece. Entonces no se enseña nada: mas vale callarse que
+//             mandar a alguien a buscar un menu que no existe.
 export type ComoInstalar = 'boton' | 'mano' | 'no'
 
 export function useComoInstalar(): ComoInstalar {
   const conBoton = useSePuedeInstalar()
   if (conBoton) return 'boton'
-  if (esIOS() && !vaComoApp()) return 'mano'
+  if (vaComoApp()) return 'no'
+  if (esIOS() || esFirefoxAndroid()) return 'mano'
   return 'no'
+}
+
+// Donde hay que ir a buscarlo, con las palabras de cada navegador. Se escribe
+// aqui, al lado de la deteccion, para que no se separen: cambiar una sin la
+// otra es mandar a la gente al sitio equivocado.
+export function dondeEstaInstalar(): string {
+  if (esIOS()) {
+    return 'En iPhone se hace a mano: toca Compartir (el cuadrado con la flecha hacia arriba) y luego "Añadir a pantalla de inicio".'
+  }
+  if (esFirefoxAndroid()) {
+    return 'En Firefox se hace desde su menú: toca los tres puntos de arriba y busca "Instalar" o "Añadir a la pantalla de inicio".'
+  }
+  return 'Busca "Instalar" o "Añadir a la pantalla de inicio" en el menú de tu navegador.'
 }
 
 // Devuelve si lo instalo. El evento solo se puede usar UNA vez: si lo rechaza,

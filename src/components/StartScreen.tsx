@@ -8,7 +8,7 @@ import { sfx } from '../utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from '../utils/desbordado'
 import { borrarTodoElProgreso } from '../hooks/borrarGuardado'
 import { useAtrasCierra } from '../utils/botonAtras'
-import { pedirInstalar, useComoInstalar } from '../utils/instalar'
+import { dondeEstaInstalar, pedirInstalar, useComoInstalar } from '../utils/instalar'
 import { apuntarQueSeLeDijo, yaSeLeDijo } from '../hooks/avisoInstalar'
 
 const STATS: { key: keyof Stats; label: string }[] = [
@@ -211,9 +211,18 @@ export function StartScreen({
             puntos del navegador y mucha gente no ha abierto ese menú nunca.
             Aquí se pide en un botón que se ve. Desaparece solo en cuanto el
             juego ya está instalado. */}
-        {comoInstalar === 'boton' && (
+        {/* El boton sale siempre que se pueda instalar, tambien donde hay que
+            hacerlo a mano (iPhone, Firefox): alli no instala, abre las
+            instrucciones. Un solo boton con el mismo nombre en todas partes,
+            porque "instalar esto" es lo que el jugador quiere en los tres
+            casos y donde esta el menu es problema nuestro, no suyo. */}
+        {comoInstalar !== 'no' && (
           <button
-            onClick={() => { sfx.boton(); void pedirInstalar() }}
+            onClick={() => {
+              sfx.boton()
+              if (comoInstalar === 'boton') void pedirInstalar()
+              else setAvisando(true)
+            }}
             style={{ ...botonTerciario, color: COLOR.oro }}
           >
             Instalar en el móvil
@@ -341,7 +350,7 @@ export function StartScreen({
             <p style={{ ...pixel, margin: '0 0 16px', fontWeight: 500, fontSize: 14, lineHeight: 1.45, color: COLOR.apagado }}>
               {comoInstalar === 'boton'
                 ? 'Se queda con su icono en la pantalla de inicio y se abre a pantalla completa, sin barra del navegador. Ocupa lo que una foto.'
-                : 'En iPhone se hace a mano: toca Compartir (el cuadrado con la flecha hacia arriba) y luego "Añadir a pantalla de inicio".'}
+                : dondeEstaInstalar()}
             </p>
             {comoInstalar === 'boton' ? (
               <button
