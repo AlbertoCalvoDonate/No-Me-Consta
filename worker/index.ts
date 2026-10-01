@@ -62,6 +62,11 @@ interface Partida {
   // dos personas distintas en su quinta partida mandan el mismo 5. Sirve para
   // la pregunta "¿la gente mejora?" sin saber quien es nadie.
   partidaN: number
+  // Aleatorio y DE ESTA PARTIDA, generado por el movil al empezarla. Une la
+  // partida a medias con la misma partida ya acabada, para que sea una fila y
+  // no dos (ver worker/esquema.sql). `null` lo manda una version antigua del
+  // juego: entonces se guarda como siempre, una fila nueva y a correr.
+  sesion: string | null
   decisiones: Decision[]
 }
 
@@ -105,6 +110,9 @@ function leerPartida(x: unknown): Partida | null {
   const reigns = deLista(o.reigns, REIGNS)
   const quien = o.pruebas === true ? 'pruebas' : null
   const partidaN = entero(o.partidaN, 1, 100000) ?? 1
+  // Opcional a proposito: si no viene, o viene rara, se trata como una partida
+  // suelta. Rechazar la partida entera por esto seria perder el dato bueno.
+  const sesion = texto(o.sesion, 64)
 
   const decisiones: Decision[] = []
   for (const d of o.decisiones) {
@@ -123,23 +131,61 @@ function leerPartida(x: unknown): Partida | null {
     }
     decisiones.push({ turno, carta, lado, medios: m, gobierno: g, calle: c, caja: b, moralidad: mo })
   }
-  return { version, final, meses, moralidad, medios, gobierno, calle, caja, juega, reigns, quien, partidaN, decisiones }
+  return { version, final, meses, moralidad, medios, gobierno, calle, caja, juega, reigns, quien, partidaN, sesion, decisiones }
 }
 
 async function guardar(env: Env, p: Partida): Promise<Response> {
-  // El id lo pone el SERVIDOR y es de la partida, no del jugador: dos partidas
-  // del mismo movil no se pueden relacionar. Es lo que hace cierto el "nada
-  // personal" que se le dice al jugador.
-  const id = crypto.randomUUID()
   const cuando = Date.now()
 
+  // UNA SOLA SENTENCIA DECIDE SI ES FILA NUEVA O LA MISMA DE ANTES.
+  //
+  // Lo segundo pasa siempre que alguien deja la partida a medias y vuelve:
+  // primero llego la abandonada (por la baliza al ocultarse la pestaña) y
+  // ahora llega acabada. Es LA MISMA partida, asi que se actualiza su fila en
+  // vez de anadir otra — si no, cada vez que alguien se va al WhatsApp y
+  // vuelve habria una muerte de mas en la base.
+  //
+  // SE HIZO ASI DESPUES DE VERLO FALLAR. El primer intento miraba antes con un
+  // SELECT y decidia entre UPDATE e INSERT con lo que encontraba. Probandolo
+  // salieron cinco decisiones colgando de una partida inexistente: dos envios
+  // casi a la vez pasaron los dos por el SELECT sin encontrar nada, cada uno
+  // se invento su id, el segundo choco contra el indice UNIQUE y actualizo la
+  // fila del primero — pero sus decisiones ya iban con el id que se habia
+  // inventado, que no existia en `partidas`.
+  //
+  // Con RETURNING no hay hueco donde quepa esa carrera: la base dice cual es
+  // el id de verdad DESPUES de resolver el conflicto, y las decisiones van con
+  // ese. Cuesta una ida y vuelta mas, y a cambio no puede mentir.
+  //
+  // El id lo sigue poniendo el SERVIDOR y es de la partida, no del jugador:
+  // dos partidas del mismo movil no se pueden relacionar. Es lo que hace
+  // cierto el "nada personal" que se le dice al jugador. La sesion que manda
+  // el movil tampoco lo rompe: tambien es de la partida y muere con ella.
+  const fila = await env.nomeconsta_partidas
+    .prepare(
+      'INSERT INTO partidas (id, cuando, version, final, meses, moralidad, medios, gobierno, calle, caja, juega, reigns, quien, partida_n, sesion)' +
+        ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)' +
+        ' ON CONFLICT(sesion) DO UPDATE SET cuando=excluded.cuando, version=excluded.version,' +
+        ' final=excluded.final, meses=excluded.meses, moralidad=excluded.moralidad,' +
+        ' medios=excluded.medios, gobierno=excluded.gobierno, calle=excluded.calle,' +
+        ' caja=excluded.caja, juega=excluded.juega, reigns=excluded.reigns,' +
+        ' quien=excluded.quien, partida_n=excluded.partida_n' +
+        ' RETURNING id'
+    )
+    .bind(crypto.randomUUID(), cuando, p.version, p.final, p.meses, p.moralidad, p.medios, p.gobierno, p.calle, p.caja, p.juega, p.reigns, p.quien, p.partidaN, p.sesion)
+    .first<{ id: string }>()
+  // Con `sesion` a NULL -una version antigua del juego- no hay conflicto
+  // posible y entra como entraba siempre: fila nueva y a correr.
+  if (!fila) return new Response('no se pudo guardar', { status: 500 })
+  const id = fila.id
+
+  // Las decisiones se reemplazan enteras en vez de anadirse. La partida que
+  // llega ahora contiene TODO lo que paso -el log vive en localStorage desde
+  // el 01/10/2026 (ver utils/pasosPartida)-, asi que lo de antes es un prefijo
+  // de esto y mezclarlos solo puede dar un turno repetido. La primera vez el
+  // DELETE no borra nada y no cuesta.
   const sentencias = [
-    env.nomeconsta_partidas
-      .prepare(
-        'INSERT INTO partidas (id, cuando, version, final, meses, moralidad, medios, gobierno, calle, caja, juega, reigns, quien, partida_n)' +
-          ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-      )
-      .bind(id, cuando, p.version, p.final, p.meses, p.moralidad, p.medios, p.gobierno, p.calle, p.caja, p.juega, p.reigns, p.quien, p.partidaN),
+    env.nomeconsta_partidas.prepare('DELETE FROM decisiones WHERE partida = ?').bind(id),
   ]
   for (const d of p.decisiones) {
     sentencias.push(
@@ -151,8 +197,13 @@ async function guardar(env: Env, p: Partida): Promise<Response> {
         .bind(id, d.turno, d.carta, d.lado, d.medios, d.gobierno, d.calle, d.caja, d.moralidad)
     )
   }
-  // En lote: o entra la partida entera o no entra ninguna fila. Media partida
+  // En lote: o entran todas las decisiones o no entra ninguna. Media partida
   // guardada contaria como una muerte prematura que nunca ocurrio.
+  //
+  // Si fallara justo aqui, quedaria la fila de la partida sin sus decisiones.
+  // Es el lado bueno por el que caer: `meses` y `final` -lo que mide si el
+  // juego esta equilibrado- ya estan bien, y el movil no recibe el 204, asi
+  // que la reintenta y el DELETE de arriba la deja entera a la segunda.
   await env.nomeconsta_partidas.batch(sentencias)
   return new Response(null, { status: 204 })
 }

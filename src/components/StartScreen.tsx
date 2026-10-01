@@ -370,8 +370,9 @@ export function StartScreen({
               Esto está en pruebas
             </p>
             <p style={{ ...pixel, margin: '0 0 14px', fontWeight: 500, fontSize: 14, lineHeight: 1.45, color: COLOR.apagado }}>
-              Al terminar una partida se envían <strong style={{ color: COLOR.texto }}>solo datos del juego</strong>: qué
-              cartas salieron, qué elegiste y cómo acabó. Sirve para saber si está bien equilibrado.
+              Se envían <strong style={{ color: COLOR.texto }}>solo datos del juego</strong>: qué cartas salieron, qué
+              elegiste y cómo acabó — o que la dejaste a medias, que también hace falta saberlo. Sirve para ver si está
+              bien equilibrado.
             </p>
             <p style={{ ...pixel, margin: '0 0 16px', fontWeight: 500, fontSize: 14, lineHeight: 1.45, color: COLOR.apagado }}>
               Al acabar la primera te preguntaré dos cosas sobre ti como jugador. Puedes pasar.

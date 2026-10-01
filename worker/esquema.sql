@@ -83,3 +83,25 @@ ALTER TABLE partidas ADD COLUMN quien TEXT;
 -- movil. La pregunta de verdad no era sobre una persona concreta: era sobre la
 -- curva. Y la curva no necesita saber de quien es cada punto.
 ALTER TABLE partidas ADD COLUMN partida_n INTEGER;
+
+-- LA SESION: UNE LOS DOS ENVIOS DE LA MISMA PARTIDA.
+--
+-- Desde el 01/10/2026 el juego manda tambien la partida SIN TERMINAR, al
+-- ocultarse la pestaña: antes, quien jugaba cuatro meses y no volvia no
+-- mandaba nada, y todo lo que habia aqui era -por construccion- de gente que
+-- habia llegado a un final. La pregunta que mas importa en un playtest es la
+-- contraria: si la gente se cae antes de engancharse.
+--
+-- Eso obliga a poder mandar la MISMA partida dos veces (a medias y, si vuelve,
+-- acabada) sin que cuente como dos. De ahi este valor: lo genera el movil al
+-- empezar la partida, es aleatorio y muere con ella (ver utils/pasosPartida).
+--
+-- NO ROMPE EL "NADA PERSONAL". Une dos envios de una partida y nada mas: dos
+-- partidas del mismo movil siguen sin poderse relacionar, porque cada una trae
+-- la suya. El id de la fila lo sigue poniendo el servidor.
+--
+-- UNIQUE para que dos balizas a la vez no puedan crear dos filas. En SQLite
+-- los NULL no chocan entre si, asi que las filas de antes -que no tienen
+-- sesion- conviven con el indice sin tocarlas.
+ALTER TABLE partidas ADD COLUMN sesion TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_partidas_sesion ON partidas (sesion);

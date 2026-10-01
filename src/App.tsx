@@ -16,7 +16,7 @@ import { epitetoDe } from './data/epitetos'
 import { sfx } from './utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from './utils/desbordado'
 import { pasosDeLaPartida } from './utils/pasosPartida'
-import { enviarPartida, estaApagado } from './utils/enviarPartida'
+import { enviarAbandonada, enviarPartida, estaApagado, vaciarCola } from './utils/enviarPartida'
 import { Encuesta } from './components/Encuesta'
 import { yaSePregunto } from './utils/perfil'
 import { haptics } from './utils/haptics'
@@ -162,6 +162,44 @@ export default function App() {
   const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, history, flagsVistos, anger, favor, extremeStreak, choose, restart } =
     useGameStore()
   const { partidas: partidasJugadas, idsVistos } = useLogrosEstado()
+
+  // LO QUE QUEDO SIN MANDAR, AL ABRIR. Una partida que no salio en su momento
+  // -sin cobertura, o con la app cerrada encima- sale ahora (ver
+  // utils/colaEnvios, donde esta medido que asi se perdia una de cada cuatro).
+  useEffect(() => {
+    void vaciarCola()
+  }, [])
+
+  // LA PARTIDA A MEDIAS, AL IRSE. Lo que el juego no sabia hasta ahora es
+  // cuanta gente lo deja sin llegar a ningun final: esos nunca mandaban nada,
+  // asi que todo lo medido era de quien habia terminado. Se manda al ocultar
+  // la pestaña, que es lo ultimo que pasa antes de que el sistema mate la app.
+  //
+  // En una ref y no en las dependencias: si no, el listener se volveria a
+  // enganchar en cada swipe solo para leer unas barras que cambian siempre.
+  const partidaViva = useRef({ started, gameOver, turn, moralidad, stats, partidasJugadas })
+  partidaViva.current = { started, gameOver, turn, moralidad, stats, partidasJugadas }
+  useEffect(() => {
+    const alOcultarse = () => {
+      if (document.visibilityState !== 'hidden') return
+      const p = partidaViva.current
+      // Solo una partida de verdad en curso. En el menu no hay nada que
+      // contar, y una terminada ya la mando la pantalla de fin.
+      if (!p.started || p.gameOver) return
+      enviarAbandonada(pasosDeLaPartida(), {
+        meses: p.turn - 1,
+        moralidad: p.moralidad,
+        stats: p.stats,
+        version: __APP_VERSION__,
+        // Esta partida todavia no ha pasado por registrarPartida, que es quien
+        // sube el contador al terminar: la que viene es la siguiente.
+        numeroDePartida: p.partidasJugadas + 1,
+      })
+    }
+    document.addEventListener('visibilitychange', alOcultarse)
+    return () => document.removeEventListener('visibilitychange', alOcultarse)
+  }, [])
+
   // EL FONDO. Ya no hay musica: hay despacho (ver utils/ambiente). Se engancha
   // una vez al boton de volumen y a la pestana, que son las dos cosas que
   // pueden matarlo por detras.

@@ -20,9 +20,27 @@
 -- se muere. Casi todas las consultas de aqui llevan `WHERE quien IS NULL` por
 -- eso. Para verlas incluidas, quitar esa linea.
 
+-- Y LA TERCERA, QUE ES NUEVA Y LA MAS FACIL DE OLVIDAR:
+--
+-- Desde el 01/10/2026 hay filas con `final = 'abandonada'`. Son partidas que
+-- el jugador dejo a medias y que el juego manda al ocultarse la pestaña. NO
+-- SON MUERTES: nadie perdio ahi, simplemente se fue. Si se cuelan en "¿cuanto
+-- dura la gente?" o en "¿por donde cae?", las dos mienten hacia abajo.
+--
+-- Por eso casi todo lo de aqui lleva ademas `AND final <> 'abandonada'`. Las
+-- que preguntan por CARTAS (4, 5 y 6) no lo llevan a proposito: una decision
+-- tomada en una partida abandonada es una decision igual de real, y tirarla
+-- seria perder justo el dato que mas costo conseguir.
+--
+-- Las dos ultimas (11 y 12) son las que miran precisamente eso.
+
 -- ===========================================================================
 -- 0. ¿CUANTAS HAY, Y DE QUIEN?
-SELECT COALESCE(quien, 'gente de fuera') AS de_quien, COUNT(*) AS partidas
+SELECT
+  COALESCE(quien, 'gente de fuera') AS de_quien,
+  SUM(CASE WHEN final <> 'abandonada' THEN 1 ELSE 0 END) AS terminadas,
+  SUM(CASE WHEN final =  'abandonada' THEN 1 ELSE 0 END) AS abandonadas,
+  COUNT(*) AS total
 FROM partidas
 GROUP BY quien;
 
@@ -38,14 +56,14 @@ SELECT
   SUM(CASE WHEN meses < 10 THEN 1 ELSE 0 END) AS menos_de_10_meses,
   SUM(CASE WHEN meses >= 48 THEN 1 ELSE 0 END) AS legislatura_entera
 FROM partidas
-WHERE quien IS NULL;
+WHERE quien IS NULL AND final <> 'abandonada';
 
 -- ===========================================================================
 -- 2. POR DONDE CAE LA GENTE. Si un final se come la mitad, ese final es el
 -- juego entero y los demas son decorado.
 SELECT final, COUNT(*) AS veces, ROUND(AVG(meses), 1) AS duraban
 FROM partidas
-WHERE quien IS NULL
+WHERE quien IS NULL AND final <> 'abandonada'
 GROUP BY final
 ORDER BY veces DESC;
 
@@ -58,7 +76,7 @@ SELECT
   COUNT(*) AS partidas,
   ROUND(AVG(meses), 1) AS media_meses
 FROM partidas
-WHERE quien IS NULL
+WHERE quien IS NULL AND final <> 'abandonada'
 GROUP BY juega, reigns
 ORDER BY partidas DESC;
 
@@ -102,7 +120,7 @@ LIMIT 20;
 -- dentro.
 SELECT meses, COUNT(*) AS partidas
 FROM partidas
-WHERE quien IS NULL
+WHERE quien IS NULL AND final <> 'abandonada'
 GROUP BY meses
 ORDER BY meses;
 
@@ -112,7 +130,7 @@ ORDER BY meses;
 SELECT d.carta, COUNT(*) AS veces
 FROM decisiones d
 JOIN partidas p ON p.id = d.partida
-WHERE p.meses <= 8 AND d.turno = p.meses
+WHERE p.meses <= 8 AND d.turno = p.meses AND p.final <> 'abandonada'
 GROUP BY d.carta
 ORDER BY veces DESC
 LIMIT 15;
@@ -133,7 +151,7 @@ SELECT
   ROUND(AVG(meses), 1) AS media_meses,
   MAX(meses) AS mejor
 FROM partidas
-WHERE quien IS NULL
+WHERE quien IS NULL AND final <> 'abandonada'
 GROUP BY cuando
 ORDER BY MIN(partida_n);
 
@@ -141,6 +159,35 @@ ORDER BY MIN(partida_n);
 -- 10. Y LA PRIMERA PARTIDA DE TODAS, que es la que decide si alguien vuelve.
 SELECT final, COUNT(*) AS veces, ROUND(AVG(meses), 1) AS duraban
 FROM partidas
-WHERE quien IS NULL AND partida_n = 1
+WHERE quien IS NULL AND partida_n = 1 AND final <> 'abandonada'
 GROUP BY final
 ORDER BY veces DESC;
+
+-- ===========================================================================
+-- 11. CUANTA GENTE LO DEJA, Y CUANDO.
+--
+-- La pregunta que esta base no podia contestar hasta el 01/10/2026, porque
+-- quien abandonaba no mandaba nada y TODO lo medido era, por construccion, de
+-- gente que habia llegado a un final.
+--
+-- Si el abandono se concentra en un mes concreto, ahi hay algo que aburre o
+-- que no se entiende, y no se parece en nada a morir: morir es el juego
+-- funcionando.
+SELECT
+  meses AS mes_en_que_lo_dejaron,
+  COUNT(*) AS partidas
+FROM partidas
+WHERE quien IS NULL AND final = 'abandonada'
+GROUP BY meses
+ORDER BY meses;
+
+-- ===========================================================================
+-- 12. LA ULTIMA CARTA DEL QUE SE FUE. Si una carta sale mucho aqui y poco en
+-- la 8, no esta matando a nadie: esta aburriendo, que cuesta mas de ver.
+SELECT d.carta, COUNT(*) AS veces, ROUND(AVG(d.turno), 1) AS mes_medio
+FROM decisiones d
+JOIN partidas p ON p.id = d.partida
+WHERE p.quien IS NULL AND p.final = 'abandonada' AND d.turno = p.meses
+GROUP BY d.carta
+ORDER BY veces DESC
+LIMIT 15;
