@@ -18,3 +18,7 @@ ost-fuentes
 # Existe porque los originales de la primera tanda de retratos se perdieron:
 # se borraba el .png despues de convertirlo y no quedaba de donde volver.
 arte-fuentes
+
+# Estado local de wrangler: la copia de D1 para probar sin tocar la de verdad,
+# bundles temporales y cachés. Se regenera solo al lanzar `wrangler dev`.
+.wrangler
