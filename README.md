@@ -37,6 +37,14 @@ src/
   App.tsx                   # Composición general + pantalla de game over
 public/
   characters/               # Retratos de personaje (ver más abajo)
+  iconos/                   # Iconos de la app instalada (los genera scripts/iconos.mjs)
+  fuentes/                  # La tipografía, servida desde aquí y no desde Google
+  manifest.webmanifest      # Lo que hace que el juego se pueda instalar
+worker/
+  index.ts                  # Sirve el juego y recoge las partidas terminadas
+  esquema.sql               # Las dos tablas de D1
+  consultas.sql             # Las preguntas que merece la pena hacerle a los datos
+wrangler.jsonc              # Config del despliegue. OJO: manda sobre el panel de Cloudflare
 ```
 
 ## Cómo añadir contenido
@@ -211,14 +219,91 @@ así:
 
 ## Despliegue
 
-Mismo flujo que tu otro proyecto: build + Cloudflare Pages.
+Un **Worker de Cloudflare** llamado `no-me-consta`, que se despliega solo en
+cada push a `main` (Workers Builds mira este repo). No hay que subir nada a
+mano: `git push` y a los dos minutos está en
+
+<https://no-me-consta.albertocalvodonate.workers.dev/>
+
+La configuración está en `wrangler.jsonc`, y **ese fichero manda sobre lo que
+haya en el panel de Cloudflare**: en cuanto existe en el repo, Workers Builds
+lo usa a él. Por eso ahí dentro está reproducido también lo que ya funcionaba
+antes de que existiera (servir `dist/` y devolver el `index.html` para rutas
+que no existen), no solo lo nuevo.
+
+Si un despliegue sale mal:
 
 ```bash
-npm run build
+npx wrangler rollback --name no-me-consta
 ```
 
-Sube la carpeta `dist/` a Cloudflare Pages (o conecta el repo de GitHub para
-despliegue automático).
+### Se instala como aplicación
+
+No hay APK ni tienda: es una aplicación web instalable. `public/manifest.webmanifest`
+es lo que la hace instalable, y de él salen el nombre, el icono y que abra sin
+barra de navegador. Los iconos se dibujan con `node scripts/iconos.mjs` (son la
+bandera del fondo del juego en oro, generada en canvas).
+
+**No hay service worker, y es a propósito.** Un service worker guarda la
+versión que ya tienes y te la sirve antes de preguntar al servidor: es la razón
+número uno de "he desplegado y sigo viendo lo de ayer". Mientras esto se esté
+probando manda que un cambio subido se vea en la siguiente apertura. El día que
+interese jugar sin cobertura se mete uno, y ese día hay que decidir a
+conciencia qué se guarda y qué no.
+
+Instalar no se puede pedir por código en todas partes, así que la portada
+pregunta primero qué se puede hacer en ese móvil (`src/utils/instalar.ts`):
+
+| navegador | qué hace el botón |
+|---|---|
+| Chrome, Edge, Samsung, Opera (Android) | instala, un toque |
+| Safari y **todo** iOS | abre las instrucciones: Compartir → Añadir a pantalla de inicio |
+| Firefox en Android | abre las instrucciones: menú de tres puntos → Instalar |
+| ordenadores, o ya instalado | no aparece |
+
+El Firefox de iPhone no es el caso de Firefox: su user agent dice `FxiOS` y por
+debajo es Safari, así que cae en la rama de iOS.
+
+## Las partidas que manda el juego
+
+Al terminar una partida, el juego la envía a `POST /api/partida` y se guarda en
+**D1** (la base SQLite de Cloudflare). Existe porque todo lo que sabíamos del
+balance salía de simuladores que juegan con heurísticas: un óptimo en banda no
+dice si la partida se *siente* bien, y las partidas de uno mismo no valen,
+porque uno ya sabe jugar.
+
+```
+worker/index.ts      el Worker: sirve el juego y recoge las partidas
+worker/esquema.sql   las dos tablas
+worker/consultas.sql las preguntas que merece la pena hacerle a los datos
+```
+
+Para mirarlo:
+
+```bash
+npx wrangler d1 execute nomeconsta-partidas --remote --file=worker/consultas.sql
+```
+
+**Qué se guarda y qué no.** Van los datos del juego: qué carta salió, en qué
+mes, qué lado se eligió, las cuatro barras y cómo acabó. No va nada que
+identifique a nadie: ni IP, ni user agent, ni ningún identificador que
+sobreviva a la partida. El `id` lo pone el servidor, es aleatorio y es *de la
+partida*, así que **dos partidas del mismo móvil no se pueden relacionar**. Se
+le dice al jugador la primera vez que abre, con un interruptor al lado para
+apagarlo.
+
+**La encuesta.** Al acabar la primera partida se preguntan dos cosas: si juega
+a videojuegos y si conocía *Reigns*. Sin eso los números no se pueden leer —
+veinte meses de alguien que juega a diario y veinte meses de quien no ha tocado
+un videojuego son dos juegos distintos.
+
+Lo que viaja son **las respuestas**, pegadas a cada partida, y no un
+identificador del móvil. Con eso se puede comparar "partidas de gente que juega
+a menudo" contra el resto, que es la pregunta útil, y a la vez dos personas que
+contestan igual siguen siendo indistinguibles. La alternativa obvia —un número
+por móvil— permitiría además seguir a una persona entre partidas, y eso es
+exactamente lo que el aviso dice que no hay. El razonamiento largo está en
+`src/utils/perfil.ts`.
 
 ## Balance del juego
 

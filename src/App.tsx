@@ -15,7 +15,10 @@ import type { StatKey } from './types'
 import { epitetoDe } from './data/epitetos'
 import { sfx } from './utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from './utils/desbordado'
-import { LOG_DE_PRUEBAS, mandarLog, textoLog } from './utils/logPruebas'
+import { LOG_DE_PRUEBAS, mandarLog, pasosDeLaPartida, textoLog } from './utils/logPruebas'
+import { enviarPartida, estaApagado } from './utils/enviarPartida'
+import { Encuesta } from './components/Encuesta'
+import { yaSePregunto } from './utils/perfil'
 import { haptics } from './utils/haptics'
 import { useAtrasCierra } from './utils/botonAtras'
 import { registrarPartida } from './hooks/useLogros'
@@ -184,6 +187,20 @@ export default function App() {
   const [colaLogros, setColaLogros] = useState<Logro[]>([])
   // Récord anterior a esta partida, para la comparación de la pantalla de fin.
   const [recordPrevio, setRecordPrevio] = useState(0)
+  const [preguntando, setPreguntando] = useState(false)
+  // La partida esperando a que se conteste la encuesta, para que salga con el
+  // perfil puesto. En una ref y no en estado: cambiarla no tiene que repintar
+  // nada, solo hay que acordarse de ella hasta que se cierre la encuesta.
+  const pendiente = useRef<{
+    pasos: ReturnType<typeof pasosDeLaPartida>
+    partida: Parameters<typeof enviarPartida>[1]
+  } | null>(null)
+  const cerrarEncuesta = () => {
+    setPreguntando(false)
+    const p = pendiente.current
+    pendiente.current = null
+    if (p) void enviarPartida(p.pasos, p.partida)
+  }
   const [verLogros, setVerLogros] = useState(false)
   const [verReparto, setVerReparto] = useState(false)
   // Instalado como app, "atras" cierra el juego. Con un panel abierto eso es
@@ -355,6 +372,31 @@ export default function App() {
       flags: flagsVistos,
     })
     setRecordPrevio(recordPrevio)
+    // Se manda la partida para poder mirarla (utils/enviarPartida). Va aqui,
+    // pegado a registrarPartida, porque es el unico sitio que corre UNA vez
+    // por partida -lo garantiza `yaComprobado`- y porque si falla no se nota:
+    // no se espera a que termine ni se mira el resultado.
+    //
+    // SALVO si toca preguntar. La encuesta sale al acabar la PRIMERA partida,
+    // y mandandola ya, esa primera -la mas interesante de alguien que acaba de
+    // llegar- viajaria sin perfil y solo lo tendrian las siguientes. Asi que
+    // espera, y sale en cuanto conteste o pase de contestar.
+    //
+    // A quien ha apagado el envio no se le pregunta: seria pedirle datos para
+    // no mandarlos.
+    const partida = {
+      finalId: currentCard.id,
+      meses: turn - 1,
+      moralidad,
+      stats,
+      version: __APP_VERSION__,
+    }
+    if (!yaSePregunto() && !estaApagado()) {
+      pendiente.current = { pasos: pasosDeLaPartida(), partida }
+      setPreguntando(true)
+    } else {
+      void enviarPartida(pasosDeLaPartida(), partida)
+    }
     // El sonido y la vibración de logro los pone LogroToast, uno por uno
     // según van saliendo, no todos de golpe aquí.
     if (nuevos.length) setColaLogros(nuevos)
@@ -899,6 +941,7 @@ export default function App() {
           )}
 
           <LogroToast cola={colaLogros} onVaciar={() => setColaLogros([])} />
+          {preguntando && <Encuesta onCerrar={cerrarEncuesta} />}
           {verLogros && <LogrosPanel onCerrar={() => setVerLogros(false)} />}
           {verReparto && <RepartoPanel onCerrar={() => setVerReparto(false)} />}
         </div>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 // EL BOTON "ATRAS" DE ANDROID, QUE INSTALADO CIERRA LA APP.
 //
@@ -22,6 +22,21 @@ import { useEffect } from 'react'
 // cierra la app, que es lo que un usuario de Android espera que haga en la
 // pantalla principal. Secuestrarlo ahi seria pelearse con el sistema.
 export function useAtrasCierra(abierto: boolean, cerrar: () => void) {
+  // LA FUNCION DE CERRAR VA EN UNA REF, Y NO ES UN DETALLE.
+  //
+  // Quien llama a esto escribe `useAtrasCierra(abierto, () => setX(false))`, o
+  // sea una funcion NUEVA en cada pintado. Si esa funcion estuviera en las
+  // dependencias del efecto, cada cambio de estado -tocar un interruptor
+  // dentro del propio dialogo, sin ir mas lejos- rehace el efecto, la limpieza
+  // llama a `history.back()`, eso dispara un `popstate`... y el dialogo se
+  // cierra solo. Paso exactamente eso con el interruptor de mandar partidas:
+  // lo tocabas y se te cerraba el aviso en la cara.
+  //
+  // Con la ref, el efecto depende solo de `abierto`, que es de lo unico que
+  // tiene que depender, y aun asi siempre llama a la ultima version.
+  const alCerrar = useRef(cerrar)
+  alCerrar.current = cerrar
+
   useEffect(() => {
     if (!abierto) return
 
@@ -30,7 +45,7 @@ export function useAtrasCierra(abierto: boolean, cerrar: () => void) {
     const marca = { nmcPanel: Date.now() }
     history.pushState(marca, '')
 
-    const alVolver = () => cerrar()
+    const alVolver = () => alCerrar.current()
     window.addEventListener('popstate', alVolver)
 
     return () => {
@@ -43,5 +58,5 @@ export function useAtrasCierra(abierto: boolean, cerrar: () => void) {
         history.back()
       }
     }
-  }, [abierto, cerrar])
+  }, [abierto])
 }

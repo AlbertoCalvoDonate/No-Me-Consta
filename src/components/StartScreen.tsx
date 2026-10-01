@@ -10,6 +10,7 @@ import { borrarTodoElProgreso } from '../hooks/borrarGuardado'
 import { useAtrasCierra } from '../utils/botonAtras'
 import { dondeEstaInstalar, pedirInstalar, useComoInstalar } from '../utils/instalar'
 import { apuntarQueSeLeDijo, yaSeLeDijo } from '../hooks/avisoInstalar'
+import { apuntarAviso, useMandarPartidas, yaSeAviso } from '../utils/enviarPartida'
 
 const STATS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
@@ -89,6 +90,22 @@ export function StartScreen({
     setAvisando(false)
   }
   useAtrasCierra(avisando, cerrarAviso)
+
+  // EL AVISO DE QUE SE MANDAN LAS PARTIDAS. Sale una vez, y con el interruptor
+  // dentro: decir "mando esto" y no dar donde apagarlo es avisar de boquilla.
+  // No compite con el de instalar: si tocan los dos, este espera a que el otro
+  // se cierre, porque dos carteles a la vez se cierran los dos sin leer.
+  const [contandoLog, setContandoLog] = useState(false)
+  const [mandaPartidas, setMandaPartidas] = useMandarPartidas()
+  useEffect(() => {
+    if (avisando || yaSeAviso()) return
+    setContandoLog(true)
+  }, [avisando])
+  const cerrarLog = () => {
+    apuntarAviso()
+    setContandoLog(false)
+  }
+  useAtrasCierra(contandoLog, cerrarLog)
   const [reseteado, setReseteado] = useState(false)
 
   // Esta pantalla se desplaza en móviles pequeños: hay que avisar de ello.
@@ -289,6 +306,74 @@ export function StartScreen({
           En Android se instala con un toque aquí mismo. En iPhone no hay botón
           posible -Safari no deja pedirlo por código-, así que ahí el aviso
           enseña los dos pasos a mano en vez de un botón que no existiría. */}
+      {/* QUE SE MANDA Y QUE NO. Se dice una vez, entero y sin letra pequeña:
+          lo que viaja son los datos de la partida y nada mas. Y el interruptor
+          va aquí mismo, no escondido en ningún ajuste, porque avisar sin dar
+          dónde apagarlo es avisar de boquilla. */}
+      {contandoLog && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 36,
+            background: 'rgba(0,0,0,0.72)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 24,
+          }}
+        >
+          <div
+            style={{
+              background: COLOR.panel,
+              border: '1px solid rgba(255,255,255,0.16)',
+              borderRadius: 14,
+              padding: '20px 18px 16px',
+              maxWidth: 310,
+              width: '100%',
+              boxSizing: 'border-box',
+              textAlign: 'center',
+            }}
+          >
+            <p style={{ ...pixel, margin: '0 0 8px', fontWeight: 400, fontSize: 19, lineHeight: 1.3, color: COLOR.texto }}>
+              Esto está en pruebas
+            </p>
+            <p style={{ ...pixel, margin: '0 0 14px', fontWeight: 500, fontSize: 14, lineHeight: 1.45, color: COLOR.apagado }}>
+              Al terminar una partida se envían <strong style={{ color: COLOR.texto }}>solo datos del juego</strong>: qué
+              cartas salieron, qué elegiste y cómo acabó. Sirve para saber si está bien equilibrado.
+            </p>
+            <p style={{ ...pixel, margin: '0 0 16px', fontWeight: 500, fontSize: 14, lineHeight: 1.45, color: COLOR.apagado }}>
+              Al acabar la primera te preguntaré dos cosas sobre ti como jugador. Puedes pasar.
+            </p>
+            <p style={{ ...pixel, margin: '0 0 16px', fontWeight: 500, fontSize: 14, lineHeight: 1.45, color: COLOR.apagado }}>
+              Nada personal: ni nombre, ni correo, ni nada que diga quién eres.
+              Dos partidas tuyas ni siquiera se pueden relacionar entre sí.
+            </p>
+            <button
+              onClick={() => { sfx.boton(); setMandaPartidas(!mandaPartidas) }}
+              style={{
+                ...pixel,
+                width: '100%',
+                background: 'none',
+                border: `1px solid ${mandaPartidas ? 'rgba(255,255,255,0.18)' : COLOR.oro}`,
+                borderRadius: 8,
+                padding: '8px 12px',
+                marginBottom: 10,
+                fontWeight: 500,
+                fontSize: 14,
+                color: mandaPartidas ? COLOR.apagado : COLOR.oro,
+                cursor: 'pointer',
+              }}
+            >
+              {mandaPartidas ? 'Enviando · tocar para no enviar' : 'No se envía nada'}
+            </button>
+            <button onClick={() => { sfx.boton(); cerrarLog() }} style={{ ...botonPrimario, width: '100%', fontSize: 17, padding: '9px 16px' }}>
+              Entendido
+            </button>
+          </div>
+        </div>
+      )}
+
       {avisando && (
         <div
           style={{

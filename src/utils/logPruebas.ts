@@ -39,6 +39,12 @@ export function limpiarLog() {
   pasos = []
 }
 
+// Lo apuntado hasta ahora. Lo necesita el envio automatico (utils/enviarPartida),
+// que manda lo mismo que este fichero escribe en texto, pero como datos.
+export function pasosDeLaPartida(): PasoPartida[] {
+  return pasos
+}
+
 // El texto que se copia. Dos partes: un encabezado que se lee de un vistazo
 // (para poder decir "esta es la que te conté") y el detalle turno a turno, que
 // es lo que sirve para analizar.

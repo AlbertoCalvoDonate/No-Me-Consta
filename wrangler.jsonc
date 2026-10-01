@@ -1,0 +1,42 @@
+{
+  // CUIDADO AL TOCAR ESTO: es lo que decide si la web se sirve.
+  //
+  // Antes de que este fichero existiera, la configuracion vivia en el panel de
+  // Cloudflare y el Worker no tenia codigo: Cloudflare servia `dist/` y punto.
+  // Workers Builds, al encontrar un wrangler.jsonc en el repo, USA ESTE y deja
+  // de usar el panel, asi que aqui tiene que estar reproducido lo que ya
+  // funcionaba, no solo lo nuevo.
+  //
+  // Lo que ya funcionaba, comprobado contra el sitio en marcha antes de
+  // escribirlo: los ficheros de dist se sirven tal cual, y una ruta que no
+  // existe devuelve el index.html (200, text/html) para que el juego abra
+  // igual. Eso es `not_found_handling: single-page-application`.
+  //
+  // Si algo sale mal: `npx wrangler rollback --name no-me-consta`.
+  "name": "no-me-consta",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-01",
+
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // Las rutas de la API pasan por el Worker ANTES de buscar un fichero. Sin
+    // esto, con `single-page-application` puesto, un POST a /api/partida se
+    // encontraria el index.html en vez del Worker y la partida se perderia en
+    // silencio: respondiendo 200 y sin guardar nada.
+    "run_worker_first": ["/api/*"]
+  },
+
+  "d1_databases": [
+    {
+      "binding": "nomeconsta_partidas",
+      "database_name": "nomeconsta-partidas",
+      "database_id": "38f9d867-b921-4b4f-a0c4-5b97b4cd11ac"
+    }
+  ],
+
+  "observability": {
+    "enabled": true
+  }
+}
