@@ -11,7 +11,8 @@
     "auditar-coherencia": "node scripts/auditar-coherencia.mjs",
     "qa-personalidad": "node scripts/qa-personalidad.mjs",
     "qa-voz": "node scripts/qa-voz.mjs",
-    "qa-ortografia": "node scripts/qa-ortografia.mjs"
+    "qa-ortografia": "node scripts/qa-ortografia.mjs",
+    "auditar-logros": "node scripts/auditar-logros.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.2.10",

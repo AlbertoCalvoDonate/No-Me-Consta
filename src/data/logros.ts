@@ -120,7 +120,13 @@ export const LOGROS: Logro[] = [
 
   // --- ELECCIONES ---
   { id: 'gana_elecciones', grupo: 'Elecciones', nombre: 'Cuatro años más', desc: 'Gana unas elecciones y sigue gobernando.', check: (r) => r.gano },
-  { id: 'gana_triunfo', grupo: 'Elecciones', nombre: 'Mayoría absoluta', desc: 'Llega a una noche electoral con los cuatro indicadores en verde.', oculto: true, check: (r) => r.endingId === 'elecciones_triunfo' },
+  // `cartas.includes` y NO `endingId`: pedía que la partida ACABARA en la
+  // noche electoral del triunfo, y esa carta no acaba ninguna partida. Las
+  // noches de los meses 48 y 96 se juegan y la partida sigue; `endingId` es
+  // siempre la ULTIMA carta. O sea que este logro era inalcanzable por
+  // construcción, no por raro: cero veces en seiscientas partidas.
+  // Ahora pide lo que dice su propia descripción: haber LLEGADO a esa noche.
+  { id: 'gana_triunfo', grupo: 'Elecciones', nombre: 'Mayoría absoluta', desc: 'Llega a una noche electoral con los cuatro indicadores en verde.', oculto: true, check: (r) => r.cartas.includes('elecciones_triunfo') },
   { id: 'leyenda', grupo: 'Elecciones', nombre: 'Nombre para una plaza', desc: 'Aguanta las tres legislaturas y retírate invicto.', oculto: true, check: (r) => r.endingId === 'elecciones_leyenda_final' },
   { id: 'aguanta_tres', grupo: 'Elecciones', nombre: 'Hasta el final', desc: 'Llega al final de la tercera legislatura, como sea.', check: (r) => r.aguantoLasTres },
 
@@ -147,6 +153,11 @@ export const LOGROS: Logro[] = [
   { id: 'coleccion_100', grupo: 'Descubrir cartas', nombre: 'Le va cogiendo el tranquillo', desc: 'Descubre 100 cartas distintas entre todas tus partidas.', check: (r) => r.cartasColeccionadas >= 100 },
   { id: 'coleccion_200', grupo: 'Descubrir cartas', nombre: 'Se conoce la casa', desc: 'Descubre 200 cartas distintas.', check: (r) => r.cartasColeccionadas >= 200 },
   { id: 'coleccion_350', grupo: 'Descubrir cartas', nombre: 'Aquí ya no le sorprende nadie', desc: 'Descubre 350 cartas distintas.', check: (r) => r.cartasColeccionadas >= 350 },
+  // Hubo un "los cuatro interrogatorios" y se quitó: las cuatro banderas nmc_
+  // salen de cuatro cartas distintas y una está al final de la cadena del
+  // hermano, que en mil quinientas partidas se completa el 0,1% de las veces.
+  // Pedir las cuatro a la vez era pedir algo que no pasa, y un logro que no
+  // salta es peor que no tenerlo. Con dos basta, y eso sí ocurre.
   {
     id: 'no_me_consta',
     grupo: 'Rarezas',
@@ -176,7 +187,6 @@ export const LOGROS: Logro[] = [
   { id: 'memorias', grupo: 'Tramas', nombre: 'Ya está escribiendo el libro', desc: 'Alguien de los tuyos se pone a escribir sus memorias.', oculto: true, check: (r) => r.flags.includes('memorias_en_marcha') },
 
   // --- MAS RAREZAS ---
-  { id: 'nmc_cuatro', grupo: 'Rarezas', nombre: 'No me consta nada de nada', desc: 'Escurre el bulto en los cuatro interrogatorios de la misma partida.', oculto: true, check: (r) => r.flags.filter((f) => f.startsWith('nmc_')).length >= 4 },
   { id: 'limpio_y_largo', grupo: 'Rarezas', nombre: 'Se puede, pero cuesta', desc: 'Aguanta una legislatura entera sin mancharte las manos.', oculto: true, check: (r) => r.meses >= 48 && r.moralidad >= 8 },
   { id: 'derrumbe', grupo: 'Rarezas', nombre: 'No se cayó: se desplomó', desc: 'Cae con tres de las cuatro barras en el extremo a la vez.', oculto: true, check: (r) => !r.gano && K4.filter((k) => r.stats[k] <= 0 || r.stats[k] >= 10).length >= 3 },
 ]
