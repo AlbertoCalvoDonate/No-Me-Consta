@@ -4,12 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
     <title>No Me Consta</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap"
-      rel="stylesheet"
-    />
+
+    <!-- QUE SE PUEDA INSTALAR.
+         El manifest es lo que convierte esto en algo instalable: de el salen
+         el nombre bajo el icono, la pantalla de arranque y el hecho de que
+         abra sin barra de direcciones. Tambien es lo que lee Bubblewrap para
+         construir el APK, asi que el APK y la version del navegador salen de
+         este mismo fichero y no se pueden descuadrar.
+
+         NO HAY SERVICE WORKER, Y ES A PROPOSITO. Un service worker guarda la
+         version que ya tienes y te la sirve a ti antes de preguntar al
+         servidor: es la razon numero uno de "he desplegado y sigo viendo lo
+         de ayer". Mientras esto se este probando, lo que manda es que un
+         cambio subido se vea en la siguiente apertura. El dia que interese
+         jugar sin cobertura se mete uno, y ese dia hay que decidir a
+         conciencia que se guarda y que no. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#0a0a0b" />
+    <link rel="icon" href="/iconos/icono-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/iconos/icono-180-apple.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="No Me Consta" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- La fuente ya no viene de Google Fonts: vive en /fuentes y la declara
+         index.css. Un @font-face propio ahorra dos conexiones a otro dominio
+         antes de poder pintar nada, y sobre todo hace que el juego se vea
+         igual sin cobertura, que instalado como app pasa mas de lo que
+         parece. -->
   </head>
   <body>
     <div id="root"></div>

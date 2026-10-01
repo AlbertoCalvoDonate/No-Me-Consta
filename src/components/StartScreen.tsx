@@ -7,6 +7,8 @@ import { COLOR, pixel } from '../utils/estilo'
 import { sfx } from '../utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from '../utils/desbordado'
 import { borrarTodoElProgreso } from '../hooks/borrarGuardado'
+import { useAtrasCierra } from '../utils/botonAtras'
+import { pedirInstalar, useSePuedeInstalar } from '../utils/instalar'
 
 const STATS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
@@ -62,6 +64,14 @@ export function StartScreen({
   const [comoSeJuega, setComoSeJuega] = useState(false)
 
   const [borrando, setBorrando] = useState(false)
+  // Lo mismo que en los paneles del juego: instalado, "atras" cierra la app.
+  // Con el tutorial o una confirmacion delante, cierra eso (ver botonAtras).
+  useAtrasCierra(comoSeJuega, () => setComoSeJuega(false))
+  useAtrasCierra(borrando, () => setBorrando(false))
+  useAtrasCierra(confirmando, () => setConfirmando(false))
+  // Solo sale si el navegador dice que se puede instalar y no esta instalado
+  // ya (ver utils/instalar). Si no se puede, no se pinta nada.
+  const sePuedeInstalar = useSePuedeInstalar()
   const [reseteado, setReseteado] = useState(false)
 
   // Esta pantalla se desplaza en móviles pequeños: hay que avisar de ello.
@@ -180,6 +190,18 @@ export function StartScreen({
         <button onClick={() => { sfx.boton(); setComoSeJuega(true) }} style={botonTerciario}>
           ¿Cómo se gobierna?
         </button>
+        {/* INSTALAR. "Añadir a pantalla de inicio" vive en el menú de tres
+            puntos del navegador y mucha gente no ha abierto ese menú nunca.
+            Aquí se pide en un botón que se ve. Desaparece solo en cuanto el
+            juego ya está instalado. */}
+        {sePuedeInstalar && (
+          <button
+            onClick={() => { sfx.boton(); void pedirInstalar() }}
+            style={{ ...botonTerciario, color: COLOR.oro }}
+          >
+            Instalar en el móvil
+          </button>
+        )}
       </div>
 
       {/* AVISO DE SATIRA. Va aqui, en la portada y antes de jugar, y no

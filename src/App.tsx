@@ -17,6 +17,7 @@ import { sfx } from './utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from './utils/desbordado'
 import { LOG_DE_PRUEBAS, mandarLog, textoLog } from './utils/logPruebas'
 import { haptics } from './utils/haptics'
+import { useAtrasCierra } from './utils/botonAtras'
 import { registrarPartida } from './hooks/useLogros'
 import type { Logro } from './data/logros'
 import { LogroToast } from './components/LogroToast'
@@ -185,6 +186,10 @@ export default function App() {
   const [recordPrevio, setRecordPrevio] = useState(0)
   const [verLogros, setVerLogros] = useState(false)
   const [verReparto, setVerReparto] = useState(false)
+  // Instalado como app, "atras" cierra el juego. Con un panel abierto eso es
+  // claramente lo que no quieres: cierra el panel (ver utils/botonAtras).
+  useAtrasCierra(verLogros, () => setVerLogros(false))
+  useAtrasCierra(verReparto, () => setVerReparto(false))
   const [compartido, setCompartido] = useState<'idle' | 'copiado' | 'error'>('idle')
 
   // El sonido va aqui y no en el store a proposito: es presentacion, no reglas
