@@ -35,16 +35,16 @@ const SIN_CARA: Record<string, string> = {
   'El Espejo': '#15151a',
   'La Fontanera': '#1b1e26',
   'El Expediente': '#191b21',
-  // LOS CINCO DE FUERA, hasta que tengan retrato. Sin esto les tocaria el
-  // hash del nombre, que saca verdes y turquesas de chicle -y en este juego
+  // LOS DOS QUE QUEDAN DE FUERA, hasta que tengan retrato. Sin esto les tocaria
+  // el hash del nombre, que saca verdes y turquesas de chicle -y en este juego
   // el verde significa que una eleccion es limpia, asi que ademas miente.
-  // Cada uno va del tono de su barra, apagado: cuando llegue el dibujo,
-  // estas cinco lineas se borran y el color sale de su ropa como en el resto.
-  'El Sindicalista': '#2b2418',
+  // Cada uno va del tono de su barra, apagado: cuando llegue el dibujo, su
+  // linea se borra y el color sale de su ropa como en el resto.
+  //
+  // El Tertuliano, La Funcionaria y El Sindicalista ya tienen retrato
+  // (02/10/2026) y por eso ya no estan aqui.
   'La Vecina': '#241f1a',
   'El Empresario': '#1d1f2a',
-  'La Funcionaria': '#1a2028',
-  'El Tertuliano': '#2a1c1c',
 }
 
 export function characterColor(character: string, characterImage?: string): string {
@@ -73,19 +73,31 @@ export function characterColor(character: string, characterImage?: string): stri
 // El fondo de la carta como DEGRADADO, no como color plano. Ahora que el
 // retrato llena la carta, el fondo solo asoma alrededor de la cabeza: un
 // plano ahi se lee como un recorte pegado sobre un rectangulo, y un degradado
-// se lee como aire detras de la figura. Oscurece hacia abajo, que es donde
-// esta el cuerpo.
+// se lee como aire detras de la figura. Aclara arriba y oscurece abajo, que es
+// donde esta el cuerpo.
 export function characterBackground(character: string, characterImage?: string): string {
   const base = characterColor(character, characterImage)
-  return `linear-gradient(170deg, ${aclarar(base, 1.35)} 0%, ${base} 46%, ${aclarar(base, 0.55)} 100%)`
+  return `linear-gradient(170deg, ${mezclar(base, '#ffffff', 0.2)} 0%, ${base} 46%, ${mezclar(base, '#000000', 0.22)} 100%)`
 }
 
-function aclarar(hex: string, k: number): string {
-  const m = /^#([0-9a-f]{6})$/i.exec(hex)
-  if (!m) return hex
-  const n = Number.parseInt(m[1], 16)
-  const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) =>
-    Math.round(Math.min(255, Math.max(0, v * k)))
-  )
+// MEZCLA HACIA UN COLOR, NO MULTIPLICA.
+//
+// Antes esto era `v * k` con k = 1,35 arriba y 0,55 abajo. Con cartas casi
+// negras funcionaba; con la paleta pastel del 02/10/2026 se rompe: un
+// #f1ecd0 multiplicado por 1,35 se sale de rango por los tres canales y vuelve
+// blanco puro, o sea que el degradado se comia el tono justo arriba, que es
+// donde mas fondo se ve. Mezclar no se sale nunca, y ademas conserva el tono
+// en vez de llevarselo hacia el canal que primero se satura.
+function mezclar(hex: string, hacia: string, cuanto: number): string {
+  const leer = (h: string) => {
+    const m = /^#([0-9a-f]{6})$/i.exec(h)
+    if (!m) return null
+    const n = Number.parseInt(m[1], 16)
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+  }
+  const a = leer(hex)
+  const b = leer(hacia)
+  if (!a || !b) return hex
+  const c = a.map((v, i) => Math.round(v + (b[i] - v) * cuanto))
   return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('')
 }

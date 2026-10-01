@@ -663,8 +663,15 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir, nu
                 letterSpacing: 1.5,
                 lineHeight: 1,
                 textTransform: 'uppercase',
-                color: '#1a1508',
-                background: COLOR.oro,
+                // AL REVES QUE ANTES: letra dorada sobre fondo oscuro.
+                // Iba dorado sobre oscuro porque la carta era casi negra y el
+                // dorado saltaba. Con la paleta pastel del 02/10/2026 deja de
+                // saltar: medido contra la esquina de arriba de las 27 cartas,
+                // el dorado se quedaba entre 1,03:1 y 1,64:1 de contraste, o
+                // sea invisible. Invertido se mantiene por encima de 10:1 en
+                // todas sin tocar el color de acento del juego.
+                color: COLOR.oro,
+                background: '#1a1508',
                 borderRadius: 6,
                 padding: '5px 8px 4px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.45)',

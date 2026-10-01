@@ -38,7 +38,7 @@ export const REPARTO: Personaje[] = [
   { nombre: 'El Jefe de Comunicación', imagen: 'jefecomunicacion.webp', dueno: 'medios', quien: 'Escribe lo que usted dice. Y lo que no dice.' },
   { nombre: 'El Escudero', imagen: 'escudero.webp', dueno: 'medios', quien: 'Sale a defender lo indefendible cada mañana.' },
   { nombre: 'El Juez', imagen: 'juez.webp', dueno: 'medios', quien: 'Preside la sala. Y sabe lo que se dijo de él cuando le pusieron ahí.' },
-  { nombre: 'El Tertuliano', dueno: 'medios', quien: 'No investiga ni pregunta: tiene minutos, y con eso basta.' },
+  { nombre: 'El Tertuliano', imagen: 'tertuliano.webp', dueno: 'medios', quien: 'No investiga ni pregunta: tiene minutos, y con eso basta.' },
 
   // GOBIERNO — que la coalicion no se rompa
   { nombre: 'La Vicepresidenta', imagen: 'vicepresi.webp', dueno: 'gobierno', quien: 'Su socia de gobierno. Y su rival por el mismo hueco.' },
@@ -48,14 +48,14 @@ export const REPARTO: Personaje[] = [
   { nombre: 'El Expresidente', imagen: 'expresidentecompetente.webp', dueno: 'gobierno', quien: 'Ya estuvo ahí y no piensa dejar de contárselo.' },
   { nombre: 'La Ministra', imagen: 'ministraincompetente.webp', dueno: 'gobierno', quien: 'Un desastre con título. "Yo soy médica y madre", y ahí se acaba la discusión.' },
   { nombre: 'La Ministra de Igualdad', imagen: 'feminista.webp', dueno: 'gobierno', quien: 'Hace mucho ruido y no piensa bajar el volumen.' },
-  { nombre: 'La Funcionaria', dueno: 'gobierno', quien: 'Cinco gobiernos en el mismo despacho. Avisa una vez y firma.' },
+  { nombre: 'La Funcionaria', imagen: 'funcionaria.webp', dueno: 'gobierno', quien: 'Cinco gobiernos en el mismo despacho. Avisa una vez y firma.' },
 
   // CALLE — lo que piensa la gente
   { nombre: 'El Encuestador', imagen: 'encuestador.webp', dueno: 'calle', quien: 'Trae el dato. Le guste o no le guste.' },
   { nombre: 'El Cruzado', imagen: 'cruzado.webp', dueno: 'calle', quien: 'Convierte cualquier asunto en una cruzada.' },
   { nombre: 'La Presidenta Regional', imagen: 'presidentaregional.webp', dueno: 'calle', quien: 'Gobierna su región y le hace oposición desde ella.' },
   { nombre: 'La Oposición', imagen: 'oposicionsuave.webp', dueno: 'calle', quien: 'Cuenta los votos de la moción. Tres veces.' },
-  { nombre: 'El Sindicalista', dueno: 'calle', quien: 'Le sostiene mientras le lleve algo a casa. El día que no, saca a la gente.' },
+  { nombre: 'El Sindicalista', imagen: 'sindicalista.webp', dueno: 'calle', quien: 'Le sostiene mientras le lleve algo a casa. El día que no, saca a la gente.' },
   { nombre: 'La Vecina', dueno: 'calle', quien: 'No sabe cómo funciona nada. Sabe lo que le ha pasado a ella.' },
 
   // CAJA B — el dinero opaco

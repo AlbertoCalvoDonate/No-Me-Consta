@@ -25,8 +25,21 @@
 //  regla: NO se arreglan reescalandolos -no hay detalle que recuperar, solo
 //  peso-, se arreglan el dia que se vuelvan a dibujar.
 //
-//  AIRE ARRIBA 5%. La cabeza empieza ahi en los veintidos retratos actuales.
-//  Es lo que hace que todos se vean al mismo plano.
+//  AIRE ARRIBA, ENTRE 0% Y 14%. Aqui ponia "5%, que es donde empieza la cabeza
+//  en los veintidos retratos actuales", y se quedo desfasado en un dia: ese
+//  numero salia de ANTES del redibujado y de antes de quitar el escalado por
+//  silueta de normalize-portraits (01/10/2026). Medido despues sobre los 27:
+//  el aire va del 1,8% al 12,6%, y DIECISEIS de los veinticuatro que ya
+//  estaban en el juego incumplian el 5%.
+//
+//  No es que el arte este mal: arte-fuentes/LEEME.md ya dice que el aire
+//  sobre la cabeza PUEDE variar y que es correcto, porque al igualar caras
+//  quien lleva mas pelo ocupa mas. Lo que no puede variar es el tamaño de la
+//  CARA, y eso lo tiene que sostener el dibujo — aqui no se mide, porque
+//  medirlo de verdad pide encontrar los ojos (ver encuadrar-cara.mjs).
+//
+//  Asi que esto ya solo caza lo que si es un fallo: una figura flotando en
+//  medio del lienzo o pegada al borde de arriba.
 //
 //  ABAJO, A SANGRE. El torso tiene que llegar al borde de abajo Y a los dos
 //  lados. Si no, quedan margenes: hoy la mitad del reparto tapa menos del 49%
@@ -56,7 +69,7 @@ const NO_SON_RETRATOS = /^(max_|min_|nocheelectoral|comite|espejo)/
 
 const RATIO = 1020 / 1200
 const ANCHO_MINIMO = 1152
-const AIRE = 0.05
+const AIRE_MAX = 0.14
 
 const args = process.argv.slice(2)
 const files =
@@ -159,8 +172,8 @@ for (const m of medidas) {
   )
   linea(m.w >= ANCHO_MINIMO, `ancho ${m.w} px (minimo ${ANCHO_MINIMO} para que no se agrande en un movil bueno)`)
   linea(
-    Math.abs(m.aire - AIRE) < 0.02,
-    `aire sobre la cabeza ${(m.aire * 100).toFixed(1)}% (tiene que ser ${AIRE * 100}%, o sea ${Math.round(m.h * AIRE)} px)`
+    m.aire <= AIRE_MAX,
+    `aire sobre la cabeza ${(m.aire * 100).toFixed(1)}% (el tope es ${(AIRE_MAX * 100).toFixed(0)}%; el reparto va del 1,8% al 12,6%)`
   )
   linea(m.llegaAbajo, 'el torso llega al borde de abajo')
   linea(m.tapaAbajo > 0.98, `tapa el ${(m.tapaAbajo * 100).toFixed(0)}% del borde de abajo (tiene que ser el 100%, de lado a lado)`)

@@ -68,20 +68,39 @@ cinco decisiones colgando de una partida inexistente. Ahora va con un
 de verdad después de resolver el conflicto. Comprobado con nueve envíos
 simultáneos de la misma partida — una fila, sin huérfanas.
 
-## 3. Demasiadas cartas azules
+## 3. Los fondos de carta: resuelto, y cambian bastante (02/10)
 
-**Lo que se ve:** 14 de los 24 fondos de carta son azules.
+Venía de "14 de 24 son azules" y de un segundo intento que dejó mucho morado.
+Medido con los 27 retratos ya: **quince cartas caían dentro de 52 grados**
+(207-259, que es donde el azul marino se vuelve violeta) y había **157 grados
+seguidos sin usar** — ni un verde, ni un turquesa, ni un cian.
 
-**Por qué, medido:** el color sale del tono dominante de la franja inferior del
-retrato (la ropa), y los políticos visten de azul marino. El dato es correcto;
-lo que falla es que la realidad es monocroma. Se miró si había de dónde sacar
-variedad sin inventarla y **no la hay**: aparte del azul solo salen tonos de
-piel, que el algoritmo descarta a propósito.
+La causa de fondo es que el tono casi no lleva información: los políticos
+visten todos de azul marino, así que quince retratos distintos devuelven el
+mismo número. Ser fiel a un dato que es idéntico para todos es exactamente lo
+que producía quince cartas iguales.
 
-Las salidas son de diseño, no de código: repintar ropa en los retratos,
-abanicar los tonos a propósito (rompe el principio de "el fondo sale del
-arte"), o variar la luminosidad (hoy fija a 0,19 para que ninguna carta pese
-más que otra). Sin decidir.
+Dos cambios en `scripts/colores-retrato.mjs`:
+
+- **Reparto por el círculo** (`REPARTO = 0.8`). Las 27 se colocan en una
+  escalera de intervalos iguales (360/27 = 13,3°, que es justo la separación
+  mínima que ya se pedía) y se mezcla con el tono real. **Del arte se conserva
+  el ORDEN**: la carta más azul de verdad sigue siendo la más azul del juego.
+  El arranque de la escalera no se pone a ojo — se prueban los 360 giros y se
+  elige el que menos mueve el conjunto.
+- **Paleta pastel**, pedida. Luminosidad de 0,77 a 0,90, donde antes iba de
+  0,145 a 0,285. Aquí había escrito que el techo era 0,30 "porque por encima el
+  fondo le disputa la atención a la cara": era cierto para cartas oscuras, no
+  para pastel, donde el retrato es lo oscuro y gana por contraste.
+
+Dos cosas que arrastraba y rompían con pastel, ya arregladas:
+
+- El degradado de la carta multiplicaba por 1,35 arriba, y un `#f1ecd0` por
+  1,35 se sale de rango y vuelve **blanco puro**. Ahora mezcla hacia blanco y
+  hacia negro, que no se sale nunca.
+- El cartel **"NUEVA"** era dorado sobre carta casi negra. Contra pastel se
+  quedaba entre **1,03:1 y 1,64:1** de contraste, o sea invisible. Invertido
+  (letra dorada sobre fondo oscuro) se mantiene por encima de 9,9:1 en las 27.
 
 ## 4. Homogeneizar el estilo del arte: cerrado, no se puede con filtros
 
@@ -104,10 +123,23 @@ redibujando, con la plantilla maestra de `no-me-consta-lora`.
 
 ## 5. Arte que falta
 
-- **Cinco personajes sin cara**: El Tertuliano, La Funcionaria, El Sindicalista,
-  La Vecina, El Empresario. Salen rotulados con el nombre en grande.
+- **Dos personajes sin cara**: La Vecina y El Empresario. Salen rotulados con
+  el nombre en grande. (El Tertuliano, La Funcionaria y El Sindicalista
+  entraron el 02/10/2026.)
 - **Ilustraciones de los cuatro finales por evento**: moción, expediente,
   ruptura y registro. El del registro es ~7 % de las muertes.
+
+Dos cosas sueltas de la importación del 02/10, por si alguna vez molestan:
+
+- Los tres nuevos son los que más **aire sobre la cabeza** tienen del reparto
+  (10,8 % y 12,6 % frente a un máximo anterior de 10,3 %), y `tertuliano` es
+  además el de cabeza más estrecha. En la carta no canta, pero si alguna vez se
+  retocan, es por ahí. La regla de `comprobar-retrato.mjs` que pedía un 5 % fijo
+  estaba desfasada —la incumplían 16 de los 24 ya publicados— y ahora es un tope
+  del 14 %, que es lo que dice `arte-fuentes/LEEME.md`: el aire puede variar, la
+  cara no.
+- `fontanera.webp` tapa el 90 % del borde de abajo y debería tapar el 100 %. Es
+  el único fallo que queda en todo el reparto, y venía de antes.
 
 Todo lo de arte, con medidas y pasos, en `arte-fuentes/LEEME.md`.
 

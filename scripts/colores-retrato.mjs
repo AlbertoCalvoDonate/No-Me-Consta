@@ -221,49 +221,94 @@ await browser.close()
 // transparente, en las esquinas y a los lados.
 
 const SEPARACION = 13 // grados minimos entre dos cartas vecinas en tono
-const DERIVA = 26 // lo que un tono puede alejarse del color real de la ropa
 
-// Cuatro profundidades y cuatro saturaciones, que se alternan segun la
-// posicion en el circulo: dos cartas de tono parecido caen en escalones
-// distintos y dejan de confundirse.
-// SEIS escalones y no cuatro, y mas abiertos. Con cuatro entre 0,155 y 0,235
-// seguia habiendo treinta y dos parejas de cartas que el ojo no separa: a esa
-// oscuridad los colores se comprimen y un azul a 243 grados y otro a 251 son
-// la misma carta. Medido en CIELAB, que es donde "parecido" significa algo.
+// CUANTO MANDA EL CIRCULO Y CUANTO MANDA LA ROPA.
 //
-// El techo sigue por debajo del 0,30 en que el fondo empieza a disputarle la
-// atencion a la cara, que es el limite que importa.
-const PROFUNDIDAD = [0.285, 0.145, 0.235, 0.175, 0.26, 0.16]
-const SATURACION = [0.3, 0.72, 0.42, 0.62, 0.36, 0.56]
+// 0 = el tono sale tal cual del retrato. 1 = las cartas se reparten a
+// intervalos iguales por todo el circulo cromatico, y del arte solo queda el
+// ORDEN (la mas azul de verdad sigue siendo la mas azul de todas).
+//
+// POR QUE HIZO FALTA SUBIRLO. El sistema de antes abria cada grupo en abanico
+// sobre su propia media, con un tope de 26 grados. Medido con los 27 retratos:
+// QUINCE cartas caian dentro de 52 grados (207-259), que es justo donde el
+// azul marino se vuelve violeta — de ahi el "mucho fondo morado" — y quedaban
+// 157 grados SEGUIDOS sin usar (50-207): ni un verde, ni un turquesa, ni un
+// cian. El abanico ya iba al tope y no podia hacer mas.
+//
+// El motivo de fondo es que el tono casi no lleva informacion: los politicos
+// visten todos de azul marino, asi que quince retratos distintos dicen el
+// mismo numero. Ser fiel a un dato que es el mismo para todos es exactamente
+// lo que produce quince cartas iguales. El orden si lleva informacion, y es lo
+// que se conserva.
+const REPARTO = 0.8
+
+// PASTEL, NO CASI NEGRO. Pedido el 02/10/2026.
+//
+// Hasta ese dia las cartas iban de 0,145 a 0,285 de luminosidad -o sea,
+// practicamente negras- y aqui habia escrito que el techo era 0,30 "porque por
+// encima el fondo empieza a disputarle la atencion a la cara". Ese numero era
+// cierto PARA CARTAS OSCURAS, donde el fondo compite subiendo de brillo. Con
+// una paleta pastel el reparto es otro: el fondo es claro y uniforme y el
+// retrato es oscuro y detallado, asi que la cara gana por contraste en vez de
+// perderlo por brillo.
+//
+// De paso arregla lo que mas costaba. A 0,15 de luminosidad los colores se
+// comprimen: un azul a 243 grados y otro a 251 son literalmente la misma
+// carta, y de ahi venian las treinta y dos parejas confundibles que hubo que
+// perseguir con seis escalones de profundidad. En pastel el mismo salto de
+// tono se ve a la primera, porque hay sitio donde verlo.
+//
+// Siguen siendo SEIS escalones alternos para que dos cartas seguidas en el
+// circulo no salgan ademas con la misma claridad.
+const PROFUNDIDAD = [0.88, 0.8, 0.85, 0.77, 0.9, 0.82]
+// Saturacion de pastel: suficiente para que el tono se lea, lo bastante baja
+// para que no sea un color de chicle. Por encima de ~0,6 deja de ser pastel y
+// pasa a ser fluor.
+const SATURACION = [0.5, 0.32, 0.42, 0.56, 0.36, 0.46]
 
 const orden = files
   .map((f) => ({ f, ...mapa[f], original: mapa[f].h }))
   .sort((a, b) => a.h - b.h)
 
-// SE ABREN EN ABANICO ALREDEDOR DE SU CENTRO, no empujando hacia delante.
+// SE REPARTEN POR EL CIRCULO, CONSERVANDO EL ORDEN.
 //
-// El primer intento empujaba al que pisaba al anterior, y eso se encadena: los
-// catorce azules se desplazaron todos su maximo y acabaron entre 250 y 281
-// grados, o sea morados. Deslizar un grupo entero no lo separa, lo muda.
+// Hubo dos intentos antes y los dos fallaron por lo mismo, que es util saber:
+//   - empujar al que pisa al anterior encadena, y los catorce azules se
+//     mudaron enteros a 250-281 grados. Deslizar un grupo no lo separa.
+//   - abrir cada grupo en abanico sobre su media no muda nada, pero con un
+//     tope de 26 grados no llega: quince cartas seguian dentro de 52 grados.
 //
-// Asi que se agrupan los que se pisan y cada grupo se reparte simetricamente
-// sobre su propia media. El centro del grupo no se mueve -los azules siguen
-// siendo azules- y lo que cambia es cuanto se abren.
-const grupos = []
-for (const c of orden) {
-  const ultimo = grupos[grupos.length - 1]
-  if (ultimo && c.h - ultimo[ultimo.length - 1].h < SEPARACION) ultimo.push(c)
-  else grupos.push([c])
+// Lo que se hace ahora es colocar las 27 en una escalera de intervalos
+// iguales (360/27 = 13,3 grados, que es justo la separacion minima que ya
+// pedia SEPARACION) y luego mezclar esa escalera con el tono real segun
+// REPARTO. Como las dos series van en el mismo orden, la mezcla tambien: la
+// carta mas azul del arte sigue siendo la mas azul del juego.
+const paso = 360 / orden.length
+
+// Donde arranca la escalera. No se pone a ojo: se prueban los 360 giros y se
+// elige el que menos mueve el conjunto respecto al color real de la ropa. Asi,
+// de todos los repartos posibles, sale el que mas se parece al arte.
+const distancia = (a, b) => {
+  const d = (((a - b) % 360) + 540) % 360 - 180
+  return Math.abs(d)
 }
-for (const g of grupos) {
-  if (g.length === 1) continue
-  const media = g.reduce((a, c) => a + c.h, 0) / g.length
-  // Lo que se puede abrir: lo que pidan las cartas, con el tope de la deriva.
-  const abertura = Math.min((g.length - 1) * SEPARACION, 2 * DERIVA)
-  g.forEach((c, i) => {
-    c.h = media - abertura / 2 + (abertura * i) / (g.length - 1)
-  })
+let ancla = 0
+let mejor = Infinity
+for (let g = 0; g < 360; g++) {
+  let suma = 0
+  for (let i = 0; i < orden.length; i++) suma += distancia(g + i * paso, orden[i].h)
+  if (suma < mejor) {
+    mejor = suma
+    ancla = g
+  }
 }
+
+orden.forEach((c, i) => {
+  const ideal = ancla + i * paso
+  // Por el camino corto, para que mezclar 350 con 10 no se vaya a 180.
+  const salto = (((ideal - c.h) % 360) + 540) % 360 - 180
+  c.h = c.h + REPARTO * salto
+})
 
 const hslAHex = (h, s, l) => {
   const hh = ((h % 360) + 360) % 360 / 360
