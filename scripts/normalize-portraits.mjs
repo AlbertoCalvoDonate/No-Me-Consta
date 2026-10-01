@@ -110,11 +110,28 @@ for (const f of files) {
       const bw = maxX - minX + 1
       const bh = maxY - minY + 1
 
-      // NUNCA AGRANDAR. Con el destino a 1224, volver a pasar esto sobre un
-      // retrato viejo de 1020 lo estiraria sin ganar un solo detalle: mismo
-      // dibujo, mas peso y mas borroso. Si la figura no da para llenar el
-      // lienzo, se queda como esta y se centra igual.
-      const scale = Math.min((CONTENT_H * TH) / bh, 1)
+      // NO AGRANDAR EL ORIGEN, que no es lo mismo que no escalar la figura.
+      //
+      // Primera version de este seguro: `Math.min(escala, 1)` a secas. Y eso
+      // rompio los veinticuatro retratos nuevos. El dibujante los entrego a
+      // 1224x1440 con la figura tocando el borde de abajo -perfectos-, pero
+      // con el aire sobre la cabeza entre el 1,8% y el 10,3%. Al llevar la
+      // cabeza al 5% la figura sube o baja, y para seguir llenando el lienzo
+      // hace falta escalarla un poco: con el tope en 1 no podia, asi que
+      // quedaba un hueco abajo y el torso dejaba de sangrar. El comprobador lo
+      // canto en veinte de los veinticuatro.
+      //
+      // Lo que hay que proteger no es que la FIGURA crezca dentro del lienzo
+      // -eso es el trabajo de este script-, sino que una imagen MAS PEQUEÑA
+      // que el destino se estire para llenarlo: ahi no hay detalle que ganar.
+      // Asi que el tope sale del tamaño del fichero de origen.
+      // Si el fichero de origen es MAS PEQUEÑO que el lienzo destino, no se
+      // estira: ahi no hay detalle que ganar, solo peso y desenfoque (el caso
+      // del arte viejo a 1020 con el destino en 1224). Si viene igual o mayor,
+      // la figura se escala libremente, que es justo el trabajo de esto.
+      const fuenteMenor = nw < TW || nh < TH
+      const deseada = (CONTENT_H * TH) / bh
+      const scale = fuenteMenor ? Math.min(deseada, 1) : deseada
       const c2 = document.createElement('canvas')
       c2.width = TW
       c2.height = TH
