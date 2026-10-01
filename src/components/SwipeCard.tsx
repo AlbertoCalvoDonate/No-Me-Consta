@@ -274,6 +274,8 @@ interface Props {
   // Primera carta de la partida: en vez de aparecer, el mazo se REPARTE. Caen
   // las dos cartas de debajo y encima la que toca leer.
   repartir?: boolean
+  // Primera vez que se ve a este personaje, en esta partida y en todas.
+  nuevo?: boolean
 }
 
 // El juego llevaba la cuenta del enfado y el favor de cada personaje desde el
@@ -315,7 +317,7 @@ export function opcionesDeCarta(card: Card) {
   }
 }
 
-export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: Props) {
+export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir, nuevo }: Props) {
   // EL RETRATO APARECE, NO APARECE DE GOLPE. Cuando la imagen ya esta en
   // cache -que es casi siempre, porque se precargan- se pinta al instante y
   // aqui no pasa nada. Pero en una conexion mala el retrato llega con la
@@ -632,6 +634,42 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir }: 
               </div>
               <Filete />
             </div>
+          )}
+
+          {/* NUEVA. La primera vez que aparece alguien, y solo esa.
+              El mazo tiene treinta personajes y una partida corta enseña ocho:
+              casi todo lo que te pasa es la primera vez y no se notaba nada.
+              Esto lo dice sin interrumpir, en la esquina, donde el Reigns pone
+              sus avisos pequeños.
+              Arriba a la IZQUIERDA porque el panel de la respuesta entra por
+              arriba al centro (216px de ancho sobre una carta de ~374), y
+              cualquier otra esquina de arriba se lo come al arrastrar. */}
+          {nuevo && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.25 }}
+              style={{
+                position: 'absolute',
+                top: 10,
+                left: 10,
+                zIndex: 3,
+                pointerEvents: 'none',
+                ...pixel,
+                fontWeight: 500,
+                fontSize: 12,
+                letterSpacing: 1.5,
+                lineHeight: 1,
+                textTransform: 'uppercase',
+                color: '#1a1508',
+                background: COLOR.oro,
+                borderRadius: 6,
+                padding: '5px 8px 4px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.45)',
+              }}
+            >
+              Nueva
+            </motion.div>
           )}
 
         </motion.div>

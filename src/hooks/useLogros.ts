@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { LOGROS, type Logro, type ResultadoPartida } from '../data/logros'
 import { cards } from '../data/cards'
+import { conocidosEntre } from '../data/reparto'
 import type { Stats, StatKey } from '../types'
 
 const KEY = 'nomeconsta.logros'
@@ -105,9 +106,16 @@ export function registrarPartida(d: DatosPartida): ResumenPartida {
   // La colección: se suman las cartas de esta partida a las de todas las
   // anteriores. Solo cuentan ids que sigan existiendo en el mazo, para que
   // renombrar una carta no infle el contador para siempre.
+  const antes = new Set(g.cartasVistas)
   const coleccion = new Set(g.cartasVistas)
   for (const id of d.cartas) if (IDS_CARTAS.has(id)) coleccion.add(id)
   g.cartasVistas = [...coleccion]
+
+  // A cuánta GENTE conoces. No se guarda aparte: se deduce de las cartas, que
+  // es lo que ya se guarda, así que no hay dos cuentas que puedan separarse
+  // (lo mismo que mira el panel del reparto y el cartel de "nueva").
+  const conocidosAntes = conocidosEntre(antes)
+  const conocidosAhora = conocidosEntre(coleccion)
 
   const gano =
     d.esEleccion && !/derrota|repeticion|quemado|retirada/.test(d.endingId)
@@ -130,6 +138,8 @@ export function registrarPartida(d: DatosPartida): ResumenPartida {
     mesesRecord: g.mesesRecord,
     epitetosVistos: g.epitetos.length,
     cartasColeccionadas: g.cartasVistas.length,
+    personajesConocidos: conocidosAhora.size,
+    personajesNuevos: conocidosAhora.size - conocidosAntes.size,
   }
 
   const nuevos: Logro[] = []

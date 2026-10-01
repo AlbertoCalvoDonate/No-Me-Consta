@@ -267,6 +267,15 @@ function loadCooldown(): Record<string, number> {
 
 let seenCooldown: Record<string, number> = loadCooldown()
 
+// El enfriamiento se lee UNA VEZ, al cargar el modulo, y a partir de ahi vive
+// en memoria. Asi que borrarlo del disco no basta: si no se vacia tambien
+// aqui, el primer `saveCooldown` lo vuelve a escribir tal cual estaba y el
+// jugador que acaba de empezar de cero sigue arrastrando que cartas vio la
+// semana pasada. Lo llama borrarGuardado, que es quien sabe que se borra.
+export function olvidarEnfriamiento() {
+  seenCooldown = {}
+}
+
 function saveCooldown() {
   try {
     localStorage.setItem(COOLDOWN_KEY, JSON.stringify(seenCooldown))

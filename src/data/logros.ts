@@ -1,6 +1,7 @@
 import type { Stats, StatKey } from '../types'
 import { cards } from './cards'
 import { epitetoDe } from './epitetos'
+import { REPARTO } from './reparto'
 
 // Sistema de logros. Cada logro tiene un check(r) que decide si se consigue,
 // mirando el RESULTADO de la partida que acaba de terminar (mas los totales
@@ -28,6 +29,8 @@ export interface ResultadoPartida {
   mesesRecord: number // el mejor "meses" de cualquier partida (ya incluye esta)
   epitetosVistos: number // cuantos epitetos distintos se han sacado
   cartasColeccionadas: number // cartas distintas vistas en toda la vida (ya incluye esta partida)
+  personajesConocidos: number // cuanta GENTE del reparto has visto alguna vez
+  personajesNuevos: number // cuantos de esos los has conocido en esta partida
 }
 
 export interface Logro {
@@ -44,6 +47,11 @@ export interface Logro {
 }
 
 const K4: StatKey[] = ['medios', 'gobierno', 'calle', 'caja']
+
+// Cuanta GENTE hay. Sale del reparto y no de un numero escrito a mano, que si
+// no, el dia que entre un personaje nuevo el logro de conocerlos a todos se
+// queda conseguido con uno de menos.
+const PERSONAJES_TOTALES = REPARTO.length
 
 export const LOGROS: Logro[] = [
   // --- SUPERVIVENCIA (incremental) ---
@@ -129,5 +137,28 @@ export const LOGROS: Logro[] = [
     check: (r) => r.flags.filter((f) => f.startsWith('nmc_')).length >= 2,
   },
   { id: 'coleccion_todas', grupo: 'Descubrir cartas', nombre: 'No me consta que quede ninguna', desc: 'Descubre todas las cartas del juego.', oculto: true, check: (r) => r.cartasColeccionadas >= cards.length },
+
+  // --- CONOCER AL REPARTO ---
+  // Hermanos del cartel de "nueva" que sale en la carta la primera vez que
+  // aparece alguien. El cartel dice "mira, uno que no habias visto"; esto le
+  // da un sitio donde sumarse. Son los dos lados de lo mismo: con treinta
+  // personajes y ocho por partida, casi todo lo que te pasa es la primera vez,
+  // y hasta ahora el juego no lo decia en ninguna parte.
+  { id: 'reparto_10', grupo: 'Conocer al reparto', nombre: 'Caras conocidas', desc: 'Conoce a 10 personajes.', check: (r) => r.personajesConocidos >= 10 },
+  { id: 'reparto_20', grupo: 'Conocer al reparto', nombre: 'Ya le saludan por el pasillo', desc: 'Conoce a 20 personajes.', check: (r) => r.personajesConocidos >= 20 },
+  { id: 'reparto_todos', grupo: 'Conocer al reparto', nombre: 'No falta nadie en la foto', desc: 'Conoce a los ' + PERSONAJES_TOTALES + ' personajes del reparto.', check: (r) => r.personajesConocidos >= PERSONAJES_TOTALES },
+  { id: 'reparto_sesion', grupo: 'Conocer al reparto', nombre: 'Día de puertas abiertas', desc: 'Conoce a seis personajes nuevos en una sola partida.', oculto: true, check: (r) => r.personajesNuevos >= 6 },
+
+  // --- MAS TRAMAS ---
+  // Flags que el mazo ya encendia y que no llevaban a ningun sitio.
+  { id: 'transfuga', grupo: 'Tramas', nombre: 'Un voto que no era suyo', desc: 'Saca adelante algo con el voto de un tránsfuga.', oculto: true, check: (r) => r.flags.includes('transfuga') },
+  { id: 'fontanero_si', grupo: 'Tramas', nombre: 'Gente que no existe', desc: 'Acepta lo que te ofrece un fontanero. No hay recibo.', oculto: true, check: (r) => r.flags.some((f) => f.startsWith('carpeta_') && f !== 'carpeta_suelta') },
+  { id: 'fontanero_deuda', grupo: 'Tramas', nombre: 'La carpeta anda suelta', desc: 'Déjale a deber a un fontanero y acaba la partida sin pagar.', oculto: true, check: (r) => r.flags.includes('carpeta_suelta') },
+  { id: 'memorias', grupo: 'Tramas', nombre: 'Ya está escribiendo el libro', desc: 'Alguien de los tuyos se pone a escribir sus memorias.', oculto: true, check: (r) => r.flags.includes('memorias_en_marcha') },
+
+  // --- MAS RAREZAS ---
+  { id: 'nmc_cuatro', grupo: 'Rarezas', nombre: 'No me consta nada de nada', desc: 'Escurre el bulto en los cuatro interrogatorios de la misma partida.', oculto: true, check: (r) => r.flags.filter((f) => f.startsWith('nmc_')).length >= 4 },
+  { id: 'limpio_y_largo', grupo: 'Rarezas', nombre: 'Se puede, pero cuesta', desc: 'Aguanta una legislatura entera sin mancharte las manos.', oculto: true, check: (r) => r.meses >= 48 && r.moralidad >= 8 },
+  { id: 'derrumbe', grupo: 'Rarezas', nombre: 'No se cayó: se desplomó', desc: 'Cae con tres de las cuatro barras en el extremo a la vez.', oculto: true, check: (r) => !r.gano && K4.filter((k) => r.stats[k] <= 0 || r.stats[k] >= 10).length >= 3 },
 ]
 

@@ -110,6 +110,27 @@ export const CARTAS_POR_PERSONAJE: Record<string, string[]> = (() => {
   return mapa
 })()
 
+// Los que son GENTE, y no una voz. El Espejo es usted a solas y La Calle es un
+// ruido de fondo: a esos no se les "conoce" por primera vez, así que ni salen
+// con el cartel de nueva ni cuentan para el logro de conocer al reparto.
+const SON_GENTE = new Set(REPARTO.map((p) => p.nombre))
+
+// A quién has conocido ya, a partir de las cartas que has visto alguna vez.
+// Lo necesitan el panel del reparto (para el contador y las siluetas) y la
+// carta (para el cartel de "nueva"), y tenerlo en dos sitios era pedir que se
+// separaran: el panel diría que ya le conoces y la carta seguiría anunciándolo.
+export function conocidosEntre(idsVistos: Set<string>): Set<string> {
+  const fuera = new Set<string>()
+  for (const nombre of SON_GENTE) {
+    if ((CARTAS_POR_PERSONAJE[nombre] ?? []).some((id) => idsVistos.has(id))) fuera.add(nombre)
+  }
+  return fuera
+}
+
+export function esGente(nombre: string): boolean {
+  return SON_GENTE.has(nombre)
+}
+
 export const ETIQUETA_INDICADOR: Record<StatKey, string> = {
   medios: 'Medios',
   gobierno: 'Gobierno',

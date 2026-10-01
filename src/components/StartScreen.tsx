@@ -6,6 +6,7 @@ import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
 import { sfx } from '../utils/sfx'
 import { mascaraBorde, useAltoVentana, useHayMasAbajo } from '../utils/desbordado'
+import { borrarTodoElProgreso } from '../hooks/borrarGuardado'
 
 const STATS: { key: keyof Stats; label: string }[] = [
   { key: 'medios', label: 'Medios' },
@@ -16,15 +17,14 @@ const STATS: { key: keyof Stats; label: string }[] = [
 
 const TOTAL_EPITETOS = 11
 
-// Lo que se borra al pedir empezar de cero: los logros conseguidos y todos los
-// contadores acumulados (récord, epítetos vistos, cartas descubiertas).
+// Empezar de cero de verdad. Qué se borra exactamente y qué se queda, en
+// hooks/borrarGuardado: aquí solo se pide.
 //
 // Antes esto vivía detrás de diez toques rápidos en el número de versión, y
 // eso fallaba por los dos lados: quien lo necesitaba no sabía que existía, y
 // quien no lo necesitaba podía encontrarlo aporreando la pantalla y borrarse
 // el progreso sin enterarse de qué había pasado. Ahora es un botón que se ve,
 // dice lo que hace y pregunta antes.
-const RESET_KEY = 'nomeconsta.logros'
 
 // Fecha de build formateada una sola vez (no cambia durante la sesión).
 const buildDate = new Date(__BUILD_DATE__).toLocaleString('es-ES', {
@@ -78,11 +78,7 @@ export function StartScreen({
   const compacto = useAltoVentana() < 600
 
   const borrarTodo = () => {
-    try {
-      localStorage.removeItem(RESET_KEY)
-    } catch {
-      /* modo incógnito: no había nada que borrar de todos modos */
-    }
+    borrarTodoElProgreso()
     setBorrando(false)
     setReseteado(true)
     window.setTimeout(() => setReseteado(false), 2500)
@@ -356,7 +352,8 @@ export function StartScreen({
                 leer. */}
             <p style={{ ...pixel, margin: '0 0 18px', fontWeight: 500, fontSize: 14, lineHeight: 1.4, color: COLOR.apagado }}>
               Se van los {hechos} logros, el récord de {mesesRecord} {mesesRecord === 1 ? 'mes' : 'meses'} y las {cartasVistas} cartas
-              que llevas descubiertas. No se puede deshacer.
+              que llevas descubiertas. También la partida a medias, si la hay, y lo que dejó el gobierno anterior:
+              volvería a empezar como el primer día. No se puede deshacer.
             </p>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
               <button onClick={() => { sfx.boton(); setBorrando(false) }} style={botonSecundario}>

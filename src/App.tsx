@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
 import { useLogrosEstado } from './hooks/useLogros'
 import { useGameStore } from './hooks/useGameStore'
@@ -6,7 +6,7 @@ import { SwipeCard } from './components/SwipeCard'
 import { StatBars } from './components/StatBars'
 import { SituationBanner, type BannerKind } from './components/SituationBanner'
 import { cards, ELECTION_INTERVAL, ELECTION_MAX_TERMS } from './data/cards'
-import { DUENO_DE_PERSONAJE } from './data/reparto'
+import { DUENO_DE_PERSONAJE, conocidosEntre, esGente } from './data/reparto'
 import { BottomBar } from './components/BottomBar'
 import { StartScreen } from './components/StartScreen'
 import { SoundButton } from './components/SoundButton'
@@ -157,6 +157,7 @@ export default function App() {
   const [reanudable] = useState(hayPartidaEnCurso)
   const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, history, flagsVistos, anger, favor, extremeStreak, choose, restart } =
     useGameStore()
+  const { partidas: partidasJugadas, idsVistos } = useLogrosEstado()
   // EL FONDO. Ya no hay musica: hay despacho (ver utils/ambiente). Se engancha
   // una vez al boton de volumen y a la pestana, que son las dos cosas que
   // pueden matarlo por detras.
@@ -217,6 +218,33 @@ export default function App() {
       : undefined
   const cartaMostrada = favorChar ? { ...currentCard, character: favorChar } : currentCard
 
+  // ¿ES LA PRIMERA VEZ QUE VE A ESTE?
+  //
+  // El mazo tiene treinta personajes y una partida corta enseña ocho, así que
+  // casi todo lo que pasa es la primera vez y no se nota. Esto lo dice.
+  //
+  // "Primera vez" es de verdad: ni en esta partida ni en ninguna anterior. Lo
+  // de antes sale de la colección de cartas vistas, que solo se escribe AL
+  // ACABAR la partida; lo de ahora, del historial, que es lo que falta para
+  // que un personaje no salga anunciado dos veces en la misma partida.
+  const conocidosDeAntes = conocidosEntre(idsVistos)
+  const vistosEstaPartida = useMemo(() => {
+    const s = new Set<string>()
+    // En el mes 1 el historial ya trae la carta que estás mirando (ver
+    // `estadoNuevo`), así que ahí no cuenta nada: todavía no has visto a nadie.
+    const hasta = turn === 1 ? 0 : history.length
+    for (let i = 0; i < hasta; i++) {
+      const c = cards.find((x) => x.id === history[i])
+      if (c) s.add(c.character)
+    }
+    return s
+  }, [history, turn])
+  const personajeNuevo =
+    !gameOver &&
+    esGente(cartaMostrada.character) &&
+    !conocidosDeAntes.has(cartaMostrada.character) &&
+    !vistosEstaPartida.has(cartaMostrada.character)
+
   // La pantalla de fin tiene bastante "chrome" fijo (título, indicador,
   // "duró X meses", epíteto) además del propio epílogo, y a veces una
   // ilustración (ver ilustracionFin). En moviles bajitos (iPhone SE, 375x667;
@@ -238,7 +266,6 @@ export default function App() {
   // los 31 finales, y en uno de 320x568 en los 31. Con el epíteto por debajo
   // del borde, que es justo lo que el jugador quiere leer y compartir.
   // Solo en la primerisima partida se explican las reglas encima de la carta.
-  const { partidas: partidasJugadas } = useLogrosEstado()
   const altoVentana = useAltoVentana()
   const pantallaBaja = altoVentana < 700
   // Y un escalon mas para los moviles de verdad pequenos (320x568, iPhone SE
@@ -518,6 +545,7 @@ export default function App() {
                     onChoose={elegir}
                     x={x}
                     repartir={turn === 1}
+                    nuevo={personajeNuevo}
                     enfado={anger[cartaMostrada.character] ?? 0}
                     favorDebido={favor[cartaMostrada.character] ?? 0}
                   />

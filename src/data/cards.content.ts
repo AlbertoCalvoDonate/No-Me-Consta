@@ -6683,9 +6683,18 @@ export const contentCards: Card[] = [
       moralidad: 1,
     },
     // Solo a mitad de año, y con peso alto para que caiga a menudo pero no
-    // siempre: medido, sale en torno a un tercio de los veranos.
+    // siempre: la idea es que salga en torno a un tercio de los veranos.
+    //
+    // Estaba en 90 y eso NO era un tercio: medido con el motor, salía en el
+    // 48% de las partidas en el mes 6. El número se eligió contra un pozo que
+    // ya no es el que hay, y el peso de una carta no significa nada por sí
+    // solo: significa lo que pese el resto. Con 45 sale en el 37%.
+    //
+    // Y el 37 está medido, no estimado, que es de lo que iba todo esto: si
+    // alguien vuelve a tocar el pozo de fase 1, este número se mueve solo y
+    // hay que volver a mirarlo.
     condition: (_s, _m, ctx) => ctx.turn % 12 === 6,
-    weight: 90,
+    weight: 45,
   },
 
 
