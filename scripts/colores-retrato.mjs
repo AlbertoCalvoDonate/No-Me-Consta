@@ -123,7 +123,7 @@ for (const f of files) {
           }
         }
       }
-      if (n === 0) return `hsl(220, 12%, ${LUZ}%)`
+      if (n === 0) return { h: 220, s: 0.12, esNeutro: true }
       // El promedio de la ropa se queda con el TONO bueno pero sin color:
       // promediar mezcla, y mezclar tiende al gris. Con el oscurecido encima,
       // las veintidos cartas salian entre #0b090b y #42444c, o sea negro con
@@ -180,31 +180,120 @@ for (const f of files) {
       }
       // Suelo de saturacion para lo demas: con poco tono, ese poco se nota.
       const S = casiGris ? 0.26 : Math.min(0.58, Math.max(0.34, s0 * 2.4))
-      const L = LUZ_FONDO
-      const hue2rgb = (pp, qq, t) => {
-        let tt = t
-        if (tt < 0) tt += 1
-        if (tt > 1) tt -= 1
-        if (tt < 1 / 6) return pp + (qq - pp) * 6 * tt
-        if (tt < 1 / 2) return qq
-        if (tt < 2 / 3) return pp + (qq - pp) * (2 / 3 - tt) * 6
-        return pp
-      }
-      const q = L < 0.5 ? L * (1 + S) : L + S - L * S
-      const pp = 2 * L - q
-      const to2 = (v) => Math.round(Math.min(255, Math.max(0, v * 255))).toString(16).padStart(2, '0')
-      return (
-        '#' +
-        to2(hue2rgb(pp, q, h0 + 1 / 3)) +
-        to2(hue2rgb(pp, q, h0)) +
-        to2(hue2rgb(pp, q, h0 - 1 / 3))
-      )
+      // Se devuelve en HSL y SIN cocinar. El reparto final se decide fuera,
+      // mirando los veinticuatro a la vez: no se puede saber si un azul se
+      // parece demasiado a otro azul viendolos de uno en uno.
+      return { h: h0 * 360, s: S, esNeutro: casiGris }
     },
     { f, LUZ, OSCURO, LUZ_FONDO }
   )
-  console.log(f.padEnd(28), mapa[f])
 }
 await browser.close()
+
+// ===========================================================================
+// SEPARAR LOS QUE SE PARECEN DEMASIADO
+//
+// El color de cada carta sale de la ropa del personaje, y eso es correcto: es
+// lo que hace que el fondo no parezca ajeno en las esquinas. El problema es
+// que la realidad es monocroma — los politicos visten de azul marino — y
+// catorce de los veinticuatro salian azules. El 58% del reparto con la misma
+// carta.
+//
+// Se miro si habia de donde sacar variedad sin inventarla, listando los cuatro
+// colores mas presentes del cuerpo de cada uno de esos catorce. No la hay: lo
+// unico que aparece aparte del azul son tonos de piel, que el algoritmo ya
+// descarta a proposito (sin ese descarte le salia el mismo marron a 19 de 22).
+//
+// POR QUE NO BASTA CON MOVER EL TONO: catorce cartas necesitan unos 180 grados
+// de separacion para distinguirse, y un traje azul marino solo tolera unos 26
+// antes de que el fondo se note ajeno en las esquinas de arriba. Asi que el
+// trabajo se reparte entre las tres dimensiones del color: el tono se abre lo
+// que el traje aguanta, y la PROFUNDIDAD y la SATURACION hacen el resto.
+//
+// Esto rompe a sabiendas la regla de "todas las cartas a la misma luminosidad
+// para que ninguna pese mas que otra". Se mantiene el espiritu -el rango va de
+// 0,15 a 0,235, y el techo sigue siendo el 0,26 en que el fondo empieza a
+// competir con la cara- pero dentro de el, dos cartas seguidas en el circulo
+// cromatico salen a distinta profundidad, que es lo que las separa cuando el
+// tono no puede.
+//
+// NO SE TOCA EL RETRATO. Esto es solo el color que se ve DETRAS del PNG
+// transparente, en las esquinas y a los lados.
+
+const SEPARACION = 13 // grados minimos entre dos cartas vecinas en tono
+const DERIVA = 26 // lo que un tono puede alejarse del color real de la ropa
+
+// Cuatro profundidades y cuatro saturaciones, que se alternan segun la
+// posicion en el circulo: dos cartas de tono parecido caen en escalones
+// distintos y dejan de confundirse.
+// SEIS escalones y no cuatro, y mas abiertos. Con cuatro entre 0,155 y 0,235
+// seguia habiendo treinta y dos parejas de cartas que el ojo no separa: a esa
+// oscuridad los colores se comprimen y un azul a 243 grados y otro a 251 son
+// la misma carta. Medido en CIELAB, que es donde "parecido" significa algo.
+//
+// El techo sigue por debajo del 0,30 en que el fondo empieza a disputarle la
+// atencion a la cara, que es el limite que importa.
+const PROFUNDIDAD = [0.285, 0.145, 0.235, 0.175, 0.26, 0.16]
+const SATURACION = [0.3, 0.72, 0.42, 0.62, 0.36, 0.56]
+
+const orden = files
+  .map((f) => ({ f, ...mapa[f], original: mapa[f].h }))
+  .sort((a, b) => a.h - b.h)
+
+// SE ABREN EN ABANICO ALREDEDOR DE SU CENTRO, no empujando hacia delante.
+//
+// El primer intento empujaba al que pisaba al anterior, y eso se encadena: los
+// catorce azules se desplazaron todos su maximo y acabaron entre 250 y 281
+// grados, o sea morados. Deslizar un grupo entero no lo separa, lo muda.
+//
+// Asi que se agrupan los que se pisan y cada grupo se reparte simetricamente
+// sobre su propia media. El centro del grupo no se mueve -los azules siguen
+// siendo azules- y lo que cambia es cuanto se abren.
+const grupos = []
+for (const c of orden) {
+  const ultimo = grupos[grupos.length - 1]
+  if (ultimo && c.h - ultimo[ultimo.length - 1].h < SEPARACION) ultimo.push(c)
+  else grupos.push([c])
+}
+for (const g of grupos) {
+  if (g.length === 1) continue
+  const media = g.reduce((a, c) => a + c.h, 0) / g.length
+  // Lo que se puede abrir: lo que pidan las cartas, con el tope de la deriva.
+  const abertura = Math.min((g.length - 1) * SEPARACION, 2 * DERIVA)
+  g.forEach((c, i) => {
+    c.h = media - abertura / 2 + (abertura * i) / (g.length - 1)
+  })
+}
+
+const hslAHex = (h, s, l) => {
+  const hh = ((h % 360) + 360) % 360 / 360
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+  const p = 2 * l - q
+  const canal = (t) => {
+    let tt = t
+    if (tt < 0) tt += 1
+    if (tt > 1) tt -= 1
+    if (tt < 1 / 6) return p + (q - p) * 6 * tt
+    if (tt < 1 / 2) return q
+    if (tt < 2 / 3) return p + (q - p) * (2 / 3 - tt) * 6
+    return p
+  }
+  const to2 = (v) => Math.round(Math.min(255, Math.max(0, v * 255))).toString(16).padStart(2, '0')
+  return '#' + to2(canal(hh + 1 / 3)) + to2(canal(hh)) + to2(canal(hh - 1 / 3))
+}
+
+orden.forEach((c, i) => {
+  const l = PROFUNDIDAD[i % PROFUNDIDAD.length]
+  // La saturacion propia manda, pero se empuja hacia el escalon que toca para
+  // que dos vecinos no salgan igual de apagados.
+  const s = (c.s + SATURACION[i % SATURACION.length]) / 2
+  mapa[c.f] = hslAHex(c.h, s, l)
+  const movido = Math.round(c.h - c.original)
+  console.log(
+    `  ${c.f.padEnd(28)} ${mapa[c.f]}  tono ${String(Math.round(c.h)).padStart(3)}` +
+      `${movido ? ` (movido ${movido > 0 ? '+' : ''}${movido})` : ''}`
+  )
+})
 
 const cuerpo = `// GENERADO POR scripts/colores-retrato.mjs — no editar a mano.
 //
