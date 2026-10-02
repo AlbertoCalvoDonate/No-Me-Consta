@@ -36,6 +36,12 @@ siempre explica por qué está así.
   El `@4.145.0` **no es opcional**: sin fijar versión, npx intenta instalar una
   más nueva y choca con un bloqueo de caché de Windows (EBUSY).
 
+  **Compila DESPUÉS de commitear, no antes.** La versión que viaja con cada
+  partida lleva el hash del commit (`0.1.0+219c5c2`), y se congela en el momento
+  del build: si compilas, commiteas y luego despliegas, el juego en producción
+  dice que es un commit que ya no es el suyo, y la telemetría miente justo donde
+  se usa para decidir si un cambio ya llegó a los móviles.
+
 - **Los heredoc de bash se comen las barras invertidas** en esta máquina. Para
   cualquier cosa con `\` usa la herramienta Write/Edit, o Python con heredoc.
 
