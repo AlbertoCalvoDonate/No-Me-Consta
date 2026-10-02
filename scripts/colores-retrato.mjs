@@ -258,8 +258,26 @@ const REPARTO = 0.8
 // utils/color.ts multiplica y con colores claros se sale de rango a blanco
 // puro, y el cartel "NUEVA" es dorado y contra pastel se queda en 1,03:1 de
 // contraste.
-const PROFUNDIDAD = [0.285, 0.145, 0.235, 0.175, 0.26, 0.16]
-const SATURACION = [0.3, 0.72, 0.42, 0.62, 0.36, 0.56]
+// MAS OSCUROS (02/10/2026, "queda mas elegante"). Luminosidad media medida en
+// CIELAB: de 23,4 a 17,9 sobre 100, o sea una cuarta parte menos.
+//
+// Y LA SATURACION SUBE PORQUE LA PROFUNDIDAD BAJA, no por gusto. Al oscurecer,
+// los colores se comprimen y dejan de distinguirse: con la saturacion de antes,
+// bajar la luminosidad disparo las parejas confundibles de 6 a 24 de golpe
+// (lo mide el propio script, al final). Mas saturacion devuelve el margen que
+// quita la oscuridad, y ademas un oscuro saturado es un tono joya, que es
+// justo lo elegante — un oscuro apagado es gris.
+//
+// Siguen siendo SEIS escalones alternos para que dos cartas seguidas en el
+// circulo no salgan ademas con la misma claridad.
+//
+// SE PROBO PASTEL (luminosidad 0,77-0,90) y se descarto: separa de maravilla,
+// pero no es el juego. Si alguna vez se reintenta, ojo con dos cosas que se
+// rompen y no se ven venir: el degradado de utils/color.ts multiplica y con
+// colores claros se sale de rango a blanco puro, y el cartel "NUEVA" es dorado
+// y contra pastel se queda en 1,03:1 de contraste.
+const PROFUNDIDAD = [0.23, 0.1, 0.19, 0.12, 0.21, 0.11]
+const SATURACION = [0.6, 1.0, 0.75, 0.92, 0.68, 0.85]
 
 const orden = files
   .map((f) => ({ f, ...mapa[f], original: mapa[f].h }))
@@ -347,3 +365,50 @@ ${files.map((f) => `  '${f}': '${mapa[f]}',`).join('\n')}
 `
 writeFileSync(SALIDA, cuerpo, 'utf8')
 console.log(`\n${files.length} retratos -> src/data/coloresRetrato.ts`)
+
+// ¿SE DISTINGUEN DE VERDAD? Se mide aqui mismo y se imprime, porque es el
+// numero que decide si los ajustes de arriba valen o no, y a ojo no se sabe:
+// dos azules oscuros parecen distintos en el editor de color y son la misma
+// carta en el movil.
+//
+// CIELAB porque es el espacio donde "parecido" significa algo — en RGB, la
+// misma distancia numerica se ve enorme en los claros y nula en los oscuros, y
+// aqui casi todo es oscuro. dE<10 es el umbral que se venia usando.
+//
+// OJO AL OSCURECER: al bajar la luminosidad los colores se comprimen y las
+// parejas confundibles se disparan. Pasar PROFUNDIDAD de 0,145-0,285 a
+// 0,105-0,205 las subio de 6 a 24 de golpe, y hubo que compensar con mas
+// saturacion. Si tocas PROFUNDIDAD, mira este numero antes de dar nada por
+// bueno.
+const aLab = (hex) => {
+  const n = Number.parseInt(hex.slice(1), 16)
+  const g = (v) => {
+    const c = v / 255
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  }
+  const r = g((n >> 16) & 255)
+  const v = g((n >> 8) & 255)
+  const b = g(n & 255)
+  const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116)
+  const X = f((0.4124 * r + 0.3576 * v + 0.1805 * b) / 0.95047)
+  const Y = f(0.2126 * r + 0.7152 * v + 0.0722 * b)
+  const Z = f((0.0193 * r + 0.1192 * v + 0.9505 * b) / 1.08883)
+  return [116 * Y - 16, 500 * (X - Y), 200 * (Y - Z)]
+}
+const hexes = files.map((f) => mapa[f])
+const distancias = []
+for (let i = 0; i < hexes.length; i++) {
+  for (let j = i + 1; j < hexes.length; j++) {
+    const a = aLab(hexes[i])
+    const b = aLab(hexes[j])
+    distancias.push(Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]))
+  }
+}
+distancias.sort((a, b) => a - b)
+const confundibles = distancias.filter((d) => d < 10).length
+const luz = hexes.reduce((a, h) => a + aLab(h)[0], 0) / hexes.length
+console.log(
+  `parejas confundibles (dE<10): ${confundibles} de ${distancias.length}` +
+    `  |  la mas parecida dE=${distancias[0].toFixed(1)}` +
+    `  |  luminosidad media ${luz.toFixed(1)} de 100`
+)

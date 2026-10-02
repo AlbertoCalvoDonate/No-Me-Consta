@@ -119,6 +119,41 @@ filtro. Los cinco que se salen, por medida: `primeradama` (52,9),
 `fontanera` (60,8). La mediana del reparto es 66,6. Solo se arreglan
 redibujando, con la plantilla maestra de `no-me-consta-lora`.
 
+## 4b. Pasada de coherencia de efectos (02/10)
+
+Encargo: "alguna carta debería obviamente mejorar calle y sin embargo la baja".
+
+**El primer intento fue por mal camino y conviene no repetirlo.** Cruzaba
+`pleases` (el lado que le da la razón al personaje) con el indicador que ese
+personaje encarna, y daba por mala toda carta donde contentarle le bajara lo
+suyo: señaló **150 de 428**. Al leerlas se ve el error de razonamiento:
+`pleases` es lo que el personaje quiere PARA ÉL, no lo que le conviene a su
+indicador. El Hermano encarna la caja y quiere el puesto a dedo; dárselo cuesta
+dinero. Es coherente.
+
+El segundo intento fue un vocabulario de frases ("subir las pensiones",
+"recortar") contra el signo del efecto: **1 sospecha de 1268 opciones, y falsa**.
+Las opciones están escritas cortas e idiomáticas ("Puesto a dedo", "Seguirle el
+rollo"), no como un programa electoral.
+
+**Lo que sí funcionó fue leerlas.** Se revisaron a mano las **310 opciones que
+bajan `calle`**, con la carta entera delante. Casi todas son coherentes: el club
+que desaparece se lleva treinta mil aficionados, al sindicato sin su plaza le
+sale una huelga. Dos no lo eran:
+
+- **`empre_cotizaciones`** — la carta dice literalmente "el coste lo asume la
+  caja", y los signos de caja estaban invertidos en las dos opciones: aceptar
+  daba +1 y negarse −1. Arreglado.
+- **`gob_financiacion_campana`** — "Cuentas claras y auditadas" llevaba
+  `calle: -1`: tener las cuentas limpias costaba apoyo popular, mientras que
+  aceptar el dinero sucio no costaba ninguno, y la calle ni se entera de esa
+  conversación. Quitado el castigo.
+
+`scripts/auditar-efectos.mjs` (`npm run auditar-efectos`) queda con el
+vocabulario, pero **es una lista de sospechas, no un validador**: no bloquea
+nada, porque a veces la contradicción es el chiste. Lo que falta por mirar con
+el mismo criterio son las opciones que bajan `medios`, `gobierno` y `caja`.
+
 ## 5. Arte que falta
 
 - **Dos personajes sin cara**: La Vecina y El Empresario. Salen rotulados con

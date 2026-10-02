@@ -441,7 +441,12 @@ export const contentCards: Card[] = [
     pleases: 'right',
     characterImage: 'ministrocorrupto.webp',
     text: '"La campaña no se paga sola, presi." Se sirve un whisky a las once de la mañana. "Yo conozco a gente que conoce a gente. Usted no pregunta, yo no cuento, y aquí paz y después gloria."',
-    left: { text: 'Cuentas claras y auditadas', effects: { calle: -1, caja: -1 }, moralidad: 2 },
+    // La calle no se entera de esta conversacion: se rechaza en un despacho y
+    // el que ofrecia no lo va a contar. Llevaba `calle: -1`, o sea que tener
+    // las cuentas limpias le costaba apoyo popular mientras que aceptar el
+    // dinero sucio no le costaba ninguno. Ahora solo cuesta dinero, que es lo
+    // unico que se paga de verdad por decir que no.
+    left: { text: 'Cuentas claras y auditadas', effects: { caja: -1 }, moralidad: 2 },
     right: { text: '"No preguntes, no cuento"', effects: { caja: 2, gobierno: 1, medios: -1 }, moralidad: -2 },
   },
   {
@@ -3490,12 +3495,16 @@ export const contentCards: Card[] = [
     text: 'Rebájeme la cuota por contrato nuevo y le lleno una provincia de empleo en un año. No es un favor a mi empresa: es la única forma de que esos contratos existan. El coste lo asume la caja, que para eso está.',
     left: {
       text: 'Aceptar el trato y contar el empleo',
-      effects: { medios: -1, calle: 2, caja: 1 },
+      // La caja BAJA al aceptar, que es lo que dice la propia carta: "el coste
+      // lo asume la caja". Estaba al reves en las dos opciones -aceptar daba
+      // +1 y negarse -1-, asi que el numero contradecia al texto en la misma
+      // pantalla.
+      effects: { medios: -1, calle: 2, caja: -1 },
       moralidad: -1,
     },
     right: {
       text: 'Decirle que el empleo no se compra',
-      effects: { medios: 1, calle: -2, caja: -1 },
+      effects: { medios: 1, calle: -2, caja: 1 },
       moralidad: 2,
     },
     pleases: 'left',

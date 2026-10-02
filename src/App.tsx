@@ -668,6 +668,13 @@ export default function App() {
                         minHeight: 0,
                         width: '100%',
                         overflowY: 'auto',
+                        // Y NADA DE DESPLAZARSE DE LADO. Medido en 360x640: el
+                        // contenedor acaba midiendo 239,x px y un hijo al 100%
+                        // redondea a 241, o sea dos pixeles de sobra. En
+                        // escritorio no se nota; en un movil son dos pixeles de
+                        // deslizamiento lateral en la pantalla que mas se lee,
+                        // y ademas pelea con el gesto de volver atras.
+                        overflowX: 'hidden',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'safe center',

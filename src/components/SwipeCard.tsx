@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
-import { animate, motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion'
+import {
+  animate,
+  motion,
+  useTransform,
+  type MotionValue,
+  type PanInfo,
+  type TargetAndTransition,
+  type Transition,
+} from 'framer-motion'
 import type { Card, StatEffects } from '../types'
 import { characterColor, characterBackground } from '../utils/color'
 import { sfx } from '../utils/sfx'
@@ -99,13 +107,22 @@ export function corruptionScore(effects: StatEffects) {
   return caja + partido - medios - votantes
 }
 
-// Cada paleta lleva su acento en dos intensidades: `tenue` mientras la
-// decisión todavía se puede deshacer y `accent` cuando ya cuenta. Van escritas
-// a mano en vez de calcularse porque son dos valores, no una escala.
-const CLEAN = { bg: '#12331f', accent: '#4dff88', tenue: 'rgba(77,255,136,0.3)' }
-const CORRUPT = { bg: '#3a1414', accent: COLOR.peligro, tenue: 'rgba(255,77,77,0.3)' }
-// Para cuando no hay nada que elegir de verdad.
-const NEUTRO = { bg: '#26262a', accent: '#8d8677', tenue: 'rgba(141,134,119,0.3)' }
+// LOS DOS PANELES VAN DEL MISMO COLOR, COMO EN EL REIGNS ORIGINAL.
+//
+// Hasta el 02/10/2026 el panel se pintaba de verde o de rojo segun lo turbia
+// que fuera la opcion (`corruptionScore`). Leia bien, y ese era el problema:
+// te decia cual era la mala ANTES de elegir, asi que la moralidad dejaba de
+// ser algo que descubres por las consecuencias y pasaba a ser una etiqueta.
+// En Reigns no hay ninguna pista de ese tipo: eliges y luego vives con ello.
+//
+// El calculo de `corruptionScore` se queda, porque el SONIDO sigue usandolo
+// (ver App.tsx): la opcion turbia suena distinto. Eso se oye despues de
+// decidir, no antes, asi que no destripa nada.
+//
+// `tenue` es mientras la decision todavia se puede deshacer y `accent` cuando
+// ya cuenta. Van escritas a mano en vez de calcularse porque son dos valores,
+// no una escala.
+const PANEL = { bg: '#26262a', accent: '#8d8677', tenue: 'rgba(141,134,119,0.3)' }
 
 // Etiqueta de tamaño fijo (ni crece ni encoge con el texto) que entra
 // deslizándose desde el lateral en sincronía directa con el arrastre — no
@@ -288,32 +305,74 @@ interface Props {
 // motor le sube el peso a este personaje y vuelve antes (ver `clima` en
 // useGameStore). Sin este aviso, el juego empezaba a perseguirte sin ensenar
 // nada hasta el 3 — el mismo fallo que tenia la mocion de censura.
+//
+// `animo` sale de aqui y no de otro sitio a proposito: la etiqueta y el
+// movimiento del retrato tienen que decir lo mismo siempre, y con dos umbrales
+// separados acabarian discrepando el dia que alguien tocara uno de los dos.
 function estadoDelPersonaje(enfado: number, favor: number) {
-  if (enfado >= 6) return { texto: 'No le perdona una', color: '#e05a4d' }
-  if (enfado >= 3) return { texto: 'Harto de usted', color: '#e0904d' }
-  if (enfado >= 2) return { texto: 'Empieza a hartarse', color: '#b08050' }
-  if (favor >= 3) return { texto: 'Le debe una', color: '#8fc98f' }
-  if (favor >= 2) return { texto: 'De su lado', color: '#7d8f7d' }
+  if (enfado >= 6) return { texto: 'No le perdona una', color: '#e05a4d', animo: 'cabreado' } as const
+  if (enfado >= 3) return { texto: 'Harto de usted', color: '#e0904d', animo: 'cabreado' } as const
+  if (enfado >= 2) return { texto: 'Empieza a hartarse', color: '#b08050', animo: 'cabreado' } as const
+  if (favor >= 3) return { texto: 'Le debe una', color: '#8fc98f', animo: 'contento' } as const
+  if (favor >= 2) return { texto: 'De su lado', color: '#7d8f7d', animo: 'contento' } as const
   return undefined
+}
+
+// COMO SE MUEVE LA CARA SEGUN COMO LE CAIGAS.
+//
+// Enfadado tiembla; contento se mece. Son los dos unicos estados que el juego
+// ya contaba (ver arriba), asi que no hay informacion nueva: lo que antes solo
+// decia una linea de texto debajo, ahora tambien se ve sin leer.
+//
+// MUY CONTENIDAS A PROPOSITO. El temblor es de pixel y medio y dura menos de
+// medio segundo, con casi dos segundos de pausa entre tandas; el meceo son
+// siete decimas de grado en cuatro segundos. Mas que eso y el retrato pasa de
+// "esta tenso" a "es un dibujo animado", que es otro juego.
+//
+// El `scale` pequeño no es decoracion: el retrato esta a `inset: 0` con
+// `objectFit: cover`, asi que al moverlo un pixel asomaria el fondo de la
+// carta por el borde contrario. Un 1,5% de sobra tapa de sobra cualquiera de
+// los dos movimientos, y a ese tamaño no se ve que la cara sea mayor.
+const ANIMO: Record<'cabreado' | 'contento', { animate: TargetAndTransition; transition: Transition }> = {
+  cabreado: {
+    animate: { x: [0, -1.5, 1.5, -1.2, 1.2, -0.6, 0], scale: 1.015 },
+    transition: { duration: 0.42, repeat: Infinity, repeatDelay: 1.9, ease: 'linear' },
+  },
+  contento: {
+    animate: { rotate: [0, 0.7, 0, -0.7, 0], y: [0, -1.6, 0, -1.6, 0], scale: 1.015 },
+    transition: { duration: 4.2, repeat: Infinity, ease: 'easeInOut' },
+  },
 }
 
 // Las dos salidas de una carta, ya resueltas: que dice cada lado y de que
 // color va. Lo necesitan la carta (para el teclado) y el banner de arriba
 // (para pintar los paneles), asi que se calcula en un solo sitio.
 export function opcionesDeCarta(card: Card) {
-  const leftIsCorrupt = corruptionScore(card.left.effects) > corruptionScore(card.right.effects)
   // En una carta de muerte (las dos salidas acaban la partida) los dos
-  // paneles dicen "Pues..." y van del mismo color, como en Reigns: ya no hay
-  // nada que elegir y esa es la broma. Cada lado conserva su propio epílogo,
-  // así que sigue habiendo dos finales, pero se eligen a ciegas.
+  // paneles dicen "Pues...": ya no hay nada que elegir y esa es la broma. Cada
+  // lado conserva su propio epílogo, así que sigue habiendo dos finales, pero
+  // se eligen a ciegas.
   const esMuerte = Boolean(card.left.epilogueText && card.right.epilogueText)
-  const mismaOpcion = esMuerte || card.left.text === card.right.text
   return {
     textoIzq: esMuerte ? 'Pues...' : card.left.text,
     textoDer: esMuerte ? 'Pues...' : card.right.text,
-    coloresIzq: mismaOpcion ? NEUTRO : leftIsCorrupt ? CORRUPT : CLEAN,
-    coloresDer: mismaOpcion ? NEUTRO : leftIsCorrupt ? CLEAN : CORRUPT,
+    coloresIzq: PANEL,
+    coloresDer: PANEL,
   }
+}
+
+// Quien tenga puesto "reducir movimiento" en su movil no quiere caras
+// temblando: es un ajuste de accesibilidad, no una preferencia estetica.
+function useMenosMovimiento() {
+  const [menos, setMenos] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setMenos(mq.matches)
+    const cambio = (e: MediaQueryListEvent) => setMenos(e.matches)
+    mq.addEventListener('change', cambio)
+    return () => mq.removeEventListener('change', cambio)
+  }, [])
+  return menos
 }
 
 export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir, nuevo }: Props) {
@@ -328,6 +387,7 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir, nu
     setCaraLista(false)
   }, [card.characterImage])
   const estado = estadoDelPersonaje(enfado, favorDebido)
+  const menosMovimiento = useMenosMovimiento()
   // Inclinada mientras se arrastra, y dando vueltas cuando sale volando: el
   // giro crece con la distancia en vez de toparse a los doce grados.
   const rotate = useTransform(
@@ -556,7 +616,13 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir, nu
           }
         >
           {card.characterImage && (
-            <img
+            <motion.img
+              // El movimiento va segun como le caigas al personaje (ver ANIMO).
+              // `key` con el animo para que al cambiar de humor la animacion
+              // arranque de cero en vez de interpolar desde donde se quedo la
+              // anterior, que deja el retrato torcido unos frames.
+              key={estado?.animo ?? 'quieto'}
+              {...(!menosMovimiento && estado?.animo ? ANIMO[estado.animo] : {})}
               src={`/characters/${card.characterImage}`}
               // Decorativa a proposito: el nombre del personaje ya esta
               // escrito debajo de la carta, asi que un alt con el nombre lo
