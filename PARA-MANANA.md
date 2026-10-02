@@ -167,6 +167,49 @@ cincuenta, el número lo dice solo. Por debajo del 88 % avisa.
 Sigue sin ser un validador y no bloquea nada, porque a veces la contradicción
 es el chiste.
 
+## 4c. Coherencia de PERSONAJE y su barra (02/10)
+
+Esto es lo que pedía el encargo de verdad —"coherencia de personaje y lo que
+afecta"— y en la primera pasada se midió otra cosa (moralidad contra efectos).
+Ya está medido lo que tocaba, y lo imprime `npm run auditar-efectos`.
+
+**El reparto cumple.** De los 24 personajes con indicador propio, la mayoría
+toca su barra en el 94–100 % de sus cartas. La cola:
+
+| personaje | encarna | toca lo suyo |
+|---|---|---|
+| El Hermano | caja | **81 %** de 32 |
+| La Oposición | calle | 86 % de 21 |
+| El Escudero · La Presidenta Regional · La Primera Dama | — | 90 % |
+
+De las 23 cartas que no tocan su barra, **14 son tipos donde el personaje narra
+en vez de protagonizar** (`feud_`, `meme_`, `recap_`, `herencia_`, `corte_`,
+`rescate_`): ahí es correcto que se mueva otra cosa. El auditor ya las descarta.
+
+**Quedan 9 ordinarias**, y dos chirrían de verdad:
+
+- **`funci_ley_imposible`** (La Funcionaria, encarna gobierno) — "la ley
+  necesita catorce desarrollos reglamentarios y aquí somos seis". Es
+  literalmente capacidad administrativa, que es la barra de gobierno, y no la
+  toca: va de `Me+1 Ca-2` contra `Ca+2 Me-1`.
+- **`gob_coche_oficial`** (El Hermano, encarna caja) — mamá quiere el coche
+  oficial para ir de compras. Usar el coche público en privado no toca la caja:
+  `Ca+1` contra `Go+1 Ca-1`.
+
+**No se han tocado**: añadir efectos es escribir contenido, no corregir un
+fallo, y mueve la banda de dificultad. Decisión del autor.
+
+**Lo que sí se leyó entero y está impecable**: las 18 cartas de La Vecina y las
+16 de El Sindicalista, que son los dos personajes que SON la calle y donde más
+probable era el fallo que se describía. Las dos tienen una forma consistente —
+la opción populista da `Ca+2 Me-2`, la honesta `Me+1` y poco o nada de calle —
+y no hay ni una invertida.
+
+**Suelto, sin consecuencia**: hay 15 efectos escritos literalmente a `0` (todos
+del encargo del 28/09) y 11 opciones sin ningún efecto. Los ceros no pintan
+nada —`EffectPips` devuelve `null` con magnitud 0— y las opciones vacías son a
+propósito: el chiste de Mopongo y rechazar un rescate.
+
 ## 5. Arte que falta
 
 - **Dos personajes sin cara**: La Vecina y El Empresario. Salen rotulados con

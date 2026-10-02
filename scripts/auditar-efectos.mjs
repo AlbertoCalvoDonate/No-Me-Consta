@@ -40,6 +40,14 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const CONTENT = fileURLToPath(new URL('../src/data/cards.content.ts', import.meta.url))
+const REPARTO = fileURLToPath(new URL('../src/data/reparto.ts', import.meta.url))
+
+// Quien encarna que indicador. Esta escrito una sola vez, en el reparto.
+const DUENO = new Map(
+  [...readFileSync(REPARTO, 'utf8').matchAll(/\{ nombre: '([^']+)'[^}]*?dueno: '([a-z]+)'/g)].map(
+    (m) => [m[1], m[2]]
+  )
+)
 
 function sacarCartas(fuente) {
   const marca = 'export const contentCards: Card[] = ['
@@ -195,6 +203,48 @@ for (const o of opciones) {
 console.log(`DICE "PAGAR" Y LA CAJA SUBE: ${sospechas.length}`)
 for (const s of sospechas) console.log(`  ${s.id.padEnd(28)}"${s.text.slice(0, 44)}"  ${pinta(s)}`)
 if (!sospechas.length) console.log('  (ninguna)')
+console.log()
+
+// ---------------------------------------------------------------------------
+// 5. EL PERSONAJE CONTRA SU PROPIO INDICADOR.
+//
+// Cada personaje encarna una barra (`dueno` en data/reparto.ts) y la idea es
+// que sus cartas la toquen: ver quien habla y saber que te juegas ES la
+// habilidad central de un Reigns. Una carta de quien encarna la calle que no
+// mueve la calle no esta mal escrita, pero no ensena lo que tendria que
+// ensenar.
+//
+// Medido el 02/10/2026: la mayoria del reparto va entre el 94% y el 100%. Los
+// que menos, El Hermano (81%) y La Oposicion (86%).
+//
+// OJO AL LEER LA LISTA: casi todas las que salen son tipos de carta donde el
+// personaje NARRA en vez de protagonizar — las de pelea entre dos (`feud_`),
+// los chistes (`meme_`), el balance de fin de ano (`recap_`), la herencia del
+// gobierno anterior (`herencia_`) y los rescates. Ahi es normal y correcto que
+// lo que se mueva sea otra cosa. Lo que merece una mirada son las ORDINARIAS.
+const FAMILIAS_NARRADAS = /^(feud_|meme_|recap_|herencia_|corte_|rescate_|react_|anger_|roce_|secuela_|bomba_|trama_)/
+console.log('EL PERSONAJE CONTRA SU PROPIO INDICADOR')
+const flojos = []
+const sueltas = []
+for (const [per, stat] of DUENO) {
+  const suyas = cartas.filter((c) => c.character === per)
+  if (!suyas.length) continue
+  const tocan = suyas.filter((c) => ['left', 'right'].some((l) => c[l]?.effects?.[stat]))
+  const pct = Math.round((100 * tocan.length) / suyas.length)
+  if (pct < 95) flojos.push({ per, stat, pct, n: suyas.length })
+  for (const c of suyas) {
+    if (tocan.includes(c)) continue
+    if (FAMILIAS_NARRADAS.test(c.id)) continue
+    sueltas.push({ id: c.id, per, stat })
+  }
+}
+flojos.sort((a, b) => a.pct - b.pct)
+for (const f of flojos) {
+  console.log(`  ${f.per.padEnd(26)} encarna ${f.stat.padEnd(9)} toca lo suyo en el ${f.pct}% de sus ${f.n} cartas`)
+}
+console.log(`
+  Cartas ORDINARIAS que no tocan el indicador de su personaje: ${sueltas.length}`)
+for (const s of sueltas) console.log(`    ${s.id.padEnd(30)}${s.per} (encarna ${s.stat})`)
 console.log()
 
 console.log('Esto es una lista de sospechas, no un validador: no bloquea nada.')
