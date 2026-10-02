@@ -1,88 +1,54 @@
-// ¿Lo que dice la opción cuadra con lo que hace?
+// ¿Los efectos de una carta dicen lo mismo que la carta?
 //
 // El otro auditor (auditar-coherencia) mira si una carta puede SALIR cuando no
-// toca. Este mira otra cosa, que se ve jugando y no leyendo: eliges "subir las
-// pensiones" y la calle BAJA. El juego no falla —el número es el que el autor
-// escribió— pero el jugador lee una cosa y ve la contraria, y eso se siente
-// como un error aunque no lo sea.
+// toca. Este mira otra cosa, que se ve jugando y no leyendo: eliges una cosa y
+// el número hace la contraria. El juego no falla —el número es el que alguien
+// escribió— pero el jugador lee una cosa y ve otra, y eso se siente como un
+// error aunque no lo sea.
 //
-// NO ES UN VALIDADOR, ES UNA LISTA DE SOSPECHAS. Cada aviso hay que leerlo y
-// decidir: a veces la contradicción es el chiste (pagas a la gente y los
-// medios te crujen por electoralista), y entonces está bien y se deja. Por eso
-// no devuelve código de error: no puede bloquear nada.
+// Uso:  npm run auditar-efectos
 //
-// SE INTENTÓ ANTES DE OTRA FORMA Y NO VALÍA, que es útil saber para no
-// repetirlo: la primera versión cruzaba `pleases` (el lado que le da la razón
-// al personaje) con el indicador que ese personaje encarna, y daba por mala
-// toda carta donde contentarle le bajara lo suyo. Señaló 150 de 428. Mirándolas
-// se ve el fallo del razonamiento: `pleases` es lo que el personaje quiere PARA
-// ÉL, no lo que le conviene a su indicador. El Hermano encarna la caja y quiere
-// el puesto a dedo; dárselo cuesta dinero. Es coherente, no un fallo.
+// ===========================================================================
+// LO QUE SE PROBÓ Y NO VALIÓ (02/10/2026). Está aquí para no repetirlo:
 //
-// Así que aquí se mira la única señal que de verdad promete una dirección: lo
-// que dice el texto de la opción.
+//  1. CRUZAR `pleases` CON EL INDICADOR DEL PERSONAJE. Dar por mala toda carta
+//     donde contentar a alguien le baje el indicador que encarna: señaló 150
+//     de 428. El razonamiento estaba mal, no las cartas — `pleases` es lo que
+//     el personaje quiere PARA ÉL, no lo que le conviene a su indicador. El
+//     Hermano encarna la caja y quiere el puesto a dedo; dárselo cuesta dinero.
 //
-// Uso:  node scripts/auditar-efectos.mjs
+//  2. UN VOCABULARIO DE FRASES de programa electoral ("subir las pensiones"):
+//     1 sospecha en 1268 opciones, y falsa. Las opciones están escritas cortas
+//     e idiomáticas ("Puesto a dedo", "Seguirle el rollo"), no así.
+//
+//  3. FRASES REPETIDAS CON SIGNOS OPUESTOS. Objetivo y barato, pero solo hay
+//     14 textos repetidos en todo el mazo y su única discrepancia es legítima
+//     ("Dejarlo como está" cuesta caja en un enchufe y la gana en unas dietas).
+//     Se deja puesto abajo porque no cuesta nada y el día que haya más textos
+//     repetidos sí servirá.
+//
+//  4. UN VOCABULARIO DE VERBOS ("pagar" -> la caja baja): 9 avisos, 8 falsos.
+//     Se cuela "que lo pague ÉL", que sube la caja en vez de bajarla. Se deja,
+//     acotado, porque el que no era falso llevó a un fallo de verdad.
+//
+// LO QUE SÍ DA SEÑAL es cruzar los efectos con la `moralidad` que el autor ya
+// escribió en cada opción. Eso no es una suposición mía sobre el español: son
+// dos campos del mismo objeto que tienen que contarse lo mismo.
+// ===========================================================================
 
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const CONTENT = fileURLToPath(new URL('../src/data/cards.content.ts', import.meta.url))
 
-// EL VOCABULARIO. Solo expresiones donde la dirección es casi segura — no
-// "reforma" ni "acuerdo", que valen para cualquier cosa. Si hay que pensarlo
-// dos veces, no entra: una lista con ruido no se lee, y una que no se lee no
-// sirve.
-//
-// `sube` = si la opción dice esto, ese indicador NO debería bajar.
-// `baja` = si la opción dice esto, ese indicador NO debería subir.
-const VOCABULARIO = [
-  {
-    stat: 'calle',
-    sube: [
-      /\bsubir (las )?pensiones\b/i, /\bsubir el salario m[ií]nimo\b/i,
-      /\bbajar (el )?(iva|los impuestos)\b/i, /\bcongelar (el )?alquiler\b/i,
-      /\bm[áa]s plantilla\b/i, /\bm[áa]s m[ée]dicos\b/i, /\bcontratar m[áa]s\b/i,
-      /\bindemnizar a las? v[ií]ctimas\b/i, /\brecibir a los manifestantes\b/i,
-      /\bceder a la huelga\b/i, /\bretirar la (ley|subida|tasa)\b/i,
-      /\bgratis\b/i, /\babaratar\b/i,
-    ],
-    baja: [
-      /\brecortar\b/i, /\bcongelar las pensiones\b/i, /\bsubir (el )?(iva|los impuestos)\b/i,
-      /\bcopago\b/i, /\bcargar contra\b/i, /\bdesalojar\b/i, /\bprivatizar\b/i,
-      /\bcerrar (el |la )?(hospital|ambulatorio|centro de salud|colegio)\b/i,
-    ],
-  },
-  {
-    stat: 'caja',
-    sube: [/\bcomisi[óo]n\b/i, /\bmordida\b/i, /\bsobre\b.*\ben efectivo\b/i, /\bcobrar\b/i],
-    baja: [
-      /\bindemnizar\b/i, /\bdevolver el dinero\b/i, /\bpagar de su bolsillo\b/i,
-      /\bpagar la (multa|sanci[óo]n|fianza)\b/i, /\brenunciar al (dinero|cobro)\b/i,
-    ],
-  },
-  {
-    stat: 'medios',
-    sube: [
-      /\bdar la exclusiva\b/i, /\bcomparecer\b/i, /\brueda de prensa\b/i,
-      /\bcontarlo todo\b/i, /\badmitirlo\b/i, /\bpublicar(lo)? (todo|el informe)\b/i,
-      /\btransparencia total\b/i,
-    ],
-    baja: [
-      /\bvetar (a|al)\b/i, /\bno comparecer\b/i, /\bquerella contra (el|la|los)\b/i,
-      /\bretirar la publicidad institucional\b/i, /\bnegarlo todo\b/i, /\btaparlo\b/i,
-    ],
-  },
-]
-
 function sacarCartas(fuente) {
   const marca = 'export const contentCards: Card[] = ['
   const desde = fuente.indexOf(marca)
   if (desde === -1) throw new Error('no encuentro el array de cartas en cards.content.ts')
-  // El corchete bueno es el del FINAL de la marca. Buscar el primer '[' a
-  // partir de `desde` encuentra el de `Card[]`, y entonces lo que se evalúa es
-  // `[]`: cero cartas, y un auditor que dice que todo está bien sin haber
-  // mirado nada. Pasó, y no falló: solo no encontraba nunca nada.
+  // El corchete bueno es el del FINAL de la marca. Buscar el primer '[' desde
+  // `desde` encuentra el de `Card[]`, y entonces lo que se evalúa es `[]`: cero
+  // cartas, y un auditor que dice que todo está bien sin haber mirado nada.
+  // Pasó, y no falló — solo no encontraba nunca nada.
   const abre = desde + marca.length - 1
   let nivel = 0
   for (let i = abre; i < fuente.length; i++) {
@@ -97,36 +63,139 @@ function sacarCartas(fuente) {
 }
 
 const cartas = sacarCartas(readFileSync(CONTENT, 'utf8'))
-const sospechas = []
-
+const opciones = []
 for (const c of cartas) {
   for (const lado of ['left', 'right']) {
-    const op = c[lado]
-    if (!op?.text) continue
-    for (const { stat, sube, baja } of VOCABULARIO) {
-      const efecto = op.effects?.[stat] ?? 0
-      const pSube = sube.find((r) => r.test(op.text))
-      const pBaja = baja.find((r) => r.test(op.text))
-      if (pSube && efecto < 0) {
-        sospechas.push({ id: c.id, lado, texto: op.text, stat, efecto, dice: 'sube', pista: pSube })
-      } else if (pBaja && efecto > 0) {
-        sospechas.push({ id: c.id, lado, texto: op.text, stat, efecto, dice: 'baja', pista: pBaja })
-      }
+    if (c[lado]) opciones.push({ id: c.id, lado, ...c[lado] })
+  }
+}
+const N = { medios: 'Me', gobierno: 'Go', calle: 'Ca', caja: 'Cj' }
+const pinta = (o) =>
+  Object.entries(o.effects || {})
+    .map(([k, v]) => N[k] + (v > 0 ? '+' : '') + v)
+    .join(' ') || '(nada)'
+
+console.log(`${cartas.length} cartas, ${opciones.length} opciones.\n`)
+
+// ---------------------------------------------------------------------------
+// 1. MORALIDAD CONTRA MEDIOS. Es la relación más fuerte del mazo y por eso es
+// la que mejor detecta un descuido: medido el 02/10/2026, de las opciones
+// turbias (moralidad <= -2) 235 bajan los medios y solo 15 los suben; de las
+// decentes (>= +2), 247 los suben y 12 los bajan. O sea un 94% en el mismo
+// sentido.
+//
+// Las excepciones NO son fallos, y conviene saberlo antes de "arreglarlas":
+// son los fontaneros. Aceptar el favor sucio sube los medios porque la
+// historia se entierra, y negarse los baja porque sale. Esa es la gracia del
+// personaje. Lo que este número vigila es que esas excepciones sigan siendo
+// pocas: si un día son cincuenta, alguien ha dejado de mirar.
+const BANDA = 0.88
+let turbiaBaja = 0
+let turbiaSube = 0
+let decenteSube = 0
+let decenteBaja = 0
+const excepciones = []
+for (const o of opciones) {
+  const m = o.moralidad ?? 0
+  const me = o.effects?.medios ?? 0
+  if (m <= -2) {
+    if (me < 0) turbiaBaja++
+    else if (me > 0) {
+      turbiaSube++
+      excepciones.push({ ...o, por: 'turbia y le sube los medios' })
+    }
+  } else if (m >= 2) {
+    if (me > 0) decenteSube++
+    else if (me < 0) {
+      decenteBaja++
+      excepciones.push({ ...o, por: 'decente y le baja los medios' })
     }
   }
 }
+const ratioT = turbiaBaja / (turbiaBaja + turbiaSube)
+const ratioD = decenteSube / (decenteSube + decenteBaja)
+console.log('MORALIDAD CONTRA MEDIOS')
+console.log(
+  `  turbias:  ${turbiaBaja} bajan medios / ${turbiaSube} los suben  (${(ratioT * 100).toFixed(0)}% en sentido)`
+)
+console.log(
+  `  decentes: ${decenteSube} suben medios / ${decenteBaja} los bajan  (${(ratioD * 100).toFixed(0)}% en sentido)`
+)
+if (ratioT < BANDA || ratioD < BANDA) {
+  console.log(`  OJO: por debajo del ${BANDA * 100}%. Antes iba al 94%: algo ha entrado torcido.`)
+}
+console.log(`  (${excepciones.length} excepciones; casi todas son los fontaneros, a propósito)\n`)
 
-console.log(`${cartas.length} cartas miradas, ${cartas.length * 2} opciones.\n`)
-if (!sospechas.length) {
-  console.log('Ninguna opción dice una cosa y hace la contraria.')
-} else {
-  console.log(`SOSPECHAS (${sospechas.length}) — hay que leerlas, no todas son fallos:\n`)
-  for (const s of sospechas) {
-    const flecha = s.dice === 'sube' ? 'debería SUBIR' : 'debería BAJAR'
-    console.log(`  ${s.id} (${s.lado})`)
-    console.log(`     "${s.texto}"`)
-    console.log(
-      `     dice algo que ${flecha} ${s.stat} (${s.pista}), y hace ${s.stat} ${s.efecto > 0 ? '+' : ''}${s.efecto}\n`
-    )
+// ---------------------------------------------------------------------------
+// 2. LA CAJA NO TIENE REGLA, y es útil saberlo para no inventarse una. Medido:
+// de las opciones turbias, 71 LLENAN la caja y 61 la VACÍAN — porque corromper
+// es las dos cosas, cobrar un maletín y comprar a un tránsfuga. Lo que sí es
+// casi ley es que ser decente CUESTA: 70 decentes vacían la caja y solo 8 la
+// llenan (y esas ocho son "que lo pague él").
+let tLlena = 0
+let tVacia = 0
+let dLlena = 0
+let dVacia = 0
+for (const o of opciones) {
+  const m = o.moralidad ?? 0
+  const cj = o.effects?.caja ?? 0
+  if (m <= -2 && cj > 0) tLlena++
+  if (m <= -2 && cj < 0) tVacia++
+  if (m >= 2 && cj > 0) dLlena++
+  if (m >= 2 && cj < 0) dVacia++
+}
+console.log('MORALIDAD CONTRA CAJA (informativo, aquí no hay regla que romper)')
+console.log(`  turbias:  ${tLlena} llenan la caja / ${tVacia} la vacían`)
+console.log(`  decentes: ${dLlena} la llenan / ${dVacia} la vacían\n`)
+
+// ---------------------------------------------------------------------------
+// 3. LA MISMA FRASE HACIENDO COSAS CONTRARIAS. Ver la nota 3 de arriba.
+const norm = (t) =>
+  t
+    .toLowerCase()
+    .replace(/["«».,¡!¿?:;()]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+const porTexto = new Map()
+for (const o of opciones) {
+  if (!o.text) continue
+  const k = norm(o.text)
+  if (!porTexto.has(k)) porTexto.set(k, [])
+  porTexto.get(k).push(o)
+}
+const contrarias = []
+for (const [k, usos] of porTexto) {
+  if (usos.length < 2) continue
+  for (const s of Object.keys(N)) {
+    const signos = new Set(usos.map((u) => Math.sign(u.effects?.[s] ?? 0)))
+    if (signos.has(1) && signos.has(-1)) contrarias.push({ k, s, usos })
   }
 }
+console.log(`LA MISMA FRASE EN SENTIDOS OPUESTOS: ${contrarias.length}`)
+for (const c of contrarias) {
+  console.log(`  "${c.k}" -> ${N[c.s]} en los dos sentidos`)
+  for (const u of c.usos) console.log(`     ${u.id.padEnd(28)}${pinta(u)}`)
+}
+console.log()
+
+// ---------------------------------------------------------------------------
+// 4. PAGAR Y COBRAR. El vocabulario mínimo que sí dice algo del dinero. Se
+// excluye "que lo pague ÉL/ELLA/QUIEN SEA", que es pagar de OTRO bolsillo y
+// por tanto sube la caja: sin ese recorte, ocho de los nueve avisos eran eso.
+const PAGA_UNO = /\b(pagar|pagarlo|pagarla|pagarles|indemnizar|devolver el dinero|de su bolsillo|costear)\b/i
+const PAGA_OTRO = /\bque (lo|la|los|las)? ?(pague|paguen|devuelva)\b|\bque .{0,20}\b(pague|paguen)\b|\bno pagar\b/i
+const sospechas = []
+for (const o of opciones) {
+  if (!o.text) continue
+  const cj = o.effects?.caja ?? 0
+  if (PAGA_UNO.test(o.text) && !PAGA_OTRO.test(o.text) && cj > 0) {
+    sospechas.push(o)
+  }
+}
+console.log(`DICE "PAGAR" Y LA CAJA SUBE: ${sospechas.length}`)
+for (const s of sospechas) console.log(`  ${s.id.padEnd(28)}"${s.text.slice(0, 44)}"  ${pinta(s)}`)
+if (!sospechas.length) console.log('  (ninguna)')
+console.log()
+
+console.log('Esto es una lista de sospechas, no un validador: no bloquea nada.')
+console.log('A veces la contradicción es el chiste, y entonces está bien.')

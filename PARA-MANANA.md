@@ -119,40 +119,53 @@ filtro. Los cinco que se salen, por medida: `primeradama` (52,9),
 `fontanera` (60,8). La mediana del reparto es 66,6. Solo se arreglan
 redibujando, con la plantilla maestra de `no-me-consta-lora`.
 
-## 4b. Pasada de coherencia de efectos (02/10)
+## 4b. Pasada de coherencia de efectos (02/10) — cerrada
 
 Encargo: "alguna carta debería obviamente mejorar calle y sin embargo la baja".
 
-**El primer intento fue por mal camino y conviene no repetirlo.** Cruzaba
-`pleases` (el lado que le da la razón al personaje) con el indicador que ese
-personaje encarna, y daba por mala toda carta donde contentarle le bajara lo
-suyo: señaló **150 de 428**. Al leerlas se ve el error de razonamiento:
-`pleases` es lo que el personaje quiere PARA ÉL, no lo que le conviene a su
-indicador. El Hermano encarna la caja y quiere el puesto a dedo; dárselo cuesta
-dinero. Es coherente.
+Se miraron las **1.268 opciones** con cinco métodos. Tres no valieron, y están
+documentados en `scripts/auditar-efectos.mjs` para no repetirlos:
 
-El segundo intento fue un vocabulario de frases ("subir las pensiones",
-"recortar") contra el signo del efecto: **1 sospecha de 1268 opciones, y falsa**.
-Las opciones están escritas cortas e idiomáticas ("Puesto a dedo", "Seguirle el
-rollo"), no como un programa electoral.
+| método | resultado |
+|---|---|
+| `pleases` × indicador del personaje | 150 avisos de 428, **todos del razonamiento** |
+| vocabulario de frases de programa | 1 aviso de 1.268, falso |
+| la misma frase con signos opuestos | 1, y legítimo |
+| vocabulario de "pagar"/"cobrar" | 9 avisos, 8 falsos — pero el noveno era real |
+| **moralidad contra efectos** | **el que da señal** |
 
-**Lo que sí funcionó fue leerlas.** Se revisaron a mano las **310 opciones que
-bajan `calle`**, con la carta entera delante. Casi todas son coherentes: el club
-que desaparece se lleva treinta mil aficionados, al sindicato sin su plaza le
-sale una huelga. Dos no lo eran:
+El primero falló por una premisa mía equivocada: `pleases` es lo que el
+personaje quiere PARA ÉL, no lo que conviene a su indicador. El Hermano encarna
+la caja y quiere el puesto a dedo; dárselo cuesta dinero, y es coherente.
 
-- **`empre_cotizaciones`** — la carta dice literalmente "el coste lo asume la
-  caja", y los signos de caja estaban invertidos en las dos opciones: aceptar
-  daba +1 y negarse −1. Arreglado.
+**Lo que se encontró de verdad, y está arreglado:**
+
+- **`empre_cotizaciones`** — la carta dice literalmente *"el coste lo asume la
+  caja"*, y los signos de caja estaban invertidos en las dos opciones: aceptar
+  daba +1 y negarse −1.
 - **`gob_financiacion_campana`** — "Cuentas claras y auditadas" llevaba
-  `calle: -1`: tener las cuentas limpias costaba apoyo popular, mientras que
+  `calle: -1`. Tener las cuentas limpias costaba apoyo popular mientras que
   aceptar el dinero sucio no costaba ninguno, y la calle ni se entera de esa
-  conversación. Quitado el castigo.
+  conversación.
 
-`scripts/auditar-efectos.mjs` (`npm run auditar-efectos`) queda con el
-vocabulario, pero **es una lista de sospechas, no un validador**: no bloquea
-nada, porque a veces la contradicción es el chiste. Lo que falta por mirar con
-el mismo criterio son las opciones que bajan `medios`, `gobierno` y `caja`.
+**Y lo que se aprendió del mazo, que vale más que los dos arreglos:**
+
+- **Moralidad y medios van de la mano al 94 %**: de las opciones turbias, 235
+  bajan los medios y 15 los suben; de las decentes, 247 los suben y 12 los
+  bajan. Las excepciones no son fallos — **son los fontaneros**: aceptar el
+  favor sucio sube los medios porque la historia se entierra, y negarse los
+  baja porque sale.
+- **La caja no tiene regla y no hay que inventarle una.** De las turbias, 71 la
+  llenan y 61 la vacían, porque corromper es las dos cosas: cobrar el maletín y
+  comprar al tránsfuga. Lo que sí es casi ley es que **ser decente cuesta**: 70
+  decentes la vacían contra 8 que la llenan, y esas ocho son "que lo pague él".
+
+`npm run auditar-efectos` imprime esos porcentajes cada vez. **Esa es la parte
+que vigila el futuro**: si un día las turbias que suben medios pasan de quince a
+cincuenta, el número lo dice solo. Por debajo del 88 % avisa.
+
+Sigue sin ser un validador y no bloquea nada, porque a veces la contradicción
+es el chiste.
 
 ## 5. Arte que falta
 
