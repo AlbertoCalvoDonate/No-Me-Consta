@@ -8545,6 +8545,26 @@ export const contentCards: Card[] = [
       addFlags: ['asumi_la_herencia'],
     },
   },
+  // LAS CARTAS DE HERENCIA Y POR QUE LA OPCION CALLADA YA NO CUESTA CALLE.
+  //
+  // Las trece van con la misma forma: a la izquierda, culpar al anterior EN
+  // PUBLICO (rueda de prensa, sede parlamentaria, la primera entrevista), que
+  // da Me+1 Ca+1 Go-1; a la derecha, callarse, que daba Go+1 Ca-1.
+  //
+  // El problema del Ca-1 es que en diez de las trece lo callado es un acto que
+  // la calle NO PUEDE VER: colgar el telefono, tomar nota y no discutir con un
+  // juez, invitarlos a desayunar y no decir nada. La barra bajaba y el jugador
+  // no tenia de donde deducir por que — y estas salen al EMPEZAR la partida,
+  // asi que es lo primero que le pasa. De ahi los "¿por que ha bajado la
+  // calle?" de las pruebas del 02/10/2026.
+  //
+  // Ahora la callada es NEUTRA en calle: el contraste se mantiene -hablar sube
+  // la calle, callar no la sube- sin cobrar por algo invisible. Se dejan con
+  // Ca-1 las tres en que callar SI es una postura publica: 'herencia_calle'
+  // ("empezar sin excusas y que se note"), 'herencia_evento' ("pasar pagina el
+  // primer dia") y 'herencia_calle_b' ("no pedir aplausos por lo de otro"); y
+  // 'herencia_ya_es_suyo', donde el propio texto dice que la cosa sale hoy en
+  // tres periodicos.
   {
     id: 'herencia_gobierno',
     phase: 1,
@@ -8560,7 +8580,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'Sentarlos a todos en la mesa y callar',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },
@@ -8601,7 +8621,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'Dejar que el juzgado vaya a su ritmo',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },
@@ -8668,7 +8688,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'Invitarlos a desayunar y no decir nada',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },
@@ -8688,7 +8708,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'Tomar nota y no decir nada',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },
@@ -8708,7 +8728,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'Guardarse el nombre para más adelante',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },
@@ -8748,7 +8768,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'Agradecer el aviso y colgar',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },
@@ -8768,7 +8788,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'Que la justicia trabaje en silencio',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },
@@ -8789,7 +8809,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'No tocar nada de aquello',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },
@@ -8809,7 +8829,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'Dar las gracias y cerrar la puerta',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },
@@ -8829,7 +8849,7 @@ export const contentCards: Card[] = [
     },
     right: {
       text: 'Tomar nota y no discutir con un juez',
-      effects: { gobierno: 1, calle: -1 },
+      effects: { gobierno: 1 },
       moralidad: 1,
       addFlags: ['asumi_la_herencia'],
     },

@@ -210,6 +210,62 @@ del encargo del 28/09) y 11 opciones sin ningún efecto. Los ceros no pintan
 nada —`EffectPips` devuelve `null` con magnitud 0— y las opciones vacías son a
 propósito: el chiste de Mopongo y rechazar un rescate.
 
+## 4d. "¿Por qué ha bajado la calle?" — encontrado y arreglado (02/10)
+
+El encargo real era este: **que el jugador entienda por qué se ha movido una
+barra**, no la coherencia interna del dato. Había comentarios de prueba
+repetidos.
+
+**La causa es sistémica y está en las cartas de herencia**, que son las que
+salen al EMPEZAR la partida, así que es lo primero que le pasa a todo el mundo.
+Las dieciséis van con la misma plantilla:
+
+- izquierda — culpar al anterior **en público** (rueda de prensa, sede
+  parlamentaria, la primera entrevista): `Me+1 Ca+1 Go-1`
+- derecha — callarse: `Go+1 Ca-1`
+
+El `Ca-1` se aplicó igual en diez de ellas donde lo callado es un acto que **la
+calle no puede ver**: colgar el teléfono, tomar nota y no discutir con un juez,
+invitarlos a desayunar y no decir nada. La barra bajaba y no había de dónde
+deducir por qué.
+
+**Arreglo:** la opción callada es neutra en calle en esas diez. El contraste se
+mantiene —hablar sube la calle, callar no la sube— sin cobrar por algo
+invisible. Se dejan con `Ca-1` las seis en que callar **sí** es una postura
+pública ("no nombrarlo ni una vez", "empezamos de cero, señores", "pasar página
+el primer día") y `herencia_ya_es_suyo`, cuyo texto dice que la cosa sale hoy en
+tres periódicos.
+
+**Medido con el simulador, dos tandas seguidas de 1.200 partidas:**
+
+| | antes | después | banda |
+|---|---|---|---|
+| bueno | 9,4 % | **10,5 %** | 9–13 ✓ |
+| óptimo | 15,8 % | **15,8 %** | 14–18 ✓ |
+
+### Lo que hay detrás, y que queda sin decidir
+
+El mazo tiene una regla deliberada: **la pasividad cuesta calle**. Aparece unas
+quince veces fuera de herencia ("no darse por aludido", "dejarlo correr y no
+darle el gusto", "no darle oxígeno y callar"). Es defendible políticamente —un
+presidente que no se moja se desgasta— pero **es ilegible**: el jugador no tiene
+cómo saberlo. En herencia se ha quitado porque ahí el contraste público/privado
+lo hacía indefendible; en el resto se deja, pero es el sitio donde seguirán
+saliendo esos comentarios.
+
+### Lo que NO se pudo automatizar, y conviene saberlo
+
+Para las otras tres barras se intentaron dos detectores más y ninguno
+discrimina:
+
+- **"acto privado que mueve una barra pública"**: 39 avisos, pero la mayoría son
+  legítimos (un indulto se publica en el BOE; la prensa ya está en el asunto).
+  De ahí salió el hallazgo de herencia, que es lo que valió.
+- **"la caja se mueve y nadie habla de dinero"**: 133 avisos, inservible. Un
+  chalet, un yate o una fundación son dinero sin que aparezca la palabra.
+
+Esta clase de problema no se detecta sola en este mazo: hay que leer.
+
 ## 5. Arte que falta
 
 - **Dos personajes sin cara**: La Vecina y El Empresario. Salen rotulados con
