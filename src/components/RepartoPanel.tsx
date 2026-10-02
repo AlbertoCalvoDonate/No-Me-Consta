@@ -4,6 +4,7 @@ import type { Personaje } from '../data/reparto'
 import { StatIcon } from './StatIcon'
 import { useLogrosEstado } from '../hooks/useLogros'
 import { COLOR, pixel } from '../utils/estilo'
+import { characterBackground } from '../utils/color'
 import { sfx } from '../utils/sfx'
 
 // EL REPARTO. Quien es quien y que indicador mueve cada uno.
@@ -257,6 +258,41 @@ export function RepartoPanel({ onCerrar }: { onCerrar: () => void }) {
               textAlign: 'center',
             }}
           >
+            {/* LA CARA, Y CON EL FONDO DE SU PROPIA CARTA. El detalle solo
+                tenia texto: se abria una ficha de alguien a quien acabas de
+                ver en una carta y no salia. Va con el degradado que usa el
+                juego (utils/color) para que se lea como lo que es, su carta,
+                y no como una foto de carnet.
+                Sin descubrir se queda en silueta, igual que en la rejilla: el
+                reparto se descubre jugando, y abrir la ficha no es jugar. */}
+            {abierto.imagen && (
+              <div
+                style={{
+                  width: 132,
+                  aspectRatio: '1020 / 1200',
+                  margin: '0 auto 12px',
+                  borderRadius: 10,
+                  overflow: 'hidden',
+                  background: conoce(abierto)
+                    ? characterBackground(abierto.nombre, abierto.imagen)
+                    : 'rgba(255,255,255,0.05)',
+                }}
+              >
+                <img
+                  src={`/characters/${abierto.imagen}`}
+                  alt=""
+                  draggable={false}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'center top',
+                    filter: conoce(abierto) ? 'none' : 'brightness(0) invert(0.28)',
+                  }}
+                />
+              </div>
+            )}
             <div style={{ ...pixel, fontWeight: 400, fontSize: 20, color: COLOR.oro }}>
               {conoce(abierto) ? abierto.nombre : '¿?'}
             </div>

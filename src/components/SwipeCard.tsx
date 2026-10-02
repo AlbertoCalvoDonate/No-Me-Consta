@@ -122,7 +122,19 @@ export function corruptionScore(effects: StatEffects) {
 // `tenue` es mientras la decision todavia se puede deshacer y `accent` cuando
 // ya cuenta. Van escritas a mano en vez de calcularse porque son dos valores,
 // no una escala.
-const PANEL = { bg: '#26262a', accent: '#8d8677', tenue: 'rgba(141,134,119,0.3)' }
+// DORADO, EL MISMO TONO QUE LAS BARRAS (COLOR.oro). Estuvo un rato en gris
+// neutro al quitarle el verde y el rojo, y quedaba apagado: el gris no es un
+// color del juego, es la ausencia de uno, y el panel es lo unico que se mueve
+// mientras arrastras. En dorado sigue sin decir si la opcion es buena o mala
+// -que era el motivo de quitar el verde y el rojo- y ademas pertenece.
+//
+// El fondo va muy oscurecido y no en oro plano: encima lleva texto claro, y el
+// oro a toda potencia detras de letras blancas no se lee.
+const PANEL = {
+  bg: '#2e2718',
+  accent: COLOR.oro,
+  tenue: 'rgba(224,184,77,0.3)',
+}
 
 // Etiqueta de tamaño fijo (ni crece ni encoge con el texto) que entra
 // deslizándose desde el lateral en sincronía directa con el arrastre — no

@@ -45,11 +45,17 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
   const grupo = GRUPOS[Math.min(pagina, GRUPOS.length - 1)]
   const delGrupo = LOGROS.filter((l) => l.grupo === grupo)
   const hechosGrupo = delGrupo.filter((l) => conseguidos.has(l.id)).length
-  // Los ocultos que aun no tienes se juntan en UNA casilla. Pintados uno a uno
-  // eran casillas identicas ("Logro oculto"): en "Por donde cae" salian nueve
-  // seguidas y el bloque entero parecia un error.
-  const visibles = delGrupo.filter((l) => !(l.oculto && !conseguidos.has(l.id)))
-  const ocultos = delGrupo.length - visibles.length
+  // CADA OCULTO CON SU CASILLA.
+  //
+  // Antes se juntaban todos en una sola que decia "nueve ocultos por
+  // descubrir", porque pintados uno a uno eran casillas identicas y parecia un
+  // error. El problema de juntarlos es que el grupo dejaba de tener forma: no
+  // se veia cuantas casillas le faltaban a "Por donde cae", solo una frase.
+  //
+  // Ahora se pintan todas y la de un oculto va con candado en vez de tick y la
+  // palabra "Oculto" en vez del nombre. Identicas entre si, si, pero eso es
+  // justo lo que son -huecos por rellenar- y asi el grupo se lee de un vistazo
+  // como una coleccion a medias, que es como se leen en cualquier juego.
 
   const ir = (d: number) => {
     sfx.boton()
@@ -154,8 +160,9 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
           boxSizing: 'border-box',
         }}
       >
-        {visibles.map((l) => {
+        {delGrupo.map((l) => {
           const hecho = conseguidos.has(l.id)
+          const tapado = Boolean(l.oculto) && !hecho
           return (
             <button
               key={l.id}
@@ -171,7 +178,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                 minWidth: 0,
                 padding: T.relleno,
                 background: hecho ? 'rgba(224,184,77,0.08)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${hecho ? 'rgba(224,184,77,0.3)' : 'rgba(255,255,255,0.07)'}`,
+                border: `1px ${tapado ? 'dashed' : 'solid'} ${hecho ? 'rgba(224,184,77,0.3)' : 'rgba(255,255,255,0.1)'}`,
                 borderRadius: 9,
                 cursor: 'pointer',
                 textAlign: 'left',
@@ -192,7 +199,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                   fontWeight: 700,
                 }}
               >
-                {hecho ? '✓' : ''}
+                {hecho ? '✓' : tapado ? '?' : ''}
               </span>
               <span
                 style={{
@@ -201,6 +208,7 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                   fontSize: T.nombre,
                   lineHeight: T.alturaLinea,
                   color: hecho ? COLOR.texto : '#6b6558',
+                  fontStyle: tapado ? 'italic' : undefined,
                   minWidth: 0,
                   overflow: 'hidden',
                   display: '-webkit-box',
@@ -213,30 +221,11 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                   WebkitLineClamp: 4,
                 }}
               >
-                {l.nombre}
+                {tapado ? 'Oculto' : l.nombre}
               </span>
             </button>
           )
         })}
-        {ocultos > 0 && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: T.hueco,
-              padding: T.relleno,
-              border: '1px dashed rgba(255,255,255,0.12)',
-              borderRadius: 9,
-              ...pixel,
-              fontWeight: 500,
-              fontSize: T.nombre,
-              lineHeight: T.alturaLinea,
-              color: '#5c5750',
-            }}
-          >
-            {ocultos} {ocultos === 1 ? 'oculto' : 'ocultos'} por descubrir
-          </div>
-        )}
       </div>
 
       <div
@@ -299,7 +288,9 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                 color: conseguidos.has(abierto.id) ? COLOR.oro : COLOR.texto,
               }}
             >
-              {abierto.nombre}
+              {/* Un oculto sin conseguir no se destripa ni abriendolo: la
+                  gracia es que aparezca sin avisar al final de una partida. */}
+              {abierto.oculto && !conseguidos.has(abierto.id) ? 'Logro oculto' : abierto.nombre}
             </div>
             <div
               style={{
@@ -311,7 +302,9 @@ export function LogrosPanel({ onCerrar }: { onCerrar: () => void }) {
                 margin: '8px 0 4px',
               }}
             >
-              {abierto.desc}
+              {abierto.oculto && !conseguidos.has(abierto.id)
+                ? 'Este no se cuenta antes de tiempo. Saldrá solo cuando le toque.'
+                : abierto.desc}
             </div>
             <div style={{ ...pixel, fontWeight: 500, fontSize: 13.5, color: '#6b6558' }}>
               {conseguidos.has(abierto.id) ? 'Conseguido' : 'Todavía no'}
