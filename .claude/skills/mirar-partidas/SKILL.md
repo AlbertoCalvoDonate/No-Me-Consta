@@ -86,6 +86,19 @@ poner la cola de envíos. Agrupar por las dos respuestas de la encuesta
 esos huecos; es un suelo, no un techo, porque dos móviles pueden caer en el
 mismo grupo.
 
+**`cuando` es la hora a la que LLEGÓ, no a la que se jugó.** Lo pone el
+servidor al recibirla, y desde que hay cola de envíos una tanda entera puede
+entrar junta: el 02/10/2026 llegaron diez partidas de un mismo móvil en dos
+minutos, incluida una de 49 meses. No es que jugara diez partidas en dos
+minutos, es que estaban encoladas y salieron todas al abrir el juego. Para
+"cuántas partidas hoy" da igual; para cualquier cosa que mire horas, no.
+
+**Un hueco en `partida_n` solo significa pérdida si el móvil es nuevo.** Un
+jugador que vuelve empieza legítimamente por donde lo dejó: el 02/10 un grupo
+apareció con p7, p8, p9 y parecían faltar seis, pero el día anterior ese mismo
+grupo había mandado p5 y p6. Antes de contar nada como perdido, mira los días
+anteriores del mismo grupo.
+
 **La `sesion` une los dos envíos de UNA partida**, la abandonada y esa misma ya
 acabada, para que sean una fila y no dos. No une dos partidas distintas.
 
