@@ -191,3 +191,24 @@ WHERE p.quien IS NULL AND p.final = 'abandonada' AND d.turno = p.meses
 GROUP BY d.carta
 ORDER BY veces DESC
 LIMIT 15;
+
+-- ===========================================================================
+-- 13. QUE BUILD ESTA USANDO LA GENTE.
+--
+-- Desde el 02/10/2026 `version` lleva el commit ("0.1.0+da2b546"), y no por
+-- capricho: ese dia se desplego la baliza de partidas abandonadas, no llego
+-- ninguna, y no habia forma de saber si era porque nadie abandona o porque el
+-- cambio aun no estaba en el movil de quien jugaba. Hasta entonces todas las
+-- partidas decian "0.1.0" y la pregunta no se podia contestar.
+--
+-- Mirala siempre que acabes de desplegar algo y quieras leer los datos nuevos:
+-- una partida con la version vieja no prueba nada sobre el cambio.
+SELECT
+  version,
+  COUNT(*) AS partidas,
+  MIN(datetime(cuando / 1000, 'unixepoch', 'localtime')) AS primera,
+  MAX(datetime(cuando / 1000, 'unixepoch', 'localtime')) AS ultima
+FROM partidas
+WHERE quien IS NULL
+GROUP BY version
+ORDER BY ultima DESC;
