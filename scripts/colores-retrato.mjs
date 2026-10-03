@@ -340,12 +340,57 @@ const hslAHex = (h, s, l) => {
   return '#' + to2(canal(hh + 1 / 3)) + to2(canal(hh)) + to2(canal(hh - 1 / 3))
 }
 
-orden.forEach((c, i) => {
-  const l = PROFUNDIDAD[i % PROFUNDIDAD.length]
-  // La saturacion propia manda, pero se empuja hacia el escalon que toca para
-  // que dos vecinos no salgan igual de apagados.
-  const s = (c.s + SATURACION[i % SATURACION.length]) / 2
-  mapa[c.f] = hslAHex(c.h, s, l)
+const aLab = (hex) => {
+  const n = Number.parseInt(hex.slice(1), 16)
+  const g = (v) => {
+    const c = v / 255
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  }
+  const r = g((n >> 16) & 255)
+  const v = g((n >> 8) & 255)
+  const b = g(n & 255)
+  const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116)
+  const X = f((0.4124 * r + 0.3576 * v + 0.1805 * b) / 0.95047)
+  const Y = f(0.2126 * r + 0.7152 * v + 0.0722 * b)
+  const Z = f((0.0193 * r + 0.1192 * v + 0.9505 * b) / 1.08883)
+  return [116 * Y - 16, 500 * (X - Y), 200 * (Y - Z)]
+}
+
+// EL ESCALON DE CADA CARTA SE ELIGE MIDIENDO, NO POR TURNO.
+//
+// Antes era `PROFUNDIDAD[i % 6]`: la escalera alterna claro/oscuro, asi que
+// separaba muy bien a los VECINOS (i, i+1) y nada a los que caen a dos sitios
+// (i, i+2), que aterrizan los dos en la misma banda. Con 27 cartas no se
+// notaba; al entrar La Vecina y El Empresario, el paso del circulo bajo de 13,3
+// a 12,4 grados, dos sitios pasaron a ser solo 25 grados de tono, y `fiscal` y
+// `oposicionsuave` salieron a dE 3,7 en CIELAB: el mismo verde oscuro.
+//
+// Asi que en vez de confiar en que un patron ciclico funcione para cualquier
+// numero de cartas, se prueba: para cada carta se miran los seis escalones y se
+// elige el que la deja MAS LEJOS de todo lo ya colocado. Es el mismo criterio
+// con el que luego se mide si el reparto esta bien, aplicado al elegir en vez
+// de solo al comprobar.
+const colocados = []
+orden.forEach((c) => {
+  let mejor = null
+  for (let k = 0; k < PROFUNDIDAD.length; k++) {
+    const l = PROFUNDIDAD[k]
+    // La saturacion propia manda, pero se empuja hacia el escalon que toca para
+    // que dos vecinos no salgan igual de apagados.
+    const s = (c.s + SATURACION[k]) / 2
+    const hex = hslAHex(c.h, s, l)
+    const lab = aLab(hex)
+    // Lo que importa es la carta mas parecida, no la media: una sola pareja
+    // confundible ya es una pareja confundible.
+    let cerca = Infinity
+    for (const otro of colocados) {
+      const d = Math.hypot(lab[0] - otro[0], lab[1] - otro[1], lab[2] - otro[2])
+      if (d < cerca) cerca = d
+    }
+    if (!mejor || cerca > mejor.cerca) mejor = { cerca, hex, lab, k }
+  }
+  colocados.push(mejor.lab)
+  mapa[c.f] = mejor.hex
   const movido = Math.round(c.h - c.original)
   console.log(
     `  ${c.f.padEnd(28)} ${mapa[c.f]}  tono ${String(Math.round(c.h)).padStart(3)}` +
@@ -380,21 +425,6 @@ console.log(`\n${files.length} retratos -> src/data/coloresRetrato.ts`)
 // 0,105-0,205 las subio de 6 a 24 de golpe, y hubo que compensar con mas
 // saturacion. Si tocas PROFUNDIDAD, mira este numero antes de dar nada por
 // bueno.
-const aLab = (hex) => {
-  const n = Number.parseInt(hex.slice(1), 16)
-  const g = (v) => {
-    const c = v / 255
-    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
-  }
-  const r = g((n >> 16) & 255)
-  const v = g((n >> 8) & 255)
-  const b = g(n & 255)
-  const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116)
-  const X = f((0.4124 * r + 0.3576 * v + 0.1805 * b) / 0.95047)
-  const Y = f(0.2126 * r + 0.7152 * v + 0.0722 * b)
-  const Z = f((0.0193 * r + 0.1192 * v + 0.9505 * b) / 1.08883)
-  return [116 * Y - 16, 500 * (X - Y), 200 * (Y - Z)]
-}
 const hexes = files.map((f) => mapa[f])
 const distancias = []
 for (let i = 0; i < hexes.length; i++) {

@@ -35,16 +35,13 @@ const SIN_CARA: Record<string, string> = {
   'El Espejo': '#15151a',
   'La Fontanera': '#1b1e26',
   'El Expediente': '#191b21',
-  // LOS DOS QUE QUEDAN DE FUERA, hasta que tengan retrato. Sin esto les tocaria
-  // el hash del nombre, que saca verdes y turquesas de chicle -y en este juego
-  // el verde significa que una eleccion es limpia, asi que ademas miente.
-  // Cada uno va del tono de su barra, apagado: cuando llegue el dibujo, su
-  // linea se borra y el color sale de su ropa como en el resto.
-  //
-  // El Tertuliano, La Funcionaria y El Sindicalista ya tienen retrato
-  // (02/10/2026) y por eso ya no estan aqui.
-  'La Vecina': '#241f1a',
-  'El Empresario': '#1d1f2a',
+  // YA NO QUEDA NADIE DE FUERA. Los cinco que salian rotulados con el nombre
+  // -El Tertuliano, La Funcionaria y El Sindicalista el 02/10/2026, La Vecina y
+  // El Empresario el 03/10- tienen retrato, y su color sale de su propia ropa
+  // como el del resto. Si algun dia entra un personaje sin dibujo, su linea
+  // vuelve aqui: sin ella le tocaria el hash del nombre, que saca verdes y
+  // turquesas de chicle, y en este juego el verde significa que una eleccion es
+  // limpia, asi que ademas mentiria.
 }
 
 export function characterColor(character: string, characterImage?: string): string {

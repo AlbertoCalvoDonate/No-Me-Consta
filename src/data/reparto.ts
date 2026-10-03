@@ -56,11 +56,11 @@ export const REPARTO: Personaje[] = [
   { nombre: 'La Presidenta Regional', imagen: 'presidentaregional.webp', dueno: 'calle', quien: 'Gobierna su región y le hace oposición desde ella.' },
   { nombre: 'La Oposición', imagen: 'oposicionsuave.webp', dueno: 'calle', quien: 'Cuenta los votos de la moción. Tres veces.' },
   { nombre: 'El Sindicalista', imagen: 'sindicalista.webp', dueno: 'calle', quien: 'Le sostiene mientras le lleve algo a casa. El día que no, saca a la gente.' },
-  { nombre: 'La Vecina', dueno: 'calle', quien: 'No sabe cómo funciona nada. Sabe lo que le ha pasado a ella.' },
+  { nombre: 'La Vecina', imagen: 'vecina.webp', dueno: 'calle', quien: 'No sabe cómo funciona nada. Sabe lo que le ha pasado a ella.' },
 
   // CAJA B — el dinero opaco
   { nombre: 'El Ministro Caído', imagen: 'ministrocorrupto.webp', dueno: 'caja', quien: 'Cayó, pero sigue sabiendo dónde está todo.' },
-  { nombre: 'El Empresario', dueno: 'caja', quien: 'En contra, salvo que le arrimen el hombro. Nunca grita: enseña cifras.' },
+  { nombre: 'El Empresario', imagen: 'empresario.webp', dueno: 'caja', quien: 'En contra, salvo que le arrimen el hombro. Nunca grita: enseña cifras.' },
   { nombre: 'El Hermano', imagen: 'hermano.webp', dueno: 'caja', quien: 'Su familia. Siempre con un plan y una servilleta.' },
   { nombre: 'El Gurú', imagen: 'guru.webp', dueno: 'caja', quien: 'El faro moral que acabó montando una fundación.' },
   { nombre: 'La Primera Dama', imagen: 'primeradama.webp', dueno: 'caja', quien: 'Su casa. Y una cátedra que apareció sola.' },

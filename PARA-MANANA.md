@@ -268,9 +268,8 @@ Esta clase de problema no se detecta sola en este mazo: hay que leer.
 
 ## 5. Arte que falta
 
-- **Dos personajes sin cara**: La Vecina y El Empresario. Salen rotulados con
-  el nombre en grande. (El Tertuliano, La Funcionaria y El Sindicalista
-  entraron el 02/10/2026.)
+- **Personajes: ya no falta ninguno.** Los veintinueve tienen retrato desde el
+  03/10/2026. Lo único de arte que queda son las cuatro ilustraciones de final.
 - **Ilustraciones de los cuatro finales por evento**: moción, expediente,
   ruptura y registro. El del registro es ~7 % de las muertes.
 
