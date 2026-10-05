@@ -266,6 +266,57 @@ discrimina:
 
 Esta clase de problema no se detecta sola en este mazo: hay que leer.
 
+## 4e. Lo que dice el propio Reigns, cruzado con el dato (05/10)
+
+Leído el *deep dive* de François Alliot en Game Developer y material de interfaz
+de juegos web. Casi todo lo que recomiendan ya está hecho aquí; lo que sale es
+**una decisión de diseño pendiente**, no una tarea.
+
+**Lo que ya coincide:**
+
+- *"El sistema de la bolsa"*: quitar del sorteo lo que no encaja y dar tamaños
+  distintos a lo que queda. Eso es `condition` + `weight` + enfriamiento.
+- **Los puntos de efecto dicen QUÉ barra se mueve pero no hacia dónde.** Es
+  textualmente lo que hace Reigns, y confirma que quitar el verde y el rojo de
+  los paneles el 02/10 fue acertado: el color revelaba la moralidad *antes* de
+  decidir, que es justo lo que ellos evitan.
+- **Frequency gating** (de la skill de motion): una animación que se ve cientos
+  de veces tiene que ser corta o no existir. Medido: lo frecuente aquí dura
+  0,25–0,42 s y lo que dura 4 s se ve una vez por partida. Bien.
+- `prefers-reduced-motion` está cubierto en los tres sitios donde hay animación.
+
+**La decisión pendiente: cuántas caras conoce el jugador en una partida.**
+
+Reigns arrancó con **50 cartas**. Este mazo tiene **634**. Y la partida mediana
+dura lo mismo: ~14 cartas. Medido sobre las 36 partidas reales recogidas:
+
+| | |
+|---|---|
+| personajes distintos por partida | **9** (mediana) |
+| de ésos, los que salen 2+ veces | **2** |
+| veces que sale el que más repite | 2 |
+
+O sea que en una partida ves a nueve personas y a siete de ellas **una sola
+vez**. El gancho de Reigns —ves quién habla y ya sabes qué te juegas— necesita
+reconocimiento, y con ese reparto el reconocimiento no llega a formarse dentro
+de una partida: tiene que formarse entre partidas, que es mucho más lento.
+
+La causa está identificada y es **deliberada**: `repartirCaras` (ver
+`useGameStore`) le baja el peso a quien ha salido hace poco —a 0,45 si salió una
+vez en las últimas cuatro cartas, a 0,2 si salió dos— y se puso en septiembre
+para arreglar que El Hermano era el 23–30 % de todo lo que salía. Funcionó. Pero
+el ajuste está en un extremo del compromiso, y el otro extremo es el que hace
+que el juego se entienda.
+
+**Sin decidir.** Si alguna vez se toca, se mide antes y después con
+`simular.mjs` y se mira el reparto por personaje en la telemetría, no solo la
+banda de dificultad.
+
+**Una idea suya que aquí no existe:** Reigns mete *subsistemas* —un duelo, una
+mazmorra— donde la bolsa se encoge a dos o tres cartas durante unos turnos, y
+eso les cambia el ritmo. Aquí hay 31 cartas que encadenan (5 %) pero nada que
+secuestre el mazo varios turnos seguidos. Es contenido nuevo, no un ajuste.
+
 ## 5. Arte que falta
 
 - **Personajes: ya no falta ninguno.** Los veintinueve tienen retrato desde el
