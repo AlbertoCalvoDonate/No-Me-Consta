@@ -346,9 +346,9 @@ fontaneros.
 
 **Lo que sigue pendiente**: aun hay gente por debajo de la mediana (Oposicion,
 Independentista, Cruzado, Socia, Sindicalista, Expresidente y Exiliado, todos
-en 15-16 sorteables). Y  se vuelve algo mas duro cada vez que
-se anaden cartas, porque cuenta contra : no hay que tocar nada,
-pero conviene saberlo.
+en 15-16 sorteables). Y el logro `coleccion_todas` se vuelve algo mas duro cada
+vez que se anaden cartas, porque cuenta contra `cards.length` y no contra un
+numero fijo: no hay que tocar nada, pero conviene saberlo.
 
 ## 5. Arte que falta
 
@@ -386,6 +386,7 @@ nueva y choca con un bloqueo de caché de Windows.)
 
 ## 7. Suelto, de la auditoría de logros
 
-`coleccion_todas` (ver las 672 cartas) es *posible* pero durísimo: en 2.500
-partidas se ven 666. Las seis que faltan están nombradas en
+`coleccion_todas` (ver las 692 cartas, 654 de contenido mas los finales) es
+*posible* pero durísimo: en 2.500 partidas se ven 666 de las 672 que habia
+entonces, y desde el 05/10 hay veinte mas. Las seis que faltan están nombradas en
 `scripts/auditar-logros.mjs`.
