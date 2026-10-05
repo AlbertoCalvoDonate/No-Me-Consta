@@ -80,11 +80,29 @@ Si encuentras un hueco nuevo, **arréglalo en el script antes de reescribir la
 carta**: el 05/10/2026, de 99 cartas marcadas, 16 estaban bien escritas y el
 detector no sabía verlas.
 
-## Quién es cada uno
+## Quién es cada uno, y cómo habla
 
-Está en `src/data/reparto.ts`, una línea por personaje, y es la fuente. Antes de
-escribirle una carta a alguien, **lee tres suyas que ya funcionen**: la voz se
-coge leyendo, no describiéndola.
+`src/data/reparto.ts` lleva dos líneas por personaje y son cosas distintas:
+`quien` dice **qué quiere** y `habla` dice **con qué boca lo pide**.
+
+El campo `habla` no está inventado: sale de medir sus propias cartas con
+
+```bash
+npm run qa-habla                 # la tabla entera
+npm run qa-habla Gurú            # su ficha, con tres cartas de ejemplo
+```
+
+Mide longitud de frase, si trata de usted o tutea, si abre pidiendo algo, si
+discute con cifras, si cita, y **las palabras que usa él y casi nadie más**, que
+es lo que de verdad define una voz. Si algo suena raro, **mide antes de
+reescribir**.
+
+Ese mismo script avisa de quien NO tiene voz propia: si sus números son los de
+la media en todo y no tiene palabras suyas, podría hablar cualquiera. El
+05/10/2026 le pasaba a El Tertuliano, con 19 cartas.
+
+Aun con todo eso, antes de escribirle a alguien **lee tres cartas suyas que ya
+funcionen**: la voz se coge leyendo, no describiéndola.
 
 Dos reglas que sí se pueden enunciar:
 

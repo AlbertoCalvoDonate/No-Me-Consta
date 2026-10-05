@@ -13,7 +13,8 @@
     "qa-voz": "node scripts/qa-voz.mjs",
     "qa-ortografia": "node scripts/qa-ortografia.mjs",
     "auditar-logros": "node scripts/auditar-logros.mjs",
-    "auditar-efectos": "node scripts/auditar-efectos.mjs"
+    "auditar-efectos": "node scripts/auditar-efectos.mjs",
+    "qa-habla": "node scripts/qa-habla.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.2.10",
