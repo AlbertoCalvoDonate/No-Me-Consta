@@ -3,8 +3,7 @@ name: voz-de-las-cartas
 description: >-
   Cómo se escribe una carta de No Me Consta para que suene como las otras 634:
   quién habla, cuándo se narra a propósito, y los tres casos que los auditores
-  mezclan. Úsala siempre que haya que ESCRIBIR o REESCRIBIR texto de cartas —
-  cartas nuevas, un personaje nuevo, arreglar las que suenan raras, repasar
+  mezclan. Úsala siempre que haya que ESCRIBIR o REESCRIBIR texto de cartas, cartas nuevas, un personaje nuevo, arreglar las que suenan raras, repasar
   diálogos, "esta carta no suena a él", o cuando `qa-voz` marque algo. También
   antes de tocar `qa-voz`, `qa-personalidad` o `auditar-riesgo`, porque aquí
   está lo que esos scripts NO pueden ver. Lleva dentro los errores de criterio
@@ -119,7 +118,7 @@ El mazo son **634 cartas entre 31 voces**, mediana de **20 por personaje**.
 
 Al escribir nuevas, mira el reparto: El Ministro Caído tiene 55 y El Sindicalista
 16. No hay una cuota, pero un personaje con cinco cartas no llega a existir para
-el jugador — en una partida mediana se ven **9 personajes distintos y solo 2
+el jugador, en una partida mediana se ven **9 personajes distintos y solo 2
 repiten** (medido sobre partidas reales, ver `PARA-MANANA.md`).
 
 ## Antes de dar una carta por buena

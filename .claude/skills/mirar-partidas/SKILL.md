@@ -80,7 +80,7 @@ ser veinte partidas.
 
 **`partida_n` cuenta partidas TERMINADAS**, no empezadas (`g.partidas += 1` en
 `registrarPartida`). Por eso un hueco en la numeración es una partida que se
-acabó y nunca llegó — así se midió que se perdía una de cada cuatro antes de
+acabó y nunca llegó, así se midió que se perdía una de cada cuatro antes de
 poner la cola de envíos. Agrupar por las dos respuestas de la encuesta
 (`juega`, `reigns`) da una huella flojita del móvil que sirve para reconstruir
 esos huecos; es un suelo, no un techo, porque dos móviles pueden caer en el

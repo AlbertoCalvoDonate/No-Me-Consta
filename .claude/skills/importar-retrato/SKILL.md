@@ -52,7 +52,7 @@ print('transparente', round((a[:,:,3]<10).mean()*100,1), '%  borde abajo cubiert
 
 Lo que buscas: **1224×1440** (ratio 0,85), modo RGBA, y el torso llegando al
 100 % del borde de abajo. Si llega a esa medida exacta, `normalize-portraits` lo
-respeta tal cual y no lo reencuadra — que es lo que quieres cuando el dibujo ya
+respeta tal cual y no lo reencuadra, que es lo que quieres cuando el dibujo ya
 viene con la cara al tamaño del resto del reparto.
 
 ## 3. Pasa la tubería, fichero a fichero
@@ -87,14 +87,14 @@ colores.
 Aquí está la trampa que más cuesta, porque no falla nada: simplemente la cara no
 sale.
 
-**Sitio 1 — `src/data/reparto.ts`.** Añade `imagen:` al personaje. Esto solo
+**Sitio 1, `src/data/reparto.ts`.** Añade `imagen:` al personaje. Esto solo
 afecta al panel "El reparto".
 
 ```ts
 { nombre: 'El Sindicalista', imagen: 'sindicalista.webp', dueno: 'calle', quien: '...' },
 ```
 
-**Sitio 2 — `src/data/cards.content.ts`.** `characterImage` va **en cada carta**,
+**Sitio 2, `src/data/cards.content.ts`.** `characterImage` va **en cada carta**,
 no en el personaje. Un personaje con veinte cartas necesita las veinte.
 
 ```ts
@@ -102,8 +102,8 @@ character: 'El Sindicalista',
 characterImage: 'sindicalista.webp',
 ```
 
-Pasó el 02/10/2026: se importaron tres retratos, se apuntaron en el reparto —con
-lo que salían bien en el panel— y sus 53 cartas siguieron saliendo rotuladas con
+Pasó el 02/10/2026: se importaron tres retratos, se apuntaron en el reparto, con
+lo que salían bien en el panel, y sus 53 cartas siguieron saliendo rotuladas con
 el nombre en grande durante un día. No daba ningún error.
 
 Para rellenarlas todas sin ir a mano, el patrón que funciona es trocear el
@@ -120,8 +120,7 @@ npm run validate-cards
 
 - `colores-retrato` recalcula el fondo de **todas** las cartas, no solo la
   nueva: el tono de cada una sale de repartir el reparto entero por el círculo
-  cromático. Al terminar imprime cuántas parejas son confundibles en CIELAB —
-  **mira ese número**: si sube mucho, el retrato nuevo ha estrechado el reparto.
+  cromático. Al terminar imprime cuántas parejas son confundibles en CIELAB, **mira ese número**: si sube mucho, el retrato nuevo ha estrechado el reparto.
 - `comprobar-retrato` avisa de proporción, ancho, aire sobre la cabeza, si el
   torso llega a los bordes y si hay halo claro.
 - `validate-cards` es el que caza el olvido del paso 4: si el personaje tiene
@@ -130,8 +129,8 @@ npm run validate-cards
 ## 6. Míralo
 
 Los números no dicen si la cara pega con el resto. Monta una hoja de contactos
-con las 27 cartas —el mismo degradado que usa el juego, `linear-gradient(170deg,
-aclarar(c,1.35) 0%, c 46%, aclarar(c,0.55) 100%)`— y compruébalo a ojo: lo que
+con las 27 cartas, el mismo degradado que usa el juego, `linear-gradient(170deg,
+aclarar(c,1.35) 0%, c 46%, aclarar(c,0.55) 100%)`, y compruébalo a ojo: lo que
 importa es que la cara salga del mismo tamaño que las demás.
 
 Si el arte nuevo trae la cara más pequeña o más grande, **se arregla en el

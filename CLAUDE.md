@@ -74,13 +74,13 @@ Es la norma de la casa. No "parece que va mejor", sino un número.
 
 ## Mapa rápido
 
-- `src/data/cards.content.ts` — las 634 cartas. **`characterImage` va en CADA
+- `src/data/cards.content.ts`, las 634 cartas. **`characterImage` va en CADA
   carta**, no en el personaje: añadirlo solo a `reparto.ts` hace que la cara
   salga en el panel del reparto y no en la carta.
-- `src/data/cards.ts` — finales. `src/data/reparto.ts` — quién es quién y qué
-  barra encarna. `src/data/logros.ts` — 62 logros.
-- `src/hooks/useGameStore.ts` — el motor. Sorteo, barras, enfado y favor.
-- `worker/index.ts` — sirve el juego y recoge las partidas (D1
+- `src/data/cards.ts`, finales. `src/data/reparto.ts`, quién es quién y qué
+  barra encarna. `src/data/logros.ts`, 62 logros.
+- `src/hooks/useGameStore.ts`, el motor. Sorteo, barras, enfado y favor.
+- `worker/index.ts`, sirve el juego y recoge las partidas (D1
   `nomeconsta-partidas`). Lo último que hace, pase lo que pase, es devolver el
   sitio: un fallo de la API no puede dejar el juego sin servir.
 
@@ -109,6 +109,40 @@ Para consultar: `npx wrangler@4.145.0 d1 execute nomeconsta-partidas --remote
 --json --command "..."`. Casi todas las consultas llevan `WHERE quien IS NULL`
 (fuera las partidas de prueba del autor) y `AND final <> 'abandonada'` (una
 partida dejada a medias no es una muerte).
+
+## Cómo se escribe una carta
+
+**El guion largo no se usa nunca.** Ni en las cartas, ni en los comentarios, ni
+en los commits. Es la marca de agua de un texto escrito por una máquina y aquí
+canta muchísimo. En su sitio van comas, dos puntos, paréntesis o un punto y
+empezar otra frase.
+
+**El patrón de la casa está medido**, no es una opinión. `npm run qa-prosa` lo
+saca de las 634 cartas que ya existen, y con un id mide una carta contra él:
+
+| | p10 | mediana | p90 |
+|---|---|---|---|
+| palabras por carta | 26 | **33** | 39 |
+| frases por carta | 2 | **3** | 4 |
+| palabras por frase | 8 | **11** | 17 |
+| comas por frase | 0 | 0,5 | 1 |
+| palabras de 11 letras o más | 0 % | **0 %** | 6 % |
+
+Y **el 47 % de las cartas rematan con una frase de cinco palabras o menos**. Se
+cuenta la situación y se cierra en seco. Ese golpe es la forma de la casa.
+
+**El fallo típico al reescribir, medido:** pasar una carta de tercera a primera
+persona la engorda. Al ponerla en boca del personaje se le añaden
+justificaciones, y de veintiuna reescritas el 05/10/2026, dieciocho salieron por
+encima de la mediana y varias rozando el p90. **Después de reescribir, mide**:
+si pasa de 39 palabras o de 4 frases, sobra algo.
+
+Las palabras largas son el termómetro del tono: la mediana del mazo es **cero**.
+Cuanto más suben, más suena a nota de prensa y menos a alguien hablando.
+
+El criterio de quién habla y cómo, en la skill `voz-de-las-cartas`. Quién es
+cada uno y con qué boca pide las cosas, en `src/data/reparto.ts` (`quien` y
+`habla`), medido con `npm run qa-habla`.
 
 ## Voz
 
