@@ -6,7 +6,7 @@
 //
 //   1. Escribir una carta nueva que suene a él sin tener que leerse las
 //      cincuenta anteriores.
-//   2. Ver de un vistazo qué personajes NO tienen una voz propia todavía —
+//   2. Ver de un vistazo qué personajes NO tienen una voz propia todavía: 
 //      si sus números son los de la media en todo, es que podría hablar
 //      cualquiera.
 //

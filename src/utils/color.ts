@@ -4,7 +4,7 @@ import { COLOR_RETRATO } from '../data/coloresRetrato'
 // de la franja de abajo de su ilustracion, oscurecido (lo genera
 // scripts/colores-retrato.mjs).
 //
-// Antes salia de un hash del NOMBRE — `hsl(hash % 360, 38%, 22%)` — o sea un
+// Antes salia de un hash del NOMBRE (`hsl(hash % 360, 38%, 22%)`) o sea un
 // tono al azar sin ninguna relacion con el dibujo. A `presi` le tocaba azul
 // marino y, como lleva traje azul, su carta parecia llena de borde a borde;
 // al resto le tocaba cualquier cosa y, como los retratos son transparentes y
@@ -76,7 +76,7 @@ export function characterColor(character: string, characterImage?: string): stri
 // Multiplicar y no mezclar hacia blanco/negro, que es a lo que se cambio un
 // rato el 02/10/2026 mientras se probo una paleta pastel: con colores claros
 // multiplicar se sale de rango y devuelve blanco puro, pero con los oscuros de
-// aqui no se sale nunca, y ademas mantiene el tono — mezclar hacia blanco lo
+// aqui no se sale nunca, y ademas mantiene el tono: mezclar hacia blanco lo
 // apaga y deja la parte de arriba grisacea.
 export function characterBackground(character: string, characterImage?: string): string {
   const base = characterColor(character, characterImage)

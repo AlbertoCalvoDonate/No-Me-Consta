@@ -1,4 +1,4 @@
-// GENERADO POR scripts/colores-retrato.mjs — no editar a mano.
+// GENERADO POR scripts/colores-retrato.mjs: no editar a mano.
 //
 // Color de fondo de la carta de cada personaje, sacado del tono dominante de
 // su propia ilustracion (ver el script para el porque). Vuelve a generarlo

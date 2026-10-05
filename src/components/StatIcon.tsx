@@ -5,7 +5,7 @@ import { COLOR } from '../utils/estilo'
 
 // Iconos planos de una sola pieza (estilo Reigns original), con el propio
 // dibujo haciendo de máscara para un relleno que sube desde abajo según el
-// valor de la stat (0-STAT_MAX) — así se ve "cuánto queda" sobre el propio
+// valor de la stat (0-STAT_MAX): así se ve "cuánto queda" sobre el propio
 // icono, sin número al lado, igual que en el juego original.
 const VB = 24
 
@@ -26,7 +26,7 @@ function IconShapes({ statKey }: { statKey: keyof Stats }) {
       )
     case 'gobierno':
       // Edificio institucional con columnas: la coalición que te sostiene.
-      // Si se caen las columnas, se cae el Gobierno — la metáfora es directa.
+      // Si se caen las columnas, se cae el Gobierno: la metáfora es directa.
       // Columnas centradas: 20 de ancho menos 4 de 3 dejan 8, en 5 huecos de 1.6.
       return (
         <>
@@ -98,14 +98,14 @@ export function StatIcon({
       {/* Relleno tipo medidor: sube desde abajo, recortado a la silueta.
           `attrY`, no `y`: Framer Motion anima `y` en un <rect> como
           transform CSS (translateY) en vez de como atributo SVG real, y el
-          clip-path se define en las coordenadas ORIGINALES del icono — con
+          clip-path se define en las coordenadas ORIGINALES del icono: con
           el rect desplazado por transform en vez de por atributo, el
           recorte deja de coincidir con el dibujo y parecen dos iconos
           distintos superpuestos. `attrY`/`attrHeight` fuerzan a Motion a
           tocar el atributo de verdad, alineado con el clip-path.
           Tween en vez de spring: un muelle con rebote puede pasarse de 0
           por una fracción de píxel al vaciarse del todo, y SVG no acepta
-          una altura negativa (rompe con un error en consola) — un medidor
+          una altura negativa (rompe con un error en consola): un medidor
           tampoco necesita ese rebote. */}
       <motion.rect
         x={0}

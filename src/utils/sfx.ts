@@ -59,7 +59,7 @@ function leerPaso(): number {
 }
 
 // Respuesta al impulso de una sala pequeña, generada al vuelo: ruido que decae
-// exponencialmente. Corta (0,9 s) a propósito — queremos que los sonidos tengan
+// exponencialmente. Corta (0,9 s) a propósito: queremos que los sonidos tengan
 // aire, no que suenen dentro de una catedral.
 function salaCorta(c: AudioContext): AudioBuffer {
   const dur = 0.9

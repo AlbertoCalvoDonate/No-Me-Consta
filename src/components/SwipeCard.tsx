@@ -13,7 +13,7 @@ import { characterColor, characterBackground } from '../utils/color'
 import { sfx } from '../utils/sfx'
 import { COLOR, pixel } from '../utils/estilo'
 
-// Tamaño FIJO a propósito — no crece ni encoge con el largo del texto, para
+// Tamaño FIJO a propósito: no crece ni encoge con el largo del texto, para
 // que la carta de debajo se vea siempre, no solo un hueco pequeño. El texto
 // que no quepa se recorta (overflow hidden) en vez de agrandar la etiqueta.
 const PANEL_WIDTH = 216
@@ -55,7 +55,7 @@ const DECIDIR_MS = 125
 const DRAG_ELASTIC = 0.7
 
 // Recorrido del DEDO para que el gesto cuente como elección. Un "flick" rápido
-// cuenta aunque no llegue — así se parece más a un gesto real y hay menos
+// cuenta aunque no llegue: así se parece más a un gesto real y hay menos
 // posibilidades de que el ratón se salga de la ventana a medio arrastre.
 const SWIPE_THRESHOLD = 92
 const FLICK_VELOCITY = 500
@@ -68,7 +68,7 @@ const FLICK_VELOCITY = 500
 const COMPROMISO = SWIPE_THRESHOLD * DRAG_ELASTIC
 
 // ZONA MUERTA: los primeros píxeles no revelan nada, solo mueven la carta. Es
-// el hueco donde se aprende que se puede empujar y soltar sin consecuencias —
+// el hueco donde se aprende que se puede empujar y soltar sin consecuencias: 
 // antes el panel empezaba a entrar desde el primer píxel y el gesto parecía
 // comprometido desde el principio. Es el mismo arranque que ya tenían los
 // puntos de efecto de las barras, que esperaban y el panel no.
@@ -80,7 +80,7 @@ const COMPROMISO = SWIPE_THRESHOLD * DRAG_ELASTIC
 export const ZONA_MUERTA = 10
 
 // Distancia de arrastre a la que un lado se considera "totalmente revelado".
-// Se exporta porque StatBars usa el mismo valor para los puntos de efecto —
+// Se exporta porque StatBars usa el mismo valor para los puntos de efecto: 
 // deben moverse en sincronía.
 //
 // Tiene que completarse bastante antes del compromiso: ese hueco es el tiempo
@@ -97,7 +97,7 @@ const PEEK_DISTANCE = 56
 // Cuánto de "corrupta" es una decisión, a partir de sus propios efectos:
 // caja/partido son ganancias de trastienda, medios/votantes son legitimidad
 // pública. Si una opción gana más de lo primero que de lo segundo, es la
-// "mala" (roja); si es al revés, es la "buena" (verde) — así el color sigue
+// "mala" (roja); si es al revés, es la "buena" (verde): así el color sigue
 // la moralidad real de cada carta, no si está a la izquierda o la derecha.
 export function corruptionScore(effects: StatEffects) {
   const caja = effects.caja ?? 0
@@ -137,7 +137,7 @@ const PANEL = {
 }
 
 // Etiqueta de tamaño fijo (ni crece ni encoge con el texto) que entra
-// deslizándose desde el lateral en sincronía directa con el arrastre — no
+// deslizándose desde el lateral en sincronía directa con el arrastre: no
 // con umbrales de opacidad. Deliberadamente pequeña y arriba: el resto de la
 // carta (el retrato) queda visible durante todo el gesto.
 //
@@ -209,7 +209,7 @@ function ChoicePanel({
   // navegador podía renderizar un subpíxel de más y se veía un salto de 1px.
   const panelX = useTransform(slideRaw, (v) => Math.round(v))
   // El panel de un lado NO existe (opacity 0) en cuanto el arrastre está en
-  // el lado contrario — incluso 1px. Así, pase lo que pase con el rebote al
+  // el lado contrario: incluso 1px. Así, pase lo que pase con el rebote al
   // soltar (que puede cruzar el 0 hacia el otro signo), el panel que no se ha
   // elegido nunca llega a verse. Cuando se empieza a arrastrar hacia este
   // lado el panel ya está a 0.93 pero todavía fuera de pantalla (zona muerta),
@@ -276,7 +276,7 @@ function ChoicePanel({
           width: '100%',
           ...pixel,
           // 400: es el único peso que existe de verdad para esta fuente (ver
-          // nota en index.css) — un 700 aquí forzaría un "bold" sintético
+          // nota en index.css): un 700 aquí forzaría un "bold" sintético
           // que se ve borroso, sobre todo a este tamaño.
           fontWeight: 400,
           fontSize: 18,
@@ -316,7 +316,7 @@ interface Props {
 // El escalon de 2 existe porque el SORTEO actua ahi: a partir de enfado 2 el
 // motor le sube el peso a este personaje y vuelve antes (ver `clima` en
 // useGameStore). Sin este aviso, el juego empezaba a perseguirte sin ensenar
-// nada hasta el 3 — el mismo fallo que tenia la mocion de censura.
+// nada hasta el 3: el mismo fallo que tenia la mocion de censura.
 //
 // `animo` sale de aqui y no de otro sitio a proposito: la etiqueta y el
 // movimiento del retrato tienen que decir lo mismo siempre, y con dos umbrales
@@ -505,7 +505,7 @@ export function SwipeCard({ card, onChoose, x, enfado, favorDebido, repartir, nu
     >
       {/* SIN overflow:hidden a propósito: este contenedor NO rota, así que al
           inclinarse la carta sus esquinas se salían de él y las recortaba en
-          vertical — y con ellas el panel de respuesta, que se veía cortado por
+          vertical: y con ellas el panel de respuesta, que se veía cortado por
           la mitad. La carta ya se recorta a sí misma con su propio
           overflow+borderRadius, que es el borde visible. */}
       {/* La carta tiene EXACTAMENTE la proporcion del retrato (1020x1200), asi

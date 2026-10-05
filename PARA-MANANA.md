@@ -32,7 +32,7 @@ Se midió cuánto se perdía antes de tocar nada. `partida_n` cuenta partidas
 TERMINADAS, así que un hueco en la numeración es una partida que se acabó y no
 llegó. Agrupando por las respuestas de la encuesta: **21 jugadas, 16
 recibidas**. Y las decisiones iban peor: **183 de 213**, y lo perdido no era al
-azar — al reanudar solo se mandaba la cola, así que faltaban siempre los turnos
+azar: al reanudar solo se mandaba la cola, así que faltaban siempre los turnos
 del principio.
 
 Tres cambios, los tres probados contra el sitio en marcha:
@@ -51,7 +51,7 @@ Tres cambios, los tres probados contra el sitio en marcha:
 
 Para que una partida mandada dos veces (a medias y luego acabada) sea una fila
 y no dos, el móvil manda una `sesion`: aleatoria, **de la partida**, y muere con
-ella. No rompe el "nada personal" — une dos envíos de UNA partida, y dos
+ella. No rompe el "nada personal": une dos envíos de UNA partida, y dos
 partidas del mismo móvil siguen sin poderse relacionar.
 
 > **OJO AL CONSULTAR.** `worker/consultas.sql` ya lleva `AND final <>
@@ -66,14 +66,14 @@ casi a la vez pasaron los dos por el `SELECT` sin encontrar nada y quedaron
 cinco decisiones colgando de una partida inexistente. Ahora va con un
 `INSERT ... ON CONFLICT(sesion) ... RETURNING id`: la base dice cuál es el id
 de verdad después de resolver el conflicto. Comprobado con nueve envíos
-simultáneos de la misma partida — una fila, sin huérfanas.
+simultáneos de la misma partida: una fila, sin huérfanas.
 
 ## 3. Los fondos de carta: más diversidad, mismo look oscuro (02/10)
 
 Venía de "14 de 24 son azules" y de un segundo intento que dejó mucho morado.
 Medido con los 27 retratos: **quince cartas caían dentro de 52 grados**
 (207-259, que es donde el azul marino se vuelve violeta) y había **157 grados
-seguidos sin usar** — ni un verde, ni un turquesa, ni un cian.
+seguidos sin usar**: ni un verde, ni un turquesa, ni un cian.
 
 La causa de fondo es que el tono casi no lleva información: los políticos
 visten todos de azul marino, así que quince retratos distintos devuelven el
@@ -84,7 +84,7 @@ producía quince cartas iguales.
 colocan en una escalera de intervalos iguales (360/27 = 13,3°, que es justo la
 separación mínima que ya se pedía) y se mezcla con el tono real. **Del arte se
 conserva el ORDEN**: la carta más azul de verdad sigue siendo la más azul del
-juego. El arranque de la escalera no se pone a ojo — se prueban los 360 giros y
+juego. El arranque de la escalera no se pone a ojo: se prueban los 360 giros y
 se elige el que menos mueve el conjunto.
 
 Medido en CIELAB, que es donde "parecido" significa algo:
@@ -119,7 +119,7 @@ filtro. Los cinco que se salen, por medida: `primeradama` (52,9),
 `fontanera` (60,8). La mediana del reparto es 66,6. Solo se arreglan
 redibujando, con la plantilla maestra de `no-me-consta-lora`.
 
-## 4b. Pasada de coherencia de efectos (02/10) — cerrada
+## 4b. Pasada de coherencia de efectos (02/10): cerrada
 
 Encargo: "alguna carta debería obviamente mejorar calle y sin embargo la baja".
 
@@ -131,7 +131,7 @@ documentados en `scripts/auditar-efectos.mjs` para no repetirlos:
 | `pleases` × indicador del personaje | 150 avisos de 428, **todos del razonamiento** |
 | vocabulario de frases de programa | 1 aviso de 1.268, falso |
 | la misma frase con signos opuestos | 1, y legítimo |
-| vocabulario de "pagar"/"cobrar" | 9 avisos, 8 falsos — pero el noveno era real |
+| vocabulario de "pagar"/"cobrar" | 9 avisos, 8 falsos: pero el noveno era real |
 | **moralidad contra efectos** | **el que da señal** |
 
 El primero falló por una premisa mía equivocada: `pleases` es lo que el
@@ -140,10 +140,10 @@ la caja y quiere el puesto a dedo; dárselo cuesta dinero, y es coherente.
 
 **Lo que se encontró de verdad, y está arreglado:**
 
-- **`empre_cotizaciones`** — la carta dice literalmente *"el coste lo asume la
+- **`empre_cotizaciones`**: la carta dice literalmente *"el coste lo asume la
   caja"*, y los signos de caja estaban invertidos en las dos opciones: aceptar
   daba +1 y negarse −1.
-- **`gob_financiacion_campana`** — "Cuentas claras y auditadas" llevaba
+- **`gob_financiacion_campana`**: "Cuentas claras y auditadas" llevaba
   `calle: -1`. Tener las cuentas limpias costaba apoyo popular mientras que
   aceptar el dinero sucio no costaba ninguno, y la calle ni se entera de esa
   conversación.
@@ -152,7 +152,7 @@ la caja y quiere el puesto a dedo; dárselo cuesta dinero, y es coherente.
 
 - **Moralidad y medios van de la mano al 94 %**: de las opciones turbias, 235
   bajan los medios y 15 los suben; de las decentes, 247 los suben y 12 los
-  bajan. Las excepciones no son fallos — **son los fontaneros**: aceptar el
+  bajan. Las excepciones no son fallos: **son los fontaneros**: aceptar el
   favor sucio sube los medios porque la historia se entierra, y negarse los
   baja porque sale.
 - **La caja no tiene regla y no hay que inventarle una.** De las turbias, 71 la
@@ -169,8 +169,8 @@ es el chiste.
 
 ## 4c. Coherencia de PERSONAJE y su barra (02/10)
 
-Esto es lo que pedía el encargo de verdad —"coherencia de personaje y lo que
-afecta"— y en la primera pasada se midió otra cosa (moralidad contra efectos).
+Esto es lo que pedía el encargo de verdad: "coherencia de personaje y lo que
+afecta": y en la primera pasada se midió otra cosa (moralidad contra efectos).
 Ya está medido lo que tocaba, y lo imprime `npm run auditar-efectos`.
 
 **El reparto cumple.** De los 24 personajes con indicador propio, la mayoría
@@ -180,7 +180,7 @@ toca su barra en el 94–100 % de sus cartas. La cola:
 |---|---|---|
 | El Hermano | caja | **81 %** de 32 |
 | La Oposición | calle | 86 % de 21 |
-| El Escudero · La Presidenta Regional · La Primera Dama | — | 90 % |
+| El Escudero · La Presidenta Regional · La Primera Dama |: | 90 % |
 
 De las 23 cartas que no tocan su barra, **14 son tipos donde el personaje narra
 en vez de protagonizar** (`feud_`, `meme_`, `recap_`, `herencia_`, `corte_`,
@@ -188,11 +188,11 @@ en vez de protagonizar** (`feud_`, `meme_`, `recap_`, `herencia_`, `corte_`,
 
 **Quedan 9 ordinarias**, y dos chirrían de verdad:
 
-- **`funci_ley_imposible`** (La Funcionaria, encarna gobierno) — "la ley
+- **`funci_ley_imposible`** (La Funcionaria, encarna gobierno): "la ley
   necesita catorce desarrollos reglamentarios y aquí somos seis". Es
   literalmente capacidad administrativa, que es la barra de gobierno, y no la
   toca: va de `Me+1 Ca-2` contra `Ca+2 Me-1`.
-- **`gob_coche_oficial`** (El Hermano, encarna caja) — mamá quiere el coche
+- **`gob_coche_oficial`** (El Hermano, encarna caja): mamá quiere el coche
   oficial para ir de compras. Usar el coche público en privado no toca la caja:
   `Ca+1` contra `Go+1 Ca-1`.
 
@@ -201,16 +201,16 @@ fallo, y mueve la banda de dificultad. Decisión del autor.
 
 **Lo que sí se leyó entero y está impecable**: las 18 cartas de La Vecina y las
 16 de El Sindicalista, que son los dos personajes que SON la calle y donde más
-probable era el fallo que se describía. Las dos tienen una forma consistente —
-la opción populista da `Ca+2 Me-2`, la honesta `Me+1` y poco o nada de calle —
+probable era el fallo que se describía. Las dos tienen una forma consistente: 
+la opción populista da `Ca+2 Me-2`, la honesta `Me+1` y poco o nada de calle: 
 y no hay ni una invertida.
 
 **Suelto, sin consecuencia**: hay 15 efectos escritos literalmente a `0` (todos
 del encargo del 28/09) y 11 opciones sin ningún efecto. Los ceros no pintan
-nada —`EffectPips` devuelve `null` con magnitud 0— y las opciones vacías son a
+nada (`EffectPips` devuelve `null` con magnitud 0) y las opciones vacías son a
 propósito: el chiste de Mopongo y rechazar un rescate.
 
-## 4d. "¿Por qué ha bajado la calle?" — encontrado y arreglado (02/10)
+## 4d. "¿Por qué ha bajado la calle?": encontrado y arreglado (02/10)
 
 El encargo real era este: **que el jugador entienda por qué se ha movido una
 barra**, no la coherencia interna del dato. Había comentarios de prueba
@@ -220,9 +220,9 @@ repetidos.
 salen al EMPEZAR la partida, así que es lo primero que le pasa a todo el mundo.
 Las dieciséis van con la misma plantilla:
 
-- izquierda — culpar al anterior **en público** (rueda de prensa, sede
+- izquierda: culpar al anterior **en público** (rueda de prensa, sede
   parlamentaria, la primera entrevista): `Me+1 Ca+1 Go-1`
-- derecha — callarse: `Go+1 Ca-1`
+- derecha: callarse: `Go+1 Ca-1`
 
 El `Ca-1` se aplicó igual en diez de ellas donde lo callado es un acto que **la
 calle no puede ver**: colgar el teléfono, tomar nota y no discutir con un juez,
@@ -230,7 +230,7 @@ invitarlos a desayunar y no decir nada. La barra bajaba y no había de dónde
 deducir por qué.
 
 **Arreglo:** la opción callada es neutra en calle en esas diez. El contraste se
-mantiene —hablar sube la calle, callar no la sube— sin cobrar por algo
+mantiene (hablar sube la calle, callar no la sube) sin cobrar por algo
 invisible. Se dejan con `Ca-1` las seis en que callar **sí** es una postura
 pública ("no nombrarlo ni una vez", "empezamos de cero, señores", "pasar página
 el primer día") y `herencia_ya_es_suyo`, cuyo texto dice que la cosa sale hoy en
@@ -247,8 +247,8 @@ tres periódicos.
 
 El mazo tiene una regla deliberada: **la pasividad cuesta calle**. Aparece unas
 quince veces fuera de herencia ("no darse por aludido", "dejarlo correr y no
-darle el gusto", "no darle oxígeno y callar"). Es defendible políticamente —un
-presidente que no se moja se desgasta— pero **es ilegible**: el jugador no tiene
+darle el gusto", "no darle oxígeno y callar"). Es defendible políticamente: un
+presidente que no se moja se desgasta: pero **es ilegible**: el jugador no tiene
 cómo saberlo. En herencia se ha quitado porque ahí el contraste público/privado
 lo hacía indefendible; en el resto se deja, pero es el sitio donde seguirán
 saliendo esos comentarios.
@@ -297,13 +297,13 @@ dura lo mismo: ~14 cartas. Medido sobre las 36 partidas reales recogidas:
 | veces que sale el que más repite | 2 |
 
 O sea que en una partida ves a nueve personas y a siete de ellas **una sola
-vez**. El gancho de Reigns —ves quién habla y ya sabes qué te juegas— necesita
+vez**. El gancho de Reigns (ves quién habla y ya sabes qué te juegas) necesita
 reconocimiento, y con ese reparto el reconocimiento no llega a formarse dentro
 de una partida: tiene que formarse entre partidas, que es mucho más lento.
 
 La causa está identificada y es **deliberada**: `repartirCaras` (ver
-`useGameStore`) le baja el peso a quien ha salido hace poco —a 0,45 si salió una
-vez en las últimas cuatro cartas, a 0,2 si salió dos— y se puso en septiembre
+`useGameStore`) le baja el peso a quien ha salido hace poco: a 0,45 si salió una
+vez en las últimas cuatro cartas, a 0,2 si salió dos: y se puso en septiembre
 para arreglar que El Hermano era el 23–30 % de todo lo que salía. Funcionó. Pero
 el ajuste está en un extremo del compromiso, y el otro extremo es el que hace
 que el juego se entienda.
@@ -312,8 +312,8 @@ que el juego se entienda.
 `simular.mjs` y se mira el reparto por personaje en la telemetría, no solo la
 banda de dificultad.
 
-**Una idea suya que aquí no existe:** Reigns mete *subsistemas* —un duelo, una
-mazmorra— donde la bolsa se encoge a dos o tres cartas durante unos turnos, y
+**Una idea suya que aquí no existe:** Reigns mete *subsistemas*, un duelo, una
+mazmorra: donde la bolsa se encoge a dos o tres cartas durante unos turnos, y
 eso les cambia el ritmo. Aquí hay 31 cartas que encadenan (5 %) pero nada que
 secuestre el mazo varios turnos seguidos. Es contenido nuevo, no un ajuste.
 
@@ -330,7 +330,7 @@ Dos cosas sueltas de la importación del 02/10, por si alguna vez molestan:
   (10,8 % y 12,6 % frente a un máximo anterior de 10,3 %), y `tertuliano` es
   además el de cabeza más estrecha. En la carta no canta, pero si alguna vez se
   retocan, es por ahí. La regla de `comprobar-retrato.mjs` que pedía un 5 % fijo
-  estaba desfasada —la incumplían 16 de los 24 ya publicados— y ahora es un tope
+  estaba desfasada (la incumplían 16 de los 24 ya publicados) y ahora es un tope
   del 14 %, que es lo que dice `arte-fuentes/LEEME.md`: el aire puede variar, la
   cara no.
 - `fontanera.webp` tapa el 90 % del borde de abajo y debería tapar el 100 %. Es

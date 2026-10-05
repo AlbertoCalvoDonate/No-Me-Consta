@@ -40,7 +40,7 @@ const CLAVE_AVISADO = 'nomeconsta.avisoPartidas'
 const MAX_DECISIONES = 400
 
 // El `final` de una partida que el jugador dejo a medias. No es una carta del
-// mazo, asi que no choca con ningun id de final de verdad — y por eso las
+// mazo, asi que no choca con ningun id de final de verdad: y por eso las
 // consultas pueden quitarlas con un `final <> 'abandonada'` (ver
 // worker/consultas.sql, donde ya estan quitadas de todo lo que mide muertes).
 export const ABANDONADA = 'abandonada'
@@ -189,7 +189,7 @@ export async function enviarPartida(pasos: PasoPartida[], f: Final): Promise<boo
 // El agujero que esto tapa: `enviarPartida` solo corria al acabar, asi que
 // quien abria el juego, jugaba cuatro meses y no volvia no mandaba NADA. Las
 // medidas que salian de la base eran, por construccion, de gente que habia
-// llegado a un final — y la pregunta que mas importa en un playtest es justo
+// llegado a un final: y la pregunta que mas importa en un playtest es justo
 // la contraria: si la gente se cae antes de engancharse.
 //
 // Va con `sendBeacon` y no con `fetch`: cuando el navegador oculta la pestaña

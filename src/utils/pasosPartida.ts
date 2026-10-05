@@ -95,7 +95,7 @@ export function apuntarPaso(p: PasoPartida) {
 
 export function limpiarLog() {
   // Partida nueva: log vacio y sesion nueva. Las dos cosas van juntas a
-  // proposito — reusar la sesion haria que la partida nueva pisara la anterior
+  // proposito: reusar la sesion haria que la partida nueva pisara la anterior
   // en la base, que es exactamente lo que la sesion existe para evitar.
   estado = { sesion: nuevaSesion(), pasos: [] }
   escribir()

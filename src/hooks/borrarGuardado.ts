@@ -7,7 +7,7 @@ import { limpiarLog } from '../utils/pasosPartida'
 // Existe por un fallo que se vio jugando: "Borrar mi progreso" borraba los
 // logros y nada más, así que la HERENCIA del gobierno anterior sobrevivía al
 // borrado. El jugador empezaba de cero y la primera carta que veía era "al
-// anterior lo tumbaron las portadas, y esa redacción sigue ahí" — hablándole
+// anterior lo tumbaron las portadas, y esa redacción sigue ahí": hablándole
 // de una partida que, hasta donde él sabía, no había jugado nunca.
 //
 // Y la peor forma de que esto se repita es que cada módulo se borre solo y
@@ -47,7 +47,7 @@ export const NO_ES_PROGRESO = ['nomeconsta.volumen'] as const
 export function borrarTodoElProgreso() {
   // Lo que estaba esperando a mandarse, se intenta mandar ahora: son partidas
   // que el jugador ya aceptó compartir y borrarlas sin más sería tirar un dato
-  // que ya era nuestro. No se espera a que termine — si no sale, se pierde, y
+  // que ya era nuestro. No se espera a que termine: si no sale, se pierde, y
   // el borrado sigue adelante igual, que es lo que el botón prometió.
   void vaciarCola()
   for (const k of PROGRESO) {

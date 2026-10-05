@@ -38,7 +38,7 @@ function clamp(n: number) {
 }
 
 // Moralidad: se acumula tal cual, sin el jitter de las stats visibles (ver
-// más abajo) — es un contador narrativo de fondo, no algo que el jugador
+// más abajo): es un contador narrativo de fondo, no algo que el jugador
 // esté intentando optimizar turno a turno, así que no necesita el
 // componente de suerte.
 function applyMoralidad(current: number, delta: number | undefined): number {
@@ -46,13 +46,13 @@ function applyMoralidad(current: number, delta: number | undefined): number {
 }
 
 // Un poco de suerte en cada efecto no nulo (±1, con un 20% de probabilidad
-// cada lado — un 60% de las veces sale tal cual). Centrado en 0, así que no
+// cada lado: un 60% de las veces sale tal cual). Centrado en 0, así que no
 // cambia el balance medio del mazo, pero evita que la partida se pueda
 // "resolver" con una estrategia perfecta: en una simulación jugando siempre
 // a la opción más segura, sin esto se ganaba en ~el 75% de las partidas
 // (y de forma predecible); con esto, gana en torno al 35-40%, y ninguna
 // partida se alarga de forma indefinida. Los puntos de arriba siguen
-// mostrando la magnitud del efecto "de catálogo" — el
+// mostrando la magnitud del efecto "de catálogo": el
 // jitter es la parte de suerte que no se anuncia por adelantado.
 function jitter(base: number): number {
   if (base === 0) return 0
@@ -74,7 +74,7 @@ function jitter(base: number): number {
 //
 // Hubo un segundo mecanismo, el "desgaste": cada X turnos las barras
 // alejadas del centro volvían solas hacia él. Se quitó porque era justo lo
-// que hacía imposible morir — no compensar salía gratis y, jugando bien, se
+// que hacía imposible morir: no compensar salía gratis y, jugando bien, se
 // moría en el 1% de las partidas. Y con él se fueron los dos modos de
 // dificultad: medidos, los dos mataban a más del 79% y lo único que
 // cambiaba de verdad era cuánto duraba la partida, no el reto. Está en el
@@ -334,7 +334,7 @@ function markSeen(card: Card, wasForced: boolean) {
 // Peso de una carta en el sorteo normal, ya con el enfriamiento aplicado.
 // CLIMA. Sin esto el mazo se reparte como una baraja: 333 de las 420 cartas
 // jugables no declaran peso, asi que valen 1 y todo sale con la misma
-// probabilidad. Reigns hace lo contrario — sus cartas tienen tamanos distintos
+// probabilidad. Reigns hace lo contrario: sus cartas tienen tamanos distintos
 // DENTRO de la bolsa, y cuando estalla una crisis las cartas de ese tema
 // engordan; al resolverse vuelve el contenido ligero. Es lo que convierte un
 // sorteo en algo que parece un relato.
@@ -387,7 +387,7 @@ function clima(c: Card, state: GameState, ctx: CardContext): number {
 //
 // El sorteo ya impedia repetir personaje en la carta siguiente, pero nada mas:
 // con una carta de por medio podia volver, y volvia. El motivo no es el
-// sorteo, es el reparto del mazo — el hermano tiene trece de las cincuenta
+// sorteo, es el reparto del mazo: el hermano tiene trece de las cincuenta
 // cartas que pueden salir en los ocho primeros meses, asi que le tocaba una de
 // cada cuatro. Medido antes de tocar nada: del mes 3 al 8 era el 23-30% de
 // todo lo que salia.
@@ -519,7 +519,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
   // Si hay varios finales válidos a la vez, elige uno al azar entre ellos
   // para que no salga siempre el mismo texto.
   // Los finales con `minTurn` (ej. la reelección) solo pueden dispararse a
-  // partir de ese turno — así no se gana "por accidente" a los 5 minutos
+  // partir de ese turno: así no se gana "por accidente" a los 5 minutos
   // solo por tener las 4 stats altas de rebote. Los finales de stat a 0 no
   // llevan minTurn, así que siguen disparándose en cuanto ocurre el crash.
   // `!c.isElection`: las cartas de la última convocatoria son isEnding Y
@@ -547,7 +547,7 @@ function pickNextCard(state: GameState, forcedId?: string): Card {
 function pickRegularCard(state: GameState): Card {
   const ctx = contextOf(state)
   // NADA DE REPETIR CARTA EN LA MISMA PARTIDA. Antes solo se bloqueaban las 5
-  // ultimas, asi que la misma situacion podia volver seis meses despues — y
+  // ultimas, asi que la misma situacion podia volver seis meses despues: y
   // eso rompe justo la ilusion que sostiene el juego, que es que el pais
   // reacciona a lo que TU haces. Con 450 cartas de contenido y una partida
   // larga de ~150 meses sobra mazo de sobra para no repetir ni una.
@@ -566,7 +566,7 @@ function pickRegularCard(state: GameState): Card {
 
   // No repetir el personaje de la carta anterior: dos cartas seguidas del
   // mismo personaje se leen como un bug. Las cadenas narrativas (nextCardId)
-  // sí pueden repetirlo — salen antes, por la rama `forcedId` de arriba.
+  // sí pueden repetirlo: salen antes, por la rama `forcedId` de arriba.
   const lastId = state.history[state.history.length - 1]
   const lastChar = lastId ? cards.find((c) => c.id === lastId)?.character : undefined
   const otherChar = (c: Card) => c.character !== lastChar

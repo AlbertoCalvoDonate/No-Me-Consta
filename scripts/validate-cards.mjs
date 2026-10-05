@@ -10,7 +10,7 @@
 // Nota técnica: en vez de compilar el .ts, extraemos el array literal
 // de cartas como texto y lo evaluamos como JS. Funciona porque
 // cards.content.ts solo contiene objetos planos (sin tipos ni lógica
-// dentro de las cartas) — si eso deja de ser cierto, este script habrá
+// dentro de las cartas): si eso deja de ser cierto, este script habrá
 // que actualizarlo.
 
 import { readdirSync, readFileSync } from 'node:fs'
@@ -316,7 +316,7 @@ function validate(cards) {
     }
 
     if (card.isEnding) {
-      warnings.push(`${label}: tiene "isEnding: true" — eso normalmente solo se usa en cards.ts, no en cards.content.ts.`)
+      warnings.push(`${label}: tiene "isEnding: true", eso normalmente solo se usa en cards.ts, no en cards.content.ts.`)
     }
   })
 

@@ -195,7 +195,7 @@ await browser.close()
 //
 // El color de cada carta sale de la ropa del personaje, y eso es correcto: es
 // lo que hace que el fondo no parezca ajeno en las esquinas. El problema es
-// que la realidad es monocroma — los politicos visten de azul marino — y
+// que la realidad es monocroma (los politicos visten de azul marino) y
 // catorce de los veinticuatro salian azules. El 58% del reparto con la misma
 // carta.
 //
@@ -231,7 +231,7 @@ const SEPARACION = 13 // grados minimos entre dos cartas vecinas en tono
 // POR QUE HIZO FALTA SUBIRLO. El sistema de antes abria cada grupo en abanico
 // sobre su propia media, con un tope de 26 grados. Medido con los 27 retratos:
 // QUINCE cartas caian dentro de 52 grados (207-259), que es justo donde el
-// azul marino se vuelve violeta — de ahi el "mucho fondo morado" — y quedaban
+// azul marino se vuelve violeta (de ahi el "mucho fondo morado") y quedaban
 // 157 grados SEGUIDOS sin usar (50-207): ni un verde, ni un turquesa, ni un
 // cian. El abanico ya iba al tope y no podia hacer mas.
 //
@@ -245,7 +245,7 @@ const REPARTO = 0.8
 // SEIS escalones alternos de profundidad y saturacion, segun la posicion en el
 // circulo: dos cartas de tono parecido caen en escalones distintos y dejan de
 // confundirse. Con cuatro escalones entre 0,155 y 0,235 quedaban treinta y dos
-// parejas que el ojo no separa — a esa oscuridad los colores se comprimen y un
+// parejas que el ojo no separa: a esa oscuridad los colores se comprimen y un
 // azul a 243 grados y otro a 251 son la misma carta. Medido en CIELAB, que es
 // donde "parecido" significa algo.
 //
@@ -266,7 +266,7 @@ const REPARTO = 0.8
 // bajar la luminosidad disparo las parejas confundibles de 6 a 24 de golpe
 // (lo mide el propio script, al final). Mas saturacion devuelve el margen que
 // quita la oscuridad, y ademas un oscuro saturado es un tono joya, que es
-// justo lo elegante — un oscuro apagado es gris.
+// justo lo elegante: un oscuro apagado es gris.
 //
 // Siguen siendo SEIS escalones alternos para que dos cartas seguidas en el
 // circulo no salgan ademas con la misma claridad.
@@ -398,7 +398,7 @@ orden.forEach((c) => {
   )
 })
 
-const cuerpo = `// GENERADO POR scripts/colores-retrato.mjs — no editar a mano.
+const cuerpo = `// GENERADO POR scripts/colores-retrato.mjs: no editar a mano.
 //
 // Color de fondo de la carta de cada personaje, sacado del tono dominante de
 // su propia ilustracion (ver el script para el porque). Vuelve a generarlo
@@ -416,7 +416,7 @@ console.log(`\n${files.length} retratos -> src/data/coloresRetrato.ts`)
 // dos azules oscuros parecen distintos en el editor de color y son la misma
 // carta en el movil.
 //
-// CIELAB porque es el espacio donde "parecido" significa algo — en RGB, la
+// CIELAB porque es el espacio donde "parecido" significa algo: en RGB, la
 // misma distancia numerica se ve enorme en los claros y nula en los oscuros, y
 // aqui casi todo es oscuro. dE<10 es el umbral que se venia usando.
 //

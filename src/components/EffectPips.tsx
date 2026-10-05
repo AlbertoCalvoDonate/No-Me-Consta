@@ -3,8 +3,8 @@ import { COLOR } from '../utils/estilo'
 
 // Un punto que se enciende sobre el icono al arrastrar la carta: dice QUE ese
 // indicador va a moverse y CUANTO (punto pequeño, mediano o gordo según la
-// magnitud), pero NO hacia donde. Es como Reigns — un solo circulo que crece
-// con el efecto — y a proposito: obliga a aprender que hace cada personaje.
+// magnitud), pero NO hacia donde. Es como Reigns: un solo circulo que crece
+// con el efecto: y a proposito: obliga a aprender que hace cada personaje.
 function pipSize(magnitude: number) {
   if (magnitude >= 3) return 12
   if (magnitude === 2) return 8

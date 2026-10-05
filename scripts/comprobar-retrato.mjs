@@ -35,7 +35,7 @@
 //  No es que el arte este mal: arte-fuentes/LEEME.md ya dice que el aire
 //  sobre la cabeza PUEDE variar y que es correcto, porque al igualar caras
 //  quien lleva mas pelo ocupa mas. Lo que no puede variar es el tamaño de la
-//  CARA, y eso lo tiene que sostener el dibujo — aqui no se mide, porque
+//  CARA, y eso lo tiene que sostener el dibujo: aqui no se mide, porque
 //  medirlo de verdad pide encontrar los ojos (ver encuadrar-cara.mjs).
 //
 //  Asi que esto ya solo caza lo que si es un fallo: una figura flotando en

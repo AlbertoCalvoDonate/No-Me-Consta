@@ -90,7 +90,7 @@ const INFO: Record<keyof Stats, { label: string; que: string }> = {
 const ITEMS = ['medios', 'gobierno', 'calle', 'caja'] as const
 
 // Pista de efecto: al arrastrar la carta se encienden puntos sobre el icono
-// del indicador que va a moverse — uno, dos o tres según la magnitud, pero
+// del indicador que va a moverse: uno, dos o tres según la magnitud, pero
 // SIN decir si sube o baja. Es como Reigns: te dice que algo cambia y cuánto,
 // y te toca aprender a ti qué hace cada personaje. Ponlo en false para
 // esconder también la magnitud (modo aún más a ciegas).

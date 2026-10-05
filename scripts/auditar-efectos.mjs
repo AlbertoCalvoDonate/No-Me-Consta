@@ -2,8 +2,8 @@
 //
 // El otro auditor (auditar-coherencia) mira si una carta puede SALIR cuando no
 // toca. Este mira otra cosa, que se ve jugando y no leyendo: eliges una cosa y
-// el número hace la contraria. El juego no falla —el número es el que alguien
-// escribió— pero el jugador lee una cosa y ve otra, y eso se siente como un
+// el número hace la contraria. El juego no falla: el número es el que alguien
+// escribió: pero el jugador lee una cosa y ve otra, y eso se siente como un
 // error aunque no lo sea.
 //
 // Uso:  npm run auditar-efectos
@@ -13,7 +13,7 @@
 //
 //  1. CRUZAR `pleases` CON EL INDICADOR DEL PERSONAJE. Dar por mala toda carta
 //     donde contentar a alguien le baje el indicador que encarna: señaló 150
-//     de 428. El razonamiento estaba mal, no las cartas — `pleases` es lo que
+//     de 428. El razonamiento estaba mal, no las cartas: `pleases` es lo que
 //     el personaje quiere PARA ÉL, no lo que le conviene a su indicador. El
 //     Hermano encarna la caja y quiere el puesto a dedo; dárselo cuesta dinero.
 //
@@ -56,7 +56,7 @@ function sacarCartas(fuente) {
   // El corchete bueno es el del FINAL de la marca. Buscar el primer '[' desde
   // `desde` encuentra el de `Card[]`, y entonces lo que se evalúa es `[]`: cero
   // cartas, y un auditor que dice que todo está bien sin haber mirado nada.
-  // Pasó, y no falló — solo no encontraba nunca nada.
+  // Pasó, y no falló: solo no encontraba nunca nada.
   const abre = desde + marca.length - 1
   let nivel = 0
   for (let i = abre; i < fuente.length; i++) {
@@ -136,7 +136,7 @@ console.log(`  (${excepciones.length} excepciones; casi todas son los fontaneros
 
 // ---------------------------------------------------------------------------
 // 2. LA CAJA NO TIENE REGLA, y es útil saberlo para no inventarse una. Medido:
-// de las opciones turbias, 71 LLENAN la caja y 61 la VACÍAN — porque corromper
+// de las opciones turbias, 71 LLENAN la caja y 61 la VACÍAN: porque corromper
 // es las dos cosas, cobrar un maletín y comprar a un tránsfuga. Lo que sí es
 // casi ley es que ser decente CUESTA: 70 decentes vacían la caja y solo 8 la
 // llenan (y esas ocho son "que lo pague él").
@@ -218,7 +218,7 @@ console.log()
 // que menos, El Hermano (81%) y La Oposicion (86%).
 //
 // OJO AL LEER LA LISTA: casi todas las que salen son tipos de carta donde el
-// personaje NARRA en vez de protagonizar — las de pelea entre dos (`feud_`),
+// personaje NARRA en vez de protagonizar: las de pelea entre dos (`feud_`),
 // los chistes (`meme_`), el balance de fin de ano (`recap_`), la herencia del
 // gobierno anterior (`herencia_`) y los rescates. Ahi es normal y correcto que
 // lo que se mueva sea otra cosa. Lo que merece una mirada son las ORDINARIAS.

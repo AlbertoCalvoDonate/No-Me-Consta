@@ -5,9 +5,9 @@ ERE fantasma, pactos de investidura, guerras de titulares…). Eres el
 presidente y tienes que aguantar una legislatura entera a tu propio gabinete
 y a la oposición, carta a carta.
 
-El reparto son arquetipos reconocibles —«El Jefe de Comunicación», «La
+El reparto son arquetipos reconocibles: «El Jefe de Comunicación», «La
 Presidenta Regional», «El Exiliado», «La Socia Incómoda», «El Hermano», «La
-Primera Dama»…— sin nombres reales ni lugares concretos (nada de países,
+Primera Dama»…: sin nombres reales ni lugares concretos (nada de países,
 capitales ni instituciones con nombre). El tono busca reírse de todos por
 igual: los efectos de cada carta van del coste político, no de si la medida
 es "buena" o "mala". Algunos personajes se llevan mal entre sí y a veces
@@ -28,7 +28,7 @@ Abre lo que te indique la terminal (normalmente `http://localhost:5173`).
 src/
   types.ts                # Tipos: Card, Stats, GameState
   data/
-    cards.content.ts       # EL MAZO — edita aquí para añadir/cambiar cartas normales
+    cards.content.ts       # EL MAZO: edita aquí para añadir/cambiar cartas normales
     cards.ts                # Solo los finales (llevan código) + ensamblaje del mazo
   hooks/useGameStore.ts    # Lógica de juego (Zustand): elegir, aplicar efectos, elegir siguiente carta
   components/
@@ -67,13 +67,13 @@ principio del archivo. Cada carta es un objeto `Card`:
 Las 4 stats (`medios`, `gobierno`, `calle`, `caja`) van de 0 a 10. Si una
 llega a 0 (o a 10, por arriba), se dispara la carta de "final"
 correspondiente. Esas cartas de final (`final_*`) están aparte, en
-`src/data/cards.ts`, porque llevan una condición en código — no hace falta
+`src/data/cards.ts`, porque llevan una condición en código: no hace falta
 tocarlas para añadir cartas normales.
 
 `moralidad` es un campo opcional en cada elección (`left`/`right`): un
 número pequeño (normalmente -2 a 2) que indica si esa opción es honesta
 (positivo) o corrupta (negativo). Es una quinta variable oculta (0-10,
-empieza en 5) que **no** se ve en ninguna barra durante la partida — solo
+empieza en 5) que **no** se ve en ninguna barra durante la partida: solo
 influye en qué variante de final sale al tocar fondo o techo con alguna
 stat: cada final tiene 3 versiones (alta/media/baja moralidad) que cuentan
 "cómo se llegó hasta ahí", no solo "qué se rompió". Omite el campo si la
@@ -107,16 +107,16 @@ personaje. Eso era lo que se veia como "huecos" en la carta.
 Para ponerle cara a un personaje (ej. `presi_intro` en `cards.content.ts`,
 que usa `public/characters/presi.png` como ejemplo):
 
-1. Guarda la imagen **cuadrada** (mismo ancho que alto — `presi.png` es
+1. Guarda la imagen **cuadrada** (mismo ancho que alto: `presi.png` es
    1000x1000, referencia a seguir) en `public/characters/`.
 2. En la carta, añade `characterImage: 'nombre-del-archivo.png'`.
 
 La carta la muestra con `object-fit: cover`, recortando por los lados para
-llenar el hueco alto y estrecho de la carta — con una imagen cuadrada y el
+llenar el hueco alto y estrecho de la carta: con una imagen cuadrada y el
 personaje centrado (como `presi.png`) el recorte queda bien; una imagen no
 cuadrada o descentrada puede acabar con la cabeza cortada.
 
-No hace falta importar nada ni tocar código — Vite sirve todo lo que hay en
+No hace falta importar nada ni tocar código: Vite sirve todo lo que hay en
 `public/` directamente. Si una carta no tiene `characterImage`, se ve como
 hasta ahora (solo el nombre en texto), así que puedes ir añadiendo retratos
 poco a poco.
@@ -293,15 +293,15 @@ le dice al jugador la primera vez que abre, con un interruptor al lado para
 apagarlo.
 
 **La encuesta.** Al acabar la primera partida se preguntan dos cosas: si juega
-a videojuegos y si conocía *Reigns*. Sin eso los números no se pueden leer —
+a videojuegos y si conocía *Reigns*. Sin eso los números no se pueden leer: 
 veinte meses de alguien que juega a diario y veinte meses de quien no ha tocado
 un videojuego son dos juegos distintos.
 
 Lo que viaja son **las respuestas**, pegadas a cada partida, y no un
 identificador del móvil. Con eso se puede comparar "partidas de gente que juega
 a menudo" contra el resto, que es la pregunta útil, y a la vez dos personas que
-contestan igual siguen siendo indistinguibles. La alternativa obvia —un número
-por móvil— permitiría además seguir a una persona entre partidas, y eso es
+contestan igual siguen siendo indistinguibles. La alternativa obvia: un número
+por móvil: permitiría además seguir a una persona entre partidas, y eso es
 exactamente lo que el aviso dice que no hay. El razonamiento largo está en
 `src/utils/perfil.ts`.
 
@@ -331,7 +331,7 @@ siempre, con la carta `_final` que corresponda.
 Las cartas de elecciones llevan `isElection: true`, viven en `cards.ts` (usan
 `condition`) y **nunca** salen por sorteo normal: las fuerza `pickNextCard`.
 Ojo: las de la última convocatoria son `isEnding` **y** `isElection`, así que
-el filtro de finales normales tiene que excluir `isElection` — si no, se
+el filtro de finales normales tiene que excluir `isElection`: si no, se
 cuelan en cualquier turno.
 
 ## Sonido
@@ -384,7 +384,7 @@ eso hay tres piezas que permiten que la partida se cuente sola:
 
 `weight` puede ser un número **o una función** `(stats, moralidad, ctx)`. Así
 una trama se vuelve más frecuente mientras está viva y se apaga sola (peso 0)
-cuando deja de tener sentido — igual que las cartas de guerra de Reigns, que
+cuando deja de tener sentido: igual que las cartas de guerra de Reigns, que
 entran en la baraja al empezar la guerra y salen al acabarla.
 
 ### Ninguna carta se repite en la misma partida
@@ -392,7 +392,7 @@ entran en la baraja al empezar la guerra y salen al acabarla.
 `pickRegularCard` descarta todo lo que ya ha salido (`state.history` entero),
 no solo lo reciente. Antes bloqueaba unicamente las cinco ultimas
 (`history.slice(-5)`), asi que la misma situacion podia volver seis meses
-despues — y eso rompe justo la ilusion que sostiene el juego, que es que el
+despues: y eso rompe justo la ilusion que sostiene el juego, que es que el
 pais reacciona a lo que TU haces.
 
 Con 463 cartas sobra mazo para una partida larga. Si aun asi se agotara
@@ -421,7 +421,7 @@ veces.
 
 Ojo al escribirlas: una condición que no se pueda cumplir nunca es contenido
 muerto y no falla en ningún sitio. `acreedor_unico` habla de un solo acreedor
-porque `ya_te_salvaron` solo permite **un rescate por partida** — escrita en
+porque `ya_te_salvaron` solo permite **un rescate por partida**: escrita en
 plural ("cuando te reclaman dos") no habría salido jamás. La forma de
 cazarlo es medir el alcance en simulación, no leer el código y suponer.
 
@@ -441,7 +441,7 @@ enfado; jugando a decir que no a todo, el 48%.
 
 **Y ahora se ve.** Debajo del nombre del personaje aparece en que punto esta
 con usted: "Harto de usted", "No le perdona una", "Le debe una", "De su lado".
-Sin numeros a proposito — no es un marcador que optimizar, es lo que notarias
+Sin numeros a proposito: no es un marcador que optimizar, es lo que notarias
 de alguien con quien tratas a diario. Antes el sistema existia pero era
 invisible: te caia una carta de enfado sin saber por que, o te salvaba alguien
 sin que supieras que le caias bien.
@@ -452,7 +452,7 @@ que obstruirle no costaba nada. Lo mismo La Oposición, El Encuestador y
 Mopongo. Al repasarlo se repartieron 47 `pleases` y se añadió una rama a
 `final_evento_registro` para que taparle el sumario al juez con la caja llena
 acabe en registro. Si añades un personaje, asegúrate de que sus cartas dicen
-de qué lado está — la auditoría del mazo lista cuántas tiene cada uno.
+de qué lado está: la auditoría del mazo lista cuántas tiene cada uno.
 
 Y al revés: el enfado de **quien no te sostiene** no debería tumbarte el
 gobierno. `final_evento_ruptura` solo cuenta el enfado de los socios de
@@ -504,8 +504,8 @@ los 64 epílogos del juego en cuatro resoluciones, hasta 320x568.
 ### Puntos de efecto
 
 Al arrastrar la carta se enciende un **punto** sobre el icono de cada stat que
-va a moverse. Dice QUÉ indicador cambia y CUÁNTO —un solo círculo, pequeño /
-mediano / gordo según la magnitud (±1, ±2, ±3 o más)— pero **no** hacia dónde,
+va a moverse. Dice QUÉ indicador cambia y CUÁNTO: un solo círculo, pequeño /
+mediano / gordo según la magnitud (±1, ±2, ±3 o más): pero **no** hacia dónde,
 igual que en Reigns: la dirección se aprende jugando. El tamaño se ajusta en
 `pipSize()` de `src/components/EffectPips.tsx`; para esconder también la
 magnitud, `SHOW_EFFECT_PIPS = false` en `src/components/StatBars.tsx`.
@@ -514,7 +514,7 @@ magnitud, `SHOW_EFFECT_PIPS = false` en `src/components/StatBars.tsx`.
 
 Al pasar unas elecciones (turno 48, 96) la partida **continúa**: se conservan
 las 4 stats, la moralidad, los flags de trama y el enfado de cada personaje.
-No hay reinicio ni pantalla intermedia — la legislatura siguiente arranca con
+No hay reinicio ni pantalla intermedia: la legislatura siguiente arranca con
 las consecuencias de la anterior encima de la mesa.
 
 ### Guardar y reanudar (`src/hooks/persistPartida.ts`)
@@ -524,13 +524,13 @@ El estado completo de la partida en curso se vuelca a `localStorage`
 bombas programadas, enfado/favor, historial y qué carta toca. Se borra al
 morir y al empezar de cero. La pantalla de inicio ofrece **Continuar · mes N**
 si hay un guardado válido (la carta guardada tiene que seguir existiendo en el
-mazo — entre despliegues puede cambiar). Es lo que hace que cerrar la pestaña
+mazo: entre despliegues puede cambiar). Es lo que hace que cerrar la pestaña
 o bloquear el móvil a mitad no cueste la partida.
 
 ### La "puntuación" (o por qué no hay)
 
 **Reigns no tiene puntos.** Lo que registra es: años de reinado, el museo de
-muertes (todos los finales que has visto) y las quests. Aquí igual — no hay
+muertes (todos los finales que has visto) y las quests. Aquí igual: no hay
 score que optimizar. Lo que se guarda y se enseña en el inicio es un
 **historial**: tu legislatura más larga y su epíteto, cuántos de los 11
 epítetos has sacado, cuántos logros llevas. El "compartir" del final
@@ -541,25 +541,25 @@ que sirva para picarse en una tabla.
 ### Ritmo visual y carta de favor
 
 Las cartas de hito no se leen igual que un turno de trámite: el banner cambia
-de color y saca una etiqueta —dorado en la noche electoral, azul en el balance
+de color y saca una etiqueta: dorado en la noche electoral, azul en el balance
 de fin de año, verde en la carta de favor (ver `BannerKind` en
-`SituationBanner`)—.
+`SituationBanner`): .
 
 La carta `favor_ganado` la fuerza `useGameStore` la primera vez que te ganas a
 alguien lo bastante como para que pueda aparecer a salvarte (favor >=
 `FAVOR_PARA_RESCATE`). Es genérica: `App` le pone el nombre y el color del
 personaje que ahora te debe una. Existe para que el favor, que es un contador
-invisible, se note — y para que el rescate, cuando pasa, tenga sentido.
+invisible, se note: y para que el rescate, cuando pasa, tenga sentido.
 
 ### Ilustraciones de la pantalla de fin
 
 Los finales por barra (`ilustracionFin` en `App.tsx`) tienen una escena propia
-por indicador y dirección — techo o fondo, `max_medios.webp` / `min_cajab.webp`
-etc. — más unas específicas: las 5 variantes de noche electoral comparten
+por indicador y dirección: techo o fondo, `max_medios.webp` / `min_cajab.webp`
+etc.: más unas específicas: las 5 variantes de noche electoral comparten
 `nocheelectoral.webp`, y "el partido te echa en comité" usa `comite.webp` en
 vez de la genérica de gobierno porque encaja literal con su texto. Los finales
 por evento (moción, registro, ruptura) y los de rechazar un rescate se quedan
-sin ilustración — no hay arte para esos todavía.
+sin ilustración: no hay arte para esos todavía.
 
 Con un epílogo largo se prescinde de la imagen: prioriza que la pantalla siga
 cabiendo sin scroll (ver el punto siguiente) antes que la decoración.
@@ -569,12 +569,12 @@ cabiendo sin scroll (ver el punto siguiente) antes que la decoración.
 Tiene bastante "chrome" fijo (título, indicador roto, "duró X meses", epíteto,
 a veces la ilustración de arriba) además del propio epílogo. En móviles bajitos
 (iPhone SE 375×667, Android 360×640) los epílogos largos no cabían sin
-scroll — medido, hasta 108px de sobra en el peor caso (292 caracteres). A
+scroll: medido, hasta 108px de sobra en el peor caso (292 caracteres). A
 partir de cierta longitud el texto y los márgenes se hacen más compactos
 (`modoCompacto` en `App.tsx`), y el umbral baja más si hay ilustración de por
 medio, para dejarle sitio. Medido con los 74 lados de los 37 finales del
 juego: 0 necesitan scroll a 360×640 y 375×667. Por debajo de eso (320×568)
-sigue habiendo scroll de último recurso — para eso está.
+sigue habiendo scroll de último recurso: para eso está.
 
 ### Vibración (`src/utils/haptics.ts`)
 
@@ -588,9 +588,9 @@ Lista de metas en `src/data/logros.ts`: supervivencia incremental (12 / 24 /
 36 / 48 / 96 / 140 meses), los 11 epítetos de moral, por dónde caes (cada
 barra, el techo, moción / registro / ruptura), coleccionar finales distintos,
 elecciones, las tramas (hermano, Gurú, Fiscal...) y algunas rarezas. Cada uno
-es un `check(r)` que mira el `ResultadoPartida` —lo que se sabe al terminar,
+es un `check(r)` que mira el `ResultadoPartida`: lo que se sabe al terminar,
 más los totales acumulados de todas las partidas (`nomeconsta.logros` en
-localStorage)—.
+localStorage): .
 
 Se comprueban todos al morir (`registrarPartida` en `src/hooks/useLogros.ts`);
 los recién conseguidos saltan de uno en uno como un pop-up estilo Xbox
@@ -600,7 +600,7 @@ desbloquearlos, para no destripar tramas y finales; los epítetos sí se ven
 desde el principio (marcan que existe un espectro moral, no cómo se recorre).
 
 Para añadir uno: una entrada más en `LOGROS` con un `id` estable (es la clave
-en localStorage) y su `check`. Nada más — el total y el panel se actualizan
+en localStorage) y su `check`. Nada más: el total y el panel se actualizan
 solos.
 
 ### El reparto (quién es quién)
@@ -649,7 +649,7 @@ cero.
 Cuidado al tocarla: la pantalla de fin va justa. Esta línea, con los tamaños
 normales, hacía desbordar quince de los setenta y cuatro lados a 360×640 (por
 5px exactos). Por eso en modo compacto va a 12px/1.2 y con márgenes negativos.
-Y no puede partirse en dos líneas — medido, el peor caso posible (tres
+Y no puede partirse en dos líneas: medido, el peor caso posible (tres
 dígitos) cabe en una sola a 360px.
 
 ## Los cuatro indicadores (y por qué son esos)
@@ -670,7 +670,7 @@ de 305.
 
 En el juego, tocar cualquiera de las cuatro barras baja un panel con esta
 misma info (qué mide y quién la mueve). El mapa está duplicado en `INFO`
-dentro de `src/components/StatBars.tsx` — si se renombra un personaje, hay que
+dentro de `src/components/StatBars.tsx`: si se renombra un personaje, hay que
 tocarlo ahí también.
 
 ### Por qué se renombraron
@@ -680,7 +680,7 @@ respuesta subía o bajaba. Midiendo el mazo salieron tres cosas:
 
 - **`partido` hacía de dos cosas opuestas**: tu aparato interno *y* tus socios
   de coalición. Ceder al Exiliado subía "partido", cuando el Exiliado no es de
-  tu partido — de hecho cabrea a los tuyos. Ese era el fallo de fondo.
+  tu partido: de hecho cabrea a los tuyos. Ese era el fallo de fondo.
   `gobierno` es una sola pregunta: ¿te sigue sosteniendo la coalición?
 - **`partido` y `votantes` eran un balancín**: 93 de 106 opciones que tocaban
   ambos los movían en sentido opuesto. Un solo eje disfrazado de dos.
@@ -707,7 +707,7 @@ mecanismo por separado (jugando al azar, mediana de meses):
 | **sin desgaste** | **18** | **99%** |
 
 El mazo, en cambio, está bien equilibrado: la suma de todos sus efectos ronda
-cero. Lo que sí está sesgado es cada estrategia pura, y eso es deliberado —
+cero. Lo que sí está sesgado es cada estrategia pura, y eso es deliberado: 
 te obliga a alternar:
 
 | Si juegas siempre… | medios | gobierno |
@@ -738,11 +738,11 @@ partidas completas, hasta un jugador que lo hacía todo bien **ganaba el ~4%**
 (mediana: 47 meses, ni una legislatura). Se aflojó en tres puntos, medido para
 que el que juega al azar siga sin ganar nunca:
 
-- **`DAMP_ZONE` 2 → 3** — la amortiguación empieza a notarse desde 8/2, no solo
+- **`DAMP_ZONE` 2 → 3**: la amortiguación empieza a notarse desde 8/2, no solo
   en 9/1.
-- **Turno de gracia: 1 → 2** (`extremeStreak < 3`) — tocar 0 o el máximo da dos
+- **Turno de gracia: 1 → 2** (`extremeStreak < 3`), tocar 0 o el máximo da dos
   turnos para rectificar, no uno.
-- **`elecciones_derrota`: `<= 2` → `<= 1`** (y `elecciones_apretada` a `>= 2`) —
+- **`elecciones_derrota`: `<= 2` → `<= 1`** (y `elecciones_apretada` a `>= 2`), 
   solo pierdes la noche electoral si llegas con algo prácticamente muerto.
 
 | jugador | gana | mediana |
@@ -759,7 +759,7 @@ sube de una legislatura a una y media: da tiempo a ver el mediojuego.
 Vuelve a medirlo cada vez que añadas cartas o toques una condición de final:
 el script de simulación está en el scratchpad y juega 5.000 partidas por
 modelo de jugador. Las últimas tandas (29 cartas del personaje nuevo, luego
-10 cartas más y 47 `pleases`) no movieron la aguja — 1,7 / 5,0 / 10,6 / 16,3 —
+10 cartas más y 47 `pleases`) no movieron la aguja (1,7 / 5,0 / 10,6 / 16,3)
 pero eso hay que comprobarlo, no suponerlo.
 
 ### Muertes por evento
@@ -767,9 +767,9 @@ pero eso hay que comprobarlo, no suponerlo.
 Además de por barra, se puede caer por una situación que has ido construyendo
 tú. Se comprueban en todos los turnos y llevan `byEvent: true`:
 
-- **Moción de censura** — el hermano imputado y sin un medio que te defienda.
-- **Ruptura de la coalición** — dos socios hartos de verdad, o cuatro bastante.
-- **Registro y detención** — caja llena, prensa encima y la moralidad por los
+- **Moción de censura**: el hermano imputado y sin un medio que te defienda.
+- **Ruptura de la coalición**: dos socios hartos de verdad, o cuatro bastante.
+- **Registro y detención**: caja llena, prensa encima y la moralidad por los
   suelos.
 
 Saltan en torno al 4% de las partidas: son caídas que se ven venir y se pueden

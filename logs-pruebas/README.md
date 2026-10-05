@@ -35,7 +35,7 @@ tener muchos y poder mirarlos juntos.
 
 ## Lo que se ha aprendido
 
-**001 — la cadena larga funciona con humanos.** La trama del hermano corrió de
+**001: la cadena larga funciona con humanos.** La trama del hermano corrió de
 principio a fin: colocarlo (mes 5), diligencias (7), la prensa con la nómina
 (14), la imputación (19) y la condena (20). Cinco cartas encadenadas a lo largo
 de catorce meses. Hasta ahora eso solo se había visto en el simulador.

@@ -7,7 +7,7 @@ import { cards } from '../data/cards'
 // los flags que se han visto (los usan los logros al terminar).
 //
 // Se borra al terminar la partida y al empezar una nueva. NO guarda récords
-// ni logros — de eso se encarga nomeconsta.logros (ver useLogros).
+// ni logros: de eso se encarga nomeconsta.logros (ver useLogros).
 
 const KEY = 'nomeconsta.partida'
 // Subir esto invalida los guardados viejos: hazlo si cambia la forma de

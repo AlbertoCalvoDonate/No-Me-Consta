@@ -142,7 +142,7 @@ async function guardar(env: Env, p: Partida): Promise<Response> {
   // Lo segundo pasa siempre que alguien deja la partida a medias y vuelve:
   // primero llego la abandonada (por la baliza al ocultarse la pestaña) y
   // ahora llega acabada. Es LA MISMA partida, asi que se actualiza su fila en
-  // vez de anadir otra — si no, cada vez que alguien se va al WhatsApp y
+  // vez de anadir otra: si no, cada vez que alguien se va al WhatsApp y
   // vuelve habria una muerte de mas en la base.
   //
   // SE HIZO ASI DESPUES DE VERLO FALLAR. El primer intento miraba antes con un
@@ -150,7 +150,7 @@ async function guardar(env: Env, p: Partida): Promise<Response> {
   // salieron cinco decisiones colgando de una partida inexistente: dos envios
   // casi a la vez pasaron los dos por el SELECT sin encontrar nada, cada uno
   // se invento su id, el segundo choco contra el indice UNIQUE y actualizo la
-  // fila del primero — pero sus decisiones ya iban con el id que se habia
+  // fila del primero: pero sus decisiones ya iban con el id que se habia
   // inventado, que no existia en `partidas`.
   //
   // Con RETURNING no hay hueco donde quepa esa carrera: la base dice cual es

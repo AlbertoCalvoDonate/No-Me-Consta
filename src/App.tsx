@@ -157,7 +157,7 @@ export default function App() {
   }, [])
 
   // ¿Había una partida a medias en localStorage al cargar? (snapshot al montar;
-  // el store ya la ha restaurado — "Continuar" solo tiene que enseñar el juego.)
+  // el store ya la ha restaurado: "Continuar" solo tiene que enseñar el juego.)
   const [reanudable] = useState(hayPartidaEnCurso)
   const { stats, turn, gameOver, deathReason, deathStat, moralidad, currentCard, history, flagsVistos, anger, favor, extremeStreak, choose, restart } =
     useGameStore()
@@ -308,12 +308,12 @@ export default function App() {
   // La pantalla de fin tiene bastante "chrome" fijo (título, indicador,
   // "duró X meses", epíteto) además del propio epílogo, y a veces una
   // ilustración (ver ilustracionFin). En moviles bajitos (iPhone SE, 375x667;
-  // Android de 360x640) los epílogos largos no cabían sin scroll — medido,
+  // Android de 360x640) los epílogos largos no cabían sin scroll: medido,
   // hasta 108px de sobra en el peor caso (292 caracteres). Con el texto y los
   // márgenes más compactos, cabe entero hasta esa altura; por debajo (320x568)
   // sigue habiendo scroll de último recurso, que para eso está.
   //
-  // La ilustración ocupa sitio (~85px): con un epílogo largo no compensa —
+  // La ilustración ocupa sitio (~85px): con un epílogo largo no compensa, 
   // se prescinde de ella y se prioriza que quepa el texto sin scroll. Con una
   // corta, el modo compacto salta antes (100 en vez de 160 caracteres) para
   // dejarle sitio. Medido igual que el resto, sigue sin hacer falta scroll
@@ -618,7 +618,7 @@ export default function App() {
                 {/* Sin AnimatePresence a propósito: con ella, al cambiar de
                     key React mantenía montada la carta saliente un frame de
                     más (a la espera de una animación de salida que no
-                    existe), y se veían solapadas las dos cartas — nombre de
+                    existe), y se veían solapadas las dos cartas: nombre de
                     personaje y panel de texto de ambas a la vez. Con un
                     condicional normal, React sustituye la carta en el mismo
                     commit, tal cual pide el comentario de más abajo. */}
@@ -833,7 +833,7 @@ export default function App() {
                       </p>
                     )}
                     {/* Cómo le recordarán: el único momento en que se
-                        enseña la moralidad acumulada, y sin número — solo el
+                        enseña la moralidad acumulada, y sin número: solo el
                         título que se ha ganado, como los apodos que la
                         historia les colgaba a los reyes. */}
                     <div

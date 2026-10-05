@@ -2,7 +2,7 @@
 //
 // Un logro que no salta nunca es peor que no tenerlo: el jugador lo ve en la
 // lista, lo persigue y no existe. Y no se detecta leyendo el código, porque el
-// `check` siempre parece razonable — lo que falla es que la condición que pide
+// `check` siempre parece razonable: lo que falla es que la condición que pide
 // no se da en el juego. Fue exactamente lo que pasó con el final de la ruptura
 // de la coalición: pedía un enfado que el motor no alcanza nunca.
 //

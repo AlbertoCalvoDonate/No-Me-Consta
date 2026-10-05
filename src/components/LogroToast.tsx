@@ -28,7 +28,7 @@ export function LogroToast({
       onVaciar()
       return
     }
-    // Un "ding" por logro, según va saliendo cada uno — no todos de golpe.
+    // Un "ding" por logro, según va saliendo cada uno: no todos de golpe.
     sfx.logro()
     haptics.logro()
     const t = setTimeout(() => setI((n) => n + 1), 3600)

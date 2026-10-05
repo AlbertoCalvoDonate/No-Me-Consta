@@ -12,7 +12,7 @@
 //   - no se reintentaba nunca, asi que un segundo de mala cobertura era una
 //     partida entera;
 //   - la PRIMERA partida de cada jugador esperaba a que contestara la encuesta,
-//     en memoria: cerrar la app en esa pantalla la perdia — y es la partida mas
+//     en memoria: cerrar la app en esa pantalla la perdia, y es la partida mas
 //     valiosa que hay, la de alguien que acaba de llegar;
 //   - un 400 del validador no se miraba.
 //

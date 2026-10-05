@@ -1,13 +1,13 @@
 import type { Card } from '../types'
 
 // ============================================================================
-// EL MAZO — aquí vive todo el contenido jugable del juego.
+// EL MAZO: aquí vive todo el contenido jugable del juego.
 // Este es el ÚNICO archivo que hace falta tocar para añadir o editar cartas.
 // (Las cartas de "final de partida" viven aparte, en cards.ts, porque llevan
-// algo de lógica de código — no hace falta tocarlas para añadir contenido.)
+// algo de lógica de código: no hace falta tocarlas para añadir contenido.)
 // ============================================================================
 //
-// PLANTILLA — copia este bloque, pégalo donde quieras dentro del array de
+// PLANTILLA: copia este bloque, pégalo donde quieras dentro del array de
 // abajo, y rellena los huecos:
 //
 //   {
@@ -31,7 +31,7 @@ import type { Card } from '../types'
 //     2 = desgaste          (turno 9+,  empiezan las grietas)
 //     3 = crisis            (turno 21+, la unidad anticorrupción, jueces, fiscal general)
 //     4 = vísperas electorales (turno 36+, indultos, moción de censura)
-// - El `id` no puede empezar por "final_" — ese prefijo está reservado para
+// - El `id` no puede empezar por "final_": ese prefijo está reservado para
 //   las cartas de final de partida (cards.ts).
 // - Después de editar, corre `npm run validate-cards` para comprobar que todo
 //   está bien (ids duplicados, stats mal escritas, valores raros...) antes de
@@ -187,7 +187,7 @@ export const contentCards: Card[] = [
       nextCardId: 'inicio',
     },
   },
-  // --- EJEMPLOS DE TONO "MEME"/CASTIZO — prueba de concepto, a ver qué tal
+  // --- EJEMPLOS DE TONO "MEME"/CASTIZO: prueba de concepto, a ver qué tal
   // sienta mezclado con el resto del mazo. Bórralas, edítalas o multiplícalas
   // libremente; llevan el prefijo "meme_" solo para que sea fácil encontrarlas
   // y borrarlas de una tacada si decidís que no encajan. ---
@@ -226,7 +226,7 @@ export const contentCards: Card[] = [
     id: 'inicio',
     phase: 1,
     // Va SIEMPRE justo detras de una presi_intro, que la fuerza via
-    // nextCardId, o sea en el turno 2 — y la barra de abajo ya marca "2
+    // nextCardId, o sea en el turno 2: y la barra de abajo ya marca "2
     // meses". Por eso no puede decir "su primer dia": ese dia es el de la
     // carta anterior. Sin maxTurn ademas podia volver a salir por sorteo en
     // cualquier mes de la partida (el bug de "me salio en el mes 15").
@@ -1558,7 +1558,7 @@ export const contentCards: Card[] = [
     right: { text: 'Impugnar esa mesa', effects: { medios: -2, gobierno: 1 }, moralidad: -1 },
   },
 
-  // --- MEMES CLÁSICOS ESPAÑOLES — referencias a frases y momentos virales
+  // --- MEMES CLÁSICOS ESPAÑOLES: referencias a frases y momentos virales
   // reales (Chiquito de la Calzada, El Risitas, Torrente, "la duda ofende",
   // el discurso de Ana Botella...), puestas en boca del reparto habitual.
   // Mismo prefijo "meme_" que las de prueba de más arriba, para poder
@@ -1689,10 +1689,10 @@ export const contentCards: Card[] = [
     right: { text: 'Fiarse de su versión', effects: { medios: -1, gobierno: 1 }, moralidad: -1 },
   },
   // ============================================================================
-  // CARTA DE FAVOR — la fuerza useGameStore la primera vez que te ganas a
+  // CARTA DE FAVOR: la fuerza useGameStore la primera vez que te ganas a
   // alguien lo bastante (favor >= FAVOR_PARA_RESCATE, el umbral del rescate).
   // Es genérica: App le pone el nombre y el color del personaje que ahora te
-  // debe una. Está para que el favor, que es un contador invisible, se NOTE —
+  // debe una. Está para que el favor, que es un contador invisible, se NOTE: 
   // y para que, si ese alguien aparece luego a salvarte, tenga sentido.
   // ============================================================================
   {
@@ -1707,7 +1707,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // CARTAS DE REACCIÓN — no salen en el sorteo normal (maxTurn: 0, weight: 0).
+  // CARTAS DE REACCIÓN: no salen en el sorteo normal (maxTurn: 0, weight: 0).
   // Solo aparecen forzadas por el `nextCardId` de otra carta: eliges la opción
   // jugosa y otro personaje "salta" para responder a lo que acabas de hacer.
   // ============================================================================
@@ -1896,7 +1896,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // ENEMISTADES — el reparto no solo te da la brasa a ti: también se pelea
+  // ENEMISTADES: el reparto no solo te da la brasa a ti: también se pelea
   // entre sí, y a veces te toca elegir bando (o mirar para otro lado).
   // ============================================================================
   {
@@ -2003,7 +2003,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // CARTAS DE PERFIL — presencia para todo el reparto, cada uno en su tono.
+  // CARTAS DE PERFIL: presencia para todo el reparto, cada uno en su tono.
   // Los efectos van del coste político (partido, medios, votantes, caja), no
   // de si la medida es "buena": aquí todos dan la brasa, en todas direcciones.
   // ============================================================================
@@ -5878,7 +5878,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // PELEAS ENTRE PERSONAJES — el gabinete no solo te da la brasa a ti, también
+  // PELEAS ENTRE PERSONAJES: el gabinete no solo te da la brasa a ti, también
   // se mata entre sí. Casi todas dejan al presidente eligiendo bando (o
   // mirando para otro lado, que también es elegir).
   // ============================================================================
@@ -5987,7 +5987,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // MÁS BROMAS — el ruido de fondo del oficio.
+  // MÁS BROMAS: el ruido de fondo del oficio.
   // ============================================================================
   {
     id: 'meme_micro_abierto',
@@ -6091,7 +6091,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // MÁS REACCIONES — encadenadas desde otra carta (maxTurn/weight 0).
+  // MÁS REACCIONES: encadenadas desde otra carta (maxTurn/weight 0).
   // ============================================================================
   {
     id: 'react_guru_periodista',
@@ -6156,7 +6156,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // ENFADOS — consecuencias de decirle que no a alguien una y otra vez.
+  // ENFADOS: consecuencias de decirle que no a alguien una y otra vez.
   // Cada carta de personaje marca con `pleases` qué lado le da la razón; el
   // lado contrario le suma enfado. Estas cartas saltan al pasar el umbral y
   // su peso crece con el enfado, así que cuanto más le ignoras, más probable
@@ -6266,7 +6266,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // TRAMA DEL HERMANO — arco con estado. La coloca a dedo, el juez abre
+  // TRAMA DEL HERMANO: arco con estado. La coloca a dedo, el juez abre
   // diligencias, la prensa tira del hilo y acaba en juicio. Cada paso enciende
   // un flag que abre el siguiente y sube el peso de la trama mientras está
   // viva (y la apaga cuando se cierra), como las cartas de guerra de Reigns.
@@ -6377,7 +6377,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // EL MINISTRO CAÍDO, EN SU SALSA — el personaje da para más que contratos:
+  // EL MINISTRO CAÍDO, EN SU SALSA: el personaje da para más que contratos:
   // vida de lujo discreta, "asesoras" que nadie sabe qué asesoran, áticos que
   // aparecen y desaparecen. Sugerente y con retranca, nunca explícito: la
   // gracia está en lo que no se dice y en su cara de no haber roto un plato.
@@ -6489,7 +6489,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // BALANCE DE FIN DE ANO (isRecap) — una cada RECAP_EVERY turnos. No salen por
+  // BALANCE DE FIN DE ANO (isRecap): una cada RECAP_EVERY turnos. No salen por
   // sorteo: las fuerza useGameStore al cumplirse el ano. Sirven para parar,
   // mirar atras y marcar el tono del ano siguiente; su `condition` mira como
   // has llegado, asi que el balance que sale ya te dice en que ano vives.
@@ -6608,7 +6608,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // EL SOBRE DEL HERMANO — bomba de relojeria. Aceptarlo no pasa factura al
+  // EL SOBRE DEL HERMANO: bomba de relojeria. Aceptarlo no pasa factura al
   // turno siguiente: enciende un flag y la factura espera MESES (ver
   // ctx.flagAge). Cuando salta, ya no te acuerdas de haber dicho que si, que
   // es exactamente la gracia.
@@ -6680,7 +6680,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // MAS ROCES ENTRE PERSONAJES — el reparto se lleva mal entre si y a veces
+  // MAS ROCES ENTRE PERSONAJES: el reparto se lleva mal entre si y a veces
   // toca elegir bando. Salen por sorteo normal, sin flags de por medio.
   // ============================================================================
   {
@@ -6766,7 +6766,7 @@ export const contentCards: Card[] = [
 
 
   // ============================================================================
-  // COMODIN DE VERANO — sale a mitad de ano (turnos 6, 18, 30...), y no
+  // COMODIN DE VERANO: sale a mitad de ano (turnos 6, 18, 30...), y no
   // siempre: compite en el sorteo con un peso alto, asi que unas veces cae y
   // otras no. Aceptar las vacaciones no suma ni resta cantidades fijas, sino
   // que ACERCA TODAS LAS BARRAS AL CENTRO (ver CardChoice.rebalance): en
@@ -6806,7 +6806,7 @@ export const contentCards: Card[] = [
 
 
   // ============================================================================
-  // RELLENO DE REPARTO — el mazo estaba muy desigual: El Ministro Caido tenia
+  // RELLENO DE REPARTO: el mazo estaba muy desigual: El Ministro Caido tenia
   // 40 cartas y Mopongo 6, asi que media plantilla se sentia decorativa. Estas
   // suben a los personajes flacos hasta un numero decente. Cada una toca el
   // indicador de cabecera de su personaje (ver la tabla en types.ts).
@@ -7250,7 +7250,7 @@ export const contentCards: Card[] = [
 
 
   // ============================================================================
-  // EL MINISTRO CAIDO, EN VENA — el personaje pedia mas cuerda: chuleria de
+  // EL MINISTRO CAIDO, EN VENA: el personaje pedia mas cuerda: chuleria de
   // barrio, cutre-lujo y esa forma suya de hacerte un favor que en realidad es
   // atarte. Sugerente y con retranca, nunca explicito: la gracia esta en lo que
   // no se dice y en su cara de no haber roto un plato en la vida.
@@ -7359,7 +7359,7 @@ export const contentCards: Card[] = [
 
 
   // ============================================================================
-  // BOMBAS DE RELOJERIA — la factura llega meses despues de la firma. Todas
+  // BOMBAS DE RELOJERIA: la factura llega meses despues de la firma. Todas
   // llevan weight: 0 para que solo puedan salir programadas (ver
   // CardChoice.scheduleCardId), nunca por sorteo. La carta que las enciende es
   // una que ya existia en el mazo: se acepta un favor cualquiera y la cuenta
@@ -7527,7 +7527,7 @@ export const contentCards: Card[] = [
 
 
   // ============================================================================
-  // EL FISCAL — al Fiscal General lo nombra el Gobierno, asi que juega a tu
+  // EL FISCAL: al Fiscal General lo nombra el Gobierno, asi que juega a tu
   // favor. Mientras El Juez instruye contra usted, el Fiscal decide a quien
   // se acusa y a quien no... y apunta cada favor en una libreta. Todo lo que
   // le acepta enciende una bomba que vuelve meses despues convertida en
@@ -7750,7 +7750,7 @@ export const contentCards: Card[] = [
 
 
   // ============================================================================
-  // RESCATES — la última oportunidad. No salen por sorteo (weight: 0): el store
+  // RESCATES: la última oportunidad. No salen por sorteo (weight: 0): el store
   // las busca justo cuando la partida iba a terminar, y solo aparece la de un
   // personaje que (a) te salva de la barra que te ha matado y (b) te debe al
   // menos FAVOR_PARA_RESCATE favores, acumulados a base de darle la razón.
@@ -7981,7 +7981,7 @@ export const contentCards: Card[] = [
 
 
   // ============================================================================
-  // TRAMA DEL GURU — el faro moral de la izquierda decide que este Gobierno ya
+  // TRAMA DEL GURU: el faro moral de la izquierda decide que este Gobierno ya
   // no esta a su altura, se va, monta "un movimiento ciudadano" y acaba
   // presentandose para partir el voto. Entra por dos sitios:
   //   A) le denuncias cuando estalla lo de su fundacion (bomba_fundacion_guru)
@@ -8057,7 +8057,7 @@ export const contentCards: Card[] = [
   },
 
   // ============================================================================
-  // AVISO DE MITAD DE LEGISLATURA — a los 3 anos (turno 36) y a los 7 (turno
+  // AVISO DE MITAD DE LEGISLATURA: a los 3 anos (turno 36) y a los 7 (turno
   // 84). Es un balance mas (isRecap), pero electoral: dice como irian las
   // urnas si fueran hoy, para que las elecciones no lleguen de sorpresa.
   // Reusa la rama de balance del motor, sin tocar codigo.
@@ -8589,7 +8589,7 @@ export const contentCards: Card[] = [
   // El problema del Ca-1 es que en diez de las trece lo callado es un acto que
   // la calle NO PUEDE VER: colgar el telefono, tomar nota y no discutir con un
   // juez, invitarlos a desayunar y no decir nada. La barra bajaba y el jugador
-  // no tenia de donde deducir por que — y estas salen al EMPEZAR la partida,
+  // no tenia de donde deducir por que: y estas salen al EMPEZAR la partida,
   // asi que es lo primero que le pasa. De ahi los "¿por que ha bajado la
   // calle?" de las pruebas del 02/10/2026.
   //

@@ -4,7 +4,7 @@ import { COLOR, pixel } from '../utils/estilo'
 // espacio, sin importar si el texto de la carta es corto o largo. Los
 // textos que no caben encogen de letra (ver `useEncaje` más abajo).
 // Banner compacto (letra pequeña) para dejarle sitio a la carta, que es lo
-// que manda visualmente — estilo Reigns.
+// que manda visualmente: estilo Reigns.
 const BANNER_HEIGHT = 168
 
 // Tamaño de letra: el que se usa siempre, y el suelo por debajo del cual no se

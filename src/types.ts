@@ -37,7 +37,7 @@ export interface CardChoice {
   effects: StatEffects
   // Efecto oculto sobre la moralidad (0-10, no se ve en pantalla). Positivo
   // = elección honesta/transparente, negativo = elección corrupta/turbia.
-  // No aparece en ninguna barra — solo se nota en el final. Omite el campo
+  // No aparece en ninguna barra: solo se nota en el final. Omite el campo
   // si la elección es moralmente neutra (la mayoría de cartas "meme_").
   moralidad?: number
   // Comodin: en vez de sumar y restar cantidades fijas, acerca TODAS las
@@ -83,7 +83,7 @@ export interface CardContext {
 }
 
 // Fases narrativas de la legislatura, de menos a más gravedad.
-// No representan fechas reales — son escalones de intensidad dramática.
+// No representan fechas reales: son escalones de intensidad dramática.
 export type Phase = 1 | 2 | 3 | 4
 // 1 = Luna de miel      (anecdótico, favores pequeños)
 // 2 = Desgaste           (empiezan las grietas, prensa tira del hilo)
@@ -108,7 +108,7 @@ export interface Card {
   left: CardChoice
   right: CardChoice
   // Condición opcional para que la carta solo aparezca en cierto rango de
-  // stats (y, opcionalmente, de moralidad — sobre todo para finales que
+  // stats (y, opcionalmente, de moralidad: sobre todo para finales que
   // combinan "qué stat tocó fondo/techo" con "cómo se llegó hasta ahí").
   // El tercer parámetro trae el estado narrativo (flags, enfados, turno).
   condition?: (stats: Stats, moralidad: number, ctx: CardContext) => boolean

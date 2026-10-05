@@ -32,11 +32,11 @@ export function amenazaRegistro(s: Stats, moralidad: number, enfadoJuez: number)
 //   - alta (7-10): intentó jugar limpio, o al menos no fue el más corrupto.
 //   - media (4-6): un político normal, ni héroe ni villano.
 //   - baja (0-3): corrupción con todas las letras.
-// No es aleatorio como antes — combina "qué se rompió" (la stat) con "cómo
+// No es aleatorio como antes: combina "qué se rompió" (la stat) con "cómo
 // se llegó hasta ahí" (la moralidad), así que la misma stat a 0 puede leerse
 // como tragedia o como justicia poética según cómo se haya jugado.
 const endingCards: Card[] = [
-  // MEDIOS a 0 — la prensa le ha destrozado
+  // MEDIOS a 0: la prensa le ha destrozado
   {
     id: 'final_medios_alta',
     phase: 4,
@@ -68,7 +68,7 @@ const endingCards: Card[] = [
     condition: (s, m) => s.medios <= 0 && m <= 3,
   },
 
-  // PARTIDO a 0 — el aparato le echa
+  // PARTIDO a 0: el aparato le echa
   {
     id: 'final_partido_alta',
     phase: 4,
@@ -100,7 +100,7 @@ const endingCards: Card[] = [
     condition: (s, m) => s.gobierno <= 0 && m <= 3,
   },
 
-  // VOTANTES a 0 — la calle le da la espalda
+  // VOTANTES a 0: la calle le da la espalda
   {
     id: 'final_votantes_alta',
     phase: 4,
@@ -133,7 +133,7 @@ const endingCards: Card[] = [
     condition: (s, m) => s.calle <= 0 && m <= 3,
   },
 
-  // CAJA a 0 — el partido se queda sin un euro
+  // CAJA a 0: el partido se queda sin un euro
   {
     id: 'final_caja_alta',
     phase: 4,
@@ -166,7 +166,7 @@ const endingCards: Card[] = [
     condition: (s, m) => s.caja <= 0 && m <= 3,
   },
 
-  // TECHO — como en el Reigns original, tener una stat DEMASIADO alta (10)
+  // TECHO: como en el Reigns original, tener una stat DEMASIADO alta (10)
   // también acaba mal, no solo tocar fondo. Mismo esquema de 3 variantes por
   // moralidad que los finales de fondo, de arriba.
   {
@@ -294,7 +294,7 @@ const endingCards: Card[] = [
   },
 
   // ==========================================================================
-  // MUERTES POR EVENTO (byEvent) — no las dispara una barra en el extremo,
+  // MUERTES POR EVENTO (byEvent): no las dispara una barra en el extremo,
   // sino una situación que has ido construyendo tú: una trama que llega
   // demasiado lejos, media bancada harta de aguantarte. Se comprueban en
   // TODOS los turnos, así que sus condiciones tienen que ser exigentes: son
@@ -367,7 +367,7 @@ const endingCards: Card[] = [
     isEnding: true,
     byEvent: true,
     // Dos socios hartos a la vez. Cuenta SOLO a quien te sostiene el Gobierno
-    // — que el juez o el periodista estén hartos de ti no rompe ninguna
+    //: que el juez o el periodista estén hartos de ti no rompe ninguna
     // coalición, y desde que ellos también acumulan enfado había que acotarlo.
     //
     // PEDIA DOS SOCIOS A 5, O CUATRO A 3, Y ESO NO PASA NUNCA. Medido con el
@@ -423,7 +423,7 @@ const endingCards: Card[] = [
 ]
 
 // ============================================================================
-// ELECCIONES — el hito de la partida, cada 4 años de gobierno.
+// ELECCIONES: el hito de la partida, cada 4 años de gobierno.
 // ============================================================================
 // Antes se podía "ganar" por accidente: bastaba con sobrevivir mucho tiempo y
 // que en algún momento las 4 stats pasaran de 6 a la vez. En simulación, un

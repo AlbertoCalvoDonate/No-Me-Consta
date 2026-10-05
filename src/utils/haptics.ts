@@ -2,7 +2,7 @@ import { sfx } from './sfx'
 
 // Vibración en móvil, con criterio: un toque seco al elegir, un doble al entrar
 // una barra en rojo, uno largo al caer el gobierno. La misma "y ya" que el
-// sonido — si el volumen está en mudo, tampoco vibra: el botón de volumen hace
+// sonido: si el volumen está en mudo, tampoco vibra: el botón de volumen hace
 // de interruptor de todo lo que molesta.
 //
 // Solo funciona en Android: iOS Safari no implementa navigator.vibrate, así

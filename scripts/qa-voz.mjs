@@ -104,8 +104,8 @@ for (const b of fuente.split('\n  {').slice(1)) {
 //
 // No se pone una regla ciega de -amos/-emos/-imos porque "primos" y "extremos"
 // acaban igual, y marcarlas como que alguien habla seria peor que el fallo:
-// taparia cartas narradas de verdad. Se miro el mazo entero —84 palabras
-// distintas con esas terminaciones— y solo cuatro no son verbos. Sale mas
+// taparia cartas narradas de verdad. Se miro el mazo entero: 84 palabras
+// distintas con esas terminaciones: y solo cuatro no son verbos. Sale mas
 // barato excluir esas cuatro que mantener una lista de ochenta.
 const TERMINA_EN_NOSOTROS = /(^|[^a-záéíóúñü])([a-záéíóúñü]{3,}(?:amos|emos|imos))([^a-záéíóúñü]|$)/i
 const NO_SON_VERBOS = /^(buen[ií]simos|car[ií]simos|extremos|primos|racimos|arrimos|anonimos|an[oó]nimos)$/i

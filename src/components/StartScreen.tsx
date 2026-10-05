@@ -60,7 +60,7 @@ export function StartScreen({
   const { partidas, mesesRecord, epitetoRecord, epitetosVistos, hechos, total, cartasVistas, totalCartas } =
     useLogrosEstado()
 
-  // "Empezar de cero" con partida guardada borra esa partida sin avisar —
+  // "Empezar de cero" con partida guardada borra esa partida sin avisar: 
   // un toque de más y se pierde. Un paso de confirmación de por medio.
   const [confirmando, setConfirmando] = useState(false)
   // El tutorial ya no ocupa la pantalla: se abre si alguien lo pide.
@@ -183,7 +183,7 @@ export function StartScreen({
       </div>
 
       {/* Marca personal: como en Reigns, cuánto aguantaste y qué has coleccionado
-          — no una puntuación, un historial. Solo si ya has jugado. */}
+: no una puntuación, un historial. Solo si ya has jugado. */}
       {partidas > 0 && (
         <div style={{ ...pixel, fontWeight: 500, fontSize: 14, lineHeight: 1.6, color: '#7d7768' }}>
           <div>
@@ -281,7 +281,7 @@ export function StartScreen({
           ofrecerlo si hay algo que borrar. */}
       {/* "ESTO SON PRUEBAS MIAS". Lo tiene que decir el movil porque el
           servidor no puede saberlo: no viaja ningun identificador. Y no
-          identifica a nadie — dice que la PARTIDA es una prueba, no de quien
+          identifica a nadie: dice que la PARTIDA es una prueba, no de quien
           es (ver utils/soyPruebas).
           Encendido se queda encendido: quien prueba, prueba muchas veces, y
           tener que acordarse en cada partida es garantia de olvidarse. */}
@@ -371,7 +371,7 @@ export function StartScreen({
             </p>
             <p style={{ ...pixel, margin: '0 0 14px', fontWeight: 500, fontSize: 14, lineHeight: 1.45, color: COLOR.apagado }}>
               Se envían <strong style={{ color: COLOR.texto }}>solo datos del juego</strong>: qué cartas salieron, qué
-              elegiste y cómo acabó — o que la dejaste a medias, que también hace falta saberlo. Sirve para ver si está
+              elegiste y cómo acabó: o que la dejaste a medias, que también hace falta saberlo. Sirve para ver si está
               bien equilibrado.
             </p>
             <p style={{ ...pixel, margin: '0 0 16px', fontWeight: 500, fontSize: 14, lineHeight: 1.45, color: COLOR.apagado }}>

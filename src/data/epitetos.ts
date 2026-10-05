@@ -4,7 +4,7 @@
 // Es la única vez que la MORALIDAD se enseña: durante la partida es una
 // variable oculta que se acumula con el campo `moralidad` de cada elección
 // (ver GameState.moralidad), sin barra ni número en pantalla. Aquí tampoco se
-// ve la cifra — solo el nombre que te has ganado, que es lo que se recuerda.
+// ve la cifra: solo el nombre que te has ganado, que es lo que se recuerda.
 //
 // Un epíteto por cada valor posible (0 a 10), así que dos partidas parecidas
 // pero no iguales acaban con títulos distintos.
