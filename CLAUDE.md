@@ -68,6 +68,8 @@ Es la norma de la casa. No "parece que va mejor", sino un número.
 - **Cartas**: `npm run validate-cards` (bloquea), más `auditar-coherencia`,
   `auditar-efectos`, `auditar-logros`, `qa-ortografia`, `qa-voz`,
   `qa-personalidad`.
+- **Escritura**: `qa-prosa` (el patrón del mazo, y una carta contra él) y
+  `qa-habla` (cómo habla cada personaje, y su ficha con ejemplos).
 - **Retratos**: `node scripts/comprobar-retrato.mjs <fichero>.webp`.
 - **Color de las cartas**: `colores-retrato.mjs` imprime al terminar cuántas
   parejas son confundibles en CIELAB. Si tocas la paleta, mira ese número.
@@ -139,6 +141,13 @@ si pasa de 39 palabras o de 4 frases, sobra algo.
 
 Las palabras largas son el termómetro del tono: la mediana del mazo es **cero**.
 Cuanto más suben, más suena a nota de prensa y menos a alguien hablando.
+
+**Una voz puede ser estructura y no vocabulario**, y eso ninguna herramienta lo
+ve. El Tertuliano tiene una sola palabra propia en diecinueve cartas, y aun así
+es de los más reconocibles del mazo: declara un principio, gira con un "dicho lo
+cual" y entonces pide. Niega el favor mientras lo pide en el 37 % de sus cartas
+contra el 1 % del resto. Si `qa-habla` da a alguien por plano, **lee tres cartas
+suyas antes de tocar nada**.
 
 El criterio de quién habla y cómo, en la skill `voz-de-las-cartas`. Quién es
 cada uno y con qué boca pide las cosas, en `src/data/reparto.ts` (`quien` y
