@@ -168,9 +168,22 @@ console.log(
     `pide ${med('pide')}%, cifras ${med('cifras')}%, citas ${med('comillas')}%`
 )
 
-// Quien se parece a la media en todo es quien todavía no tiene voz propia.
-const sosos = filas.filter((f) => f.n >= 10 && f.propias.length <= 1)
-if (sosos.length) {
-  console.log(`\nSIN PALABRAS PROPIAS (${sosos.length}): podría hablar cualquiera.`)
-  for (const f of sosos) console.log(`  ${f.nombre} (${f.n} cartas)`)
+// AVISO, NO VEREDICTO. Esto mide VOCABULARIO, y una voz puede estar en la
+// estructura y no en las palabras.
+//
+// Paso el 05/10/2026: el script dio a El Tertuliano por plano, una sola palabra
+// suya en diecinueve cartas, y se dijo que podria hablar cualquiera. Leyendolas,
+// tiene de las voces mas marcadas del mazo: el 37% de sus cartas niegan el favor
+// mientras lo piden ("no le pido nada, lo digo para que conste que no le pido
+// nada"), contra el 1,1% del resto. Treinta y cuatro veces mas que la media.
+//
+// Su firma es una forma de construir la frase, no un lexico, y eso aqui no se
+// ve. Asi que si alguien sale en esta lista, el siguiente paso es LEER tres
+// cartas suyas, no reescribirlas.
+const sinLexico = filas.filter((f) => f.n >= 10 && f.propias.length <= 1)
+if (sinLexico.length) {
+  console.log(`
+SIN VOCABULARIO PROPIO (${sinLexico.length}). Puede que su voz este en la`)
+  console.log('estructura y no en las palabras: lee tres cartas suyas antes de tocar nada.')
+  for (const f of sinLexico) console.log(`  ${f.nombre} (${f.n} cartas)`)
 }

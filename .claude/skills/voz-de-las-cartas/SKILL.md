@@ -96,9 +96,16 @@ discute con cifras, si cita, y **las palabras que usa él y casi nadie más**, q
 es lo que de verdad define una voz. Si algo suena raro, **mide antes de
 reescribir**.
 
-Ese mismo script avisa de quien NO tiene voz propia: si sus números son los de
-la media en todo y no tiene palabras suyas, podría hablar cualquiera. El
-05/10/2026 le pasaba a El Tertuliano, con 19 cartas.
+Ese mismo script avisa de quien no tiene vocabulario propio, pero **eso es un
+aviso, no un veredicto, y hay que leer antes de tocar**.
+
+Pasó el 05/10/2026: el script dio a El Tertuliano por plano, una sola palabra
+suya en diecinueve cartas. Leyéndolas, tiene de las voces más marcadas del mazo.
+Su firma no son palabras, es una forma de construir la frase: declara un
+principio, gira con un "dicho lo cual" y entonces pide. **Niega el favor
+mientras lo pide en el 37 % de sus cartas, contra el 1,1 % del resto.**
+
+Una voz puede estar en la estructura, y el vocabulario no la ve.
 
 Aun con todo eso, antes de escribirle a alguien **lee tres cartas suyas que ya
 funcionen**: la voz se coge leyendo, no describiéndola.

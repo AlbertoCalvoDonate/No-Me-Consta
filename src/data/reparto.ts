@@ -50,7 +50,7 @@ export const REPARTO: Personaje[] = [
   { nombre: 'El Jefe de Comunicación', imagen: 'jefecomunicacion.webp', dueno: 'medios', quien: 'Escribe lo que usted dice. Y lo que no dice.', habla: 'Le habla de usted, en corto, y siempre con un plan ya montado. Dice "esto se puede gestionar" y no detalla cómo.'},
   { nombre: 'El Escudero', imagen: 'escudero.webp', dueno: 'medios', quien: 'Sale a defender lo indefendible cada mañana.', habla: 'De usted y a la defensiva. Habla de lo que le mandan defender, no de lo que piensa.'},
   { nombre: 'El Juez', imagen: 'juez.webp', dueno: 'medios', quien: 'Preside la sala. Y sabe lo que se dijo de él cuando le pusieron ahí.', habla: 'De usted, frase larga y término exacto: auto, diligencia, nombramiento. Nunca amenaza, informa.'},
-  { nombre: 'El Tertuliano', imagen: 'tertuliano.webp', dueno: 'medios', quien: 'No investiga ni pregunta: tiene minutos, y con eso basta.', habla: 'Minutos, audiencia y favores. Nunca pregunta por saber: pregunta para tener algo que contar esta noche.'},
+  { nombre: 'El Tertuliano', imagen: 'tertuliano.webp', dueno: 'medios', quien: 'No investiga ni pregunta: tiene minutos, y con eso basta.', habla: 'Declara un principio, gira con un "dicho lo cual" y entonces pide. Niega el favor mientras lo pide: lo hace en el 37% de sus cartas, contra el 1% del resto del mazo.'},
 
   // GOBIERNO, que la coalicion no se rompa
   { nombre: 'La Vicepresidenta', imagen: 'vicepresi.webp', dueno: 'gobierno', quien: 'Su socia de gobierno. Y su rival por el mismo hueco.', habla: 'Frases largas y una sonrisa al final. Cita lo que han dicho otros para no decirlo ella.'},
