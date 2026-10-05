@@ -31,7 +31,11 @@ const CONTENT = fileURLToPath(new URL('../src/data/cards.content.ts', import.met
 const fuente = readFileSync(CONTENT, 'utf8')
 
 // 1. Pronombres y posesivos de primera persona.
-const PRONOMBRES = /(^|[^a-záéíóúñü])(yo|me|mí|mi|mis|conmigo|nos|nuestro|nuestra|nuestros|nuestras)([^a-záéíóúñü]|$)/i
+//
+// `nosotros` y `nosotras` van aparte aunque empiecen por "nos": la frontera de
+// palabra que lleva la regla no los dejaba entrar, y por eso "la deuda del
+// partido con nosotros" se contaba como narrada. Igual con `mío/mía`.
+const PRONOMBRES = /(^|[^a-záéíóúñü])(yo|me|mí|mi|mis|conmigo|nos|nosotros|nosotras|nuestro|nuestra|nuestros|nuestras|m[ií]o|m[ií]a|m[ií]os|m[ií]as)([^a-záéíóúñü]|$)/i
 
 // 2. Formas verbales de primera persona. Las regulares se cazan por
 //    terminación sobre raíces frecuentes; las irregulares, una a una.
@@ -47,7 +51,7 @@ const VERBOS = new RegExp(
     // regulares frecuentes en presente
     'necesito|propongo|pido|aviso|informo|cuento|reconozco|entiendo|prefiero|' +
     'necesitamos|proponemos|pedimos|avisamos|contamos|preferimos|firmamos|' +
-    'creo|pienso|opino|insisto|repito|añado|llevo|llevamos|paso|dejo|espero' +
+    'creo|pienso|opino|insisto|repito|añado|llevo|llevamos|paso|dejo|espero|organizo' +
     ')([^a-záéíóúñü]|$)',
   'i'
 )
@@ -57,6 +61,11 @@ const DIRIGIRSE = new RegExp(
   '(^|[^a-záéíóúñü])(' +
     'usted|ustedes|presidente|presi|' +
     'd[ií]game|d[ií]galo|m[ií]reme|m[ií]relo|esc[uú]cheme|f[ií]jese|haga|venga|oiga|perdone|' +
+    // Imperativos de cortesia con el pronombre pegado: no hay forma de
+    // decirlos sin tener a alguien delante. Se listan uno a uno y no por
+    // terminacion porque en castellano hay nombres que acaban en -me
+    // (informe, uniforme, enorme) y marcarlos seria peor que el fallo.
+    'perm[ií]tame|cr[ée]ame|enti[ée]ndame|h[áa]game|d[ée]jeme|ll[áa]meme|ap[úu]nteme|c[uu][ée]nteme|' +
     'le digo|le pido|le aviso|le traigo|le cuento|le explico|le juro|le advierto|le recuerdo|' +
     'se lo digo|se lo cuento|se lo pido|se lo aviso|se lo traigo|se lo explico|se lo juro' +
     ')([^a-záéíóúñü]|$)',
@@ -88,7 +97,25 @@ for (const b of fuente.split('\n  {').slice(1)) {
   cartas.push({ id: id[1], quien: quien[1], texto: texto[1], recap: b.includes('isRecap: true') })
 }
 
-const habla = (t) => PRONOMBRES.test(t) || VERBOS.test(t) || DIRIGIRSE.test(t)
+// 2b. PRIMERA PERSONA DEL PLURAL POR TERMINACION, que es donde se escapaban
+// mas. La lista de verbos de arriba es finita y el castellano no: "podríamos
+// ajustar la metodologia", "recalificamos ese suelo" o "estiramos esto seis
+// meses" son el personaje hablando, y salian marcadas como narradas.
+//
+// No se pone una regla ciega de -amos/-emos/-imos porque "primos" y "extremos"
+// acaban igual, y marcarlas como que alguien habla seria peor que el fallo:
+// taparia cartas narradas de verdad. Se miro el mazo entero —84 palabras
+// distintas con esas terminaciones— y solo cuatro no son verbos. Sale mas
+// barato excluir esas cuatro que mantener una lista de ochenta.
+const TERMINA_EN_NOSOTROS = /(^|[^a-záéíóúñü])([a-záéíóúñü]{3,}(?:amos|emos|imos))([^a-záéíóúñü]|$)/i
+const NO_SON_VERBOS = /^(buen[ií]simos|car[ií]simos|extremos|primos|racimos|arrimos|anonimos|an[oó]nimos)$/i
+const pluralPrimera = (t) => {
+  const m = TERMINA_EN_NOSOTROS.exec(t)
+  return Boolean(m) && !NO_SON_VERBOS.test(m[2])
+}
+
+const habla = (t) =>
+  PRONOMBRES.test(t) || VERBOS.test(t) || DIRIGIRSE.test(t) || pluralPrimera(t)
 
 const mudas = []
 let conVoz = 0
