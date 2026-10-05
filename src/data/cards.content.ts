@@ -3988,7 +3988,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 0.85
+          ? 0.5
           : 0,
   },
   {
@@ -4013,7 +4013,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 0.85
+          ? 0.5
           : 0,
   },
   {
@@ -4038,7 +4038,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 0.85
+          ? 0.5
           : 0,
   },
   {
@@ -4063,7 +4063,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 0.85
+          ? 0.5
           : 0,
   },
   {
@@ -4088,7 +4088,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 0.85
+          ? 0.5
           : 0,
   },
   {
@@ -4113,7 +4113,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 0.85
+          ? 0.5
           : 0,
   },
 
@@ -8377,6 +8377,14 @@ export const contentCards: Card[] = [
   // esta pagando hasta despues. Es la unica grieta deliberada en el trato de
   // que si sale el punto, la barra se mueve.
   //
+  // EL PESO DE CADA OFERTA ES 0,5 Y NO 0,85, y el numero importa. El 05/10/2026
+  // se les anadieron seis ofertas nuevas sobre las nueve que habia, para que la
+  // trama no fuera siempre la misma. Medido con el simulador: los fontaneros
+  // pasaron de salir en el 30,7% de las partidas al 40,6%, y eso saco al
+  // jugador optimo de la banda (de 15,3% a 13,4%). No sobraban cartas: sobraba
+  // peso. Repartido el mismo total entre quince, la trama vuelve a dispararse
+  // como antes y lo que cambia es CUAL de las ofertas te toca.
+  //
   // Como funcionan los tres: aparecen solos cuando huelen sangre (una barra
   // en apuros o la caja demasiado llena), resuelven el problema de hoy, y
   // dejan una carpeta abierta. Meses despues vienen a cobrar. Pagar cuesta;
@@ -8410,7 +8418,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 0.85
+          ? 0.5
           : 0,
   },
   {
@@ -8456,7 +8464,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 0.85
+          ? 0.5
           : 0,
   },
   {
@@ -8517,7 +8525,7 @@ export const contentCards: Card[] = [
       ctx.flags.has('carpeta_agente')
         ? 0
         : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
-          ? 0.85
+          ? 0.5
           : 0,
   },
   {
@@ -8957,6 +8965,309 @@ export const contentCards: Card[] = [
     condition: (_s, _m, ctx) => ctx.flagAge('asumi_la_herencia') >= 16,
     weight: (_s, _m, ctx) => (ctx.flagAge('asumi_la_herencia') >= 16 ? 2.5 : 0),
     pleases: 'right',
+  },
+
+  // ==========================================================================
+  // CARTAS NUEVAS (05/10/2026): igualar a los que menos tenian.
+  //
+  // Contando solo las SORTEABLES, la mediana del reparto eran 17 cartas y
+  // habia gente muy por debajo: el Fiscal con doce, Mopongo y la
+  // Vicepresidenta con catorce. Un personaje con pocas cartas no llega a
+  // existir para el jugador, que en una partida mediana ve nueve caras.
+  //
+  // Los efectos van con un ojo en lo que dice la telemetria: la gente muere
+  // por barras ALTAS, sobre todo medios. Asi que aqui casi nada sube medios de
+  // dos en dos, y hay tres cartas con `rebalance` para dar aire.
+  // ==========================================================================
+
+  {
+    id: 'fiscal_correos',
+    phase: 2,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'Han salido correos míos en la prensa, de mi cuenta oficial. No le pregunto quién los ha dado. Le pregunto qué hago mañana cuando me citen a declarar.',
+    left: { text: 'Que vaya y cuente lo que pasó', effects: { medios: 1, gobierno: -2 }, moralidad: 3 },
+    right: { text: 'Que no recuerde gran cosa', effects: { gobierno: 1, medios: -1 }, moralidad: -2 },
+    pleases: 'right',
+  },
+  {
+    id: 'fiscal_aforado',
+    phase: 2,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'Su exministro pide que le juzgue el Supremo, que es más lento y más discreto. Técnicamente le corresponde. Técnicamente es la palabra que más trabajo hace en esa frase.',
+    left: { text: 'Que le juzgue quien le toque', effects: { medios: 1, gobierno: -1 }, moralidad: 2 },
+    right: { text: 'Al Supremo, y sin prisa', effects: { gobierno: 1, calle: -1 }, moralidad: -2 },
+    pleases: 'right',
+  },
+  {
+    id: 'fiscal_dos_velocidades',
+    phase: 3,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'Tengo dos causas encima de la mesa: una contra uno de los suyos y otra contra uno de enfrente. Las dos van igual de verdes. Si una corre más, se nota.',
+    left: { text: 'Que corran las dos igual', effects: { medios: 1, gobierno: -1 }, moralidad: 3 },
+    right: { text: 'Que la de enfrente corra un poco más', effects: { gobierno: 2, medios: -2 }, moralidad: -3 },
+    pleases: 'right',
+  },
+  {
+    id: 'fiscal_junta_sala',
+    phase: 3,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'La Junta de Fiscales de Sala ha votado en contra de mi criterio, nueve a cuatro. Yo decido igual, que para eso mando. Dígame si prefiere que decida o que obedezca.',
+    left: { text: 'Que haga caso a la Junta', effects: { medios: 1, gobierno: -1 }, moralidad: 2 },
+    right: { text: 'Que mande usted', effects: { gobierno: 1, medios: -2 }, moralidad: -2 },
+    pleases: 'right',
+  },
+  {
+    id: 'fiscal_cena_supremo',
+    phase: 2,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'Ceno una vez al mes con tres magistrados y no consta en ninguna agenda. Lo hace todo el mundo. Si algún día sale, prefiero que salga diciendo que usted lo sabía.',
+    left: { text: 'Que no vuelva a esa cena', effects: { medios: 1, gobierno: -1 }, moralidad: 2 },
+    right: { text: '"Yo no sé nada de ninguna cena"', effects: { gobierno: 1, medios: -1 }, moralidad: -2 },
+    pleases: 'right',
+  },
+  {
+    id: 'fiscal_archivo_agosto',
+    phase: 3,
+    character: 'El Fiscal',
+    characterImage: 'fiscal.webp',
+    text: 'Hay un archivo que conviene firmar en agosto. El expediente está igual de maduro en julio que en septiembre. Lo que cambia es quién está de guardia en las redacciones.',
+    left: { text: 'Firmarlo cuando toque', effects: { medios: 1, gobierno: -1 }, moralidad: 3 },
+    right: { text: 'Agosto, pues', effects: { caja: 1, medios: -2 }, moralidad: -3 },
+    pleases: 'right',
+  },
+
+  {
+    id: 'mopongo_acta',
+    phase: 2,
+    character: 'Mopongo',
+    characterImage: 'mopongo.webp',
+    text: 'Ha leído el acta entera de la reunión de ayer. Señala el punto cuatro y dice: "Aquí pone que yo dije que sí." No dijo que sí. No estaba.',
+    left: { text: 'Corregir el acta', effects: { gobierno: -1, medios: 1 }, moralidad: 2 },
+    right: { text: 'Dejar el acta como está', effects: { gobierno: 1, calle: -1 }, moralidad: -2 },
+  },
+  {
+    id: 'mopongo_factura',
+    phase: 3,
+    character: 'Mopongo',
+    characterImage: 'mopongo.webp',
+    text: 'Levanta una factura con dos dedos, como quien coge algo mojado. Son cuatro mil euros en flores para un acto de hora y media. "Flores", repite.',
+    left: { text: 'Preguntar quién firmó eso', effects: { caja: 1, gobierno: -1 }, moralidad: 2 },
+    right: { text: 'Que siga, que quedó muy bonito', effects: { caja: -1, calle: 1 }, moralidad: -1 },
+  },
+  {
+    id: 'mopongo_silla',
+    phase: 2,
+    character: 'Mopongo',
+    characterImage: 'mopongo.webp',
+    text: 'En la foto oficial del Consejo se ha sentado en la silla del ministro que se fue. Nadie se lo ha dicho. La foto ya está publicada.',
+    left: { text: 'Repetir la foto', effects: { medios: -1, gobierno: 1 } },
+    right: { text: 'Dejarla y no explicar nada', effects: { medios: 1, gobierno: -1 } },
+  },
+  {
+    id: 'mopongo_cifra',
+    phase: 3,
+    character: 'Mopongo',
+    characterImage: 'mopongo.webp',
+    text: 'Pregunta en voz baja cuánto cuesta el plan que se anuncia el jueves. Nadie contesta. Ella saca un papel y lee una cifra que no coincide con ninguna de las que se han dicho.',
+    left: { text: 'Parar el anuncio y cuadrar la cifra', effects: { gobierno: -1, caja: 1 }, moralidad: 2 },
+    right: { text: 'Anunciarlo igual', effects: { calle: 1, caja: -1 }, moralidad: -1 },
+  },
+
+  {
+    id: 'vice_dos_agendas',
+    phase: 2,
+    character: 'La Vicepresidenta',
+    characterImage: 'vicepresi.webp',
+    text: 'Hay dos agendas del Gobierno: la que se publica y la que se cumple. Lo digo sin acritud y con una sonrisa, pero lo digo. ¿Cuál quiere que defienda yo el jueves?',
+    left: { text: 'Publicar la que se cumple', effects: { medios: 1, gobierno: -2 }, moralidad: 3 },
+    right: { text: 'Que defienda la publicada', effects: { gobierno: 1, medios: -1 }, moralidad: -2 },
+    pleases: 'right',
+  },
+  {
+    id: 'vice_contrato_amiga',
+    phase: 3,
+    character: 'La Vicepresidenta',
+    characterImage: 'vicepresi.webp',
+    text: 'He mirado el contrato de comunicación de su gabinete. Lo lleva una empresa de una amiga mía, se lo digo yo antes de que lo diga otro. Y así se queda, o lo saco a concurso.',
+    left: { text: 'Que salga a concurso', effects: { medios: 1, caja: -1 }, moralidad: 3 },
+    right: { text: 'Que se quede donde está', effects: { gobierno: 1, medios: -1 }, moralidad: -2 },
+    pleases: 'left',
+  },
+  {
+    id: 'vice_respiro',
+    phase: 3,
+    character: 'La Vicepresidenta',
+    characterImage: 'vicepresi.webp',
+    text: 'Le propongo una semana sin anuncios. Ni uno. Que el Gobierno respire, que la gente nos eche de menos y que los nuestros dejen de pelearse en los pasillos.',
+    left: { text: 'Una semana en silencio', effects: {}, rebalance: true, moralidad: 1 },
+    right: { text: 'Anunciar algo gordo el lunes', effects: { medios: 1, calle: 1, caja: -1 } },
+    pleases: 'left',
+  },
+  {
+    id: 'vice_sucesion',
+    phase: 4,
+    character: 'La Vicepresidenta',
+    characterImage: 'vicepresi.webp',
+    text: 'Si usted se cae, alguien tiene que estar listo. No lo digo por mí, lo digo porque es verdad. Y lo digo ahora porque dentro de un año ya no hará falta decirlo.',
+    left: { text: 'Agradecer la lealtad y cambiar de tema', effects: { gobierno: 1, medios: -1 } },
+    right: { text: 'Decirle que aquí no se cae nadie', effects: { gobierno: -2, calle: 1 } },
+    pleases: 'left',
+  },
+
+  {
+    id: 'fontanera_oferta_d',
+    phase: 3,
+    character: 'La Fontanera',
+    sinPistas: true,
+    characterImage: 'fontanera.webp',
+    text: 'El diputado que le pide la comisión de investigación tiene un piso que no declaró en 2019. No pienso publicarlo. Pienso que alguien se lo recuerde en un pasillo, y ya está.',
+    left: { text: 'Que pida lo que quiera', effects: { gobierno: -1 }, moralidad: 2 },
+    right: {
+      text: 'Que se lo recuerden',
+      effects: { gobierno: 2, calle: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_fontanera'],
+      scheduleCardId: 'fontanera_cobro',
+      scheduleIn: 13,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.5
+          : 0,
+  },
+  {
+    id: 'comisario_oferta_d',
+    phase: 3,
+    character: 'El Comisario',
+    sinPistas: true,
+    characterImage: 'comisario.webp',
+    text: 'La manifestación del sábado la convoca una asociación con dos cuentas y un presidente que no existe. Puedo pedir que alguien mire esas cuentas esta semana. O la que viene.',
+    left: { text: 'Que se manifieste quien quiera', effects: { calle: -1 }, moralidad: 2 },
+    right: {
+      text: 'Que miren esas cuentas',
+      effects: { calle: 2, medios: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_comisario'],
+      scheduleCardId: 'comisario_cobro',
+      scheduleIn: 13,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.5
+          : 0,
+  },
+  {
+    id: 'agente_oferta_d',
+    phase: 3,
+    character: 'El Agente',
+    sinPistas: true,
+    characterImage: 'agente.webp',
+    text: 'Dos de sus socios cenaron el martes con gente de fuera que no le conviene. Tengo la mesa, la hora y la cuenta. Se lo cuento ahora o se lo cuenta un periódico en marzo.',
+    left: { text: 'No quiero saber de dónde sale eso', effects: { gobierno: -1 }, moralidad: 2 },
+    right: {
+      text: 'Cuéntemelo',
+      effects: { gobierno: 2, medios: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_agente'],
+      scheduleCardId: 'agente_cobro',
+      scheduleIn: 13,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.5
+          : 0,
+  },
+  {
+    id: 'fontanera_oferta_e',
+    phase: 2,
+    character: 'La Fontanera',
+    sinPistas: true,
+    characterImage: 'fontanera.webp',
+    text: 'Hay un audio suyo de hace cuatro años dando vueltas. Todavía no lo tiene nadie que vaya a usarlo. Puedo conseguir que siga sin tenerlo nadie, y usted no pregunta cómo.',
+    left: { text: 'Que salga y ya veremos', effects: { medios: -1 }, moralidad: 2 },
+    right: {
+      text: 'Que no salga',
+      effects: { medios: 2, caja: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_fontanera'],
+      scheduleCardId: 'fontanera_cobro',
+      scheduleIn: 15,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.5
+          : 0,
+  },
+  {
+    id: 'comisario_oferta_e',
+    phase: 2,
+    character: 'El Comisario',
+    sinPistas: true,
+    characterImage: 'comisario.webp',
+    text: 'El periodista que le lleva tres portadas seguidas tiene una multa de tráfico de hace un año que nadie ha cobrado. Es una tontería. Las tonterías, bien contadas, también pesan.',
+    left: { text: 'Que escriba lo que quiera', effects: { medios: -1 }, moralidad: 2 },
+    right: {
+      text: 'Que alguien se la cobre',
+      effects: { medios: 2, calle: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_comisario'],
+      scheduleCardId: 'comisario_cobro',
+      scheduleIn: 15,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.5
+          : 0,
+  },
+  {
+    id: 'agente_oferta_e',
+    phase: 2,
+    character: 'El Agente',
+    sinPistas: true,
+    characterImage: 'agente.webp',
+    text: 'Mi país puede comprar deuda suya el mes que viene, mucha y sin hacer ruido. No le pedimos nada hoy, señor presidente. Hoy solo queremos que sepa que podemos.',
+    left: { text: 'Agradecerlo y no aceptar', effects: { caja: -1 }, moralidad: 2 },
+    right: {
+      text: 'Que compren',
+      effects: { caja: 2, gobierno: -1 },
+      moralidad: -3,
+      addFlags: ['carpeta_agente'],
+      scheduleCardId: 'agente_cobro',
+      scheduleIn: 15,
+    },
+    weight: (s, _m, ctx) =>
+      ctx.flags.has('carpeta_fontanera') ||
+      ctx.flags.has('carpeta_comisario') ||
+      ctx.flags.has('carpeta_agente')
+        ? 0
+        : Math.min(s.medios, s.gobierno, s.calle) <= 3 || s.caja >= 7
+          ? 0.5
+          : 0,
   },
 
 ]

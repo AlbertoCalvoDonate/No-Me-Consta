@@ -128,6 +128,8 @@ const MAYUSCULAS_PERMITIDAS = new Set([
   'Gobierno', 'Estado', 'Congreso', 'Senado', 'Parlamento', 'Consejo', 'Ministros',
   'Ministerio', 'Ministra', 'Ministro', 'Presidencia', 'Presidente', 'Presidenta',
   'Vicepresidenta', 'Vicepresidente', 'Hacienda', 'Fiscalia', 'Fiscal', 'Justicia',
+  // 'Junta de Fiscales de Sala' es un organo real, y 'Sala' es parte del nombre.
+  'Junta', 'Sala', 'Supremo',
   'Interior', 'Sanidad', 'Educacion', 'Igualdad', 'Defensa', 'Exteriores',
   'Trabajo', 'Energia', 'Bienestar', 'Emocional', 'Administracion', 'Union',
   'Constitucion', 'Tribunal', 'Supremo', 'Audiencia', 'Juzgado', 'Junta',

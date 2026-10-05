@@ -317,6 +317,39 @@ mazmorra: donde la bolsa se encoge a dos o tres cartas durante unos turnos, y
 eso les cambia el ritmo. Aquí hay 31 cartas que encadenan (5 %) pero nada que
 secuestre el mazo varios turnos seguidos. Es contenido nuevo, no un ajuste.
 
+## 4f. Veinte cartas nuevas para los que menos tenian (05/10)
+
+Contando solo las SORTEABLES (las de guion no se ven si no se dispara su
+trama), la mediana del reparto eran 17 cartas y habia gente muy por debajo.
+Escritas veinte:
+
+| personaje | antes | ahora |
+|---|---|---|
+| El Fiscal | 12 | 18 |
+| La Vicepresidenta | 14 | 18 |
+| Mopongo | 14 | 18 |
+| La Fontanera, El Comisario, El Agente | 4 c/u | 6 c/u |
+
+**Lo que se aprendio midiendo, y vale mas que las cartas.** Con las veinte
+metidas, el jugador optimo cayo de 15,3 % a 13,4 %, fuera de banda. La causa
+estaba en el propio informe del simulador: los fontaneros pasaron de salir en el
+30,7 % de las partidas al 40,6 %, porque se les anadieron seis ofertas sobre las
+nueve que habia.
+
+No sobraban cartas: sobraba peso. Repartido el mismo total entre quince ofertas
+(de 0,85 a 0,5 cada una), el equilibrio vuelve a la linea base, bueno 9,5 % y
+optimo 15,3 %, y lo que cambia es CUAL de las ofertas te toca, no cuantas veces
+te asaltan.
+
+Queda apuntado en el propio fichero de cartas, encima del bloque de los
+fontaneros.
+
+**Lo que sigue pendiente**: aun hay gente por debajo de la mediana (Oposicion,
+Independentista, Cruzado, Socia, Sindicalista, Expresidente y Exiliado, todos
+en 15-16 sorteables). Y  se vuelve algo mas duro cada vez que
+se anaden cartas, porque cuenta contra : no hay que tocar nada,
+pero conviene saberlo.
+
 ## 5. Arte que falta
 
 - **Personajes: ya no falta ninguno.** Los veintinueve tienen retrato desde el
