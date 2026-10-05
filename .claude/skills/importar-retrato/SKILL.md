@@ -144,9 +144,20 @@ se quitaron el 01/10/2026 porque con arte igualado a mano hacían lo contrario.
 npm run build && npx wrangler@4.145.0 deploy
 ```
 
-El `@4.145.0` no es opcional. Y comprueba que el retrato está en vivo:
+El `@4.145.0` no es opcional. Y **compila despues de commitear**: la version
+lleva el hash del commit y se congela en el build.
+
+Comprueba que el retrato esta en vivo **mirando el tipo de contenido, no el
+codigo de estado**:
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}\n" \
-  https://no-me-consta.albertocalvodonate.workers.dev/characters/<nombre>.webp
+curl -s -o /dev/null -w "%{http_code} %{content_type} %{size_download}
+"   https://no-me-consta.albertocalvodonate.workers.dev/characters/<nombre>.webp
 ```
+
+Tiene que decir `image/webp` y un tamano parecido al del fichero local. **Un 200
+no prueba nada**: el worker va con `not_found_handling: single-page-application`,
+asi que una ruta que no existe devuelve el index.html con un 200 tan ricamente.
+El 03/10/2026 dos retratos parecian desplegados y lo que llegaba eran 2.266
+bytes de HTML, los mismos que devuelve un nombre inventado, que es la forma
+rapida de salir de dudas.
