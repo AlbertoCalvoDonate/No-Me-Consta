@@ -111,6 +111,10 @@ const resultados = await page.evaluate(
     for (const estrategia of ESTRATEGIAS) {
       let ganadas = 0
       let turnos = 0
+      // Cuanto aguanta cada partida, para poder decir que parte llega a las
+      // primeras elecciones. "Ganar" aqui son 144 meses (tres legislaturas),
+      // que no es lo que un jugador entiende por ganar.
+      const hitos = []
       const muertes = {}
       for (let p = 0; p < PARTIDAS; p++) {
         store.getState().restart()
@@ -131,6 +135,7 @@ const resultados = await page.evaluate(
         }
         const fin = store.getState()
         turnos += fin.turn
+        hitos.push(fin.turn)
         if (fin.turn >= META) ganadas++
         const causa = fin.deathReason || 'sin causa'
         muertes[causa] = (muertes[causa] || 0) + 1
@@ -142,6 +147,9 @@ const resultados = await page.evaluate(
       salida[estrategia] = {
         ganadas,
         tasa: (ganadas * 100) / PARTIDAS,
+        llega48: (100 * hitos.filter((t) => t >= 48).length) / PARTIDAS,
+        llega96: (100 * hitos.filter((t) => t >= 96).length) / PARTIDAS,
+        mediana: hitos.slice().sort((a, b) => a - b)[Math.floor(hitos.length / 2)],
         turnosMedios: turnos / PARTIDAS,
         muertes: Object.entries(muertes)
           .sort((a, b) => b[1] - a[1])
@@ -156,7 +164,8 @@ const resultados = await page.evaluate(
 console.log(`${PARTIDAS} partidas por estrategia. Ganar = llegar al mes ${resultados.META}.\n`)
 for (const [nombre, r] of Object.entries(resultados.salida)) {
   console.log(
-    `${nombre.padEnd(9)} gana ${r.tasa.toFixed(1).padStart(5)}%   duran ${r.turnosMedios.toFixed(1).padStart(5)} meses`
+    `${nombre.padEnd(9)} gana ${r.tasa.toFixed(1).padStart(5)}%   duran ${r.turnosMedios.toFixed(1).padStart(5)} meses` +
+      `   mediana ${String(r.mediana).padStart(3)}   llega a las 1as elecciones ${r.llega48.toFixed(1).padStart(5)}%   a las 2as ${r.llega96.toFixed(1).padStart(5)}%`
   )
   for (const [causa, n] of r.muertes) {
     console.log(`            ${String(n).padStart(4)}  ${causa.slice(0, 68)}`)
